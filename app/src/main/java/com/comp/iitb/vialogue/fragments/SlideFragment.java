@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
+import com.comp.iitb.vialogue.helpers.SlideRecyclerViewCallback;
 import com.comp.iitb.vialogue.models.DummyContent;
 
 /**
@@ -69,8 +71,16 @@ public class SlideFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SlideRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            //Adapter for Slides
+            SlideRecyclerViewAdapter adapter=new SlideRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            recyclerView.setAdapter(adapter);
+            //Reordering helper for slides
+            SlideRecyclerViewCallback callback=new SlideRecyclerViewCallback(adapter,DummyContent.ITEMS);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+
         }
+
         return view;
     }
 
@@ -91,17 +101,5 @@ public class SlideFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-/*
-    *
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(DummyItem item);
-    }*/
+
 }

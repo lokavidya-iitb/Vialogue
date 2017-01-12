@@ -8,21 +8,21 @@ import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
-import com.comp.iitb.vialogue.models.DummyContent.DummyItem;
+import com.comp.iitb.vialogue.models.DummyContent.Slide;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Slide} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Slide> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public SlideRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public SlideRecyclerViewAdapter(List<Slide> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -61,7 +61,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Slide mItem;
 
         public ViewHolder(View view) {
             super(view);
