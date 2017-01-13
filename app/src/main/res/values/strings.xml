@@ -8,5 +8,11 @@
     <string name="video">Video</string>
     <string name="question">Question</string>
 
+    <string-array name="tab_titles">
+        <item>Vialogue</item>
+        <item>Create Videos</item>
+        <item>Videos</item>
+        <item>My Account</item>
+    </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
