@@ -17,10 +17,12 @@ import android.view.View;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
+        OnProgressUpdateListener {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
@@ -131,5 +132,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onListFragmentInteraction(DummyContent.Slide item) {
 
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        Log.d("Progress Main Activity","___________ ___ _"+ progress);
     }
 }
