@@ -144,10 +144,13 @@ public class Storage {
             }
         }
         try {
+            CopyFileAsync copyFileAsync = null;
             if (mActivity instanceof OnProgressUpdateListener) {
-                CopyFileAsync copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), (OnProgressUpdateListener) mActivity);
-                copyFileAsync.execute(sourceFile,destinationFile);
+                copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), (OnProgressUpdateListener) mActivity);
+            } else {
+                copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), null);
             }
+            copyFileAsync.execute(sourceFile, destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

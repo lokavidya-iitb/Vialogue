@@ -22,7 +22,7 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     private Context mContext;
     private OnProgressUpdateListener mProgressUpdateListener;
 
-    public CopyFileAsync(@NonNull Context context,@NonNull OnProgressUpdateListener progressUpdateListener) {
+    public CopyFileAsync(@NonNull Context context, @NonNull OnProgressUpdateListener progressUpdateListener) {
         mContext = context;
         mProgressUpdateListener = progressUpdateListener;
     }
@@ -30,7 +30,7 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(File... params) {
         try {
-            if(params.length<2){
+            if (params.length < 2) {
                 throw new NullPointerException("Two file objects are compulsory");
             }
             boolean completed = copyFile(params[0], params[1]);
@@ -59,8 +59,10 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
         int len;
         while ((len = in.read(buf)) > 0) {
             out.write(buf, 0, len);
-            current+=len;
-            publishProgress((int)((current/sourceFileSize)*100.0));
+            if (mProgressUpdateListener != null) {
+                current += len;
+                publishProgress((int) ((current / sourceFileSize) * 100.0));
+            }
         }
         in.close();
         out.close();
