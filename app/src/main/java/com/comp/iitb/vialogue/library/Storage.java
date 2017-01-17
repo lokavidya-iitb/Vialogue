@@ -1,10 +1,12 @@
 package com.comp.iitb.vialogue.library;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -13,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 
 import java.io.ByteArrayOutputStream;
@@ -115,9 +118,9 @@ public class Storage {
      * @param filePaths   : source of the files to be copied
      * @return was success
      */
-    public boolean addFilesToDirectory(@NonNull File root, String destination, @NonNull List<String> filePaths) {
+    public boolean addFilesToDirectory(@NonNull File root, String destination, @NonNull List<String> filePaths, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
         for (String source : filePaths) {
-            if (!addFileToDirectory(root, destination, new File(source)))
+            if (!addFileToDirectory(root, destination, new File(source),progressUpdateListener, fileCopyCompleted))
                 return false;
         }
         return true;
@@ -131,7 +134,7 @@ public class Storage {
      * @param sourceFile  : source of the file to be copied
      * @return was success
      */
-    public boolean addFileToDirectory(@NonNull File root, String destination, @NonNull File sourceFile) {
+    public boolean addFileToDirectory(@NonNull File root, String destination, @NonNull File sourceFile, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
 
         File destinationFile = root;
         if (destination != null) {
@@ -145,11 +148,7 @@ public class Storage {
         }
         try {
             CopyFileAsync copyFileAsync = null;
-            if (mActivity instanceof OnProgressUpdateListener) {
-                copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), (OnProgressUpdateListener) mActivity);
-            } else {
-                copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), null);
-            }
+            copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), progressUpdateListener, fileCopyCompleted);
             copyFileAsync.execute(sourceFile, destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,5 +175,37 @@ public class Storage {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, mActivity.getResources().getString(R.string.captured_image_name), null);
         return Uri.parse(path);
+    }
+
+    /**
+     * Gets thumbnail of image stored in android by default
+     *
+     * @param filePath : storage path of original Image
+     * @return thumbnail of images
+     */
+    public Bitmap getImageThumbnail(@NonNull String filePath) {
+        Bitmap thumbnail = null;
+        ContentResolver contentResolver = mActivity.getContentResolver();
+        Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[]{MediaStore.MediaColumns._ID}, MediaStore.MediaColumns.DATA + "=?", new String[]{filePath}, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            thumbnail = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+        }
+        cursor.close();
+        if (thumbnail == null) {
+            Log.d("Storage", "Image might be unsupported");
+            //TODO: placeholder Image for unsupported image
+        }
+        return thumbnail;
+    }
+
+    public Bitmap getVideoThumbnail(@NonNull String filePath) {
+        Bitmap thumbnail = null;
+        thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
+        if (thumbnail == null) {
+            Log.d("Storage", "Video might be unsupported");
+            //TODO: placeholder Image for unsupported video
+        }
+        return thumbnail;
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 
 import java.io.File;
@@ -19,12 +20,15 @@ import java.io.OutputStream;
 
 public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
 
+    private File mDestinationFile;
     private Context mContext;
     private OnProgressUpdateListener mProgressUpdateListener;
+    private OnFileCopyCompleted mFileCopyCompleted;
 
-    public CopyFileAsync(@NonNull Context context, @NonNull OnProgressUpdateListener progressUpdateListener) {
+    public CopyFileAsync(@NonNull Context context, @NonNull OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
         mContext = context;
         mProgressUpdateListener = progressUpdateListener;
+        mFileCopyCompleted = fileCopyCompleted;
     }
 
     @Override
@@ -52,7 +56,8 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
         double sourceFileSize = sourceFile.length();
         double current = 0;
         InputStream in = new FileInputStream(sourceFile);
-        OutputStream out = new FileOutputStream(new File(destinationFolder, sourceFile.getName()));
+        mDestinationFile = new File(destinationFolder, sourceFile.getName());
+        OutputStream out = new FileOutputStream(mDestinationFile);
 
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
@@ -83,5 +88,10 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
+        if(aBoolean&&mFileCopyCompleted!=null){
+            mFileCopyCompleted.done(mDestinationFile,true);
+        } else {
+            mFileCopyCompleted.done(mDestinationFile,false);
+        }
     }
 }

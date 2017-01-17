@@ -1,5 +1,7 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,8 @@ import java.util.List;
 public class SharedRuntimeContent {
     public static List<String> videoPathList = new ArrayList<>();
     public static List<String> imagePathList = new ArrayList<>();
+    public static List<Bitmap> imageThunbnails = new ArrayList<>();
+    public static List<Bitmap> videoThunbnails = new ArrayList<>();
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -43,6 +44,7 @@ import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
 
+import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
@@ -151,10 +153,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         return mView;
     }
 
-    private void setEditTextLostFocus() {
-
-    }
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -243,36 +241,60 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("Create Videos", "resultCode " + resultCode + " request code " + requestCode);
+        if (resultCode == RESULT_OK)
+            handlePickedData(requestCode, data);
+    }
+
+    public void handlePickedData(int requestCode, Intent data) {
         if (data != null) {
             String selectedPath = null;
             if (requestCode == GET_CAMERA_IMAGE) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                selectedPath = mStorage.getRealPathFromURI(mStorage.getImageUri(getContext(), photo));
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    Bitmap photo = (Bitmap) bundle.get("data");
+                    selectedPath = mStorage.getRealPathFromURI(mStorage.getImageUri(getContext(), photo));
+                }
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
             }
-            Log.d("Create Videos", "resultCode " + resultCode + " request code " + requestCode + " selectedPath " + selectedPath);
-            File pickedFile = new File(selectedPath);
-            switch (requestCode) {
-                case GET_IMAGE:
-                    if (!SharedRuntimeContent.imagePathList.contains(selectedPath)) {
-                        mStorage.addFileToDirectory(mFolder, SharedRuntimeContent.IMAGE_FOLDER_NAME, pickedFile);
-                        SharedRuntimeContent.imagePathList.add(pickedFile.getName());
-                    }
-                    break;
-                case GET_VIDEO:
-                    if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
-                        mStorage.addFileToDirectory(mFolder, SharedRuntimeContent.VIDEO_FOLDER_NAME, pickedFile);
-                        SharedRuntimeContent.videoPathList.add(pickedFile.getName());
-                    }
-                    break;
-                case GET_CAMERA_IMAGE:
-                    if (!SharedRuntimeContent.imagePathList.contains(selectedPath)) {
-                        mStorage.addFileToDirectory(mFolder, SharedRuntimeContent.IMAGE_FOLDER_NAME, pickedFile);
-                        SharedRuntimeContent.imagePathList.add(pickedFile.getName());
-                    }
-                    break;
-
+            if (selectedPath != null) {
+                File pickedFile = new File(selectedPath);
+                switch (requestCode) {
+                    case GET_CAMERA_IMAGE:
+                    case GET_IMAGE:
+                        if (!SharedRuntimeContent.imagePathList.contains(selectedPath)) {
+                            mStorage.addFileToDirectory(mFolder,
+                                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
+                                    pickedFile,
+                                    null,
+                                    new OnFileCopyCompleted() {
+                                        @Override
+                                        public void done(File file, boolean isSuccessful) {
+                                            SharedRuntimeContent.imagePathList.add(file.getName());
+                                            Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
+                                            SharedRuntimeContent.imageThunbnails.add(thumbnail);
+                                        }
+                                    });
+                        }
+                        break;
+                    case GET_VIDEO:
+                        if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
+                            mStorage.addFileToDirectory(mFolder,
+                                    SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                                    pickedFile,
+                                    null,
+                                    new OnFileCopyCompleted() {
+                                        @Override
+                                        public void done(File file, boolean isSuccessful) {
+                                            SharedRuntimeContent.videoPathList.add(file.getName());
+                                            Bitmap thumbnail = mStorage.getVideoThumbnail(file.getAbsolutePath());
+                                            SharedRuntimeContent.videoThunbnails.add(thumbnail);
+                                        }
+                                    });
+                        }
+                        break;
+                }
             }
         }
     }

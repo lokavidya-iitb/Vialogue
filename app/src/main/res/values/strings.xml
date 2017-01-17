@@ -7,12 +7,16 @@
     <string name="camera">Camera</string>
     <string name="image">Image</string>
     <string name="video">Video</string>
+    <string name="add_audio">Add Audio</string>
     <string name="captured_image_name">Lokavidya</string>
     <string name="question">Question</string>
     <string name="storage_error">Storage can not be accessed</string>
     <string name="permission_storage_rationale">We need your permissions to save Projects and Videos on your phone</string>
     <string name="button_allow">Permission granted</string>
     <string name="button_deny">No</string>
+    <string name="record_audio">Record</string>
+    <string name="stop_record_audio">Stop</string>
+    <string name="done">Done</string>
     <string-array name="tab_titles">
         <item>Vialogue</item>
         <item>Create Videos</item>
