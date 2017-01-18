@@ -7,4 +7,18 @@
     <dimen name="segment_height">25dp</dimen>
     <dimen name="segment_width">0.5dp</dimen>
     <dimen name="time">20sp</dimen>
+    <dimen name="item_offset">10dp</dimen>
+    <dimen name="project_back_height">250dp</dimen>
+    <dimen name="project_back_title">30dp</dimen>
+    <dimen name="project_back_subtitle">18dp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="card_radius">0dp</dimen>
+    <dimen name="card_height">160dp</dimen>
+    <dimen name="card_title_padding">10dp</dimen>
+    <dimen name="title">15dp</dimen>
+    <dimen name="count_padding_bottom">5dp</dimen>
+    <dimen name="Images_count">12dp</dimen>
+    <dimen name="overflow_width">20dp</dimen>
+    <dimen name="overflow_height">30dp</dimen>
+    <dimen name="overflow_margin_top">10dp</dimen>
 </resources>
