@@ -7,5 +7,5 @@ import com.comp.iitb.vialogue.models.DummyContent;
  */
 
 public interface OnListFragmentInteractionListener {
-    void onListFragmentInteraction(DummyContent.DummyItem item);
+    void onListFragmentInteraction(DummyContent.Slide item);
 }

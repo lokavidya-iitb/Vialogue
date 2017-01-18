@@ -2,7 +2,6 @@ package com.comp.iitb.vialogue.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,12 +15,12 @@ public class DummyContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static final ArrayList<Slide> ITEMS = new ArrayList<Slide>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<String, Slide> ITEM_MAP = new HashMap<String, Slide>();
 
     private static final int COUNT = 25;
 
@@ -32,13 +31,13 @@ public class DummyContent {
         }
     }
 
-    private static void addItem(DummyItem item) {
+    private static void addItem(Slide item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+    private static Slide createDummyItem(int position) {
+        return new Slide(String.valueOf(position), "Item " + position, makeDetails(position),SlideType.IMAGE_AUDIO);
     }
 
     private static String makeDetails(int position) {
@@ -53,20 +52,28 @@ public class DummyContent {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class DummyItem {
+    public static class Slide {
         public final String id;
         public final String content;
         public final String details;
+        public final SlideType slideType;
 
-        public DummyItem(String id, String content, String details) {
+
+        public Slide(String id, String content, String details, SlideType slideType) {
             this.id = id;
             this.content = content;
             this.details = details;
+            this.slideType = slideType;
         }
 
         @Override
         public String toString() {
             return content;
         }
+    }
+
+    public enum SlideType {
+        IMAGE_AUDIO,
+        VIDEO
     }
 }

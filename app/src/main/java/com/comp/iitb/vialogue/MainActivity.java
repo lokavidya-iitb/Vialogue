@@ -1,39 +1,49 @@
 package com.comp.iitb.vialogue;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
+import com.comp.iitb.vialogue.models.DummyContent;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
+        OnProgressUpdateListener {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
-        mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
 
         setUpTabs();
 
@@ -42,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+                startActivity(intent);
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -49,7 +61,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     private void setUpTabs() {
-        mTabLayout.addOnTabSelectedListener(new OnTabSelectedListener());
+        String[] tabNames = getResources().getStringArray(R.array.tab_titles);
+        OnTabSelectedListener tabSelectedListener = new OnTabSelectedListener(this,
+                tabNames,
+                ContextCompat.getColor(getApplicationContext(), R.color.tabSelected),
+                ContextCompat.getColor(getApplicationContext(), R.color.tabUnselected));
+        mTabLayout.addOnTabSelectedListener(tabSelectedListener);
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
 
@@ -104,7 +121,24 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("Main Activity", "resultCode " + resultCode + " request code " + requestCode);
+
+    }
+
+    @Override
     public void onFragmentInteraction(int page) {
 
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.Slide item) {
+
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        Log.d("Progress Main Activity","___________ ___ _"+ progress);
     }
 }
