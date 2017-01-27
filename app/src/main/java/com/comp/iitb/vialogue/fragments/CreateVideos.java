@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.crop.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -78,7 +79,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
     private File mFolder;
-
+    private Fragment mFragment;
     public CreateVideos() {
 
         // Required empty public constructor
@@ -107,6 +108,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mFragment = this;
 
     }
 
@@ -246,6 +248,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             handlePickedData(requestCode, data);
     }
 
+    private String mFilePath = null;
     public void handlePickedData(int requestCode, Intent data) {
         if (data != null) {
             String selectedPath = null;
@@ -272,10 +275,14 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                                         @Override
                                         public void done(File file, boolean isSuccessful) {
                                             SharedRuntimeContent.imagePathList.add(file.getName());
+                                            mFilePath = file.getAbsolutePath();
                                             Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
                                             SharedRuntimeContent.imageThunbnails.add(thumbnail);
+                                            mFragment.startActivity(new Intent(getContext(), CropMainActivity.class));
                                         }
                                     });
+
+
                         }
                         break;
                     case GET_VIDEO:

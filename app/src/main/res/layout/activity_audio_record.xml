@@ -1,74 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.comp.iitb.vialogue.activity.AudioRecordActivity">
 
-    <TextView
-        android:id="@+id/time_display"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_audio_record" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/colorAccentLight"
-        android:textSize="@dimen/time"
-        />
-    <View
-        android:id="@+id/view_center"
-        android:layout_width="0.1dp"
-        android:layout_height="0.1dp"
-        android:layout_centerInParent="true"/>
-    <ImageView
-        android:id="@+id/selected_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/time_display"
-        android:layout_alignBottom="@id/view_center"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginLeft="@dimen/fab_margin"
-        />
-    <ImageButton
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/selected_image"
-        android:layout_alignLeft="@id/selected_image"
-        android:src="@drawable/ic_play_arrow_black_24dp"/>
+        app:srcCompat="@android:drawable/ic_dialog_email" />
 
-    <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/audio_seek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_alignBottom="@+id/play_button"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_alignRight="@+id/selected_image"
-        android:layout_alignEnd="@+id/selected_image" />
-    <Button
-        android:id="@+id/record_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/record_audio"
-        android:layout_below="@id/play_button"
-        android:layout_alignLeft="@id/play_button"/>
-    <Button
-        android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/stop_record_audio"
-        android:layout_below="@id/play_button"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/retry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/record_audio"
-        android:layout_below="@id/play_button"
-        android:layout_alignRight="@id/selected_image"/>
-
-    <Button
-        android:id="@+id/done_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/done"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_alignParentBottom="true"/>
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

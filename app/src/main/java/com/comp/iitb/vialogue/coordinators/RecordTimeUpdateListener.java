@@ -5,5 +5,6 @@ package com.comp.iitb.vialogue.coordinators;
  */
 
 public interface RecordTimeUpdateListener {
-    public void onRecordTimeUpdate(int time);
+    void onRecordTimeUpdate(int time);
+    void onRecordStopped();
 }

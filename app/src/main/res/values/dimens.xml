@@ -6,5 +6,20 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="segment_height">25dp</dimen>
     <dimen name="segment_width">0.5dp</dimen>
-    <dimen name="time">20sp</dimen>
+    <dimen name="time">23sp</dimen>
+    <dimen name="time_padding">5dp</dimen>
+
+
+<!--
+
+    &lt;!&ndash; Default screen margins, per the Android Design guidelines. &ndash;&gt;
+    <dimen name="activity_horizontal_margin">12dp</dimen>
+    <dimen name="activity_vertical_margin">12dp</dimen>
+-->
+
+    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html -->
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="drawer_text_size">15sp</dimen>
+    <dimen name="drawer_text_padding">8dp</dimen>
 </resources>

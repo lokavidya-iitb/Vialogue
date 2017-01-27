@@ -34,4 +34,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+/*    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'*/
 }

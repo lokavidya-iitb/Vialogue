@@ -6,13 +6,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSeekBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
@@ -34,12 +38,24 @@ import java.io.File;
 public class AudioRecordActivity extends AppCompatActivity implements MediaTimeUpdateListener, RecordTimeUpdateListener {
 
     private static final String LOG_TAG = "AudioRecordActivity";
+    public static final String RECORD_PATH = "recordPath";
+    public static final String IMAGE_PATH = "imagePath";
+    public static final String RECORD_NAME = "recordName";
+    public static final String FOLDER_PATH = "folderPath";
+    private Toolbar mToolbar;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private static String mFileName = null;
+    private String mRecordName = null;
+    private String mFolderPath = null;
     private AppCompatSeekBar mSeekbar;
     private Button mRecordButton = null;
+    private Button mStopButton = null;
+    private Button mRetryButton = null;
     private ImageButton mPlayButton = null;
+    private ImageView mImageView;
+
     private AudioRecorder mAudioRecorder = null;
+    private String mRecordPath;
+    private String mImagePath;
     private boolean isRecording = false;
     private boolean isPlaying = false;
     private Storage mStorage;
@@ -61,135 +77,115 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted) finish();
-
+        if (!permissionToRecordAccepted)
+            finish();
     }
-/*
-
-    private void onRecord(boolean start) {
-        if (start) {
-            startRecording();
-        } else {
-            stopRecording();
-        }
-    }
-*/
-
-   /* private void onPlay(boolean start) {
-        if (start) {
-            startPlaying();
-        } else {
-            stopPlaying();
-        }
-    }
-
-    private void startPlaying() {
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFileName);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
-    }
-
-    private void stopPlaying() {
-        mPlayer.release();
-        mPlayer = null;
-    }
-*/
-
-   /* private void startRecording() {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
-
-        mRecorder.start();
-    }
-*/
-   /* private void stopRecording() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
-    }*/
-
-    /*class RecordButton extends Button {
-        boolean mStartRecording = true;
-
-        OnClickListener clicker = new OnClickListener() {
-            public void onClick(View v) {
-                onRecord(mStartRecording);
-
-                mStartRecording = !mStartRecording;
-            }
-        };
-
-        public RecordButton(Context ctx) {
-            super(ctx);
-            setText("Start recording");
-            setOnClickListener(clicker);
-        }
-    }*/
-
-    /*class PlayButton extends Button {
-        boolean mStartPlaying = true;
-
-        OnClickListener clicker = new OnClickListener() {
-            public void onClick(View v) {
-                onPlay(mStartPlaying);
-                if (mStartPlaying) {
-                    setText("Stop playing");
-                } else {
-                    setText("Start playing");
-                }
-                mStartPlaying = !mStartPlaying;
-            }
-        };
-
-        public PlayButton(Context ctx) {
-            super(ctx);
-            setText("Start playing");
-            setOnClickListener(clicker);
-        }
-    }*/
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_audio_record);
         // Record to the external cache directory for visibility
-        mFileName = getExternalCacheDir().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            mRecordPath = bundle.getString(RECORD_PATH);
+            mImagePath = bundle.getString(IMAGE_PATH);
+            mFolderPath = bundle.getString(FOLDER_PATH);
+            mRecordName = bundle.getString(RECORD_NAME);
+            Log.d(LOG_TAG, mRecordName + "  " + mRecordPath + " " + mImagePath + " " + mFolderPath);
+        }
+
         mStorage = new Storage(this);
-        File file = new File(mStorage.getStorageDir("audio_record", true), "audio.wav");
+        mImageView = (ImageView) findViewById(R.id.selected_image);
+        mImageView = (ImageView) findViewById(R.id.selected_image);
+        mStopButton = (Button) findViewById(R.id.stop_button);
+        mRetryButton = (Button) findViewById(R.id.retry);
         mSeekbar = (AppCompatSeekBar) findViewById(R.id.audio_seek);
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
+        mTimeDisplay = (TextView) findViewById(R.id.time_display);
+        mRecordButton = (Button) findViewById(R.id.record_button);
+        setUpUI();
+        mImageView.setImageURI(Uri.parse(mImagePath));
+        mSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            boolean isTouch = false;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (isTouch)
+                    mAudioRecorder.seekTo(progress);
+                setmTimeDisplay(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                isTouch = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                isTouch = false;
+            }
+        });
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAudioRecorder.onPlay(!isPlaying);
+                if (isRecording) {
+                    Snackbar.make(mPlayButton, R.string.cannot_play, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
                 isPlaying = !isPlaying;
+                if (mAudioRecorder.isPlayPrepared() || mSeekbar.getProgress() == mSeekbar.getMax())
+                    mAudioRecorder.onPlay();
+                else {
+                    mAudioRecorder.onPlay(mSeekbar.getProgress());
+                }
             }
         });
-        mTimeDisplay = (TextView)findViewById(R.id.time_display);
-        mAudioRecorder = new AudioRecorder(file.getAbsolutePath(), this, this);
+
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-        mRecordButton = (Button) findViewById(R.id.record_button);
+
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isPlaying) {
+                    Snackbar.make(mRecordButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (permissionToRecordAccepted) {
                     mAudioRecorder.onRecord(!isRecording);
                     isRecording = !isRecording;
+                    mRecordButton.setEnabled(false);
+                    mStopButton.setEnabled(true);
+                }
+            }
+        });
+        mStopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (permissionToRecordAccepted) {
+                    mAudioRecorder.onRecord(false);
+                    isRecording = false;
+                    mStopButton.setEnabled(false);
+                    mRetryButton.setEnabled(true);
+                }
+            }
+        });
+        mRetryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlaying) {
+                    Snackbar.make(mRetryButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                if (permissionToRecordAccepted) {
+                    mAudioRecorder.onRecord(true);
+                    isRecording = true;
+                    mStopButton.setEnabled(true);
+                    mRetryButton.setEnabled(false);
                 }
             }
         });
@@ -221,15 +217,32 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         } else {
             mSeekbar.setProgress(currentTime);
         }
+        setmTimeDisplay(currentTime);
+        //Log.d(LOG_TAG, formatTime + " play time " + currentTime + " total " + totalTime);
+    }
+
+    @Override
+    public void onMediaTimeEndReached() {
+        isPlaying = false;
+    }
+
+    private void setmTimeDisplay(int currentTime) {
+        Log.d(LOG_TAG, "Timew display " + currentTime);
         String formatTime = TimeFormater.getMinutesAndSeconds(currentTime);
         mTimeDisplay.setText(formatTime);
-        Log.d(LOG_TAG,formatTime + " play time " + currentTime + " total " + totalTime);
+        Log.d(LOG_TAG, "Timew display last" + currentTime);
     }
 
     @Override
     public void onRecordTimeUpdate(int time) {
-        //TODO: Update timer;
+        setmTimeDisplay(time);
         Log.d(LOG_TAG, "record time " + time);
+    }
+
+    @Override
+    public void onRecordStopped() {
+        setUpUI();
+        isRecording = false;
     }
 
     /**
@@ -257,4 +270,37 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAudioRecorder.setRelativeUpdate(mSeekbar.getWidth());
+    }
+
+    private void setUpUI() {
+        File file = null;
+        if (mFolderPath != null && mRecordName != null) {
+            file = new File(mStorage.getStorageDir(mFolderPath, true), mRecordName);
+            Log.d(LOG_TAG, "file is" + file);
+        }
+        if (!file.exists()) {
+            mSeekbar.setEnabled(false);
+            mPlayButton.setEnabled(false);
+            mRetryButton.setEnabled(false);
+
+            mRecordButton.setEnabled(true);
+            mStopButton.setEnabled(true);
+        } else {
+            mSeekbar.setEnabled(true);
+            mPlayButton.setEnabled(true);
+            mRetryButton.setEnabled(true);
+
+            mRecordButton.setEnabled(false);
+            mStopButton.setEnabled(false);
+        }
+        if (mAudioRecorder != null)
+            mAudioRecorder.release();
+        mAudioRecorder = new AudioRecorder(file.getAbsolutePath(), this, this);
+    }
+
 }
