@@ -38,12 +38,9 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activity.crop.CropResultActivity"
-            android:label="@string/title_activity_crop_image" />
-
-        <activity
-            android:name=".activity.crop.CropMainActivity"
-            android:label="@string/title_activity_crop_image"/>
+            android:name=".activity.CropMainActivity"
+            android:label="@string/title_activity_crop_image"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".library.cropper.CropImageActivity"
             android:label="@string/add_audio"/>
     </application>

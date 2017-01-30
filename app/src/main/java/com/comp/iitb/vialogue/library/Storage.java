@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,9 @@ import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -33,13 +37,21 @@ import static android.content.ContentValues.TAG;
  */
 public class Storage {
     private static final String LOG_TAG = "Storage";
-    private Activity mActivity;
+    private Context mContext;
 
-    public Storage(Activity activity) {
+    @Deprecated
+    public Storage(@NonNull Activity activity) {
         if (activity == null) {
             throw new NullPointerException("Activity cannot be null");
         }
-        mActivity = activity;
+        mContext = activity;
+    }
+
+    public Storage(@NonNull Context context) {
+        if (context == null) {
+            throw new NullPointerException("Context cannot be null");
+        }
+        mContext = context;
     }
 
     /**
@@ -53,7 +65,7 @@ public class Storage {
         return false;
     }
 
-    public boolean isInternalStorageWriteable() {
+    public boolean isInternalStorageWritable() {
         File file = Environment.getDataDirectory();
         Log.d(LOG_TAG, "Internal storage " + String.valueOf(file.exists()));
         return true;
@@ -71,9 +83,16 @@ public class Storage {
         return false;
     }
 
+    /**
+     * Gets storage folder
+     *
+     * @param folderName : name of the folder to be created
+     * @param createNew  : create a new folder or return existing folder
+     * @return File : file handler of the folder.
+     */
     public File getStorageDir(String folderName, boolean createNew) {
         File file = null;
-        isInternalStorageWriteable();
+        isInternalStorageWritable();
         // Get the directory for the user's public directory.
         if (isStoragePermissionGranted()) {
             if (isExternalStorageWritable()) {
@@ -92,15 +111,18 @@ public class Storage {
         return file;
     }
 
+    /**
+     * Checks storage permissions
+     */
     public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (mActivity.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (mContext.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
                 return true;
             } else {
                 Log.v(TAG, "Permission is revoked");
-                //ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                //ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
@@ -120,7 +142,7 @@ public class Storage {
      */
     public boolean addFilesToDirectory(@NonNull File root, String destination, @NonNull List<String> filePaths, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
         for (String source : filePaths) {
-            if (!addFileToDirectory(root, destination, new File(source),progressUpdateListener, fileCopyCompleted))
+            if (!addFileToDirectory(root, destination, new File(source), progressUpdateListener, fileCopyCompleted))
                 return false;
         }
         return true;
@@ -147,8 +169,9 @@ public class Storage {
             }
         }
         try {
-            CopyFileAsync copyFileAsync = null;
-            copyFileAsync = new CopyFileAsync(mActivity.getApplicationContext(), progressUpdateListener, fileCopyCompleted);
+            CopyFileAsync copyFileAsync = new CopyFileAsync(mContext.getApplicationContext());
+            copyFileAsync.addProgressUpdateListener(progressUpdateListener);
+            copyFileAsync.addFileCopyCompletedListener(fileCopyCompleted);
             copyFileAsync.execute(sourceFile, destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,10 +181,16 @@ public class Storage {
     }
 
 
+    /**
+     * Gets real path from Uri of the file
+     *
+     * @param contentUri : uri of the file
+     * @return String : file path
+     */
     public String getRealPathFromURI(Uri contentUri) {
         String res = null;
         String[] proj = {MediaStore.Images.Media.DATA, MediaStore.Video.Media.DATA, MediaStore.Images.ImageColumns.DATA};
-        Cursor cursor = mActivity.getContentResolver().query(contentUri, proj, null, null, null);
+        Cursor cursor = mContext.getContentResolver().query(contentUri, proj, null, null, null);
         if (cursor.moveToFirst()) {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             res = cursor.getString(column_index);
@@ -170,11 +199,42 @@ public class Storage {
         return res;
     }
 
+    /*
+    * Gets Uri for given Bitmap
+    *
+    * */
+    @Deprecated
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, mActivity.getResources().getString(R.string.captured_image_name), null);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, mContext.getResources().getString(R.string.captured_image_name), null);
         return Uri.parse(path);
+    }
+
+    /**
+     * Gets Uri for bitmap
+     *
+     * @param image : bitmap Image
+     */
+    public Uri getImageUri(Bitmap image) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(mContext.getContentResolver(), image, mContext.getResources().getString(R.string.captured_image_name), null);
+        return Uri.parse(path);
+    }
+
+    public File saveBitmapToFile(File pictureFile, Bitmap image) {
+        File file = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+        return file;
     }
 
     /**
@@ -185,7 +245,7 @@ public class Storage {
      */
     public Bitmap getImageThumbnail(@NonNull String filePath) {
         Bitmap thumbnail = null;
-        ContentResolver contentResolver = mActivity.getContentResolver();
+        ContentResolver contentResolver = mContext.getContentResolver();
         Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[]{MediaStore.MediaColumns._ID}, MediaStore.MediaColumns.DATA + "=?", new String[]{filePath}, null);
         if (cursor != null && cursor.moveToFirst()) {
             int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
@@ -193,12 +253,22 @@ public class Storage {
         }
         cursor.close();
         if (thumbnail == null) {
-            Log.d("Storage", "Image might be unsupported");
-            //TODO: placeholder Image for unsupported image
+            try {
+                thumbnail = ThumbnailUtils.extractThumbnail(MediaStore.Images.Media.getBitmap(contentResolver, getUriFromPath(filePath)), 512, 384);
+                Log.d(LOG_TAG, "getImageThumb " + String.valueOf(thumbnail == null));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return thumbnail;
     }
 
+    /**
+     * Get the thumbnail of the video from filePath
+     *
+     * @param filePath : filePath of the video.
+     * @return Bitmap : bitmap of the thumbnail.
+     */
     public Bitmap getVideoThumbnail(@NonNull String filePath) {
         Bitmap thumbnail = null;
         thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
@@ -207,5 +277,29 @@ public class Storage {
             //TODO: placeholder Image for unsupported video
         }
         return thumbnail;
+    }
+
+    /**
+     * Gets Uri from file path
+     *
+     * @param filePath : path of the file
+     * @return Uri : uri of the file
+     **/
+    public Uri getUriFromPath(String filePath) {
+        Uri uriPath = null;
+        try {
+            uriPath = Uri.fromFile(new File(filePath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return uriPath;
+    }
+
+    public Bitmap getBitmap(String imagePath)
+    {
+        File image = new File(imagePath);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        return bitmap;
     }
 }

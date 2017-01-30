@@ -10,12 +10,12 @@
 // - Sun Tsu,
 // "The Art of War"
 
-package com.comp.iitb.vialogue.activity.crop;
+package com.comp.iitb.vialogue.models.crop;
 
 /**
  * Created by Arthu on 24-03-16.
  */
-enum CropDemoPreset {
+public enum CropDemoPreset {
     RECT,
     CIRCULAR,
     CUSTOMIZED_OVERLAY,

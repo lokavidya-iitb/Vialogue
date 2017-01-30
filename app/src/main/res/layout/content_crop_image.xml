@@ -6,33 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.comp.iitb.vialogue.activity.CropImageActivity"
+    tools:context="com.comp.iitb.vialogue.activity.CropMainActivity"
     tools:showIn="@layout/activity_crop_image">
 
-    <com.theartofdev.edmodo.cropper.CropImageView
-        android:id="@+id/cropImageView"
+
+    <Button
+        android:id="@+id/done_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/done"
+        android:textColor="@android:color/white"/>
+
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-    <View
-        android:id="@+id/view_pad"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <Button
-        android:id="@+id/crop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@id/view_pad"
-        />
-
-    <Button
-        android:id="@+id/crop_image_menu_rotate_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/view_pad" />
+        android:layout_above="@id/done_button"/>
 </RelativeLayout>

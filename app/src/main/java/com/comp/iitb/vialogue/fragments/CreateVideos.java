@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.activity.crop.CropMainActivity;
+import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -80,6 +80,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private LinearLayout mRoot;
     private File mFolder;
     private Fragment mFragment;
+
     public CreateVideos() {
 
         // Required empty public constructor
@@ -169,6 +170,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void setUpProject() {
         mFolder = mStorage.getStorageDir(getString(R.string.create_project), true);
+        SharedRuntimeContent.projectFolder = mFolder;
         mProjectNameDisplay.setText(getString(R.string.create_project));
         boolean success = true;
         if (mFolder != null) {
@@ -249,14 +251,17 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     private String mFilePath = null;
+
     public void handlePickedData(int requestCode, Intent data) {
         if (data != null) {
             String selectedPath = null;
+            Uri imageUri;
             if (requestCode == GET_CAMERA_IMAGE) {
                 Bundle bundle = data.getExtras();
                 if (bundle != null) {
                     Bitmap photo = (Bitmap) bundle.get("data");
-                    selectedPath = mStorage.getRealPathFromURI(mStorage.getImageUri(getContext(), photo));
+                    imageUri = mStorage.getImageUri(photo);
+                    selectedPath = mStorage.getRealPathFromURI(imageUri);
                 }
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
@@ -266,24 +271,13 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 switch (requestCode) {
                     case GET_CAMERA_IMAGE:
                     case GET_IMAGE:
-                        if (!SharedRuntimeContent.imagePathList.contains(selectedPath)) {
-                            mStorage.addFileToDirectory(mFolder,
-                                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
-                                    pickedFile,
-                                    null,
-                                    new OnFileCopyCompleted() {
-                                        @Override
-                                        public void done(File file, boolean isSuccessful) {
-                                            SharedRuntimeContent.imagePathList.add(file.getName());
-                                            mFilePath = file.getAbsolutePath();
-                                            Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
-                                            SharedRuntimeContent.imageThunbnails.add(thumbnail);
-                                            mFragment.startActivity(new Intent(getContext(), CropMainActivity.class));
-                                        }
-                                    });
 
+                        Intent intent = new Intent(getContext(), CropMainActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                        intent.putExtras(bundle);
+                        mFragment.startActivity(intent);
 
-                        }
                         break;
                     case GET_VIDEO:
                         if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
@@ -304,6 +298,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 }
             }
         }
+
     }
 
     @Override

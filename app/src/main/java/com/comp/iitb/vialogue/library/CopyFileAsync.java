@@ -25,9 +25,22 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     private OnProgressUpdateListener mProgressUpdateListener;
     private OnFileCopyCompleted mFileCopyCompleted;
 
-    public CopyFileAsync(@NonNull Context context, @NonNull OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
+    @Deprecated
+    public CopyFileAsync(@NonNull Context context, OnProgressUpdateListener progressUpdateListener, @NonNull OnFileCopyCompleted fileCopyCompleted) {
         mContext = context;
         mProgressUpdateListener = progressUpdateListener;
+        mFileCopyCompleted = fileCopyCompleted;
+    }
+
+    public CopyFileAsync(@NonNull Context context) {
+        mContext = context;
+    }
+
+    public void addProgressUpdateListener(OnProgressUpdateListener progressUpdateListener) {
+        mProgressUpdateListener = progressUpdateListener;
+    }
+
+    public void addFileCopyCompletedListener(OnFileCopyCompleted fileCopyCompleted) {
         mFileCopyCompleted = fileCopyCompleted;
     }
 
@@ -39,7 +52,7 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
             }
             boolean completed = copyFile(params[0], params[1]);
             return completed;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -52,26 +65,49 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
      * @param destinationFolder : directory inside which file should be copied
      * @return was success
      */
-    public boolean copyFile(File sourceFile, File destinationFolder) throws IOException {
+    public boolean copyFile(File sourceFile, File destinationFolder) {
         double sourceFileSize = sourceFile.length();
         double current = 0;
-        InputStream in = new FileInputStream(sourceFile);
-        mDestinationFile = new File(destinationFolder, sourceFile.getName());
-        OutputStream out = new FileOutputStream(mDestinationFile);
+        boolean isSuccess = true;
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(sourceFile);
+            mDestinationFile = new File(destinationFolder, sourceFile.getName());
+            out = new FileOutputStream(mDestinationFile);
 
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-            if (mProgressUpdateListener != null) {
-                current += len;
-                publishProgress((int) ((current / sourceFileSize) * 100.0));
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+                if (mProgressUpdateListener != null) {
+                    current += len;
+                    publishProgress((int) ((current / sourceFileSize) * 100.0));
+                }
+            }
+        } catch (IOException exception) {
+            isSuccess = false;
+            exception.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                    isSuccess = false;
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (Exception e) {
+                    isSuccess = false;
+                    e.printStackTrace();
+                }
             }
         }
-        in.close();
-        out.close();
-        return true;
+        return isSuccess;
     }
 
     @Override
@@ -88,10 +124,8 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        if(aBoolean&&mFileCopyCompleted!=null){
-            mFileCopyCompleted.done(mDestinationFile,true);
-        } else {
-            mFileCopyCompleted.done(mDestinationFile,false);
+        if (mFileCopyCompleted != null) {
+            mFileCopyCompleted.done(mDestinationFile, aBoolean);
         }
     }
 }

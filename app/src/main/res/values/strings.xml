@@ -62,4 +62,6 @@
     <string name="drawer_option_toggle_show_overlay">Show Overlay: %1s</string>
     <string name="drawer_option_toggle_show_progress_bar">Show Progress Bar: %1s</string>
     <string name="result_image_desc">hello resource</string>
+    <string name="crop_failed">Cropping Image Failed</string>
+    <string name="image_load_failed">Failed to load Image</string>
 </resources>

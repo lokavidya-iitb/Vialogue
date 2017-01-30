@@ -46,7 +46,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private String mRecordName = null;
     private String mFolderPath = null;
-    private AppCompatSeekBar mSeekbar;
+    private AppCompatSeekBar mSeekBar;
     private Button mRecordButton = null;
     private Button mStopButton = null;
     private Button mRetryButton = null;
@@ -103,13 +103,13 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mImageView = (ImageView) findViewById(R.id.selected_image);
         mStopButton = (Button) findViewById(R.id.stop_button);
         mRetryButton = (Button) findViewById(R.id.retry);
-        mSeekbar = (AppCompatSeekBar) findViewById(R.id.audio_seek);
+        mSeekBar = (AppCompatSeekBar) findViewById(R.id.audio_seek);
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
         mTimeDisplay = (TextView) findViewById(R.id.time_display);
         mRecordButton = (Button) findViewById(R.id.record_button);
         setUpUI();
         mImageView.setImageURI(Uri.parse(mImagePath));
-        mSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             boolean isTouch = false;
 
             @Override
@@ -137,10 +137,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
                 isPlaying = !isPlaying;
-                if (mAudioRecorder.isPlayPrepared() || mSeekbar.getProgress() == mSeekbar.getMax())
+                if (mAudioRecorder.isPlayPrepared() || mSeekBar.getProgress() == mSeekBar.getMax())
                     mAudioRecorder.onPlay();
                 else {
-                    mAudioRecorder.onPlay(mSeekbar.getProgress());
+                    mAudioRecorder.onPlay(mSeekBar.getProgress());
                 }
             }
         });
@@ -211,11 +211,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onMediaTimeUpdate(int currentTime, int totalTime) {
         //TODO: Calculate seek and update Timer
-        mSeekbar.setMax(totalTime);
+        mSeekBar.setMax(totalTime);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mSeekbar.setProgress(currentTime, true);
+            mSeekBar.setProgress(currentTime, true);
         } else {
-            mSeekbar.setProgress(currentTime);
+            mSeekBar.setProgress(currentTime);
         }
         setmTimeDisplay(currentTime);
         //Log.d(LOG_TAG, formatTime + " play time " + currentTime + " total " + totalTime);
@@ -274,7 +274,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     protected void onResume() {
         super.onResume();
-        mAudioRecorder.setRelativeUpdate(mSeekbar.getWidth());
+        mAudioRecorder.setRelativeUpdate(mSeekBar.getWidth());
     }
 
     private void setUpUI() {
@@ -284,14 +284,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             Log.d(LOG_TAG, "file is" + file);
         }
         if (!file.exists()) {
-            mSeekbar.setEnabled(false);
+            mSeekBar.setEnabled(false);
             mPlayButton.setEnabled(false);
             mRetryButton.setEnabled(false);
 
             mRecordButton.setEnabled(true);
             mStopButton.setEnabled(true);
         } else {
-            mSeekbar.setEnabled(true);
+            mSeekBar.setEnabled(true);
             mPlayButton.setEnabled(true);
             mRetryButton.setEnabled(true);
 

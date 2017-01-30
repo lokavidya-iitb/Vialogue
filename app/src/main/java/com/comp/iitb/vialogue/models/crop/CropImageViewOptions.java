@@ -10,7 +10,7 @@
 // - Sun Tsu,
 // "The Art of War"
 
-package com.comp.iitb.vialogue.activity.crop;
+package com.comp.iitb.vialogue.models.crop;
 
 import android.util.Pair;
 
@@ -19,7 +19,7 @@ import com.comp.iitb.vialogue.library.cropper.CropImageView;
 /**
  * The crop image view options that can be changed live.
  */
-final class CropImageViewOptions {
+public final class CropImageViewOptions {
 
     public CropImageView.ScaleType scaleType = CropImageView.ScaleType.CENTER_INSIDE;
 
