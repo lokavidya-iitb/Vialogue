@@ -20,6 +20,8 @@ import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -199,7 +201,7 @@ public class Storage {
         return thumbnail;
     }
 
-    public Bitmap getVideoThumbnail(@NonNull String filePath) {
+    public static Bitmap getVideoThumbnail(@NonNull String filePath) {
         Bitmap thumbnail = null;
         thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
         if (thumbnail == null) {
@@ -208,4 +210,84 @@ public class Storage {
         }
         return thumbnail;
     }
+
+    public static void createThisDirectory(String path)
+    {
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + path);
+        boolean success = true;
+        if (!folder.exists()) {
+            success = folder.mkdirs();
+        }
+        if (success) {
+        } else {
+        }
+    }
+    public static List<String> getMeAllTheFilesHere(String path){
+        List<String> myStringArray = new ArrayList<String>();
+        File sdCard = Environment.getExternalStorageDirectory();
+        File targetDirectory = new File (sdCard.getAbsolutePath()+path);
+        boolean fileArrayExists= false;
+        if(targetDirectory.exists()&& targetDirectory.isDirectory())
+        {
+            File file[] = targetDirectory.listFiles();
+            try {
+                fileArrayExists =file.equals(null);
+            }
+            catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if(!fileArrayExists)
+            {
+                boolean fileExists= false;
+
+                for (int i=0; i < file.length; i++)
+                {
+                    myStringArray.add(file[i].getName());
+                }
+            }
+            else
+            {
+            }
+        }
+        Collections.sort(myStringArray);
+        return myStringArray;
+    }
+
+    public static List<String> getMeTheeseInThisProject(String projectName, String whichProjectType, String whatFiles)
+    {
+        List<String> myStringArray = new ArrayList<String>();
+        File sdCard = Environment.getExternalStorageDirectory();
+        File targetDirectory = new File (sdCard.getAbsolutePath()+"/Lokavidya/Projects/"+whichProjectType+"/"+projectName+"/"+whatFiles);
+        boolean fileArrayExists= false;
+        if(targetDirectory.exists()&& targetDirectory.isDirectory())
+        {
+            File file[] = targetDirectory.listFiles();
+            try {
+                fileArrayExists =file.equals(null);
+            }
+            catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if(!fileArrayExists)
+            {
+                boolean fileExists= false;
+
+                for (int i=0; i < file.length; i++)
+                {
+                    myStringArray.add(file[i].getName());
+                }
+            }
+            else
+            {
+            }
+        }
+        Collections.sort(myStringArray);
+        return myStringArray;
+    }
+
+
+
 }

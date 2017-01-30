@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.ProjectsAdapter;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
 import java.util.ArrayList;
@@ -88,7 +89,6 @@ public class InceptionSavedProjects extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         prepareProjects();
         /*
         try {
@@ -118,36 +118,13 @@ public class InceptionSavedProjects extends Fragment {
 
     private void prepareProjects() {
 
-        ProjectsShowcase a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
+        List<String> myStringArray = new ArrayList<String>();
+        myStringArray=Storage.getMeAllTheFilesHere("/Lokavidya/Projects/SavedProjects");
+        for(int i=0;i<myStringArray.size();i++)
+        {
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").get(0),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
+            projectList.add(a);
+        }
         adapter.notifyDataSetChanged();
     }
 

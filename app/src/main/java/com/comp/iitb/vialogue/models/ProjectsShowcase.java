@@ -51,11 +51,22 @@ public class ProjectsShowcase {
     private int VideoCount;
     private int QuestionCount;
 
+    public String getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(String imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    private String imageFile;
+
     public ProjectsShowcase() {
     }
 
-    public ProjectsShowcase(String name, int AudioCount, int ImagesCount, int QuestionCount, int VideoCount) {
+    public ProjectsShowcase(String name, String imageFile, int AudioCount, int ImagesCount, int QuestionCount, int VideoCount) {
         this.name = name;
+        this.imageFile=imageFile;
         this.AudioCount=AudioCount;
         this.ImagesCount=ImagesCount;
         this.QuestionCount=QuestionCount;

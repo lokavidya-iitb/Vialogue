@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.ProjectsAdapter;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
 import java.util.ArrayList;
@@ -116,37 +117,13 @@ public class InceptionMyProjects extends Fragment {
     }
 
     private void prepareProjects() {
-
-        ProjectsShowcase a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
-        a = new ProjectsShowcase("Project1", 13,14,1,1);
-        projectList.add(a);
-
+        List<String> myStringArray = new ArrayList<String>();
+        myStringArray= Storage.getMeAllTheFilesHere("/Lokavidya/Projects/MyProjects");
+        for(int i=0;i<myStringArray.size();i++)
+        {
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").get(0),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","audios").size(),0,1);
+            projectList.add(a);
+        }
         adapter.notifyDataSetChanged();
     }
 

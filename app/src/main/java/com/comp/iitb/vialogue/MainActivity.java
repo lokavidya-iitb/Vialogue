@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,22 +20,26 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
-
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -140,5 +145,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onProgressUpdate(int progress) {
         Log.d("Progress Main Activity","___________ ___ _"+ progress);
+    }
+
+    public void setupLokavidyaLegacy(){
+    Storage.createThisDirectory("/Lokavidya");
+    Storage.createThisDirectory("/Lokavidya/Projects");
+    Storage.createThisDirectory("/Lokavidya/Projects/MyProjects");
+    Storage.createThisDirectory("/Lokavidya/Projects/SavedProjects");
+    Storage.createThisDirectory("/Lokavidya/Videos/SavedVideos");
     }
 }

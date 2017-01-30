@@ -4,7 +4,12 @@ package com.comp.iitb.vialogue.adapters;
  * Created by jeffrey on 17/1/17.
  */
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,17 +23,19 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
+import java.io.File;
 import java.util.List;
 
-public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyViewHolder> {
+public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdapter.MyViewHolder> {
 
     private Context mContext;
     private List<ProjectsShowcase> albumList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count, AudioCount;
+        public TextView title, count;
         public ImageView thumbnail, overflow;
 
         public MyViewHolder(View view) {
@@ -37,12 +44,11 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
             count = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             overflow = (ImageView) view.findViewById(R.id.overflow);
-            AudioCount = (TextView) view.findViewById(R.id.AudioCount);
         }
     }
 
 
-    public ProjectsAdapter(Context mContext, List<ProjectsShowcase> albumList) {
+    public ProjectsVideoAdapter(Context mContext, List<ProjectsShowcase> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
     }
@@ -60,9 +66,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
         ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
-        holder.AudioCount.setText(album.getAudioCount() +" Audios");
-        Glide.with(mContext).load(album.getImageFile())/*.placeholder(R.drawable.ic_computer_black_24dp)*/.into(holder.thumbnail);
-
+        File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
+        holder.thumbnail.setImageBitmap(Storage.getVideoThumbnail(Video.getAbsolutePath()));
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

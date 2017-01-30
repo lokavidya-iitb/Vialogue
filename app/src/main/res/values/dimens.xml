@@ -18,6 +18,7 @@
     <dimen name="title">15dp</dimen>
     <dimen name="count_padding_bottom">5dp</dimen>
     <dimen name="Images_count">12dp</dimen>
+    <dimen name="Audios_count">12dp</dimen>
     <dimen name="overflow_width">20dp</dimen>
     <dimen name="overflow_height">30dp</dimen>
     <dimen name="overflow_margin_top">10dp</dimen>
