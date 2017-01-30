@@ -22,7 +22,6 @@ public class ProjectTextWatcher implements TextWatcher {
     private TextView mDestination;
 
     public ProjectTextWatcher(@NonNull Storage storage, @NonNull File folder, @NonNull TextView destination) {
-
         mFolder = folder;
         mStorage = storage;
         mDestination = destination;
@@ -38,12 +37,12 @@ public class ProjectTextWatcher implements TextWatcher {
         if (s != null) {
             String folderName = s.toString();
             if (folderName.length() > 0) {
-                File directory = mStorage.getStorageDir(folderName, false);
+                File directory = new File(mFolder.getParentFile(),folderName);
                 if (directory == null)
                     Log.d("ProjectTextWatcher", "directory is null");
                 mFolder.renameTo(directory);
                 mDestination.setText(folderName);
-                mFolder = mStorage.getStorageDir(directory.getName(),false);
+                mFolder = directory;
             }
         }
     }

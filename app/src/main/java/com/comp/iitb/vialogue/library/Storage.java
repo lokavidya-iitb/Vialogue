@@ -111,6 +111,17 @@ public class Storage {
         return file;
     }
 
+    public File addFolder(File source, String name) {
+        File destination = null;
+        if (isStoragePermissionGranted()) {
+            destination = new File(source, name);
+            if (!destination.exists()) {
+                destination.mkdir();
+            }
+        }
+        return destination;
+    }
+
     /**
      * Checks storage permissions
      */
@@ -172,6 +183,39 @@ public class Storage {
             CopyFileAsync copyFileAsync = new CopyFileAsync(mContext.getApplicationContext());
             copyFileAsync.addProgressUpdateListener(progressUpdateListener);
             copyFileAsync.addFileCopyCompletedListener(fileCopyCompleted);
+            copyFileAsync.execute(sourceFile, destinationFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Copies file to root directory in specified directory if present
+     *
+     * @param root        : main directory
+     * @param destination : directory inside main
+     * @param sourceFile  : source of the file to be copied
+     * @return was success
+     */
+    public boolean addFileToDirectory(@NonNull File root, String destination, @NonNull String fileName, @NonNull File sourceFile, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
+
+        File destinationFile = root;
+        if (destination != null) {
+            destinationFile = new File(root.getAbsolutePath(), destination);
+            if (!destinationFile.exists()) {
+                if (!destinationFile.mkdir()) {
+                    Log.d("Storage", sourceFile.getName() + "This is the place I failed " + destinationFile.getAbsolutePath());
+                    return false;
+                }
+            }
+        }
+        try {
+            CopyFileAsync copyFileAsync = new CopyFileAsync(mContext.getApplicationContext());
+            copyFileAsync.addProgressUpdateListener(progressUpdateListener);
+            copyFileAsync.addFileCopyCompletedListener(fileCopyCompleted);
+            copyFileAsync.setFileName(fileName);
             copyFileAsync.execute(sourceFile, destinationFile);
         } catch (Exception e) {
             e.printStackTrace();
@@ -295,11 +339,11 @@ public class Storage {
         return uriPath;
     }
 
-    public Bitmap getBitmap(String imagePath)
-    {
+    public Bitmap getBitmap(String imagePath) {
         File image = new File(imagePath);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
         return bitmap;
     }
+
 }

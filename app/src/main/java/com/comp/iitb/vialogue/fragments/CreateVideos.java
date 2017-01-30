@@ -169,8 +169,12 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void setUpProject() {
-        mFolder = mStorage.getStorageDir(getString(R.string.create_project), true);
+        mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.my_projects));
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.create_project));
         SharedRuntimeContent.projectFolder = mFolder;
+
         mProjectNameDisplay.setText(getString(R.string.create_project));
         boolean success = true;
         if (mFolder != null) {
@@ -178,7 +182,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 success = mFolder.mkdirs();
             }
             if (success) {
-                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, mFolder, mProjectNameDisplay));
+                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, SharedRuntimeContent.projectFolder, mProjectNameDisplay));
             } else {
                 Snackbar.make(getView(), R.string.storage_error, Snackbar.LENGTH_LONG).show();
                 mRoot.setEnabled(false);
@@ -283,6 +287,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                         if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
                             mStorage.addFileToDirectory(mFolder,
                                     SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                                    SharedRuntimeContent.projectFolder.getName(),
                                     pickedFile,
                                     null,
                                     new OnFileCopyCompleted() {

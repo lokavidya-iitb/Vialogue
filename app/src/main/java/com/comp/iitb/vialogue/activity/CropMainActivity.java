@@ -146,6 +146,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         File pickedFile = new File(selectedPath);
         mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
                 SharedRuntimeContent.IMAGE_FOLDER_NAME,
+                SharedRuntimeContent.projectFolder.getName(),
                 pickedFile,
                 null,
                 new OnFileCopyCompleted() {

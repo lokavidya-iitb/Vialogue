@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue.library;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -24,12 +25,17 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
     private Context mContext;
     private OnProgressUpdateListener mProgressUpdateListener;
     private OnFileCopyCompleted mFileCopyCompleted;
+    private String mFileName;
 
     @Deprecated
     public CopyFileAsync(@NonNull Context context, OnProgressUpdateListener progressUpdateListener, @NonNull OnFileCopyCompleted fileCopyCompleted) {
         mContext = context;
         mProgressUpdateListener = progressUpdateListener;
         mFileCopyCompleted = fileCopyCompleted;
+    }
+
+    public void setFileName(String fileName) {
+        mFileName = fileName;
     }
 
     public CopyFileAsync(@NonNull Context context) {
@@ -73,7 +79,15 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
         OutputStream out = null;
         try {
             in = new FileInputStream(sourceFile);
-            mDestinationFile = new File(destinationFolder, sourceFile.getName());
+            if (mFileName == null)
+                mDestinationFile = new File(destinationFolder, sourceFile.getName());
+            else {
+                int temp = 0;
+                do {
+                    Log.d("CopyFileAsync", destinationFolder.getAbsolutePath());
+                    mDestinationFile = new File(destinationFolder, mFileName + (temp++) + "." + getFileExtension(sourceFile.getName()));
+                } while (mDestinationFile.exists());
+            }
             out = new FileOutputStream(mDestinationFile);
 
             // Transfer bytes from in to out
@@ -108,6 +122,16 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
             }
         }
         return isSuccess;
+    }
+
+
+    private String getFileExtension(String fileName) {
+        String filename = fileName;
+        String filenameArray[] = filename.split("\\.");
+        if (filenameArray.length > 0)
+            return filenameArray[filenameArray.length - 1];
+        else
+            return null;
     }
 
     @Override
