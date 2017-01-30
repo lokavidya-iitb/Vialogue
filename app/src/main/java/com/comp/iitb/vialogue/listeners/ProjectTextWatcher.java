@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 
 import java.io.File;
@@ -43,6 +44,7 @@ public class ProjectTextWatcher implements TextWatcher {
                 mFolder.renameTo(directory);
                 mDestination.setText(folderName);
                 mFolder = directory;
+                SharedRuntimeContent.projectFolder = mFolder;
             }
         }
     }

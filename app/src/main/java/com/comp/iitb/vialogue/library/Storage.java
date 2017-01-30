@@ -115,9 +115,8 @@ public class Storage {
         File destination = null;
         if (isStoragePermissionGranted()) {
             destination = new File(source, name);
-            if (!destination.exists()) {
+            if (!destination.exists())
                 destination.mkdir();
-            }
         }
         return destination;
     }
@@ -233,14 +232,18 @@ public class Storage {
      */
     public String getRealPathFromURI(Uri contentUri) {
         String res = null;
-        String[] proj = {MediaStore.Images.Media.DATA, MediaStore.Video.Media.DATA, MediaStore.Images.ImageColumns.DATA};
+        /*String[] proj = {MediaStore.Images.Media.DATA, MediaStore.Video.Media.DATA, MediaStore.Images.ImageColumns.DATA};
         Cursor cursor = mContext.getContentResolver().query(contentUri, proj, null, null, null);
         if (cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
+            try {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                res = cursor.getString(column_index);
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+            }
         }
-        cursor.close();
-        return res;
+        cursor.close();*/
+        return MediaFilePath.getPath(mContext,contentUri);
     }
 
     /*

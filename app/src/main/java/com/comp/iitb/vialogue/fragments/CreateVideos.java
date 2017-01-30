@@ -257,6 +257,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
+        Log.d("CreateVideos","handle picked data" + String.valueOf(data == null));
         if (data != null) {
             String selectedPath = null;
             Uri imageUri;
@@ -270,6 +271,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
             }
+            Log.d("CreateVideos","handle picked selectedPath " + data.getData().toString());
+
             if (selectedPath != null) {
                 File pickedFile = new File(selectedPath);
                 switch (requestCode) {
@@ -284,7 +287,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
                         break;
                     case GET_VIDEO:
-                        if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
+                        Log.d("CreateVideos","here add file");
                             mStorage.addFileToDirectory(mFolder,
                                     SharedRuntimeContent.VIDEO_FOLDER_NAME,
                                     SharedRuntimeContent.projectFolder.getName(),
@@ -298,7 +301,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                                             SharedRuntimeContent.videoThunbnails.add(thumbnail);
                                         }
                                     });
-                        }
                         break;
                 }
             }

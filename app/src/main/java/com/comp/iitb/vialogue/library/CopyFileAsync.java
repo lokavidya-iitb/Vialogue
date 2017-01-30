@@ -3,7 +3,6 @@ package com.comp.iitb.vialogue.library;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -84,7 +83,6 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
             else {
                 int temp = 0;
                 do {
-                    Log.d("CopyFileAsync", destinationFolder.getAbsolutePath());
                     mDestinationFile = new File(destinationFolder, mFileName + (temp++) + "." + getFileExtension(sourceFile.getName()));
                 } while (mDestinationFile.exists());
             }
