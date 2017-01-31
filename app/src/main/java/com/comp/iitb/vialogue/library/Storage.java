@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -253,7 +255,7 @@ public class Storage {
     @Deprecated
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, mContext.getResources().getString(R.string.captured_image_name), null);
         return Uri.parse(path);
     }
@@ -265,7 +267,7 @@ public class Storage {
      */
     public Uri getImageUri(Bitmap image) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        image.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(mContext.getContentResolver(), image, mContext.getResources().getString(R.string.captured_image_name), null);
         return Uri.parse(path);
     }
@@ -274,12 +276,12 @@ public class Storage {
         File file = null;
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
         } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
+            Log.d(LOG_TAG, "File not found: " + e.getMessage());
         } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            Log.d(LOG_TAG, "Error accessing file: " + e.getMessage());
         }
         return file;
     }
@@ -347,6 +349,87 @@ public class Storage {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
         return bitmap;
+    }
+
+    /**
+     * Jeff
+     * */
+
+    public static void createThisDirectory(String path)
+    {
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + path);
+        boolean success = true;
+        if (!folder.exists()) {
+            success = folder.mkdirs();
+        }
+        if (success) {
+        } else {
+        }
+    }
+    public static List<String> getMeAllTheFilesHere(String path){
+        List<String> myStringArray = new ArrayList<String>();
+        File sdCard = Environment.getExternalStorageDirectory();
+        File targetDirectory = new File (sdCard.getAbsolutePath()+path);
+        boolean fileArrayExists= false;
+        if(targetDirectory.exists()&& targetDirectory.isDirectory())
+        {
+            File file[] = targetDirectory.listFiles();
+            try {
+                fileArrayExists =file.equals(null);
+            }
+            catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if(!fileArrayExists)
+            {
+                boolean fileExists= false;
+
+                for (int i=0; i < file.length; i++)
+                {
+                    myStringArray.add(file[i].getName());
+                }
+            }
+            else
+            {
+            }
+        }
+        Collections.sort(myStringArray);
+        return myStringArray;
+    }
+
+    public static List<String> getMeTheeseInThisProject(String projectName, String whichProjectType, String whatFiles)
+    {
+        List<String> myStringArray = new ArrayList<String>();
+        File sdCard = Environment.getExternalStorageDirectory();
+        File targetDirectory = new File (sdCard.getAbsolutePath()+"/Lokavidya/Projects/"+whichProjectType+"/"+projectName+"/"+whatFiles);
+        boolean fileArrayExists= false;
+        if(targetDirectory.exists()&& targetDirectory.isDirectory())
+        {
+            File file[] = targetDirectory.listFiles();
+            try {
+                fileArrayExists =file.equals(null);
+            }
+            catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if(!fileArrayExists)
+            {
+                boolean fileExists= false;
+
+                for (int i=0; i < file.length; i++)
+                {
+                    myStringArray.add(file[i].getName());
+                }
+            }
+            else
+            {
+            }
+        }
+        Collections.sort(myStringArray);
+        return myStringArray;
     }
 
 }

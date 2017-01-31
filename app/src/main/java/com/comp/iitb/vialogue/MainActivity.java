@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,11 +25,14 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.FOLDER_PATH;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.IMAGE_PATH;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_NAME;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_PATH;
-
+@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener {
 
@@ -36,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
-
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

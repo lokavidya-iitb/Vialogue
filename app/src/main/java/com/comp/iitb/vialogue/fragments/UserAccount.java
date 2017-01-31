@@ -3,7 +3,10 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTabHost;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,14 @@ import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
  * create an instance of this fragment.
  */
 public class UserAccount extends Fragment {
+
+    public static final String TAG = UserAccount.class.getName();
+
+    private FragmentTabHost fragmentTabHost;
+
+    private TabLayout mTabLayout;
+    private Toolbar mToolbar;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -57,14 +68,40 @@ public class UserAccount extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_account, container, false);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        fragmentTabHost = new FragmentTabHost(getActivity());
+
+        /** Important: Must use Child FragmentManager */
+        fragmentTabHost.setup(getActivity(), getChildFragmentManager(), R.layout.fragment_user_account);
+
+        Bundle arg1 = new Bundle();
+        arg1.putInt(ChildFragment.POSITION_KEY, 1);
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag1").setIndicator("My projects"),
+                InceptionMyProjects.class, arg1);
+
+        Bundle arg2 = new Bundle();
+        arg2.putInt(ChildFragment.POSITION_KEY, 2);
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag2").setIndicator("Saved Videos"),
+                InceptionSavedVideos.class, arg2);
+
+
+        Bundle arg3 = new Bundle();
+        arg3.putInt(ChildFragment.POSITION_KEY, 3);
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag3").setIndicator("Saved Projects"),
+                InceptionSavedProjects.class, arg3);
+
+        return fragmentTabHost;
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
