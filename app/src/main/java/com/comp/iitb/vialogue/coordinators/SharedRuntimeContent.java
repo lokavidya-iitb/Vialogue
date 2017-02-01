@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.coordinators;
 
 import android.graphics.Bitmap;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,5 +22,5 @@ public class SharedRuntimeContent {
     public static final String VIDEO_FOLDER_NAME="videos";
     public static final String AUDIO_FOLDER_NAME="audio";
     public static final String VIALOGUE_FOLDER_NAME="vialogue";
-
+    public static File projectFolder;
 }

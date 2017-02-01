@@ -6,4 +6,5 @@ package com.comp.iitb.vialogue.coordinators;
 
 public interface MediaTimeUpdateListener {
     void onMediaTimeUpdate(int currentTime,int totalTime);
+    void onMediaTimeEndReached();
 }

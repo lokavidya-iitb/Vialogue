@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/app_logo"
@@ -23,13 +24,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AudioRecordActivity"
+        <activity
+            android:name=".activity.AudioRecordActivity"
             android:label="@string/add_audio"
-            android:theme="@style/AppTheme.NoActionBar"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".activity.CropMainActivity"
+            android:label="@string/title_activity_crop_image"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".library.cropper.CropImageActivity"
+            android:label="@string/add_audio"/>
     </application>
 
 </manifest>

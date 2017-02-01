@@ -1,5 +1,9 @@
 package com.comp.iitb.vialogue.library;
 
+/**
+ * Created by shubh on 20-01-2017.
+ */
+
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -16,7 +20,8 @@ import java.io.IOException;
  */
 
 public class AudioRecorder {
-    private final int UPDATE_INTERVAL = 1000;
+    private int mUpdateInterval;
+    private static int RECORD_UPDATE_INTERVAL = 1000;
     private MediaRecorder mRecorder = null;
     private String mFileName;
     private final String LOG_TAG = "AudioRecorder";
@@ -26,13 +31,14 @@ public class AudioRecorder {
     private Handler mHandler;
     private boolean mCompletedPlaying;
     private boolean mCompletedRecording;
-
+    private int mWidth;
 
     public AudioRecorder(@NonNull String fileName, MediaTimeUpdateListener mediaTimeUpdateListener, RecordTimeUpdateListener recordTimeUpdateListener) {
         mFileName = fileName;
         mMediaTimeUpdate = mediaTimeUpdateListener;
         mRecordTimeUpdate = recordTimeUpdateListener;
         mHandler = new Handler();
+        mUpdateInterval = 10;
     }
 
 
@@ -47,22 +53,22 @@ public class AudioRecorder {
             mRecorder.prepare();
             if (mRecordTimeUpdate != null) {
                 mHandler.postDelayed(new Runnable() {
-                    private int time = 1;
+                    private int time = 1000;
 
                     @Override
                     public void run() {
                         if (!mCompletedRecording) {
-                            mHandler.postDelayed(this, UPDATE_INTERVAL);
-                            mRecordTimeUpdate.onRecordTimeUpdate(time++);
+                            mHandler.postDelayed(this, RECORD_UPDATE_INTERVAL);
+                            mRecordTimeUpdate.onRecordTimeUpdate(time);
+                            time += 1000;
                         }
 
                     }
-                }, UPDATE_INTERVAL);
+                }, RECORD_UPDATE_INTERVAL);
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
         mRecorder.start();
     }
 
@@ -71,6 +77,8 @@ public class AudioRecorder {
         mRecorder.release();
         mRecorder = null;
         mCompletedRecording = true;
+        if (mRecordTimeUpdate != null)
+            mRecordTimeUpdate.onRecordStopped();
     }
 
     public void release() {
@@ -94,11 +102,13 @@ public class AudioRecorder {
         }
     }
 
-    public void onPlay(boolean start) {
-        if (start) {
+    public void onPlay() {
+        if (mPlayer == null) {
             startPlaying();
+        } else if (mPlayer.isPlaying()) {
+            mPlayer.pause();
         } else {
-            stopPlaying();
+            mPlayer.start();
         }
     }
 
@@ -108,17 +118,19 @@ public class AudioRecorder {
         try {
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
+            if (mWidth != 0)
+                mUpdateInterval = mPlayer.getDuration() / mWidth;
             mPlayer.start();
             if (mMediaTimeUpdate != null) {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (!mCompletedPlaying && mPlayer != null) {
+                        if (!mCompletedPlaying && mPlayer != null && mPlayer.isPlaying()) {
                             mMediaTimeUpdate.onMediaTimeUpdate(mPlayer.getCurrentPosition(), mPlayer.getDuration());
-                            mHandler.postDelayed(this, UPDATE_INTERVAL);
+                            mHandler.postDelayed(this, mUpdateInterval);
                         }
                     }
-                }, UPDATE_INTERVAL);
+                }, mUpdateInterval);
             }
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -146,4 +158,20 @@ public class AudioRecorder {
         mPlayer = null;
     }
 
+    public boolean isPlayPrepared() {
+        if (mPlayer == null)
+            return false;
+        else
+            return true;
+
+    }
+
+    public void onPlay(int progress) {
+        startPlaying();
+        mPlayer.seekTo(progress);
+    }
+
+    public void setRelativeUpdate(int width) {
+        mWidth = width;
+    }
 }

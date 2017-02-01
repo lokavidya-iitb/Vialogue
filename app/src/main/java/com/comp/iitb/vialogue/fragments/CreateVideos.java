@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -78,6 +79,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
     private File mFolder;
+    private Fragment mFragment;
 
     public CreateVideos() {
 
@@ -107,6 +109,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mFragment = this;
 
     }
 
@@ -166,7 +169,12 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void setUpProject() {
-        mFolder = mStorage.getStorageDir(getString(R.string.create_project), true);
+        mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.my_projects));
+        mFolder = mStorage.addFolder(mFolder, getString(R.string.create_project));
+        SharedRuntimeContent.projectFolder = mFolder;
+
         mProjectNameDisplay.setText(getString(R.string.create_project));
         boolean success = true;
         if (mFolder != null) {
@@ -174,7 +182,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 success = mFolder.mkdirs();
             }
             if (success) {
-                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, mFolder, mProjectNameDisplay));
+                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, SharedRuntimeContent.projectFolder, mProjectNameDisplay));
             } else {
                 Snackbar.make(getView(), R.string.storage_error, Snackbar.LENGTH_LONG).show();
                 mRoot.setEnabled(false);
@@ -246,42 +254,43 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             handlePickedData(requestCode, data);
     }
 
+    private String mFilePath = null;
+
     public void handlePickedData(int requestCode, Intent data) {
+        Log.d("CreateVideos","handle picked data" + String.valueOf(data == null));
         if (data != null) {
             String selectedPath = null;
+            Uri imageUri;
             if (requestCode == GET_CAMERA_IMAGE) {
                 Bundle bundle = data.getExtras();
                 if (bundle != null) {
                     Bitmap photo = (Bitmap) bundle.get("data");
-                    selectedPath = mStorage.getRealPathFromURI(mStorage.getImageUri(getContext(), photo));
+                    imageUri = mStorage.getImageUri(photo);
+                    selectedPath = mStorage.getRealPathFromURI(imageUri);
                 }
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
             }
+            Log.d("CreateVideos","handle picked selectedPath " + data.getData().toString());
+
             if (selectedPath != null) {
                 File pickedFile = new File(selectedPath);
                 switch (requestCode) {
                     case GET_CAMERA_IMAGE:
                     case GET_IMAGE:
-                        if (!SharedRuntimeContent.imagePathList.contains(selectedPath)) {
-                            mStorage.addFileToDirectory(mFolder,
-                                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
-                                    pickedFile,
-                                    null,
-                                    new OnFileCopyCompleted() {
-                                        @Override
-                                        public void done(File file, boolean isSuccessful) {
-                                            SharedRuntimeContent.imagePathList.add(file.getName());
-                                            Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
-                                            SharedRuntimeContent.imageThunbnails.add(thumbnail);
-                                        }
-                                    });
-                        }
+
+                        Intent intent = new Intent(getContext(), CropMainActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                        intent.putExtras(bundle);
+                        mFragment.startActivity(intent);
+
                         break;
                     case GET_VIDEO:
-                        if (!SharedRuntimeContent.videoPathList.contains(selectedPath)) {
+                        Log.d("CreateVideos","here add file");
                             mStorage.addFileToDirectory(mFolder,
                                     SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                                    SharedRuntimeContent.projectFolder.getName(),
                                     pickedFile,
                                     null,
                                     new OnFileCopyCompleted() {
@@ -292,11 +301,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                                             SharedRuntimeContent.videoThunbnails.add(thumbnail);
                                         }
                                     });
-                        }
                         break;
                 }
             }
         }
+
     }
 
     @Override

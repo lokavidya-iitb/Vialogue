@@ -20,6 +20,7 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
@@ -27,6 +28,10 @@ import com.comp.iitb.vialogue.models.DummyContent;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.FOLDER_PATH;
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.IMAGE_PATH;
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_NAME;
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_PATH;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener {
@@ -34,18 +39,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
+    private Storage mStorage;
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupLokavidyaLegacy();
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
-
+        mStorage = new Storage(this);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
@@ -58,6 +65,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+                Bundle bundle = new Bundle();
+
+
+                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
+                bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+                bundle.putString(RECORD_NAME, "hello.wav");
+                bundle.putString(IMAGE_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
+
+                intent.putExtras(bundle);
                 startActivity(intent);
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -77,16 +93,16 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
             switch (i) {
                 case 0:
-                    tab.setIcon(R.drawable.ic_computer_black_24dp);
+                    tab.setIcon(R.drawable.home);
                     break;
                 case 1:
-                    tab.setIcon(R.drawable.ic_ondemand_video_black_24dp);
+                    tab.setIcon(R.drawable.create_videos);
                     break;
                 case 2:
-                    tab.setIcon(R.drawable.ic_subscriptions_black_24dp);
+                    tab.setIcon(R.drawable.view_videos);
                     break;
                 case 3:
-                    tab.setIcon(R.drawable.ic_videocam_black_24dp);
+                    tab.setIcon(R.drawable.profile);
                     break;
             }
             /*
@@ -96,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             ImageView tabTextView = (ImageView) relativeLayout.findViewById(R.id.tab_image);
             tabTextView.setText(tab.getText());*//*
             tab.setCustomView(relativeLayout);*/
-            tab.select();
+            //tab.select();
         }
         mTabLayout.getTabAt(0).select();
 
@@ -144,14 +160,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public void onProgressUpdate(int progress) {
-        Log.d("Progress Main Activity","___________ ___ _"+ progress);
-    }
-
-    public void setupLokavidyaLegacy(){
-    Storage.createThisDirectory("/Lokavidya");
-    Storage.createThisDirectory("/Lokavidya/Projects");
-    Storage.createThisDirectory("/Lokavidya/Projects/MyProjects");
-    Storage.createThisDirectory("/Lokavidya/Projects/SavedProjects");
-    Storage.createThisDirectory("/Lokavidya/Videos/SavedVideos");
+        Log.d("Progress Main Activity", "___________ ___ _" + progress);
     }
 }
