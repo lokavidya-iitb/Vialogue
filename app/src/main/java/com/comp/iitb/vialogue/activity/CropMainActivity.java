@@ -155,7 +155,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                         SharedRuntimeContent.imagePathList.add(file.getName());
                         mFilePath = file.getAbsolutePath();
                         Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
-                        SharedRuntimeContent.imageThunbnails.add(thumbnail);
+                        SharedRuntimeContent.imageThumbnails.add(thumbnail);
                     }
                 });
         finish();

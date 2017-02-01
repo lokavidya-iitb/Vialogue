@@ -4,12 +4,8 @@ package com.comp.iitb.vialogue.adapters;
  * Created by jeffrey on 17/1/17.
  */
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
@@ -67,7 +62,7 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
         File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
-        holder.thumbnail.setImageBitmap(Storage.getVideoThumbnail(Video.getAbsolutePath()));
+        holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Video.getAbsolutePath()));
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

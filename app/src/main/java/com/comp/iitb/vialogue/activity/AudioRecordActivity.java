@@ -22,15 +22,16 @@ import android.widget.TextView;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.RecordTimeUpdateListener;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.AudioRecorder;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.TimeFormater;
 import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.File;
+
+import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.AUDIO_FOLDER_NAME;
 
 /**
  * Created by shubh on 17-01-2017.
@@ -63,11 +64,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -98,7 +94,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             Log.d(LOG_TAG, mRecordName + "  " + mRecordPath + " " + mImagePath + " " + mFolderPath);
         }
 
-        mStorage = new Storage(this);
+        mStorage = new Storage(getApplicationContext());
         mImageView = (ImageView) findViewById(R.id.selected_image);
         mImageView = (ImageView) findViewById(R.id.selected_image);
         mStopButton = (Button) findViewById(R.id.stop_button);
@@ -189,23 +185,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 }
             }
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
         if (mAudioRecorder != null) {
             mAudioRecorder.release();
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.disconnect();
     }
 
     @Override
@@ -264,11 +251,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     @Override
@@ -280,7 +262,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private void setUpUI() {
         File file = null;
         if (mFolderPath != null && mRecordName != null) {
-            file = new File(mStorage.getStorageDir(mFolderPath, true), mRecordName);
+            file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder,AUDIO_FOLDER_NAME), mRecordName);
             Log.d(LOG_TAG, "file is" + file);
         }
         if (!file.exists()) {

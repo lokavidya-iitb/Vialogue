@@ -13,8 +13,7 @@ import java.util.List;
 public class SharedRuntimeContent {
     public static List<String> videoPathList = new ArrayList<>();
     public static List<String> imagePathList = new ArrayList<>();
-    public static List<Bitmap> imageThunbnails = new ArrayList<>();
-    public static List<Bitmap> videoThunbnails = new ArrayList<>();
+    public static List<Bitmap> imageThumbnails = new ArrayList<>();
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;

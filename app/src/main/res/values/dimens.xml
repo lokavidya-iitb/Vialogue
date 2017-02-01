@@ -6,6 +6,25 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="segment_height">25dp</dimen>
     <dimen name="segment_width">0.5dp</dimen>
+    <dimen name="time_padding_audio">5dp</dimen>
+    <dimen name="answer_option_text">20sp</dimen>
+    <dimen name="answer_option_padding">10dp</dimen>
+    <dimen name="question_text">18sp</dimen>
+    <dimen name="linear_layout_padding">15dp</dimen>
+    <dimen name="delete_button_padding">13dp</dimen>
+
+    <!--
+
+    &lt;!&ndash; Default screen margins, per the Android Design guidelines. &ndash;&gt;
+    <dimen name="activity_horizontal_margin">12dp</dimen>
+    <dimen name="activity_vertical_margin">12dp</dimen>
+-->
+
+    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html -->
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="drawer_text_size">15sp</dimen>
+    <dimen name="drawer_text_padding">8dp</dimen>
     <dimen name="time">20sp</dimen>
     <dimen name="item_offset">10dp</dimen>
     <dimen name="project_back_height">250dp</dimen>
