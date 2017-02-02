@@ -4,12 +4,12 @@
     <string name="create_project">New Project</string>
     <string name="view_videos">Videos</string>
     <string name="user_account">Profile</string>
-    <string name="camera">Camera</string>
-    <string name="image">Image</string>
-    <string name="video">Video</string>
+    <string name="camera">Take\nImage</string>
+    <string name="image">Choose\nImage</string>
+    <string name="video">Choose\nVideo</string>
     <string name="add_audio">Add Audio</string>
     <string name="captured_image_name">Lokavidya</string>
-    <string name="question">Question</string>
+    <string name="question">Write Question</string>
     <string name="storage_error">Storage can not be accessed</string>
     <string name="permission_storage_rationale">We need your permissions to save Projects and Videos on your phone</string>
     <string name="button_allow">Permission granted</string>
@@ -27,13 +27,13 @@
         <item>My Account</item>
     </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_audio_record">AudioRecordActivity</string>
-    <string name="title_activity_crop_image">CropImageActivity</string>
+    <string name="title_activity_audio_record">Add Audio</string>
+    <string name="title_activity_crop_image">Edit Image</string>
     <string name="projects">Projects</string>
     <string name="my_projects">My Projects</string>
 <!---->
 
-    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_activity_title">Edit Image</string>
     <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
     <string name="crop_image_menu_rotate_right">Rotate</string>
     <string name="crop_image_menu_crop">Crop</string>
@@ -69,4 +69,5 @@
     <string name="answer_option">Answer Option</string>
     <string name="delete_button">X</string>
     <string name="add_option">+</string>
+    <string name="file_copy_title">File copy</string>
 </resources>

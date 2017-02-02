@@ -29,6 +29,7 @@ import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.CameraImagePicker;
+import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
@@ -233,7 +234,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("Create Videos", "resultCode " + resultCode + " request code " + requestCode);
         if (resultCode == RESULT_OK)
             handlePickedData(requestCode, data);
     }
@@ -241,7 +241,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
-        Log.d("CreateVideos","handle picked data" + String.valueOf(data == null));
         if (data != null) {
             String selectedPath = null;
             Uri imageUri;
@@ -255,7 +254,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
             }
-            Log.d("CreateVideos","handle picked selectedPath " + data.getData().toString());
 
             if (selectedPath != null) {
                 File pickedFile = new File(selectedPath);
@@ -271,20 +269,19 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
                         break;
                     case GET_VIDEO:
-                        Log.d("CreateVideos","here add file");
-                            mStorage.addFileToDirectory(mFolder,
-                                    SharedRuntimeContent.VIDEO_FOLDER_NAME,
-                                    SharedRuntimeContent.projectFolder.getName(),
-                                    pickedFile,
-                                    null,
-                                    new OnFileCopyCompleted() {
-                                        @Override
-                                        public void done(File file, boolean isSuccessful) {
-                                            SharedRuntimeContent.videoPathList.add(file.getName());
-                                            Bitmap thumbnail = mStorage.getVideoThumbnail(file.getAbsolutePath());
-                                            SharedRuntimeContent.imageThumbnails.add(thumbnail);
-                                        }
-                                    });
+                        mStorage.addFileToDirectory(mFolder,
+                                SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                                SharedRuntimeContent.projectFolder.getName(),
+                                pickedFile,
+                                new FileCopyUpdateListener(getContext()),
+                                new OnFileCopyCompleted() {
+                                    @Override
+                                    public void done(File file, boolean isSuccessful) {
+                                        SharedRuntimeContent.videoPathList.add(file.getName());
+                                        Bitmap thumbnail = mStorage.getVideoThumbnail(file.getAbsolutePath());
+                                        SharedRuntimeContent.imageThumbnails.add(thumbnail);
+                                    }
+                                });
                         break;
                 }
             }

@@ -204,14 +204,14 @@
             </RelativeLayout>
         </RadioGroup>
 
-        <Button
+        <ImageButton
             android:id="@+id/add_option"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:text="@string/add_option"
+            android:src="@drawable/plus"
             android:textColor="@color/colorAccentLight"
             android:textSize="30sp"
             android:textStyle="bold" />

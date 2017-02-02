@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -71,12 +70,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
                 bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
                 bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
+                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
 
                 intent.putExtras(bundle);
                 startActivity(intent);
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
     }

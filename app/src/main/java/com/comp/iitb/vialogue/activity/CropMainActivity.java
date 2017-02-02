@@ -34,6 +34,7 @@ import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CropMainFragment;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
@@ -148,7 +149,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 SharedRuntimeContent.IMAGE_FOLDER_NAME,
                 SharedRuntimeContent.projectFolder.getName(),
                 pickedFile,
-                null,
+                new FileCopyUpdateListener(this),
                 new OnFileCopyCompleted() {
                     @Override
                     public void done(File file, boolean isSuccessful) {
@@ -156,8 +157,8 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                         mFilePath = file.getAbsolutePath();
                         Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
                         SharedRuntimeContent.imageThumbnails.add(thumbnail);
+                        finish();
                     }
                 });
-        finish();
     }
 }

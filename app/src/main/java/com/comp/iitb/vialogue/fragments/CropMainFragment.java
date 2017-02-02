@@ -87,7 +87,7 @@ public final class CropMainFragment extends Fragment
             mCropImageView.getCroppedImageAsync();
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
-            mCropImageView.rotateImage(90);
+            mCropImageView.rotateImage(-90);
             return true;
         }
         return super.onOptionsItemSelected(item);
