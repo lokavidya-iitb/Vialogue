@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.adapters.ProjectsAdapter;
 import com.comp.iitb.vialogue.adapters.ProjectsVideoAdapter;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;

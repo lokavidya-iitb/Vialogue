@@ -2,12 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/something1"
+        android:id="@+id/deleteThis"
         android:orderInCategory="100"
-        android:title="AddSomething" />
+        android:title="Delete Project" />
 
     <item
-        android:id="@+id/something2"
+        android:id="@+id/renameThis"
         android:orderInCategory="101"
         android:title="AgainSomething" />
 </menu>

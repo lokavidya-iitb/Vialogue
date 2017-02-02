@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.adapters.ProjectsAdapter;
+import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
@@ -41,7 +41,7 @@ public class InceptionSavedProjects extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView recyclerView;
-    private ProjectsAdapter adapter;
+    private SavedProjectsAdapter adapter;
     private List<ProjectsShowcase> projectList;
 
 
@@ -80,7 +80,7 @@ public class InceptionSavedProjects extends Fragment {
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
 
         projectList = new ArrayList<>();
-        adapter = new ProjectsAdapter(getContext(), projectList);
+        adapter = new SavedProjectsAdapter(getContext(), projectList);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -122,7 +122,7 @@ public class InceptionSavedProjects extends Fragment {
         myStringArray=Storage.getMeAllTheFilesHere("/Lokavidya/Projects/SavedProjects");
         for(int i=0;i<myStringArray.size();i++)
         {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").get(0),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"",Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
             projectList.add(a);
         }
         adapter.notifyDataSetChanged();

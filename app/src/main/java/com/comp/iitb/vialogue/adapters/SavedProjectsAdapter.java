@@ -5,6 +5,7 @@ package com.comp.iitb.vialogue.adapters;
  */
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,18 +15,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
+import java.io.File;
 import java.util.List;
 
-public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyViewHolder> {
+public class SavedProjectsAdapter extends RecyclerView.Adapter<SavedProjectsAdapter.MyViewHolder> {
 
     private Context mContext;
     private List<ProjectsShowcase> albumList;
+    private int listItemPositionForPopupMenu;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, count, AudioCount;
@@ -42,7 +45,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
     }
 
 
-    public ProjectsAdapter(Context mContext, List<ProjectsShowcase> albumList) {
+    public SavedProjectsAdapter(Context mContext, List<ProjectsShowcase> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
     }
@@ -61,22 +64,23 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
         holder.AudioCount.setText(album.getAudioCount() +" Audios");
-        Glide.with(mContext).load(album.getImageFile())/*.placeholder(R.drawable.ic_computer_black_24dp)*/.into(holder.thumbnail);
+        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow);
+                showPopupMenu(holder.overflow,holder.getAdapterPosition());
             }
         });
     }
 
-    private void showPopupMenu(View view) {
+    private void showPopupMenu(View view, int listItemPosition) {
         // inflate menu
+        listItemPositionForPopupMenu = listItemPosition;
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_card, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(listItemPosition));
         popup.show();
     }
 
@@ -84,18 +88,25 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
      * Click listener for popup menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
+    private int listItemPosition;
+        public MyMenuItemClickListener(int listItemPosition) {
+            this.listItemPosition = listItemPosition;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.something1:
-                    Toast.makeText(mContext, "Something1", Toast.LENGTH_SHORT).show();
+                case R.id.deleteThis:
+                    int newPosition = listItemPosition;
+                    albumList.remove(newPosition);
+                    notifyItemRemoved(newPosition);
+                    notifyItemRangeChanged(newPosition, albumList.size());
+                    Storage.deleteThisFolder("");
                     return true;
-                case R.id.something2:
-                    Toast.makeText(mContext, "Something2", Toast.LENGTH_SHORT).show();
+                case R.id.renameThis:
+                    File oldFolder = new File(Environment.getExternalStorageDirectory(),"old folder name");
+                    File newFolder = new File(Environment.getExternalStorageDirectory(),"new folder name");
+                    boolean success = oldFolder.renameTo(newFolder);
                     return true;
                 default:
             }
