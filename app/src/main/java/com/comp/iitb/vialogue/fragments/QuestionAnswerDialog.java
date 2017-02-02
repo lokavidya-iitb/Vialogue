@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 
 import com.comp.iitb.vialogue.R;
@@ -27,7 +29,7 @@ public class QuestionAnswerDialog extends Dialog {
     private AppCompatRadioButton[] mIsAnswerButtons = new AppCompatRadioButton[MAX_OPTIONS];
     private RelativeLayout[] mOptionalLayout = new RelativeLayout[OPTIONAL_LAYOUT_COUNT];
     private Button[] mRemoveOption = new Button[OPTIONAL_LAYOUT_COUNT];
-    private Button mAddOptionButton;
+    private ImageButton mAddOptionButton;
     private AppCompatRadioButton mSelectedAnswer;
     private Button mDoneButton;
 
@@ -50,7 +52,7 @@ public class QuestionAnswerDialog extends Dialog {
         setContentView(R.layout.question_answer);
 
         mQuestion = (EditText) findViewById(R.id.question_text);
-        mAddOptionButton = (Button) findViewById(R.id.add_option);
+        mAddOptionButton = (ImageButton) findViewById(R.id.add_option);
 
         mAnswerOptions[0] = (EditText) findViewById(R.id.answer_option_0);
         mAnswerOptions[1] = (EditText) findViewById(R.id.answer_option_1);
@@ -95,8 +97,8 @@ public class QuestionAnswerDialog extends Dialog {
     }
 
     private void setUpRadioButtonsGroup() {
-        for (int i = 0; i < mIsAnswerButtons.length; i++) {
-            mIsAnswerButtons[i].setOnClickListener(new View.OnClickListener() {
+        for (RadioButton radioButton:mIsAnswerButtons) {
+            radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mSelectedAnswer != null) {
