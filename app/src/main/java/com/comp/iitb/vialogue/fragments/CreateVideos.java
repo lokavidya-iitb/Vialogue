@@ -122,6 +122,10 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
+<<<<<<< master
+       // CreateVideosPermissionsDispatcher.setUpProjectWithCheck(this);
+=======
+>>>>>>> master
 
         //Load Pickers
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
@@ -159,12 +163,16 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             Log.d("Create Videos", "Visible");
-            setUpProject();
+           // setUpProject();
         } else {
             Log.d("Create Videos", "Not visible");
         }
     }
 
+<<<<<<< master
+   /* @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+=======
+>>>>>>> master
     public void setUpProject() {
         mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
         mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
@@ -186,9 +194,27 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             }
         }
     }
+<<<<<<< master
+*/
+    @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void OnPermissionDenied() {
+        Snackbar.make(getView(), R.string.storage_error, Snackbar.LENGTH_LONG).show();
+        mRoot.setVisibility(View.INVISIBLE);
+    }
+
+    @OnShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showRationaleForContact(PermissionRequest request) {
+        // NOTE: Show a rationale to explain why the permission is needed, e.g. with a dialog.
+        // Call proceed() or cancel() on the provided PermissionRequest to continue or abort
+        showRationaleDialog(R.string.permission_storage_rationale, request);
+    }
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void showRationaleDialog(@StringRes int messageResId, final PermissionRequest request) {
+=======
 
 
     private void showRationaleDialog(@StringRes int messageResId, final PermissionRequest request) {
+>>>>>>> master
         new AlertDialog.Builder(getActivity())
                 .setPositiveButton(R.string.button_allow, new DialogInterface.OnClickListener() {
                     @Override
@@ -292,6 +318,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+<<<<<<< master
+        // NOTE: delegate the permission handling to generated method
+       // CreateVideosPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+=======
+>>>>>>> master
     }
 
     @Override

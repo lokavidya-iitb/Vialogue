@@ -16,8 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.adapters.ProjectsAdapter;
 import com.comp.iitb.vialogue.adapters.ProjectsVideoAdapter;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
 import java.util.ArrayList;
@@ -119,9 +119,13 @@ public class InceptionSavedVideos extends Fragment {
     }
 
     private void prepareProjects() {
-
-        ProjectsShowcase a = new ProjectsShowcase("Project1","", 13,14,1,1);
-        projectList.add(a);
+        List<String> myStringArray = new ArrayList<String>();
+        myStringArray= Storage.getMeAllTheFilesHere("/Lokavidya/Projects/SavedVideos");
+        for(int i=0;i<myStringArray.size();i++)
+        {
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").get(0),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
+            projectList.add(a);
+        }
 
 
         adapter.notifyDataSetChanged();

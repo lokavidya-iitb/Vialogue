@@ -15,8 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
@@ -24,13 +25,14 @@ import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import java.io.File;
 import java.util.List;
 
-public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdapter.MyViewHolder> {
+public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
 
     private Context mContext;
     private List<ProjectsShowcase> albumList;
+    private int listItemPositionForPopupMenu;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count;
+        public TextView title, count, AudioCount;
         public ImageView thumbnail, overflow;
 
         public MyViewHolder(View view) {
@@ -39,11 +41,12 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
             count = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             overflow = (ImageView) view.findViewById(R.id.overflow);
+            AudioCount = (TextView) view.findViewById(R.id.AudioCount);
         }
     }
 
 
-    public ProjectsVideoAdapter(Context mContext, List<ProjectsShowcase> albumList) {
+    public MyProjectsAdapter(Context mContext, List<ProjectsShowcase> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
     }
@@ -58,25 +61,27 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        ProjectsShowcase album = albumList.get(position);
+        final ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
-        File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
-        holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Video.getAbsolutePath()));
+        holder.AudioCount.setText(album.getAudioCount() +" Audios");
+        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopupMenu(holder.overflow);
+                showPopupMenu(holder.overflow,holder.getAdapterPosition(),album.getName());
             }
         });
     }
 
-    private void showPopupMenu(View view) {
+    private void showPopupMenu(View view, int listItemPosition, String projectName) {
         // inflate menu
+        listItemPositionForPopupMenu = listItemPosition;
         PopupMenu popup = new PopupMenu(mContext, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_card, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
+        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(listItemPosition,projectName));
         popup.show();
     }
 
@@ -84,18 +89,28 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
      * Click listener for popup menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+    private int listItemPosition;
+    private String projectName;
+        public MyMenuItemClickListener(int listItemPosition, String projectName) {
+            this.listItemPosition = listItemPosition;
+            this.projectName = projectName;
 
-        public MyMenuItemClickListener() {
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.deleteThis:
-                    Toast.makeText(mContext, "Something1", Toast.LENGTH_SHORT).show();
+                    int newPosition = listItemPosition;
+                    albumList.remove(newPosition);
+                    notifyItemRemoved(newPosition);
+                    notifyItemRangeChanged(newPosition, albumList.size());
+                    Storage.deleteThisFolder(Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+projectName);
                     return true;
                 case R.id.renameThis:
-                    Toast.makeText(mContext, "Something2", Toast.LENGTH_SHORT).show();
+                    File oldName = new File(Environment.getExternalStorageDirectory(),Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+projectName);
+                    File newName = new File(Environment.getExternalStorageDirectory(),Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+"myNameDa");
+                    boolean success = oldName.renameTo(newName);
                     return true;
                 default:
             }

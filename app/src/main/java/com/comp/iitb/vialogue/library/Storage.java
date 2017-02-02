@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -318,7 +319,7 @@ public class Storage {
      * @param filePath : filePath of the video.
      * @return Bitmap : bitmap of the thumbnail.
      */
-    public Bitmap getVideoThumbnail(@NonNull String filePath) {
+    public static Bitmap  getVideoThumbnail(@NonNull String filePath) {
         Bitmap thumbnail = null;
         thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
         if (thumbnail == null) {
@@ -357,8 +358,7 @@ public class Storage {
 
     public static void createThisDirectory(String path)
     {
-        File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + path);
+        File folder = new File(Environment.getExternalStorageDirectory() + path);
         boolean success = true;
         if (!folder.exists()) {
             success = folder.mkdirs();
@@ -403,7 +403,7 @@ public class Storage {
     {
         List<String> myStringArray = new ArrayList<String>();
         File sdCard = Environment.getExternalStorageDirectory();
-        File targetDirectory = new File (sdCard.getAbsolutePath()+"/Lokavidya/Projects/"+whichProjectType+"/"+projectName+"/"+whatFiles);
+        File targetDirectory = new File (sdCard.getAbsolutePath()+Master.AppPath+Master.ProjectsPath+"/"+whichProjectType+"/"+projectName+"/"+whatFiles);
         boolean fileArrayExists= false;
         if(targetDirectory.exists()&& targetDirectory.isDirectory())
         {
@@ -430,6 +430,32 @@ public class Storage {
         }
         Collections.sort(myStringArray);
         return myStringArray;
+    }
+
+    public static void deleteThisFolder(String projectPath)
+    {
+    File parentDirectory = new File(Environment.getExternalStorageDirectory()+projectPath);
+    deleteDirectory(parentDirectory);
+    }
+
+    static private void deleteDirectory(File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    deleteDirectory(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
+        }
+    }
+    public static void setupLokavidyaLegacy(){
+        Storage.createThisDirectory(Master.AppPath);
+        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath);
+        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath);
+        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath+Master.SavedProjectsPath);
+        Storage.createThisDirectory(Master.AppPath+Master.VideosPath+Master.SavedVideosPath);
     }
 
 }

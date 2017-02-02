@@ -43,9 +43,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Storage.setupLokavidyaLegacy();
         setContentView(R.layout.activity_main);
-
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -62,18 +61,16 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {/*
                 Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
                 Bundle bundle = new Bundle();
-
-
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
                 bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
                 bundle.putString(RECORD_NAME, "hello.wav");
                 bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
 
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
     }
