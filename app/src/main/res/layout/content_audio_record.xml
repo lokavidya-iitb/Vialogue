@@ -38,24 +38,11 @@
         android:layout_below="@id/selected_image"
         android:layout_alignLeft="@id/selected_image"
         android:src="@drawable/ic_play_arrow_black_24dp"
-        android:background="?android:attr/colorButtonNormal"/>
+        android:background="@android:color/transparent"
+        android:paddingLeft="0dp"
+        android:minWidth="0dp"
+        android:tint="@color/colorPrimary"/>
 
-    <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/audio_seek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_alignBottom="@+id/play_button"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_alignRight="@+id/selected_image"
-        android:layout_alignEnd="@+id/selected_image" />
-    <Button
-        android:id="@+id/record_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/record_audio"
-        android:layout_below="@id/play_button"
-        android:layout_alignLeft="@id/play_button"/>
     <Button
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
@@ -67,7 +54,7 @@
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/record_audio"
+        android:text="@string/retry"
         android:layout_below="@id/play_button"
         android:layout_alignRight="@id/selected_image"/>
 
@@ -77,5 +64,29 @@
         android:layout_height="wrap_content"
         android:text="@string/done"
         android:layout_margin="@dimen/fab_margin"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"/>
+
+    <app.minimize.com.seek_bar_compat.SeekBarCompat
+        android:id="@+id/audio_seek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/record_button"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_alignRight="@+id/retry"
+        android:layout_alignEnd="@+id/retry"
+        android:layout_below="@+id/view_center"
+        app:thumbColor="@color/colorPrimary"
+        app:progressColor="@color/colorPrimary"
+        />
+
+    <Button
+        android:id="@+id/record_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/record_audio"
+        android:layout_below="@+id/play_button"
+        android:layout_alignLeft="@+id/play_button"
+        android:layout_alignStart="@+id/play_button"
+        />
 </RelativeLayout>

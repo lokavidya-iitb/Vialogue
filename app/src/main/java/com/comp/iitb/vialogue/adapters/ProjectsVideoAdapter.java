@@ -62,7 +62,7 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
         File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
-        holder.thumbnail.setImageBitmap(Storage.getVideoThumbnail(Video.getAbsolutePath()));
+        holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Video.getAbsolutePath()));
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,6 +1,5 @@
 package com.comp.iitb.vialogue.fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,20 +29,18 @@ import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.CameraImagePicker;
-import com.comp.iitb.vialogue.listeners.ChangeVisibilityClick;
+import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
+import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
 import com.comp.iitb.vialogue.listeners.ImagePickerClick;
 import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
+import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
 
 import java.io.File;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
 
 import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
@@ -58,7 +55,6 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO
  * Use the {@link CreateVideos#newInstance} factory method to
  * create an instance of this fragment.
  */
-@RuntimePermissions
 public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -123,10 +119,13 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mStorage = new Storage(getActivity());
         mProjectName = (EditText) mView.findViewById(R.id.project_name);
         mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
-        mProjectNameDisplay.setOnClickListener(new ChangeVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
+        mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
+<<<<<<< master
        // CreateVideosPermissionsDispatcher.setUpProjectWithCheck(this);
+=======
+>>>>>>> master
 
         //Load Pickers
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
@@ -145,6 +144,9 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         VideoPickerClick videoPickerClickListener = new VideoPickerClick(this);
         mVideoPicker.setOnClickListener(videoPickerClickListener);
 
+        //Question Picker
+        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getContext());
+        mQuestionPicker.setOnClickListener(questionPickerClickListener);
         //set SlideLayout
         mSlideFragment = SlideFragment.newInstance(3);
         getFragmentManager().beginTransaction().add(R.id.create_videos_root, mSlideFragment).commit();
@@ -167,7 +169,10 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         }
     }
 
+<<<<<<< master
    /* @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+=======
+>>>>>>> master
     public void setUpProject() {
         mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
         mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
@@ -189,6 +194,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             }
         }
     }
+<<<<<<< master
 */
     @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void OnPermissionDenied() {
@@ -204,6 +210,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void showRationaleDialog(@StringRes int messageResId, final PermissionRequest request) {
+=======
+
+
+    private void showRationaleDialog(@StringRes int messageResId, final PermissionRequest request) {
+>>>>>>> master
         new AlertDialog.Builder(getActivity())
                 .setPositiveButton(R.string.button_allow, new DialogInterface.OnClickListener() {
                     @Override
@@ -249,7 +260,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("Create Videos", "resultCode " + resultCode + " request code " + requestCode);
         if (resultCode == RESULT_OK)
             handlePickedData(requestCode, data);
     }
@@ -257,7 +267,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
-        Log.d("CreateVideos","handle picked data" + String.valueOf(data == null));
         if (data != null) {
             String selectedPath = null;
             Uri imageUri;
@@ -271,7 +280,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
             }
-            Log.d("CreateVideos","handle picked selectedPath " + data.getData().toString());
 
             if (selectedPath != null) {
                 File pickedFile = new File(selectedPath);
@@ -287,20 +295,19 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
                         break;
                     case GET_VIDEO:
-                        Log.d("CreateVideos","here add file");
-                            mStorage.addFileToDirectory(mFolder,
-                                    SharedRuntimeContent.VIDEO_FOLDER_NAME,
-                                    SharedRuntimeContent.projectFolder.getName(),
-                                    pickedFile,
-                                    null,
-                                    new OnFileCopyCompleted() {
-                                        @Override
-                                        public void done(File file, boolean isSuccessful) {
-                                            SharedRuntimeContent.videoPathList.add(file.getName());
-                                            Bitmap thumbnail = mStorage.getVideoThumbnail(file.getAbsolutePath());
-                                            SharedRuntimeContent.videoThunbnails.add(thumbnail);
-                                        }
-                                    });
+                        mStorage.addFileToDirectory(mFolder,
+                                SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                                SharedRuntimeContent.projectFolder.getName(),
+                                pickedFile,
+                                new FileCopyUpdateListener(getContext()),
+                                new OnFileCopyCompleted() {
+                                    @Override
+                                    public void done(File file, boolean isSuccessful) {
+                                        SharedRuntimeContent.videoPathList.add(file.getName());
+                                        Bitmap thumbnail = mStorage.getVideoThumbnail(file.getAbsolutePath());
+                                        SharedRuntimeContent.imageThumbnails.add(thumbnail);
+                                    }
+                                });
                         break;
                 }
             }
@@ -311,8 +318,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+<<<<<<< master
         // NOTE: delegate the permission handling to generated method
        // CreateVideosPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+=======
+>>>>>>> master
     }
 
     @Override

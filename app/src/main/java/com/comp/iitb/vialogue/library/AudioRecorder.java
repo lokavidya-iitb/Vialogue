@@ -34,6 +34,7 @@ public class AudioRecorder {
     private int mWidth;
 
     public AudioRecorder(@NonNull String fileName, MediaTimeUpdateListener mediaTimeUpdateListener, RecordTimeUpdateListener recordTimeUpdateListener) {
+        Log.d(LOG_TAG, "here AudioRecorder");
         mFileName = fileName;
         mMediaTimeUpdate = mediaTimeUpdateListener;
         mRecordTimeUpdate = recordTimeUpdateListener;
@@ -43,6 +44,7 @@ public class AudioRecorder {
 
 
     private void startRecording() {
+        Log.d(LOG_TAG, "startRecording");
         mCompletedRecording = false;
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -73,15 +75,20 @@ public class AudioRecorder {
     }
 
     private void stopRecording() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
-        mCompletedRecording = true;
-        if (mRecordTimeUpdate != null)
-            mRecordTimeUpdate.onRecordStopped();
+        Log.d(LOG_TAG, "stopRecording");
+        if (mRecorder != null) {
+            Log.d(LOG_TAG, "stopRecording");
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+            mCompletedRecording = true;
+            if (mRecordTimeUpdate != null)
+                mRecordTimeUpdate.onRecordStopped();
+        }
     }
 
     public void release() {
+        Log.d(LOG_TAG, "release");
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
@@ -93,6 +100,7 @@ public class AudioRecorder {
     }
 
     public void onRecord(boolean start) {
+        Log.d(LOG_TAG, "onRecord " + String.valueOf(start));
         if (start) {
             Log.d(LOG_TAG, "Started Recording");
             startRecording();
@@ -103,16 +111,18 @@ public class AudioRecorder {
     }
 
     public void onPlay() {
-        if (mPlayer == null) {
-            startPlaying();
-        } else if (mPlayer.isPlaying()) {
+        Log.d(LOG_TAG, "onPlay");
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            Log.d(LOG_TAG, "mPlayer isPlaying");
             mPlayer.pause();
         } else {
-            mPlayer.start();
+            Log.d(LOG_TAG, "mPlayer null");
+            startPlaying();
         }
     }
 
     private void startPlaying() {
+        Log.d(LOG_TAG, "startPlaying");
         mPlayer = new MediaPlayer();
         mCompletedPlaying = false;
         try {
@@ -136,7 +146,7 @@ public class AudioRecorder {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     mCompletedPlaying = true;
-                    if (mMediaTimeUpdate != null) {
+                    if (mMediaTimeUpdate != null && mPlayer != null) {
                         mMediaTimeUpdate.onMediaTimeUpdate(mPlayer.getDuration(), mPlayer.getDuration());
                     }
                     Log.d(LOG_TAG, "completed playing");
