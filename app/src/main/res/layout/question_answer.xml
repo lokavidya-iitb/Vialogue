@@ -59,7 +59,7 @@
                     android:layout_alignBottom="@+id/delete_button_0"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    app:buttonTint="@color/colorPrimary" />
+                    app:buttonTint="@color/colorPrimary"/>
 
                 <EditText
                     android:id="@+id/answer_option_0"
@@ -122,7 +122,8 @@
             <RelativeLayout
                 android:id="@+id/answer_option_view_2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/delete_button_2"
@@ -164,7 +165,8 @@
             <RelativeLayout
                 android:id="@+id/answer_option_view_3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/delete_button_3"
@@ -224,6 +226,7 @@
             android:minHeight="0dp"
             android:minWidth="0dp"
             android:text="@string/done"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:enabled="false"/>
     </LinearLayout>
 </LinearLayout>

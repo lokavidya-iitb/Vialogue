@@ -148,6 +148,7 @@ public class AudioRecorder {
                     mCompletedPlaying = true;
                     if (mMediaTimeUpdate != null && mPlayer != null) {
                         mMediaTimeUpdate.onMediaTimeUpdate(mPlayer.getDuration(), mPlayer.getDuration());
+                        mMediaTimeUpdate.onMediaTimeEndReached();
                     }
                     Log.d(LOG_TAG, "completed playing");
                 }

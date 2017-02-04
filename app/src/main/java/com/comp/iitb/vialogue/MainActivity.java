@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {/*
+            public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
 
                 intent.putExtras(bundle);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
     }

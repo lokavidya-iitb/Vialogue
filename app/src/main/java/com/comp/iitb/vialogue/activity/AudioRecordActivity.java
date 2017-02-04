@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import com.google.android.gms.appindexing.Thing;
 
 import java.io.File;
 
+import static android.os.Build.VERSION.SDK_INT;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.AUDIO_FOLDER_NAME;
 
 /**
@@ -130,6 +132,17 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mPlayButton, R.string.cannot_play, Snackbar.LENGTH_LONG).show();
                     return;
                 }
+                if (isPlaying) {
+                    if (SDK_INT >= 21)
+                        mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                    else
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                } else {
+                    if (SDK_INT >= 21)
+                        mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_pause_black_24dp));
+                    else
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_black_24dp));
+                }
                 if (mSeekBar.getProgress() != mSeekBar.getMax() && !isPlaying)
                     mAudioRecorder.onPlay(mSeekBar.getProgress());
                 else {
@@ -139,7 +152,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+        if (SDK_INT > 20)
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,8 +223,9 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch (item.getItemId()){
-            case android.R.id.home: finish();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
                 break;
         }
         return true;
@@ -219,6 +234,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onMediaTimeEndReached() {
         isPlaying = false;
+        if (SDK_INT >= 21)
+            mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
+        else
+            mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
     }
 
     private void setmTimeDisplay(int currentTime) {
@@ -269,8 +288,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (mRecordName != null) {
             file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder, AUDIO_FOLDER_NAME), mRecordName);
         }
+        Log.d(LOG_TAG,"hello file "+String.valueOf(file.exists()));
         if (!file.exists()) {
             mSeekBar.setEnabled(false);
+            mSeekBar.invalidate();
+            mSeekBar.requestLayout();
             mPlayButton.setEnabled(false);
             mRetryButton.setEnabled(false);
 
@@ -278,6 +300,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mStopButton.setEnabled(true);
         } else {
             mSeekBar.setEnabled(true);
+            mSeekBar.invalidate();
+            mSeekBar.requestLayout();
             mPlayButton.setEnabled(true);
             mRetryButton.setEnabled(true);
 
