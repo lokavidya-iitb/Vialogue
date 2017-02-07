@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -55,21 +56,22 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.question_answer);
 
-        MinimumConditionOnTextChangeListener minimumConditionChangeListener = new MinimumConditionOnTextChangeListener(this);
         mConditionSatisfiedCount = 0;
 
         mQuestion = (EditText) findViewById(R.id.question_text);
-        mQuestion.addTextChangedListener(minimumConditionChangeListener);
+        mQuestion.addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mQuestion));
         mAddOptionButton = (ImageButton) findViewById(R.id.add_option);
 
         mAnswerOptions[0] = (EditText) findViewById(R.id.answer_option_0);
-        mAnswerOptions[0].addTextChangedListener(minimumConditionChangeListener);
+        mAnswerOptions[0].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[0]));
 
         mAnswerOptions[1] = (EditText) findViewById(R.id.answer_option_1);
-        mAnswerOptions[1].addTextChangedListener(minimumConditionChangeListener);
+        mAnswerOptions[1].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[1]));
 
         mAnswerOptions[2] = (EditText) findViewById(R.id.answer_option_2);
+        mAnswerOptions[2].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[2]));
         mAnswerOptions[3] = (EditText) findViewById(R.id.answer_option_3);
+        mAnswerOptions[3].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[3]));
 
         mIsAnswerButtons[0] = (AppCompatRadioButton) findViewById(R.id.is_answer_0);
         mIsAnswerButtons[1] = (AppCompatRadioButton) findViewById(R.id.is_answer_1);
@@ -135,16 +137,63 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         mRemoveOption[1].setOnClickListener(new ChangeVisibilityClick(mOptionalLayout[1], View.GONE));
     }
 
+    private boolean[] mFlag = new boolean[MAX_OPTIONS + 1];
+
     @Override
-    public void conditionSatisfied(Object sender) {
-        mConditionSatisfiedCount++;
-        if (mConditionSatisfiedCount == 3) {
+    public void conditionSatisfied(EditText sender) {
+        Log.d("Audio Recorder", String.valueOf(sender.equals(mQuestion)) + " " + mConditionSatisfiedCount);
+        switch (sender.getId()) {
+            case R.id.question_text:
+                mFlag[0] = true;
+                break;
+            case R.id.answer_option_0:
+                mFlag[1] = true;
+                break;
+            case R.id.answer_option_1:
+                mFlag[2] = true;
+                break;
+            case R.id.answer_option_2:
+                mFlag[3] = true;
+                break;
+            case R.id.answer_option_3:
+                mFlag[4] = true;
+                break;
+        }
+        int j=0;
+        for (int i = 0; i<3;i++){
+            if(mFlag[i])
+                j++;
+        }
+        if(j==3){
             mDoneButton.setEnabled(true);
         }
     }
 
     @Override
-    public void conditionFailed(Object sender) {
-        mDoneButton.setEnabled(false);
+    public void conditionFailed(EditText sender) {
+        Log.d("Audio Recorder", String.valueOf(sender.equals(mQuestion)) + " " + mConditionSatisfiedCount);
+
+        switch (sender.getId()) {
+            case R.id.question_text:
+                mFlag[0] = false;
+                break;
+            case R.id.answer_option_0:
+                mFlag[1] = false;
+                break;
+            case R.id.answer_option_1:
+                mFlag[2] = false;
+                break;
+            case R.id.answer_option_2:
+                mFlag[3] = false;
+                break;
+            case R.id.answer_option_3:
+                mFlag[4] = false;
+                break;
+        }
+        for (int i=0;i<3;i++ ) {
+            if(!mFlag[i]){
+                mDoneButton.setEnabled(false);
+            }
+        }
     }
 }

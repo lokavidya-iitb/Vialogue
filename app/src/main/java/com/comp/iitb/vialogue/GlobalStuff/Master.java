@@ -13,4 +13,27 @@ public class Master {
     public static String SavedVideosPath="/SavedVideos";
     public static String ImagesPath ="/images";
     public static String AudiosPath ="/audios";
+
+    public static void getVideosPath(){
+
+    }
+    public static String getProjectsPath(){
+
+        return Master.AppPath + Master.ProjectsPath;
+    }
+    public static String getMyProjectsPath(){
+
+       return Master.AppPath + Master.ProjectsPath + Master.MyProjectsPath;
+
+    }
+    public static String getSavedProjectsPath(){
+
+        return Master.AppPath + Master.ProjectsPath + Master.SavedProjectsPath;
+
+    }
+    public static String getSavedVideosPath(){
+
+        return Master.AppPath + Master.VideosPath+ Master.SavedVideosPath;
+    }
+
     }

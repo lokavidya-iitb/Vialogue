@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.listeners;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.EditText;
 
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
 
@@ -12,9 +13,11 @@ import com.comp.iitb.vialogue.coordinators.ConditionListener;
 public class MinimumConditionOnTextChangeListener implements TextWatcher{
     private ConditionListener mConditionListener;
     private int mTextLengthLimit;
-    public MinimumConditionOnTextChangeListener(ConditionListener conditionListener){
+    private EditText mEditText;
+    public MinimumConditionOnTextChangeListener(ConditionListener conditionListener, EditText editText){
         mConditionListener = conditionListener;
         mTextLengthLimit = 0;
+        mEditText = editText;
     }
 
     public int getTextLengthLimit() {
@@ -34,9 +37,9 @@ public class MinimumConditionOnTextChangeListener implements TextWatcher{
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if(s.length()<=mTextLengthLimit)
-            mConditionListener.conditionFailed(this);
+            mConditionListener.conditionFailed(mEditText);
         else
-            mConditionListener.conditionSatisfied(this);
+            mConditionListener.conditionSatisfied(mEditText);
     }
 
     @Override

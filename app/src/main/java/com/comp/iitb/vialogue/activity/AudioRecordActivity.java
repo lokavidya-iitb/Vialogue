@@ -64,6 +64,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+    private Button mDone;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -92,6 +93,13 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mRecordName = bundle.getString(RECORD_NAME);
         }
 
+        mDone = (Button) findViewById(R.id.done_button);
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         mStorage = new Storage(getApplicationContext());
         mImageView = (ImageView) findViewById(R.id.selected_image);
         mImageView = (ImageView) findViewById(R.id.selected_image);

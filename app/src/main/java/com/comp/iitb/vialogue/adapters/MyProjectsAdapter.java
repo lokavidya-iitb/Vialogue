@@ -5,16 +5,21 @@ package com.comp.iitb.vialogue.adapters;
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
@@ -86,11 +91,11 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     }
 
     /**
-     * Click listener for popup menu items
+     * Click listener for options pop up menu items
      */
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-    private int listItemPosition;
-    private String projectName;
+        private int listItemPosition;
+        private String projectName;
         public MyMenuItemClickListener(int listItemPosition, String projectName) {
             this.listItemPosition = listItemPosition;
             this.projectName = projectName;
@@ -105,18 +110,51 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                     albumList.remove(newPosition);
                     notifyItemRemoved(newPosition);
                     notifyItemRangeChanged(newPosition, albumList.size());
-                    Storage.deleteThisFolder(Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+projectName);
+                    Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
                     return true;
                 case R.id.renameThis:
-                    File oldName = new File(Environment.getExternalStorageDirectory(),Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+projectName);
-                    File newName = new File(Environment.getExternalStorageDirectory(),Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath+"/"+"myNameDa");
-                    boolean success = oldName.renameTo(newName);
+                    showChangeLangDialog(projectName, listItemPosition);
+
                     return true;
                 default:
             }
             return false;
         }
     }
+
+    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
+
+        dialogBuilder.setTitle("Rename the project?");
+        dialogBuilder.setMessage("Enter the new project name:");
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
+                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
+                boolean success = oldName.renameTo(newName);
+                ProjectsShowcase renamingStub = albumList.get(listItemPosition);
+                albumList.remove(listItemPosition);
+                renamingStub.setName(edt.getText().toString());
+                albumList.add(renamingStub);
+                Log.d("Renaming stub working","---------Yea");
+                notifyDataSetChanged();
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //Just close the dialog
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
 
     @Override
     public int getItemCount() {

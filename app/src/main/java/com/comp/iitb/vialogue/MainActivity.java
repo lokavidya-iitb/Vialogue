@@ -2,9 +2,13 @@ package com.comp.iitb.vialogue;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,14 +28,13 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
 
+import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.FOLDER_PATH;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.IMAGE_PATH;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_NAME;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_PATH;
-@RuntimePermissions
+
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener {
 
@@ -39,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +58,17 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mTabLayout.setupWithViewPager(mViewPager);
 
         setUpTabs();
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
 
+            } else {
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+            }
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     private void setUpTabs() {
@@ -155,5 +173,24 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onProgressUpdate(int progress) {
         Log.d("Progress Main Activity", "___________ ___ _" + progress);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 1){
+            if (Build.VERSION.SDK_INT >= 23) {
+
+                if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(TAG, "Permission is granted");
+
+                } else {
+                    Log.v(TAG, "Permission is revoked");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+                }
+            }
+        }
     }
 }

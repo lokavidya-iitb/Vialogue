@@ -12,8 +12,10 @@
 
 package com.comp.iitb.vialogue.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,16 +23,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.CropImageCoordinator;
 import com.comp.iitb.vialogue.coordinators.FragmentBinder;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
+import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CropMainFragment;
 import com.comp.iitb.vialogue.library.Storage;
@@ -39,7 +44,6 @@ import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
 import java.io.File;
-
 
 public class CropMainActivity extends AppCompatActivity implements FragmentBinder {
 
@@ -60,12 +64,13 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
     public static final String IMAGE_PATH = "imagePath";
     private String mFilePath;
+    private ProgressDialog mProgressDialog;
 
 
     public void setCurrentFragment(Fragment fragment) {
         mCurrentFragment = fragment;
-        if(fragment instanceof CropImageCoordinator)
-            mCropImageCoordinator = (CropImageCoordinator)fragment;
+        if (fragment instanceof CropImageCoordinator)
+            mCropImageCoordinator = (CropImageCoordinator) fragment;
     }
 
     public void setCurrentOptions(CropImageViewOptions options) {
@@ -89,11 +94,11 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         if (bundle != null) {
             mFilePath = bundle.getString(IMAGE_PATH);
         }
-        mDone = (Button)findViewById(R.id.done_button);
+        mDone = (Button) findViewById(R.id.done_button);
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               done();
+                done();
             }
         });
 
@@ -140,25 +145,57 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 .commit();
     }
 
-    private void done(){
-        Bitmap photo = mCropImageCoordinator.getCroppedImage();
-        Uri imageUri = mStorage.getImageUri(photo);
-        String selectedPath = mStorage.getRealPathFromURI(imageUri);
-        File pickedFile = new File(selectedPath);
-        mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-                SharedRuntimeContent.IMAGE_FOLDER_NAME,
-                SharedRuntimeContent.projectFolder.getName(),
-                pickedFile,
-                new FileCopyUpdateListener(this),
-                new OnFileCopyCompleted() {
-                    @Override
-                    public void done(File file, boolean isSuccessful) {
-                        SharedRuntimeContent.imagePathList.add(file.getName());
-                        mFilePath = file.getAbsolutePath();
-                        Bitmap thumbnail = mStorage.getImageThumbnail(file.getAbsolutePath());
-                        SharedRuntimeContent.imageThumbnails.add(thumbnail);
-                        finish();
-                    }
-                });
+    private void done() {
+        /*mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setTitle(getString(R.string.processing_image));
+        mProgressDialog.setMessage(getString(R.string.please_wait));
+        mProgressDialog.setProgress(0);
+        mProgressDialog.setMax(100);
+        mProgressDialog.show();*/
+        new ProcessAsync().execute();
+    }
+
+    private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
+        @Override
+        public void onThumbnailCreated(Bitmap thumbnail) {
+            //mProgressDialog.dismiss();
+            SharedRuntimeContent.imageThumbnails.add(thumbnail);
+
+            finish();
+        }
+    };
+
+    private class ProcessAsync extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            Bitmap photo = mCropImageCoordinator.getCroppedImage();
+            Uri imageUri = mStorage.getImageUri(photo);
+            String selectedPath = mStorage.getRealPathFromURI(imageUri);
+            File pickedFile = new File(selectedPath);
+            mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
+                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
+                    SharedRuntimeContent.projectFolder.getName(),
+                    pickedFile,
+                    new FileCopyUpdateListener(CropMainActivity.this),
+                    new OnFileCopyCompleted() {
+                        @Override
+                        public void done(File file, boolean isSuccessful) {
+                            try {
+                                SharedRuntimeContent.imagePathList.add(file.getName());
+                                mFilePath = file.getAbsolutePath();
+                                Toast.makeText(getApplicationContext(), "Generating Thumbnail", Toast.LENGTH_LONG).show();
+                                mStorage.getImageThumbnailAsync(file.getAbsolutePath(), mThumbnailCreated);
+                            } catch (Exception e) {
+                                Log.d("CropMainActivity", e.getMessage());
+                                Toast.makeText(getApplicationContext(), "Error Generating Thumbnail", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+            return null;
+        }
     }
 }

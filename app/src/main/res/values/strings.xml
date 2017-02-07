@@ -31,7 +31,7 @@
     <string name="title_activity_audio_record">Add Audio</string>
     <string name="title_activity_crop_image">Edit Image</string>
     <string name="projects">Projects</string>
-    <string name="my_projects">My Projects</string>
+    <string name="my_projects">MyProjects</string>
 <!---->
 
     <string name="crop_image_activity_title">Edit Image</string>
@@ -71,4 +71,6 @@
     <string name="delete_button">X</string>
     <string name="add_option">+</string>
     <string name="file_copy_title">File copy</string>
+    <string name="please_wait">Please Wait</string>
+    <string name="processing_image">Processing Image</string>
 </resources>
