@@ -42,20 +42,19 @@ public abstract class QuestionAnswerAdapter extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.question_answer);
         mLayoutInflater = LayoutInflater.from(getContext());
-
         setCancelable(false);
 
         mQuestionLayout = (RelativeLayout) findViewById(R.id.question_layer);
-        setQuestionView(mQuestionLayout);
+        mQuestionLayout.addView(onCreateQuestionView());
 
         mOptionLayout = (RelativeLayout) findViewById(R.id.option_layer);
-        setOptionsView(mOptionLayout);
+        mOptionLayout.addView(onCreateOptionsView());
 
         mHintLayout = (RelativeLayout) findViewById(R.id.hint_layer);
-        setHintsView(mHintLayout);
+        mHintLayout.addView(onCreateHintsView());
 
         mSolutionLayout = (RelativeLayout) findViewById(R.id.solution_layer);
-        setSolutionView(mSolutionLayout);
+        mSolutionLayout.addView(onCreateSolutionView());
 
         mDone = (Button) findViewById(R.id.done_button);
 
@@ -65,7 +64,7 @@ public abstract class QuestionAnswerAdapter extends Dialog {
                 if(isAnswerCorrect()){
                     onAnswerCorrect();
                 } else {
-                    onAnswerInCorrect();
+                    onAnswerIncorrect();
                 }
             }
         });
@@ -96,17 +95,18 @@ public abstract class QuestionAnswerAdapter extends Dialog {
     }
 
 
-    protected abstract void setSolutionView(RelativeLayout mSolutionLayout);
 
-    protected abstract void onAnswerInCorrect();
+    protected abstract View onCreateQuestionView();
 
-    protected abstract void setQuestionView(RelativeLayout questionLayout);
+    protected abstract View onCreateOptionsView();
 
-    protected abstract void setOptionsView(RelativeLayout optionLayout);
+    protected abstract View onCreateHintsView();
+
+    protected abstract View onCreateSolutionView();
 
     protected abstract boolean isAnswerCorrect();
 
-    protected abstract void setHintsView(RelativeLayout hintLayout);
+    protected abstract void onAnswerIncorrect();
 
     protected abstract void onAnswerCorrect();
 
