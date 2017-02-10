@@ -31,6 +31,8 @@
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="drawer_text_size">15sp</dimen>
     <dimen name="drawer_text_padding">8dp</dimen>
+    <dimen name="picker_padding">15dp</dimen>
+    <dimen name="general_button_padding">40dp</dimen>
     <!--
     &lt;!&ndash; Default screen margins, per the Android Design guidelines. &ndash;&gt;
     <dimen name="activity_horizontal_margin">12dp</dimen>

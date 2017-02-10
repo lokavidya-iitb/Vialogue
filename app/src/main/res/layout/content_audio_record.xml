@@ -13,6 +13,7 @@
         android:paddingTop="@dimen/text_margin"
         android:paddingBottom="@dimen/text_margin"
         android:text="00:00"
+        android:layout_below="@+id/play_button"
         android:background="@color/colorAccentLight"
         android:textSize="@dimen/time"
         />
@@ -25,38 +26,29 @@
         android:id="@+id/selected_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/time_display"
         android:layout_alignBottom="@id/view_center"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_alignParentTop="true"
         android:background="@android:color/black"
         />
-    <ImageButton
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/selected_image"
-        android:layout_alignLeft="@id/selected_image"
-        android:src="@drawable/ic_play_arrow_black_24dp"
-        android:background="@android:color/transparent"
-        android:paddingLeft="0dp"
-        android:minWidth="0dp"
-        android:tint="@color/colorPrimary"/>
 
     <Button
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stop_record_audio"
-        android:layout_below="@id/play_button"
+        android:layout_below="@+id/time_display"
+        android:paddingLeft="@dimen/general_button_padding"
+        android:paddingRight="@dimen/general_button_padding"
         android:layout_centerHorizontal="true"/>
     <Button
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/retry"
-        android:layout_below="@id/play_button"
-        android:layout_alignRight="@id/selected_image"/>
+        android:layout_below="@+id/time_display"
+        android:layout_toRightOf="@+id/stop_button"
+        android:layout_alignRight="@+id/done_button"
+        android:layout_alignEnd="@+id/done_button" />
 
     <Button
         android:id="@+id/done_button"
@@ -71,22 +63,35 @@
         android:id="@+id/audio_seek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/record_button"
         android:layout_toRightOf="@+id/play_button"
-        android:layout_alignRight="@+id/retry"
-        android:layout_alignEnd="@+id/retry"
         android:layout_below="@+id/view_center"
         app:thumbColor="@color/colorPrimary"
         app:progressColor="@color/colorPrimary"
-        />
+        android:layout_above="@+id/time_display"
+        android:layout_alignRight="@+id/time_display"
+        android:layout_alignEnd="@+id/time_display" />
 
     <Button
         android:id="@+id/record_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/record_audio"
-        android:layout_below="@+id/play_button"
+        android:layout_below="@+id/time_display"
         android:layout_alignLeft="@+id/play_button"
         android:layout_alignStart="@+id/play_button"
-        />
+        android:layout_toLeftOf="@+id/stop_button"
+        android:layout_toStartOf="@+id/stop_button" />
+
+    <ImageButton
+        android:id="@+id/play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="0dp"
+        android:minWidth="0dp"
+        android:tint="@color/colorPrimary"
+        android:layout_below="@+id/selected_image"
+        android:layout_alignLeft="@+id/time_display"
+        android:layout_alignStart="@+id/time_display" />
 </RelativeLayout>
