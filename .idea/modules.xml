@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Vialogue.iml" filepath="$PROJECT_DIR$/Vialogue.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ijkplayer-java/ijkplayer-java.iml" filepath="$PROJECT_DIR$/ijkplayer-java/ijkplayer-java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vplayercore/vplayercore.iml" filepath="$PROJECT_DIR$/vplayercore/vplayercore.iml" />
     </modules>
   </component>
 </project>

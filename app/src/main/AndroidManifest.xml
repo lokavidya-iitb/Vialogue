@@ -39,11 +39,17 @@
 
         <activity
             android:name=".activity.CropMainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_crop_image"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".library.cropper.CropImageActivity"
-            android:label="@string/add_audio"/>
+        <activity
+            android:name=".library.cropper.CropImageActivity"
+            android:label="@string/add_audio" />
+        <activity
+            android:name=".activity.UploadVideoActivity"
+            android:label="@string/title_activity_upload_video"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
     </application>
 
 </manifest>
