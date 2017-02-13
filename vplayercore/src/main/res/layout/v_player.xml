@@ -39,7 +39,6 @@
                 android:id="@+id/app_video_replay_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_play_circle_outline_white_36dp" />
         </LinearLayout>
 
@@ -98,7 +97,7 @@
                     android:paddingTop="8dp"
                     android:text="50%"
                     android:textColor="@android:color/white"
-                    android:textSize="16dp" />
+                    android:textSize="16sp" />
             </LinearLayout>
             <!-- fast forward-->
             <LinearLayout
@@ -140,7 +139,7 @@
                         android:layout_height="wrap_content"
                         android:text="50%"
                         android:textColor="@color/Grey_300"
-                        android:textSize="16dp" />
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -164,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/small_problem"
                 android:textColor="@android:color/white"
-                android:textSize="14dp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!-- loading-->
@@ -222,7 +221,7 @@
                 android:layout_toLeftOf="@+id/app_video_fullscreen"
                 android:text="10:10"
                 android:textColor="@android:color/white"
-                android:textSize="12dp" />
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/app_video_fullscreen"
@@ -244,11 +243,11 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+       <!-- <ImageView
             android:id="@+id/app_video_finish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chevron_left_white_36dp" />
+            android:src="@drawable/ic_chevron_left_white_36dp" />-->
 
         <TextView
             android:id="@+id/app_video_title"
@@ -256,9 +255,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:padding="8dp"
-            android:singleLine="true"
+            android:minLines="1"
             android:textColor="@android:color/white"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:visibility="visible" />
     </LinearLayout>
 

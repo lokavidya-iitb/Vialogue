@@ -33,6 +33,8 @@
     <dimen name="drawer_text_padding">8dp</dimen>
     <dimen name="picker_padding">15dp</dimen>
     <dimen name="general_button_padding">40dp</dimen>
+    <dimen name="hover_margin">120dp</dimen>
+    <dimen name="small_font_size">10sp</dimen>
     <!--
     &lt;!&ndash; Default screen margins, per the Android Design guidelines. &ndash;&gt;
     <dimen name="activity_horizontal_margin">12dp</dimen>

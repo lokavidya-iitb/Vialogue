@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
+        mViewPager.setOffscreenPageLimit(0);
         mStorage = new Storage(this);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
                 bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
                 bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath()+"/"+SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
+                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
 
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -178,8 +180,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 1){
-            if (Build.VERSION.SDK_INT >= 23) {
+        if (requestCode == 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {

@@ -15,24 +15,28 @@ import com.comp.iitb.vialogue.R;
  * Created by shubh on 10-02-2017.
  */
 
-public abstract class QuestionAnswerAdapter extends Dialog {
+public abstract class QuestionAnswerDialog extends Dialog {
 
     private RelativeLayout mQuestionLayout;
+    private View mQuestionView;
     private RelativeLayout mOptionLayout;
+    private View mOptionsView;
     private RelativeLayout mHintLayout;
+    private View mHintView;
     private RelativeLayout mSolutionLayout;
+    private View mSolutionView;
     private Button mDone;
     private LayoutInflater mLayoutInflater;
-
-    public QuestionAnswerAdapter(Context context) {
+    private Button mSkip;
+    public QuestionAnswerDialog(Context context) {
         super(context);
     }
 
-    public QuestionAnswerAdapter(Context context, int themeResId) {
+    public QuestionAnswerDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
 
-    protected QuestionAnswerAdapter(Context context, boolean cancelable, OnCancelListener cancelListener) {
+    protected QuestionAnswerDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
 
@@ -40,61 +44,90 @@ public abstract class QuestionAnswerAdapter extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.question_answer);
+        setContentView(R.layout.question_answer_layout);
         mLayoutInflater = LayoutInflater.from(getContext());
         setCancelable(false);
 
         mQuestionLayout = (RelativeLayout) findViewById(R.id.question_layer);
-        mQuestionLayout.addView(onCreateQuestionView());
+        mQuestionView = onCreateQuestionView();
+        if (mQuestionView != null)
+            mQuestionLayout.addView(mQuestionView);
 
         mOptionLayout = (RelativeLayout) findViewById(R.id.option_layer);
-        mOptionLayout.addView(onCreateOptionsView());
+        mOptionsView = onCreateOptionsView();
+        if (mOptionsView != null)
+            mOptionLayout.addView(mOptionsView);
 
         mHintLayout = (RelativeLayout) findViewById(R.id.hint_layer);
-        mHintLayout.addView(onCreateHintsView());
+        mHintView = onCreateOptionsView();
+        if (mHintView != null)
+            mHintLayout.addView(mHintView);
 
         mSolutionLayout = (RelativeLayout) findViewById(R.id.solution_layer);
-        mSolutionLayout.addView(onCreateSolutionView());
+        mSolutionView = onCreateSolutionView();
+        if (mSolutionView != null)
+            mSolutionLayout.addView(mSolutionView);
 
         mDone = (Button) findViewById(R.id.done_button);
 
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isAnswerCorrect()){
+                if (isAnswerCorrect()) {
                     onAnswerCorrect();
                 } else {
                     onAnswerIncorrect();
                 }
             }
         });
+        
+        mSkip = (Button)findViewById(R.id.skip_button);
+        if(isSkipEnabled()){
+            mSkip.setVisibility(View.VISIBLE);
+        } else {
+            mSkip.setVisibility(View.GONE);
+        }
+        mSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSkipPressed();
+            }
+        });
     }
 
-    public Button getDoneButton(){
+    protected abstract void onSkipPressed();
+
+    public void showSkip(){ mSkip.setVisibility(View.VISIBLE);}
+
+    public void hideSkip() {mSkip.setVisibility(View.GONE);}
+
+    public void enableSkip() {mSkip.setEnabled(true);}
+
+    public void disableSkip(){mSkip.setEnabled(false);}
+
+    protected Button getDoneButton() {
         return mDone;
     }
 
-    public LayoutInflater getLayoutInflator(){
+    public LayoutInflater getLayoutInflator() {
         return mLayoutInflater;
     }
 
-    public void showHints(){
+    public void showHints() {
         mHintLayout.setVisibility(View.VISIBLE);
     }
 
-    public void hideHints(){
+    public void hideHints() {
         mHintLayout.setVisibility(View.GONE);
     }
 
-    public void showSolution(){
+    public void showSolution() {
         mSolutionLayout.setVisibility(View.VISIBLE);
     }
 
-    public void hideSolution(){
+    public void hideSolution() {
         mSolutionLayout.setVisibility(View.GONE);
     }
-
-
 
     protected abstract View onCreateQuestionView();
 
@@ -110,6 +143,5 @@ public abstract class QuestionAnswerAdapter extends Dialog {
 
     protected abstract void onAnswerCorrect();
 
-
-
+    protected abstract boolean isSkipEnabled();
 }
