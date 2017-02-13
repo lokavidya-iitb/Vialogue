@@ -689,6 +689,7 @@ public class VPlayer implements SimulationHandler {
         mediaIndex = 0;
         mDuration = 0;
         mPosition = 0;
+        mCurrentPosition = 0;
     }
 
     private Handler mHandler = new Handler();
