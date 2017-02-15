@@ -39,7 +39,7 @@ import java.util.Map;
  * Use the {@link ViewVideos#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ViewVideos extends Fragment {
+public class ViewVideosCategory extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,7 +62,7 @@ public class ViewVideos extends Fragment {
     RecyclerView recyclerView;
     ViewCategoryAdapter mAdapter;
     private List<CategoryType> categoryTypeList = new ArrayList<>();
-    public ViewVideos() {
+    public ViewVideosCategory() {
         // Required empty public constructor
     }
 
@@ -73,9 +73,9 @@ public class ViewVideos extends Fragment {
      * @return A new instance of fragment ViewVideos.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewVideos newInstance(String catOrVid) {
+    public static ViewVideosCategory newInstance(String catOrVid) {
         catOrVids=catOrVid;
-        ViewVideos fragment = new ViewVideos();
+        ViewVideosCategory fragment = new ViewVideosCategory();
         Bundle args = new Bundle();/*
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
@@ -110,8 +110,7 @@ public class ViewVideos extends Fragment {
             new GetCategoryType().execute("Ok");
 
         }
-            else {
-
+        else {
             expListView.setVisibility(View.VISIBLE);
             new GetCategories().execute("OK");
         }
@@ -155,7 +154,7 @@ public class ViewVideos extends Fragment {
 
     private void createGroupList() {
         for(Category i :categoryList)
-        groupList.add(i.getName());
+            groupList.add(i.getName());
     }
 
     private void createCollection() {
@@ -217,7 +216,6 @@ public class ViewVideos extends Fragment {
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(mAdapter);
-
             mAdapter.notifyDataSetChanged();
 
         }
@@ -244,31 +242,31 @@ public class ViewVideos extends Fragment {
         @Override
         protected String doInBackground(String... params) {
 
-            vidArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/tutorials/search/findByCategory?category=1","");
+            vidArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/tutorials/search/findByCategory?category="+catOrVids,"");
             Log.d("-------recieved",vidArray.toString());
-           for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
-           {
-               Category tempStub = new Category();
+            for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
+            {
+                Category tempStub = new Category();
 
-               try {
+                try {
 
-                   tempStub.setName(vidArray.getJSONObject(iterateBuddy).get("name").toString());
-                   tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
-                   tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
+                    tempStub.setName(vidArray.getJSONObject(iterateBuddy).get("name").toString());
+                    tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
+                    tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
+                    tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
                    /*
                    tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*/
-                   categoryList.add(tempStub);
-               } catch (JSONException e) {
-                   e.printStackTrace();
-               }
-           }
+                    categoryList.add(tempStub);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             return "Executed";
         }
 
         @Override
         protected void onPostExecute(String result) {
-        pd.dismiss();
+            pd.dismiss();
            /* createGroupList();
 
             createCollection();*/
