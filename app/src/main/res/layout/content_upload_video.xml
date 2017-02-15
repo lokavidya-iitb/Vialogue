@@ -77,86 +77,6 @@
                     android:gravity="top"
                     android:hint="@string/tags" />
 
-                <TextView
-                    android:id="@+id/tv_speed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <EditText
-                        android:id="@+id/et_url"
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:layout_weight="1"
-                        android:gravity="top|left"
-                        android:maxLines="4"
-                        android:selectAllOnFocus="true"
-                        android:text="http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8" />
-
-                    <Button
-                        android:id="@+id/btn_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_margin="8dp"
-                        android:text="play" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-
-
-                    <Button
-                        android:id="@+id/btn_pause"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="pause" />
-
-                    <Button
-                        android:id="@+id/btn_start"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="start" />
-
-                    <Button
-                        android:id="@+id/btn_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="toggleFullScreen" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-
-                    <Button
-                        android:id="@+id/btn_forward"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="forward" />
-
-                    <Button
-                        android:id="@+id/btn_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="back" />
-
-                    <Button
-                        android:id="@+id/btn_toggle_ratio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="toggleRatio" />
-
-                </LinearLayout>
 
                 <Button
                     android:id="@+id/btn_play_sample_1"
@@ -170,19 +90,6 @@
                     android:layout_height="wrap_content"
                     android:text="play sample 2" />
 
-                <Button
-                    android:id="@+id/btn_play_sample_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="play sample 3(https)"
-                    android:visibility="gone"/>
-
-                <Button
-                    android:id="@+id/btn_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="play by out of the box player"
-                    android:visibility="gone"/>
             </LinearLayout>
             </ScrollView>
 

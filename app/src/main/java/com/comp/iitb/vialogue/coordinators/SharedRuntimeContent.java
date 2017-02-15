@@ -21,5 +21,8 @@ public class SharedRuntimeContent {
     public static final String VIDEO_FOLDER_NAME="videos";
     public static final String AUDIO_FOLDER_NAME="audio";
     public static final String VIALOGUE_FOLDER_NAME="vialogue";
+    public static final String TEMP_FOLDER = "temp_folder";
+    public static final String TEMP_IMAGE_NAME = "image_temp";
+
     public static File projectFolder;
 }

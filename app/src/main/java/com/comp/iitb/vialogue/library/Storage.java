@@ -46,16 +46,10 @@ public class Storage {
 
     @Deprecated
     public Storage(@NonNull Activity activity) {
-        if (activity == null) {
-            throw new NullPointerException("Activity cannot be null");
-        }
         mContext = activity;
     }
 
     public Storage(@NonNull Context context) {
-        if (context == null) {
-            throw new NullPointerException("Context cannot be null");
-        }
         mContext = context;
     }
 
@@ -248,7 +242,7 @@ public class Storage {
             }
         }
         cursor.close();*/
-        return MediaFilePath.getPath(mContext,contentUri);
+        return MediaFilePath.getPath(mContext, contentUri);
     }
 
     /*
@@ -306,7 +300,7 @@ public class Storage {
         cursor.close();
         if (thumbnail == null) {
             try {
-                thumbnail = decodeSampledBitmapFromResource(filePath,512, 384);
+                thumbnail = decodeSampledBitmapFromResource(filePath, 512, 384);
                 //If above doesn't work use this
                 //thumbnail = ThumbnailUtils.extractThumbnail(MediaStore.Images.Media.getBitmap(contentResolver, getUriFromPath(filePath)), 512, 384);
                 Log.d(LOG_TAG, "getImageThumb " + String.valueOf(thumbnail == null));
@@ -317,8 +311,8 @@ public class Storage {
         return thumbnail;
     }
 
-    public AsyncTask getImageThumbnailAsync(@NonNull String filePath,@NonNull OnThumbnailCreated thumbnailCreated){
-        ImageThumbnailAsync imageThumbnailAsync = new ImageThumbnailAsync(mContext,this,thumbnailCreated);
+    public AsyncTask getImageThumbnailAsync(@NonNull String filePath, @NonNull OnThumbnailCreated thumbnailCreated) {
+        ImageThumbnailAsync imageThumbnailAsync = new ImageThumbnailAsync(mContext, this, thumbnailCreated);
         return imageThumbnailAsync.execute(filePath);
     }
 
@@ -351,7 +345,7 @@ public class Storage {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath,options);
+        BitmapFactory.decodeFile(filePath, options);
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
@@ -360,13 +354,14 @@ public class Storage {
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(filePath, options);
     }
+
     /**
      * Get the thumbnail of the video from filePath
      *
      * @param filePath : filePath of the video.
      * @return Bitmap : bitmap of the thumbnail.
      */
-    public static Bitmap  getVideoThumbnail(@NonNull String filePath) {
+    public static Bitmap getVideoThumbnail(@NonNull String filePath) {
         Bitmap thumbnail = null;
         thumbnail = ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND);
         if (thumbnail == null) {
@@ -399,12 +394,27 @@ public class Storage {
         return bitmap;
     }
 
+    public File getUniqueFileName(File directory, String prefix, String extension) {
+        File file = null;
+        isInternalStorageWritable();
+        // Get the directory for the user's public directory.
+        if (isStoragePermissionGranted()) {
+            if (isExternalStorageWritable()) {
+                Log.e(LOG_TAG, "External storage is used");
+                int temp = 0;
+                do {
+                    file = new File(directory, prefix + (temp++) + "." + extension);
+                } while (file.exists());
+            }
+        }
+        return file;
+    }
+
     /**
      * Jeff
-     * */
+     */
 
-    public static void createThisDirectory(String path)
-    {
+    public static void createThisDirectory(String path) {
         File folder = new File(Environment.getExternalStorageDirectory() + path);
         boolean success = true;
         if (!folder.exists()) {
@@ -414,75 +424,62 @@ public class Storage {
         } else {
         }
     }
-    public static List<String> getMeAllTheFilesHere(String path){
+
+    public static List<String> getMeAllTheFilesHere(String path) {
         List<String> myStringArray = new ArrayList<String>();
         File sdCard = Environment.getExternalStorageDirectory();
-        File targetDirectory = new File (sdCard.getAbsolutePath()+path);
-        boolean fileArrayExists= false;
-        if(targetDirectory.exists()&& targetDirectory.isDirectory())
-        {
+        File targetDirectory = new File(sdCard.getAbsolutePath() + path);
+        boolean fileArrayExists = false;
+        if (targetDirectory.exists() && targetDirectory.isDirectory()) {
             File file[] = targetDirectory.listFiles();
             try {
-                fileArrayExists =file.equals(null);
-            }
-            catch(NullPointerException e) {
+                fileArrayExists = file.equals(null);
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-            if(!fileArrayExists)
-            {
-                boolean fileExists= false;
+            if (!fileArrayExists) {
+                boolean fileExists = false;
 
-                for (int i=0; i < file.length; i++)
-                {
+                for (int i = 0; i < file.length; i++) {
                     myStringArray.add(file[i].getName());
                 }
-            }
-            else
-            {
+            } else {
             }
         }
         Collections.sort(myStringArray);
         return myStringArray;
     }
 
-    public static List<String> getMeTheeseInThisProject(String projectName, String whichProjectType, String whatFiles)
-    {
+    public static List<String> getMeTheeseInThisProject(String projectName, String whichProjectType, String whatFiles) {
         List<String> myStringArray = new ArrayList<String>();
         File sdCard = Environment.getExternalStorageDirectory();
-        File targetDirectory = new File (sdCard.getAbsolutePath()+Master.AppPath+Master.ProjectsPath+"/"+whichProjectType+"/"+projectName+"/"+whatFiles);
-        boolean fileArrayExists= false;
-        if(targetDirectory.exists()&& targetDirectory.isDirectory())
-        {
+        File targetDirectory = new File(sdCard.getAbsolutePath() + Master.AppPath + Master.ProjectsPath + "/" + whichProjectType + "/" + projectName + "/" + whatFiles);
+        boolean fileArrayExists = false;
+        if (targetDirectory.exists() && targetDirectory.isDirectory()) {
             File file[] = targetDirectory.listFiles();
             try {
-                fileArrayExists =file.equals(null);
-            }
-            catch(NullPointerException e) {
+                fileArrayExists = file.equals(null);
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
-            if(!fileArrayExists)
-            {
-                boolean fileExists= false;
+            if (!fileArrayExists) {
+                boolean fileExists = false;
 
-                for (int i=0; i < file.length; i++)
-                {
+                for (int i = 0; i < file.length; i++) {
                     myStringArray.add(file[i].getName());
                 }
-            }
-            else
-            {
+            } else {
             }
         }
         Collections.sort(myStringArray);
         return myStringArray;
     }
 
-    public static void deleteThisFolder(String projectPath)
-    {
-    File parentDirectory = new File(Environment.getExternalStorageDirectory()+projectPath);
-    deleteDirectory(parentDirectory);
+    public static void deleteThisFolder(String projectPath) {
+        File parentDirectory = new File(Environment.getExternalStorageDirectory() + projectPath);
+        deleteDirectory(parentDirectory);
     }
 
     static private void deleteDirectory(File path) {
@@ -497,12 +494,13 @@ public class Storage {
             }
         }
     }
-    public static void setupLokavidyaLegacy(){
+
+    public static void setupLokavidyaLegacy() {
         Storage.createThisDirectory(Master.AppPath);
-        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath);
-        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath+Master.MyProjectsPath);
-        Storage.createThisDirectory(Master.AppPath+Master.ProjectsPath+Master.SavedProjectsPath);
-        Storage.createThisDirectory(Master.AppPath+Master.VideosPath+Master.SavedVideosPath);
+        Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath);
+        Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.MyProjectsPath);
+        Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.SavedProjectsPath);
+        Storage.createThisDirectory(Master.AppPath + Master.VideosPath + Master.SavedVideosPath);
     }
 
 }
