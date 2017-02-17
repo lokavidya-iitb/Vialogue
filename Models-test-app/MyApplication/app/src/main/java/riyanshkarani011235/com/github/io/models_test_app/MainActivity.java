@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.comp.iitb.vialogue.models.ParseObjects.models.BaseParseClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -15,7 +12,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         new LoadFromJson();
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
     }
 }
