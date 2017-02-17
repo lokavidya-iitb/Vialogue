@@ -16,59 +16,39 @@ import riyanshkarani011235.com.github.io.models_test_app.models.json.AuthorJson;
 @ParseClassName("Author")
 public class Author extends BaseParseClass {
 
-    private AuthorJson mAuthorJson;
-    private String mFirstName;
-    private String mLastName;
-    private String mEmail;
+    private static final class Fields {
+        public static final String
+
+        FIRST_NAME = "first_name",
+        LAST_NAME = "last_name",
+        EMAIL = "email";
+    }
 
     // default constructor required by Parse
     public Author() {}
 
-//    // from JSON string
-//    public Author(String json) throws org.json.JSONException {
-//        this(new Gson().fromJson(json, AuthorJson.class));
-//    }
-//
-//    // from AuthorJson Instance
-//    public Author(AuthorJson authorJson) throws org.json.JSONException {
-//        mAuthorJson = authorJson;
-//        mFirstName = authorJson.getFirstName();
-//        mLastName = authorJson.getLastName();
-//        mEmail = authorJson.getEmail();
-//        init();
-//    }
-
-    // implementing the interface
-    public AuthorJson getJsonObject() {
-        return mAuthorJson;
-    }
-
     public String getFirstName() {
-        return mFirstName;
+        return getString(Fields.FIRST_NAME);
     }
 
     public void setFirstName(String firstName) {
-        mFirstName = firstName;
+        put(Fields.FIRST_NAME, firstName);
     }
 
     public String getLastName() {
-        return mLastName;
+        return getString(Fields.LAST_NAME);
     }
 
     public void setLastName(String lastName) {
-        mLastName = lastName;
+        put(Fields.LAST_NAME, lastName);
     }
 
     public String getEmail() {
-        return mEmail;
+        return getString(Fields.EMAIL);
     }
 
     public void setEmail(String email) {
-        mEmail = email;
+        put(Fields.EMAIL, email);
     }
 
-    @Override
-    public String toString() {
-        return mAuthorJson.toString();
-    }
 }

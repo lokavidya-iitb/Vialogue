@@ -2,6 +2,7 @@ package riyanshkarani011235.com.github.io.models_test_app.models;
 
 import com.google.gson.Gson;
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -15,50 +16,30 @@ import riyanshkarani011235.com.github.io.models_test_app.models.json.ResourceJso
 @ParseClassName("Resource")
 public class Resource extends BaseParseClass {
 
-    private ResourceJson mResourceJson;
-    private String mType;
-    private String mUrl;
+    private static final class Fields {
+        public static final String
+
+        TYPE = "type",
+        FILE = "file";
+    }
 
     // default constructor required by Parse
     public Resource() {}
 
-//    // from JSON String
-//    public Resource(String json) throws org.json.JSONException {
-//        this(new Gson().fromJson(json, ResourceJson.class));
-//    }
-//
-//    // from ResourceJson instance
-//    public Resource(ResourceJson resourceJson) throws org.json.JSONException {
-//        mResourceJson = resourceJson;
-//        mType = resourceJson.getType();
-//        mUrl = resourceJson.getUrl();
-//        init();
-//    }
+    public ParseFile getFile() {
+        return getParseFile(Fields.FILE);
+    }
 
-    // implement interface
-    public ResourceJson getJsonObject() {
-        return mResourceJson;
+    public void setFile(ParseFile file) {
+        put(Fields.FILE, file);
     }
 
     public String getType() {
-        return mType;
+        return getString(Fields.TYPE);
     }
 
     public void setType(String type) {
-        mType = type;
-    }
-
-    public String getUrl() {
-        return mUrl;
-    }
-
-    public void setUrl(String url) {
-        mUrl = url;
-    }
-
-    @Override
-    public String toString() {
-        return mResourceJson.toString();
+        put(Fields.TYPE, type);
     }
 
 }

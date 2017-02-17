@@ -137,8 +137,6 @@ public class LoadFromJson {
         try {
             Log.i("------", "----------------");
             Log.i("------", "----------------");
-            Project p = new Project(json);
-            p.saveParseObject();
         } catch (Exception e) {
             e.printStackTrace();
         }

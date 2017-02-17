@@ -14,30 +14,20 @@ import riyanshkarani011235.com.github.io.models_test_app.models.json.LanguageJso
 @ParseClassName("Language")
 public class Language extends BaseParseClass {
 
-    private LanguageJson mLanguageJson;
-    private String mName;
+    private static final class Fields {
+        public static final String
+
+        NAME = "name";
+    }
 
     // default constructor required by Parse
     public Language() {}
 
-//    // from Json String
-//    public Language(String json) throws org.json.JSONException {
-//        this(new Gson().fromJson(json, LanguageJson.class));
-//    }
-//
-//    public Language(LanguageJson languageJson) throws org.json.JSONException {
-//        mLanguageJson = languageJson;
-//        mName = languageJson.getName();
-//        init();
-//    }
-
-    // implement interface
-    public LanguageJson getJsonObject() {
-        return mLanguageJson;
+    public String getName() {
+        return getString(Fields.NAME);
     }
 
-    @Override
-    public String toString() {
-        return mLanguageJson.toString();
+    public void setName(String name) {
+        put(Fields.NAME, name);
     }
 }

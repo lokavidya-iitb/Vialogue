@@ -25,8 +25,6 @@ public abstract class BaseParseClass extends ParseObject {
     private static class Fields {
         public static final String
 
-        ID = "id",
-        IS_EDITED = "is_edited",
         CHILDREN_RESOURCE_IDS = "children_resource_ids";
     }
 
@@ -63,11 +61,11 @@ public abstract class BaseParseClass extends ParseObject {
     // IS_EDITED
     private boolean mIsEdited = false;
     public final boolean getIsEdited() {
-        return getBoolean(Fields.IS_EDITED);
+        return mIsEdited;
     }
 
     public final void setIsEdited(boolean isEdited) {
-        put(Fields.IS_EDITED, isEdited);
+        mIsEdited = isEdited;
         if(mIsEdited) {
             mIsEditedObservable.notifyObservers();
         }
@@ -104,18 +102,10 @@ public abstract class BaseParseClass extends ParseObject {
 //        save();
 //    }
 
-    public abstract void saveParseObject();
+//    public abstract void saveParseObject();
 
     // constructor
     public void init() throws org.json.JSONException {
-//        BaseJsonClass jsonObject = getJsonObject();
-//        setObjectId(jsonObject.getId());
-//        setIsEdited(jsonObject.getIsEdited());
-//        List<Resource> childrenResources = new ArrayList<Resource>();
-//        for(ResourceJson json : jsonObject.getChildrenResources()) {
-//            childrenResources.add(new Resource(json));
-//        }
-//        setChildrenResources(childrenResources);
         observeChildrenResources();
     }
 
@@ -125,5 +115,5 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // abstract methods
-    public abstract BaseJsonClass getJsonObject();
+//    public abstract BaseJsonClass getJsonObject();
 }

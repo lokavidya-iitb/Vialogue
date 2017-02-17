@@ -25,7 +25,6 @@ import riyanshkarani011235.com.github.io.models_test_app.models.json.SlideJson;
 @ParseClassName("Project")
 public class Project extends BaseParseClass {
 
-    private ProjectJson mProjectJson;
     private String mParentId;
     private String mName;
     private String mDescription;
@@ -58,43 +57,6 @@ public class Project extends BaseParseClass {
 
     // default constructor required by Parse
     public Project() {}
-
-//    // from URI
-//    public Project(Uri uri) throws org.json.JSONException {
-//        // TODO
-//        // get json file from uri
-//        this("");
-//    }
-//
-//    // from JSON String
-//    public Project(String json) throws org.json.JSONException {
-//        this(new Gson().fromJson(json, ProjectJson.class));
-//    }
-//
-//    // from ProjectJson Instance
-//    public Project(ProjectJson projectJson) throws org.json.JSONException {
-//        mProjectJson = projectJson;
-//        setParentId(projectJson.getParentId());
-//        setName(projectJson.getName());
-//        setDescription(projectJson.getDescription());
-//        setAuthor(new Author(projectJson.getAuthor()));
-//        setCategory(new Category(projectJson.getCategory()));
-//        setLanguage(new Language(projectJson.getLanguage()));
-//        setTags(projectJson.getTags());
-//        setResolution(projectJson.getResolution());
-//        setSlideOrderingSequence(projectJson.getSlideOrderingSequence());
-//        List<Slide> slides = new ArrayList<Slide>();
-//        for(SlideJson s : projectJson.getSlides()) {
-//            slides.add(new Slide(s));
-//        }
-//        setSlides(slides);
-//        init();
-//    }
-
-    // implement interface
-    public ProjectJson getJsonObject() {
-        return mProjectJson;
-    }
 
     // getters and setters
     public String getParentId() {

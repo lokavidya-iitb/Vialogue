@@ -17,50 +17,30 @@ import riyanshkarani011235.com.github.io.models_test_app.models.json.SlideJson;
 @ParseClassName("Slide")
 public class Slide extends BaseParseClass {
 
-    public SlideJson mSlideJson;
-    public Integer mProjectSlideId;
-    public List<String> mHyperlinks;
+    private static class Fields {
+        public static final String
+
+        PROJECT_SLIDE_ID = "project_slide_id",
+        HYPERLINKS = "hyperlinks";
+    }
 
     // default constructor required by Parse
     public Slide() {}
 
-//    // from JSON String
-//    public Slide(String json) throws org.json.JSONException {
-//        this(new Gson().fromJson(json, SlideJson.class));
-//    }
-//
-//    // from SlideJson instance
-//    public Slide(SlideJson slideJson) throws org.json.JSONException {
-//        mSlideJson = slideJson;
-//        mProjectSlideId = slideJson.getProjectSlideId();
-//        mHyperlinks = slideJson.getHyperlinks();
-//        init();
-//    }
-
-    // implementing interface
-    public SlideJson getJsonObject() {
-        return mSlideJson;
-    }
-
     public Integer getProjectSlideId() {
-        return mProjectSlideId;
+        return getInt(Fields.PROJECT_SLIDE_ID);
     }
 
     public void setProjectSlideId(Integer projectSlideId) {
-        mProjectSlideId = projectSlideId;
+        put(Fields.PROJECT_SLIDE_ID, projectSlideId);
     }
 
     public List<String> getHyperlinks() {
-        return mHyperlinks;
+        return getList(Fields.HYPERLINKS);
     }
 
     public void setHyperlinks(List<String> hyperlinks) {
-        mHyperlinks = hyperlinks;
-    }
-
-    @Override
-    public String toString() {
-        return mSlideJson.toString();
+        put(Fields.HYPERLINKS, hyperlinks);
     }
 
 }
