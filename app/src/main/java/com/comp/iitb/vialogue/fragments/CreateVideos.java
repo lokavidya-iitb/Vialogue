@@ -71,6 +71,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private File mFolder;
     private Fragment mFragment;
 
+    private CameraImagePicker mCameraImagePicker;
+
     public CreateVideos() {
 
         // Required empty public constructor
@@ -124,8 +126,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
         mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
 
-        CameraImagePicker cameraImagePicker = new CameraImagePicker(this);
-        mCameraPicker.setOnClickListener(cameraImagePicker);
+        mCameraImagePicker = new CameraImagePicker(mStorage, this);
+        mCameraPicker.setOnClickListener(mCameraImagePicker);
 
         //Image Picker
         ImagePickerClick imagePickerClickListener = new ImagePickerClick(this);
@@ -155,7 +157,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             Log.d("Create Videos", "Visible");
-           // setUpProject();
+            // setUpProject();
         } else {
             Log.d("Create Videos", "Not visible");
         }
@@ -210,6 +212,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(getClass().getName(), requestCode + " " + resultCode);
         if (resultCode == RESULT_OK)
             handlePickedData(requestCode, data);
     }
@@ -217,15 +220,26 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
+        Log.d(getClass().getName(), "data " + String.valueOf(data == null));
+        if (requestCode == GET_CAMERA_IMAGE && data == null) {
+
+            Intent intent = new Intent(getContext(), CropMainActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
+            intent.putExtras(bundle);
+            mFragment.startActivity(intent);
+        }
         if (data != null) {
             String selectedPath = null;
             Uri imageUri;
             if (requestCode == GET_CAMERA_IMAGE) {
                 Bundle bundle = data.getExtras();
+                Log.d(getClass().getName(), "bundle " + String.valueOf(bundle == null));
                 if (bundle != null) {
                     Bitmap photo = (Bitmap) bundle.get("data");
                     imageUri = mStorage.getImageUri(photo);
                     selectedPath = mStorage.getRealPathFromURI(imageUri);
+                    Log.d(getClass().getName(), "Got selected path" + selectedPath);
                 }
             } else {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
@@ -234,7 +248,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             if (selectedPath != null) {
                 File pickedFile = new File(selectedPath);
                 switch (requestCode) {
-                    case GET_CAMERA_IMAGE:
                     case GET_IMAGE:
 
                         Intent intent = new Intent(getContext(), CropMainActivity.class);

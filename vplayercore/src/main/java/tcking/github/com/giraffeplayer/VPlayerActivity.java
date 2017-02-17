@@ -32,7 +32,7 @@ public class VPlayerActivity extends Activity {
             player.setFullScreenOnly(config.fullScreenOnly);
             player.setScaleType(TextUtils.isEmpty(config.scaleType) ? VPlayer.SCALETYPE_FITPARENT : config.scaleType);
             player.setTitle(TextUtils.isEmpty(config.title) ? "" : config.title);
-            player.setShowNavIcon(config.showNavIcon);
+            player.setShowNavIcon(false);
             player.play(config.url);
         }
     }

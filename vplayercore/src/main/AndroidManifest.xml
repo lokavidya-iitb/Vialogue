@@ -14,6 +14,7 @@
             android:name=".VPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
+            android:windowSoftInputMode="adjustResize|adjustPan"
             />
 
     </application>

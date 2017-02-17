@@ -29,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
@@ -39,7 +40,6 @@ import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CropMainFragment;
 import com.comp.iitb.vialogue.library.Storage;
-import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
@@ -58,6 +58,8 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private Storage mStorage;
     private Button mDone;
     private Uri mCropImageUri;
+    private RelativeLayout mPleaseWait;
+    AppCompatActivity mActivity;
 
     private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
     //endregion
@@ -88,7 +90,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         mStorage = new Storage(getApplicationContext());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
+        mActivity = this;
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -101,7 +103,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 done();
             }
         });
-
+        mPleaseWait = (RelativeLayout) findViewById(R.id.please_wait);
         setMainFragmentByPreset(CropDemoPreset.RECT);
 
     }
@@ -132,6 +134,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             finish();
             return true;
         }
+
         if (mCurrentFragment != null && mCurrentFragment.onOptionsItemSelected(item)) {
             return true;
         }
@@ -146,22 +149,16 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     }
 
     private void done() {
-        /*mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setTitle(getString(R.string.processing_image));
-        mProgressDialog.setMessage(getString(R.string.please_wait));
-        mProgressDialog.setProgress(0);
-        mProgressDialog.setMax(100);
-        mProgressDialog.show();*/
+        mPleaseWait.setVisibility(View.VISIBLE);
         new ProcessAsync().execute();
     }
 
     private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
         @Override
         public void onThumbnailCreated(Bitmap thumbnail) {
-            //mProgressDialog.dismiss();
-            SharedRuntimeContent.imageThumbnails.add(thumbnail);
 
+            SharedRuntimeContent.imageThumbnails.add(thumbnail);
+            mPleaseWait.setVisibility(View.GONE);
             finish();
         }
     };
@@ -179,7 +176,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                     SharedRuntimeContent.IMAGE_FOLDER_NAME,
                     SharedRuntimeContent.projectFolder.getName(),
                     pickedFile,
-                    new FileCopyUpdateListener(CropMainActivity.this),
+                    null,
                     new OnFileCopyCompleted() {
                         @Override
                         public void done(File file, boolean isSuccessful) {
