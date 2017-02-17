@@ -1,13 +1,10 @@
-package riyanshkarani011235.com.github.io.models_test_app.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models;
 
-import com.google.gson.Gson;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import riyanshkarani011235.com.github.io.models_test_app.models.json.ProjectJson;
-import riyanshkarani011235.com.github.io.models_test_app.models.json.ResourceJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
 
 /**
  * Created by ironstein on 16/02/17.

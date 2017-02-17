@@ -1,4 +1,4 @@
-package riyanshkarani011235.com.github.io.models_test_app.models.json;
+package com.comp.iitb.vialogue.models.ParseObjects.models.json;
 
 import java.util.List;
 

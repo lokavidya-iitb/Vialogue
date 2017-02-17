@@ -1,22 +1,11 @@
-package riyanshkarani011235.com.github.io.models_test_app.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models;
 
-import android.net.Uri;
-import android.util.Log;
-
-import com.google.gson.Gson;
 import com.parse.ParseClassName;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import riyanshkarani011235.com.github.io.models_test_app.LoadFromJson;
-import riyanshkarani011235.com.github.io.models_test_app.models.json.ProjectJson;
-import riyanshkarani011235.com.github.io.models_test_app.models.json.SlideJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.SlideJson;
 
 /**
  * Created by ironstein on 15/02/17.

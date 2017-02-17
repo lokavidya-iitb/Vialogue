@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.parse.Parse;
-import com.parse.ParseInstallation;
-
-import riyanshkarani011235.com.github.io.models_test_app.models.BaseParseClass;
-import riyanshkarani011235.com.github.io.models_test_app.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.BaseParseClass;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 
 public class MainActivity extends AppCompatActivity {
 

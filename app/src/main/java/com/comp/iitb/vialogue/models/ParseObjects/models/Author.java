@@ -1,13 +1,8 @@
-package riyanshkarani011235.com.github.io.models_test_app.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
 import com.parse.ParseClassName;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import riyanshkarani011235.com.github.io.models_test_app.models.json.AuthorJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.AuthorJson;
 
 /**
  * Created by ironstein on 16/02/17.

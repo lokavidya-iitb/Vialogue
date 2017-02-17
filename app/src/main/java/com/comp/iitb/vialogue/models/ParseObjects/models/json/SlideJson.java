@@ -1,12 +1,12 @@
 
-package riyanshkarani011235.com.github.io.models_test_app.models.json;
+package com.comp.iitb.vialogue.models.ParseObjects.models.json;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class LanguageJson extends BaseJsonClass {
+public class SlideJson extends BaseJsonClass {
 
     /**
      * 
@@ -16,9 +16,19 @@ public class LanguageJson extends BaseJsonClass {
     @SerializedName("id")
     @Expose
     private String id;
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @SerializedName("is_edited")
     @Expose
     private Boolean isEdited;
+    /**
+     * 
+     * (Required)
+     * 
+     */
     @SerializedName("children_resources")
     @Expose
     private List<ResourceJson> childrenResources = null;
@@ -27,9 +37,17 @@ public class LanguageJson extends BaseJsonClass {
      * (Required)
      * 
      */
-    @SerializedName("name")
+    @SerializedName("project_slide_id")
     @Expose
-    private String name;
+    private Integer projectSlideId;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @SerializedName("hyperlinks")
+    @Expose
+    private List<String> hyperlinks = null;
 
     /**
      * 
@@ -49,18 +67,38 @@ public class LanguageJson extends BaseJsonClass {
         this.id = id;
     }
 
+    /**
+     * 
+     * (Required)
+     * 
+     */
     public Boolean getIsEdited() {
         return isEdited;
     }
 
+    /**
+     * 
+     * (Required)
+     * 
+     */
     public void setIsEdited(Boolean isEdited) {
         this.isEdited = isEdited;
     }
 
+    /**
+     * 
+     * (Required)
+     * 
+     */
     public List<ResourceJson> getChildrenResources() {
         return childrenResources;
     }
 
+    /**
+     * 
+     * (Required)
+     * 
+     */
     public void setChildrenResources(List<ResourceJson> childrenResources) {
         this.childrenResources = childrenResources;
     }
@@ -70,8 +108,8 @@ public class LanguageJson extends BaseJsonClass {
      * (Required)
      * 
      */
-    public String getName() {
-        return name;
+    public Integer getProjectSlideId() {
+        return projectSlideId;
     }
 
     /**
@@ -79,8 +117,26 @@ public class LanguageJson extends BaseJsonClass {
      * (Required)
      * 
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setProjectSlideId(Integer projectSlideId) {
+        this.projectSlideId = projectSlideId;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    public List<String> getHyperlinks() {
+        return hyperlinks;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    public void setHyperlinks(List<String> hyperlinks) {
+        this.hyperlinks = hyperlinks;
     }
 
     @Override

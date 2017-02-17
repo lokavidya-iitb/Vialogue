@@ -6,13 +6,8 @@ package riyanshkarani011235.com.github.io.models_test_app;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.*;
 
-
-import java.io.IOException;
-
-import riyanshkarani011235.com.github.io.models_test_app.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 
 public class LoadFromJson {
 

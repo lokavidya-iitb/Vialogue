@@ -1,20 +1,17 @@
-package riyanshkarani011235.com.github.io.models_test_app.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.parse.ParseObject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import riyanshkarani011235.com.github.io.models_test_app.models.json.BaseJsonClass;
-import riyanshkarani011235.com.github.io.models_test_app.models.json.ProjectJson;
-import riyanshkarani011235.com.github.io.models_test_app.models.json.ResourceJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.BaseJsonClass;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
+import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
 
 /**
  * Created by ironstein on 13/02/17.
