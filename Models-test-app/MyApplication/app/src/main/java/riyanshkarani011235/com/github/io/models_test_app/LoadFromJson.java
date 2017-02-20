@@ -6,9 +6,6 @@ package riyanshkarani011235.com.github.io.models_test_app;
 
 import android.util.Log;
 
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
-
 public class LoadFromJson {
 
     String json =
