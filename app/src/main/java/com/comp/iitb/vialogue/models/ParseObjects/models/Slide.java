@@ -22,7 +22,14 @@ public class Slide extends BaseParseClass {
     }
 
     // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Slide() {}
+
+    public Slide(int projectSlideId) {
+        setProjectSlideId(projectSlideId);
+    }
 
     public Integer getProjectSlideId() {
         return getInt(Fields.PROJECT_SLIDE_ID);
