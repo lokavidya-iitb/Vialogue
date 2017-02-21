@@ -28,12 +28,8 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
-
 import static android.content.ContentValues.TAG;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.FOLDER_PATH;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.IMAGE_PATH;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_NAME;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_PATH;
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener {
@@ -42,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
-
+        SharedRuntimeContent.mainActivity = this;
         setUpTabs();
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
@@ -76,15 +73,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
-                bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
                 bundle.putString(RECORD_NAME, "hello.wav");
                 bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
 
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
     }
@@ -137,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -168,7 +166,25 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public void onListFragmentInteraction(DummyContent.Slide item) {
+        Log.d(getClass().getName(), item.slideType.toString());
+        //SharedRuntimeContent.ITEMS.get(SharedRuntimeContent.ITEMS.indexOf(item));
+        if (item.slideType == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
+            Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+            Bundle bundle = new Bundle();
+            Log.d(getClass().getName(), "item : " + item.slideType.toString());
+            Log.d(getClass().getName(), "item : " + item.path.toString());
+            Log.d(getClass().getName(), "item : ");
 
+            bundle.putInt(SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
+            /*bundle.putString(FOLDER_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath());
+            bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+            bundle.putString(RECORD_NAME, new File(item.path).getName() + ".wav");
+            bundle.putString(IMAGE_PATH, item.path);
+*/
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+        onContextDeleteMenuNotRequired();
     }
 
     @Override
@@ -194,4 +210,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             }
         }
     }
+
+    public void onContextDeleteMenuRequired(int position) {
+        mMenu.findItem(R.id.delete_option).setVisible(true);
+    }
+
+    public void onContextDeleteMenuNotRequired() {
+        mMenu.findItem(R.id.delete_option).setVisible(false);
+    }
+
 }

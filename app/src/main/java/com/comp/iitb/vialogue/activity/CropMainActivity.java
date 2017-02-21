@@ -40,6 +40,7 @@ import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CropMainFragment;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.DummyContent;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
@@ -158,6 +159,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         public void onThumbnailCreated(Bitmap thumbnail) {
 
             SharedRuntimeContent.imageThumbnails.add(thumbnail);
+            SharedRuntimeContent.addSlide(new DummyContent.Slide(mFilePath, null, thumbnail, DummyContent.SlideType.IMAGE));
             mPleaseWait.setVisibility(View.GONE);
             finish();
         }
@@ -183,7 +185,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                             try {
                                 SharedRuntimeContent.imagePathList.add(file.getName());
                                 mFilePath = file.getAbsolutePath();
-                                Toast.makeText(getApplicationContext(), "Generating Thumbnail", Toast.LENGTH_LONG).show();
                                 mStorage.getImageThumbnailAsync(file.getAbsolutePath(), mThumbnailCreated);
                             } catch (Exception e) {
                                 Log.d("CropMainActivity", e.getMessage());

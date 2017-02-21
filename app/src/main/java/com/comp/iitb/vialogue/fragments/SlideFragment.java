@@ -7,17 +7,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.helpers.SlideRecyclerViewCallback;
-import com.comp.iitb.vialogue.models.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -74,10 +72,11 @@ public class SlideFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             //Adapter for Slides
-            SlideRecyclerViewAdapter adapter=new SlideRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(SharedRuntimeContent.ITEMS, mListener);
             recyclerView.setAdapter(adapter);
+            SharedRuntimeContent.projectAdapter = adapter;
             //Reordering helper for slides
-            SlideRecyclerViewCallback callback=new SlideRecyclerViewCallback(adapter,DummyContent.ITEMS);
+            SlideRecyclerViewCallback callback = new SlideRecyclerViewCallback(adapter, SharedRuntimeContent.ITEMS);
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
             itemTouchHelper.attachToRecyclerView(recyclerView);
 

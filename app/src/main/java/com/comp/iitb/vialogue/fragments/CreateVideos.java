@@ -33,6 +33,7 @@ import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
+import com.comp.iitb.vialogue.models.DummyContent;
 
 import java.io.File;
 
@@ -268,7 +269,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                                     public void done(File file, boolean isSuccessful) {
                                         SharedRuntimeContent.videoPathList.add(file.getName());
                                         Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
-                                        SharedRuntimeContent.imageThumbnails.add(thumbnail);
+                                        SharedRuntimeContent.addSlide(new DummyContent.Slide(file.getAbsolutePath(),null,thumbnail, DummyContent.SlideType.VIDEO));
                                     }
                                 });
                         break;
