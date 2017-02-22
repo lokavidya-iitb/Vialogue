@@ -165,7 +165,7 @@ public class postmanCommunication {
 
     public static JSONObject okhttpgetGuestTutorial(String URL, String id){
         okhttpGuestAuth();
-        Log.i("GuestTutorial- xauth", xAUTH_TOKEN);
+        Log.i("`GuestTutorial- xauth", xAUTH_TOKEN);
 
         Log.i("OKHTTP", "auth done inside getjson" + URL);
 

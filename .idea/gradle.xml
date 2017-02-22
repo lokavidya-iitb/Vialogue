@@ -7,10 +7,10 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="/Volumes/jarvis/Documents/projects_working_directory/iitb_internship_working_directory/Riyansh_Karani-Lokavidya/Lokavidya-Android/Vialogue-1" />
-            <option value="/Volumes/jarvis/Documents/projects_working_directory/iitb_internship_working_directory/Riyansh_Karani-Lokavidya/Lokavidya-Android/Vialogue-1/app" />
-            <option value="/Volumes/jarvis/Documents/projects_working_directory/iitb_internship_working_directory/Riyansh_Karani-Lokavidya/Lokavidya-Android/Vialogue-1/ijkplayer-java" />
-            <option value="/Volumes/jarvis/Documents/projects_working_directory/iitb_internship_working_directory/Riyansh_Karani-Lokavidya/Lokavidya-Android/Vialogue-1/vplayercore" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/ijkplayer-java" />
+            <option value="$PROJECT_DIR$/vplayercore" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

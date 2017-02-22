@@ -1,13 +1,17 @@
 package com.comp.iitb.vialogue.adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.helpers.DeleteActionMode;
+import com.comp.iitb.vialogue.models.DummyContent;
 import com.comp.iitb.vialogue.models.DummyContent.Slide;
 
 import java.util.List;
@@ -37,9 +41,11 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mThumbnail.setImageBitmap(mValues.get(position).thumbnail);
+        if (holder.mItem.slideType == DummyContent.SlideType.IMAGE)
+            holder.mAudioMissing.setVisibility(View.VISIBLE);
+        else
+            holder.mAudioMissing.setVisibility(View.GONE);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,28 +57,44 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             }
         });
     }
+/*
+
+    void toggleSelection(int pos){}
+    void clearSelections(){}
+    int getSelectedItemCount(){}
+    List<Integer> getSelectedItems(){}
+*/
+
 
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final ImageView mThumbnail;
+        public final ImageView mAudioMissing;
         public Slide mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            mView.setOnLongClickListener(this);
+            mAudioMissing = (ImageView) view.findViewById(R.id.audio_missing);
         }
 
         @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+        public boolean onLongClick(View v) {
+            Activity activity = (Activity) mView.getContext();
+            DeleteActionMode actionMode = new DeleteActionMode(activity,
+                    SharedRuntimeContent.ITEMS,
+                    SharedRuntimeContent.getSlidePosition(mItem),
+                    SharedRuntimeContent.projectAdapter);
+            activity.startActionMode(actionMode);
+            SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);
+            return false;
         }
     }
 }
