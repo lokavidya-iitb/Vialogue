@@ -1,12 +1,9 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package riyanshkarani011235.com.github.io.models_test_app.models;
 
 import com.parse.ParseClassName;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.BaseJsonClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.SlideJson;
 
 /**
  * Created by ironstein on 16/02/17.
@@ -18,7 +15,6 @@ public class Slide extends BaseParseClass {
     private static class Fields {
         public static final String
 
-        PROJECT_SLIDE_ID = "project_slide_id",
         HYPERLINKS = "hyperlinks";
     }
 
@@ -28,17 +24,9 @@ public class Slide extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Slide() {}
 
-    public Slide(int projectSlideId) {
-        setProjectSlideId(projectSlideId);
-    }
-
-    public Integer getProjectSlideId() {
-        return getInt(Fields.PROJECT_SLIDE_ID);
-    }
-
-    private void setProjectSlideId(Integer projectSlideId) {
-        put(Fields.PROJECT_SLIDE_ID, projectSlideId);
-    }
+//    public Slide(String type) {
+//        put()
+//    }
 
     public ArrayList<String> getHyperlinks() {
         return (ArrayList) getList(Fields.HYPERLINKS);
@@ -53,6 +41,10 @@ public class Slide extends BaseParseClass {
         // if the slideId passed corresponds to a valid slide in the Slide class in the database
 
         ArrayList<String> hyperlinks = getHyperlinks();
+        // if hyperlinks array not initialized
+        if(hyperlinks == null) {
+            hyperlinks = new ArrayList<String>();
+        }
         hyperlinks.add(slideId);
         setHyperlinks(hyperlinks);
     }

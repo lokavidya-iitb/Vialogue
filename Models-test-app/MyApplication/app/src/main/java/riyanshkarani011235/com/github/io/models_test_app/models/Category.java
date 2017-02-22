@@ -1,15 +1,13 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package riyanshkarani011235.com.github.io.models_test_app.models;
 
 import com.parse.ParseClassName;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.LanguageJson;
 
 /**
  * Created by ironstein on 16/02/17.
  */
 
-@ParseClassName("Language")
-public class Language extends BaseParseClass {
+@ParseClassName("Category")
+public class Category extends BaseParseClass {
 
     private static final class Fields {
         public static final String
@@ -21,7 +19,7 @@ public class Language extends BaseParseClass {
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
-    public Language() {}
+    public Category() {}
 
     public String getName() {
         return getString(Fields.NAME);
@@ -30,4 +28,5 @@ public class Language extends BaseParseClass {
     public void setName(String name) {
         put(Fields.NAME, name);
     }
+
 }

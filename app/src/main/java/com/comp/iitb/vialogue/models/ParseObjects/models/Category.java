@@ -18,6 +18,9 @@ public class Category extends BaseParseClass {
     }
 
     // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Category() {}
 
     public String getName() {

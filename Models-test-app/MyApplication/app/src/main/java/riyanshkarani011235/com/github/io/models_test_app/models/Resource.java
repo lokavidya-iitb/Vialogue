@@ -1,10 +1,7 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package riyanshkarani011235.com.github.io.models_test_app.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
 
 /**
  * Created by ironstein on 16/02/17.
