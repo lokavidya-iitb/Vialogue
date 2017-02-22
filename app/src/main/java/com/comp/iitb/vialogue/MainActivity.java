@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mTabLayout.addOnTabSelectedListener(tabSelectedListener);
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
-
             switch (i) {
                 case 0:
                     tab.setIcon(R.drawable.home);
@@ -123,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             ImageView tabTextView = (ImageView) relativeLayout.findViewById(R.id.tab_image);
             tabTextView.setText(tab.getText());*//*
             tab.setCustomView(relativeLayout);*/
-            //tab.select();
+            tab.select();
         }
         mTabLayout.getTabAt(0).select();
 

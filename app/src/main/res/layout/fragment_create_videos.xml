@@ -31,7 +31,6 @@
                     android:background="@color/colorAccentLight"
                     android:padding="10dp"
                     android:text="@string/app_name"
-                    android:textAlignment="center"
                     android:layout_marginBottom="5dp"/>
 
                 <EditText
@@ -40,7 +39,6 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorAccentLight"
                     android:padding="10dp"
-                    android:textAlignment="center"
                     android:visibility="gone"
                     android:layout_marginBottom="5dp"/>
 
@@ -49,6 +47,37 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
                     android:orientation="horizontal">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <Button
+                                android:id="@+id/image_picker"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:text="@string/image"
+                                android:textAllCaps="false"
+                                android:paddingTop="@dimen/picker_padding"
+                                android:paddingBottom="@dimen/picker_padding"
+                                android:textColor="@android:color/white"/>
+
+                            <View
+                                android:layout_width="@dimen/segment_width"
+                                android:layout_height="@dimen/segment_height"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@android:color/white" />
+                        </RelativeLayout>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -91,36 +120,6 @@
                             android:layout_height="wrap_content">
 
                             <Button
-                                android:id="@+id/image_picker"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="?android:attr/selectableItemBackground"
-                                android:text="@string/image"
-                                android:textAllCaps="false"
-                                android:paddingTop="@dimen/picker_padding"
-                                android:paddingBottom="@dimen/picker_padding"
-                                android:textColor="@android:color/white"/>
-
-                            <View
-                                android:layout_width="@dimen/segment_width"
-                                android:layout_height="@dimen/segment_height"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:background="@android:color/black" />
-                        </RelativeLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <Button
                                 android:id="@+id/video_picker"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -137,7 +136,7 @@
                                 android:layout_height="@dimen/segment_height"
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
-                                android:background="@android:color/black" />
+                                android:background="@android:color/white" />
                         </RelativeLayout>
                     </LinearLayout>
 
@@ -167,7 +166,7 @@
                                 android:layout_height="@dimen/segment_height"
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerVertical="true"
-                                android:background="@android:color/black" />
+                                android:background="@android:color/white" />
 
                         </RelativeLayout>
                     </LinearLayout>
