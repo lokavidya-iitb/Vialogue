@@ -124,7 +124,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="?android:attr/selectableItemBackground"
-                                android:text="@string/video"
+                                android:text="@string/choose_video"
                                 android:textAllCaps="false"
                                 android:paddingTop="@dimen/picker_padding"
                                 android:paddingBottom="@dimen/picker_padding"

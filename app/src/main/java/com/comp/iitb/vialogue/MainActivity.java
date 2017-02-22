@@ -24,27 +24,23 @@ import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Author;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
-
-import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
-        OnProgressUpdateListener {
+        OnProgressUpdateListener, TabSelectedHelper {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
     private Menu mMenu;
+    private FloatingActionButton mPreviewFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,21 +58,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
         SharedRuntimeContent.mainActivity = this;
-        setUpTabs();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-
-            } else {
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-            }
-        }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
+        mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
@@ -115,6 +98,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 //
 //        p.saveParseObject();
 
+        setUpTabs();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+
+            } else {
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+            }
+        }
+
+        SharedRuntimeContent.previewFab = mPreviewFab;
     }
 
     @Override
@@ -129,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 tabNames,
                 ContextCompat.getColor(getApplicationContext(), R.color.tabSelected),
                 ContextCompat.getColor(getApplicationContext(), R.color.tabUnselected));
+        tabSelectedListener.setTabSelectedHelper(this);
         mTabLayout.addOnTabSelectedListener(tabSelectedListener);
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
@@ -201,10 +199,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         if (item.slideType == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
             Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
             Bundle bundle = new Bundle();
-            Log.d(getClass().getName(), "item : " + item.slideType.toString());
-            Log.d(getClass().getName(), "item : " + item.path.toString());
-            Log.d(getClass().getName(), "item : ");
-
             bundle.putInt(SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
             /*bundle.putString(FOLDER_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath());
             bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
@@ -249,4 +243,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mMenu.findItem(R.id.delete_option).setVisible(false);
     }
 
+    @Override
+    public void onTabSelected(int tabNumber) {
+        switch (tabNumber) {
+            case 0:
+                mPreviewFab.hide();
+                break;
+            case 1:
+                mPreviewFab.show();
+                break;
+            case 2:
+                mPreviewFab.hide();
+                break;
+            case 3:
+                mPreviewFab.hide();
+        }
+    }
 }

@@ -34,6 +34,9 @@ public class DeleteActionMode implements ActionMode.Callback {
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         mode.getMenuInflater().inflate(R.menu.create_project_action, menu);
         MenuItem item = menu.findItem(R.id.delete_option);
+        SharedRuntimeContent.selectedPosition = mIndex;
+        SharedRuntimeContent.isSelected = true;
+        SharedRuntimeContent.updateAdapterView();
         item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -60,6 +63,8 @@ public class DeleteActionMode implements ActionMode.Callback {
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        SharedRuntimeContent.isSelected = false;
+        SharedRuntimeContent.updateAdapterView();
         if (mActivity instanceof AppCompatActivity)
             ((AppCompatActivity) mActivity).getSupportActionBar().show();
     }

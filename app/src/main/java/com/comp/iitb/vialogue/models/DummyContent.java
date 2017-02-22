@@ -50,6 +50,10 @@ public class DummyContent {
         public String toString() {
             return slideType.toString();
         }
+
+        public String getAudioPath() {
+            return audioPath;
+        }
     }
 
     public enum SlideType {

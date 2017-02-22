@@ -6,7 +6,8 @@
     <string name="user_account">Profile</string>
     <string name="camera">Take\nImage</string>
     <string name="image">Choose\nImage</string>
-    <string name="video">Choose\nVideo</string>
+    <string name="choose_video">Choose\nVideo</string>
+    <string name="play_video">Play Video</string>
     <string name="add_audio">Add Audio</string>
     <string name="captured_image_name">Lokavidya</string>
     <string name="question">Write Question</string>
@@ -21,7 +22,7 @@
     <string name="cannot_record">Cannot record while playing</string>
     <string name="cannot_play">Cannot play while recording</string>
     <string-array name="tab_titles">
-        <item>Vialogue</item>
+        <item>@string/app_name</item>
         <item>Create Videos</item>
         <item>Videos</item>
         <item>My Account</item>
