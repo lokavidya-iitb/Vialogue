@@ -5,14 +5,8 @@ import com.parse.ParseObject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.BaseJsonClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
 
 /**
  * Created by ironstein on 13/02/17.
@@ -26,12 +20,24 @@ public abstract class BaseParseClass extends ParseObject {
         CHILDREN_RESOURCES = "children_resources";
     }
 
+    public BaseParseClass() {
+        mIsEditedObservable = new Observable();
+        mIsEditedObserver = new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                setIsEdited(true);
+            }
+        };
+        mIsEdited = false;
+        mChildrenResources = new ParseObjectsCollection<>();
+    }
+
     // ID
     // everything related to ID's is already implemented by Parse
     // getObjectId and setObjectId methods can be used as getter and setter
 
     // IS_EDITED_OBSERVABLE
-    private Observable mIsEditedObservable = new Observable();
+    private Observable mIsEditedObservable;
 
     public final void addIsEditedObserver(Observer observer) {
         mIsEditedObservable.addObserver(observer);
@@ -42,13 +48,7 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // IS_EDITED_OBSERVER
-    private Observer mIsEditedObserver = new Observer() {
-        @Override
-        public void update(Observable observable, Object o) {
-            setIsEdited(true);
-        }
-    };
-
+    private Observer mIsEditedObserver;
     public final void observeChildrenResources() {
         for(Resource r : getChildrenResources().getAll()) {
             r.addIsEditedObserver(mIsEditedObserver);
@@ -56,7 +56,7 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // IS_EDITED
-    private boolean mIsEdited = false;
+    private boolean mIsEdited;
 
     public final boolean getIsEdited() {
         return mIsEdited;
@@ -70,7 +70,7 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // CHILDREN_RESOURCES
-    private ParseObjectsCollection<Resource> mChildrenResources = new ParseObjectsCollection<>();
+    private ParseObjectsCollection<Resource> mChildrenResources;
 
     public final ParseObjectsCollection<Resource> getChildrenResources() {
         return (ParseObjectsCollection) getParseObject(Fields.CHILDREN_RESOURCES);
@@ -89,7 +89,11 @@ public abstract class BaseParseClass extends ParseObject {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
             if(this.get(key) instanceof BaseParseClass) {
+                // is an instance of BaseParseClass
                 ((BaseParseClass) this.getParseObject(key)).saveParseObject();
+            } else if(this.get(key) instanceof ParseObjectsCollection) {
+                // is an instance of ParseObjectCollection
+                ((ParseObjectsCollection) this.getParseObject(key)).saveParseObject();
             }
         }
 

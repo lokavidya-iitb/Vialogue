@@ -1,19 +1,14 @@
 package riyanshkarani011235.com.github.io.models_test_app;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.parse.ParseException;
-import com.parse.ParseObject;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import riyanshkarani011235.com.github.io.models_test_app.models.Author;
-import riyanshkarani011235.com.github.io.models_test_app.models.Category;
-import riyanshkarani011235.com.github.io.models_test_app.models.Language;
-import riyanshkarani011235.com.github.io.models_test_app.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Author;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 
 public class MainActivity extends AppCompatActivity {
 

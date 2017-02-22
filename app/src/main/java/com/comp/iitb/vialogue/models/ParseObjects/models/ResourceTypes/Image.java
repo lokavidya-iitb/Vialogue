@@ -2,8 +2,6 @@ package com.comp.iitb.vialogue.models.ParseObjects.models.ResourceTypes;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resource;
 
-import java.util.ArrayList;
-
 /**
  * Created by ironstein on 20/02/17.
  */

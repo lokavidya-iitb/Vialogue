@@ -2,8 +2,6 @@ package com.comp.iitb.vialogue.models.ParseObjects.models;
 
 import com.parse.ParseClassName;
 
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.LanguageJson;
-
 /**
  * Created by ironstein on 16/02/17.
  */

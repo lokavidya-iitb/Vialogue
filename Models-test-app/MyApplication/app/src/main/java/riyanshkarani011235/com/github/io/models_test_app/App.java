@@ -5,13 +5,13 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
-import riyanshkarani011235.com.github.io.models_test_app.models.Author;
-import riyanshkarani011235.com.github.io.models_test_app.models.Category;
-import riyanshkarani011235.com.github.io.models_test_app.models.Language;
-import riyanshkarani011235.com.github.io.models_test_app.models.ParseObjectsCollection;
-import riyanshkarani011235.com.github.io.models_test_app.models.Project;
-import riyanshkarani011235.com.github.io.models_test_app.models.Resource;
-import riyanshkarani011235.com.github.io.models_test_app.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Author;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
+import com.comp.iitb.vialogue.models.ParseObjects.models.ParseObjectsCollection;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resource;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 
 /**

@@ -1,21 +1,17 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
-import com.parse.Parse;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseRelation;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 /**
  * Created by ironstein on 20/02/17.
  */
 
 @ParseClassName("Collection")
-public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseClass {
+public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObject {
 
     private static final class Fields {
         public static final String
@@ -25,13 +21,8 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
 
     private ArrayList<T> mObjectsArray;
 
-    public void ParseObjectsCollection() {
+    public ParseObjectsCollection() {
         mObjectsArray = new ArrayList<T>();
-    }
-
-    public Array[] toArray() {
-        Array[] arrayList = new Array[mObjectsArray.size()];
-        return mObjectsArray.toArray(arrayList);
     }
 
     public void add(T object) {
@@ -51,13 +42,17 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     }
 
     public void saveParseObject() {
-        put(Fields.ELEMENTS_FIELD, toArray());
 
-//        // call the mySave method for all the children BaseParseClass instances
-//        for(T object : mObjectsArray) {
-//            object.saveParseObject();
-//        }
+        remove(Fields.ELEMENTS_FIELD);
+        for(T object: mObjectsArray) {
+            add(Fields.ELEMENTS_FIELD, (ParseObject) object);
+        }
 
-        super.saveParseObject();
+        try {
+            save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 }

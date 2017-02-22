@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.ResourceTypes;
 
+
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resource;
 
 /**
