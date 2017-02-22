@@ -27,6 +27,12 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Author;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+
+import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
@@ -43,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Storage.setupLokavidyaLegacy();
         setContentView(R.layout.activity_main);
+        Storage.setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -84,6 +90,31 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 startActivity(intent);*/
             }
         });
+
+        // ------------
+        // TESTING CODE
+        // ------------
+
+//        Project p = new Project("hello world project", "100e3r");
+//        p.setName("ironstein's first project");
+//        p.setDescription("I am Iron Man (Batman Sucks!)");
+//        p.setCategory(new Category());
+//        p.setLanguage(new Language());
+//        p.setAuthor(new Author());
+//        ArrayList<String> tags = new ArrayList();
+//        tags.add("one");
+//        tags.add("two");
+//        p.setTags(tags);
+//        ArrayList<Integer> resolution = new ArrayList<>();
+//        resolution.add(10);
+//        resolution.add(20);
+//        p.setResolution(resolution);
+//        for(int i=0; i<10; i++) {
+//            p.addSlide();
+//        }
+//
+//        p.saveParseObject();
+
     }
 
     @Override

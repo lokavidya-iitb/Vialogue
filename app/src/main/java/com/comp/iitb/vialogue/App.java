@@ -1,4 +1,4 @@
-package riyanshkarani011235.com.github.io.models_test_app;
+package com.comp.iitb.vialogue;
 
 import android.app.Application;
 
