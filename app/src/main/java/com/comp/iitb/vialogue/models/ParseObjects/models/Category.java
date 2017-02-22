@@ -2,8 +2,6 @@ package com.comp.iitb.vialogue.models.ParseObjects.models;
 
 import com.parse.ParseClassName;
 
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.CategoryJson;
-
 /**
  * Created by ironstein on 16/02/17.
  */
@@ -18,6 +16,9 @@ public class Category extends BaseParseClass {
     }
 
     // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Category() {}
 
     public String getName() {

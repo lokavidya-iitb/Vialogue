@@ -1,17 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.BaseJsonClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
 
 /**
  * Created by ironstein on 13/02/17.
@@ -22,11 +17,27 @@ public abstract class BaseParseClass extends ParseObject {
     private static class Fields {
         public static final String
 
-        CHILDREN_RESOURCE_IDS = "children_resource_ids";
+        CHILDREN_RESOURCES = "children_resources";
     }
 
+    public BaseParseClass() {
+        mIsEditedObservable = new Observable();
+        mIsEditedObserver = new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                setIsEdited(true);
+            }
+        };
+        mIsEdited = false;
+        mChildrenResources = new ParseObjectsCollection<>();
+    }
+
+    // ID
+    // everything related to ID's is already implemented by Parse
+    // getObjectId and setObjectId methods can be used as getter and setter
+
     // IS_EDITED_OBSERVABLE
-    private Observable mIsEditedObservable = new Observable();
+    private Observable mIsEditedObservable;
 
     public final void addIsEditedObserver(Observer observer) {
         mIsEditedObservable.addObserver(observer);
@@ -37,26 +48,16 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // IS_EDITED_OBSERVER
-    private Observer mIsEditedObserver = new Observer() {
-        @Override
-        public void update(Observable observable, Object o) {
-            setIsEdited(true);
-        }
-    };
-
-    public final void observeChildrenResources() throws org.json.JSONException {
-        List<Resource> childrenResources = getChildrenResources();
-        for(Resource r : childrenResources) {
+    private Observer mIsEditedObserver;
+    public final void observeChildrenResources() {
+        for(Resource r : getChildrenResources().getAll()) {
             r.addIsEditedObserver(mIsEditedObserver);
         }
     }
 
-    // ID
-    // everything related to ID's is already implemented by Parse
-    // getObjectId and setObjectId methods can be used as getter and setter
-
     // IS_EDITED
-    private boolean mIsEdited = false;
+    private boolean mIsEdited;
+
     public final boolean getIsEdited() {
         return mIsEdited;
     }
@@ -69,48 +70,43 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // CHILDREN_RESOURCES
-    private List<Resource> mChildrenResources = new ArrayList<Resource>();
+    private ParseObjectsCollection<Resource> mChildrenResources;
 
-    public final List<Resource> getChildrenResources() {
-        return mChildrenResources;
+    public final ParseObjectsCollection<Resource> getChildrenResources() {
+        return (ParseObjectsCollection) getParseObject(Fields.CHILDREN_RESOURCES);
     }
 
-    public final void setChildrenResources(List<Resource> childrenResources) {
-        mChildrenResources = childrenResources;
+    public final void setChildrenResources(ParseObjectsCollection<Resource> childrenResources) {
+        put(Fields.CHILDREN_RESOURCES, childrenResources);
     }
-
-    public final List<String> getChildrenResourceIds() {
-        return getList(Fields.CHILDREN_RESOURCE_IDS);
-    }
-
-    public final void setChildrenResourceIds(List<String> childrenResourceIds) {
-        put(Fields.CHILDREN_RESOURCE_IDS, childrenResourceIds);
-    }
-
-//    public void saveParseObject() throws com.parse.ParseException {
-//        // save children resources independently
-//        List<String> childrenResourceIds = new ArrayList<String>();
-//        for(Resource r: getChildrenResources()) {
-//            // TODO handle exception, and check the reason for display to the user
-//            r.save();
-//            childrenResourceIds.add(r.getObjectId());
-//        }
-//        setChildrenResourceIds(childrenResourceIds);
-//        save();
-//    }
-
-//    public abstract void saveParseObject();
 
     // constructor
-    public void init() throws org.json.JSONException {
+    public void init() {
         observeChildrenResources();
+    }
+
+    public void saveParseObject() {
+        // call the mySave method for all the children BaseParseClass instances
+        for(String key : this.keySet()) {
+            if(this.get(key) instanceof BaseParseClass) {
+                // is an instance of BaseParseClass
+                ((BaseParseClass) this.getParseObject(key)).saveParseObject();
+            } else if(this.get(key) instanceof ParseObjectsCollection) {
+                // is an instance of ParseObjectCollection
+                ((ParseObjectsCollection) this.getParseObject(key)).saveParseObject();
+            }
+        }
+
+        // now save this
+        try {
+            save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-    // abstract methods
-//    public abstract BaseJsonClass getJsonObject();
 }

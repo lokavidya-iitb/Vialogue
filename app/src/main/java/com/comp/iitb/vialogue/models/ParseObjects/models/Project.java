@@ -2,13 +2,7 @@ package com.comp.iitb.vialogue.models.ParseObjects.models;
 
 import com.parse.ParseClassName;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.SlideJson;
 
 /**
  * Created by ironstein on 15/02/17.
@@ -39,16 +33,20 @@ public class Project extends BaseParseClass {
         LANGUAGE =                      "language",
         TAGS =                          "tags",
         RESOLUTION =                    "resolution",
-        SLIDE_ORDERING_SEQUENCE =       "slide_ordering_sequence",
         SLIDES =                        "slides";
     }
 
     // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Project() {}
 
     public Project(String name, String parentId) {
         setName(name);
-        setParentId(parentId);
+        if(!(parentId == null || parentId.equals(""))) {
+            setParentId(parentId);
+        }
     }
 
     // getters and setters
@@ -120,93 +118,40 @@ public class Project extends BaseParseClass {
      * Slide related methods
      */
 
-    public ArrayList<Integer> getSlideOrderingSequence() {
-        return (ArrayList) getList(Fields.SLIDE_ORDERING_SEQUENCE);
+    private ParseObjectsCollection<Slide> getSlides() {
+        return (ParseObjectsCollection) getParseObject(Fields.SLIDES);
     }
 
-    private void setSlideOrderingSequence(List<Integer> slideOrderingSequence) {
-        put(Fields.SLIDE_ORDERING_SEQUENCE, slideOrderingSequence);
-    }
-
-    private ArrayList<Slide> getSlides() {
-        return (ArrayList) getList(Fields.SLIDES);
-    }
-
-    private void setSlides(ArrayList<Slide> slides) {
+    private void setSlides(ParseObjectsCollection<Slide> slides) {
         put(Fields.SLIDES, slides);
     }
 
     public void addSlide() {
-        int newProjectSlideId;
-        ArrayList<Integer> slideOrderingSequence = getSlideOrderingSequence();
-        ArrayList<Slide> slides = (ArrayList) getSlides();
+        ParseObjectsCollection<Slide> slides = getSlides();
 
-        if(slideOrderingSequence == null) {
-            // no slides added to the project yet
-            slideOrderingSequence = new ArrayList<Integer>();
-            slides = new ArrayList<Slide>();
-            newProjectSlideId = 0;
-        } else {
-            newProjectSlideId = Collections.max(getSlideOrderingSequence()) + 1;
+        // if 0 objects in the "slides" collection
+        if(slides == null) {
+            slides = new ParseObjectsCollection<Slide>();
         }
 
-        // add new Slide to "slides", and the new ProjectSlideId to "slideOrderingSequence"
-        slideOrderingSequence.add(newProjectSlideId);
-        Slide slide = new Slide(newProjectSlideId);
-        slides.add(slide);
+        System.out.println(slides);
 
-        // save the new "slides" and "slideOrderingSequence" arrays
-        setSlideOrderingSequence(slideOrderingSequence);
+        slides.add(new Slide());
         setSlides(slides);
     }
 
     public Slide getSlide(int slideIndex) {
-        ArrayList<Integer> slideOrderingSequence = getSlideOrderingSequence();
-        if(slideIndex >= slideOrderingSequence.size()) {
-            throw new ArrayIndexOutOfBoundsException("slideIndex greater than length of {slideOrderingSequence}");
-        }
-        int projectSlideId = getSlideOrderingSequence().get(slideIndex);
-        for(Slide s : getSlides()) {
-            if(s.getProjectSlideId() == projectSlideId) {
-                return s;
-            }
-        }
-        throw new Error("projectSlideId does not match any Slide. Something is very wrong here :(");
+        return getSlides().get(slideIndex);
     }
 
     public void deleteSlide(int slideIndex) {
-        ArrayList<Integer> slideOrderingSequence = getSlideOrderingSequence();
-        if(slideIndex >= slideOrderingSequence.size()) {
-            throw new ArrayIndexOutOfBoundsException("slideIndex greater than length of {slideOrderingSequence}");
-        }
-
-        int projectSlideId = getSlideOrderingSequence().get(slideIndex);
-        ArrayList<Slide> slides = getSlides();
-
-        int slideToDeleteIndex = -1;
-        for(int i=0; i<slides.size(); i++) {
-            if(slides.get(i).getProjectSlideId() == projectSlideId) {
-                slideToDeleteIndex = i;
-                break;
-            }
-        }
-
-        if(slideToDeleteIndex == -1) {
-            throw new Error("projectSlideId does not match any Slide. Something is very wrong here :(");
-        }
-
-        // remove elements from "slides" and "slideOrderingSequence"
-        slideOrderingSequence.remove(slideIndex);
-        slides.remove(slideToDeleteIndex);
-
-        // save the new "slides" and "slideOrderingSequence" arrays
-        setSlideOrderingSequence(slideOrderingSequence);
+        ParseObjectsCollection<Slide> slides = getSlides();
+        slides.remove(slideIndex);
         setSlides(slides);
-
     }
 
     public void moveSlideToPosition(int initialPosition, int finalPosition) {
-        ArrayList<Slide> slides = getSlides();
+//        ArrayList<Slide> slides = getSlides();
     }
 
 }

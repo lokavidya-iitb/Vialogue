@@ -3,9 +3,6 @@ package com.comp.iitb.vialogue.models.ParseObjects.models;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ProjectJson;
-import com.comp.iitb.vialogue.models.ParseObjects.models.json.ResourceJson;
-
 /**
  * Created by ironstein on 16/02/17.
  */
@@ -21,7 +18,18 @@ public class Resource extends BaseParseClass {
     }
 
     // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Resource() {}
+
+    public Resource(ParseFile file) {
+        setFile(file);
+    }
+
+    public Resource(String type) {
+        setType(type);
+    }
 
     public ParseFile getFile() {
         return getParseFile(Fields.FILE);
@@ -35,7 +43,7 @@ public class Resource extends BaseParseClass {
         return getString(Fields.TYPE);
     }
 
-    public void setType(String type) {
+    private void setType(String type) {
         put(Fields.TYPE, type);
     }
 
