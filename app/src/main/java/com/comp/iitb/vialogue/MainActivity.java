@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     public void onContextDeleteMenuRequired(int position) {
-        mMenu.findItem(R.id.delete_option).setVisible(true);
+        //    mMenu.findItem(R.id.delete_option).setVisible(true);
     }
 
     public void onContextDeleteMenuNotRequired() {

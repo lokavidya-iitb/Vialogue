@@ -108,7 +108,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
                     SharedRuntimeContent.getSlidePosition(mItem),
                     SharedRuntimeContent.projectAdapter);
             activity.startActionMode(actionMode);
-            SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);
+            //            SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);
             return false;
         }
     }

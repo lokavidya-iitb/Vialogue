@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             app:cardElevation="10dp"
+            android:visibility="gone"
             app:contentPadding="@dimen/fab_margin">
 
             <LinearLayout
