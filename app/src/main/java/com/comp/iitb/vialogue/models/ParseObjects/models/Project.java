@@ -1,5 +1,7 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
 import java.util.List;

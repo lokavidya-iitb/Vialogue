@@ -74,30 +74,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             }
         });
 
-        // ------------
-        // TESTING CODE
-        // ------------
-
-//        Project p = new Project("hello world project", "100e3r");
-//        p.setName("ironstein's first project");
-//        p.setDescription("I am Iron Man (Batman Sucks!)");
-//        p.setCategory(new Category());
-//        p.setLanguage(new Language());
-//        p.setAuthor(new Author());
-//        ArrayList<String> tags = new ArrayList();
-//        tags.add("one");
-//        tags.add("two");
-//        p.setTags(tags);
-//        ArrayList<Integer> resolution = new ArrayList<>();
-//        resolution.add(10);
-//        resolution.add(20);
-//        p.setResolution(resolution);
-//        for(int i=0; i<10; i++) {
-//            p.addSlide();
-//        }
-//
-//        p.saveParseObject();
-
         setUpTabs();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)

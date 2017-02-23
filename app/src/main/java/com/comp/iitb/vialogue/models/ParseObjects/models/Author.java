@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.parse.ParseClassName;
 
 /**

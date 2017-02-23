@@ -1,4 +1,4 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -50,7 +50,7 @@ public abstract class BaseParseClass extends ParseObject {
     // IS_EDITED_OBSERVER
     private Observer mIsEditedObserver;
     public final void observeChildrenResources() {
-        for(Resource r : getChildrenResources().getAll()) {
+        for(BaseResourceClass r : getChildrenResources().getAll()) {
             r.addIsEditedObserver(mIsEditedObserver);
         }
     }
@@ -70,13 +70,13 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // CHILDREN_RESOURCES
-    private ParseObjectsCollection<Resource> mChildrenResources;
+    private ParseObjectsCollection<BaseResourceClass> mChildrenResources;
 
-    public final ParseObjectsCollection<Resource> getChildrenResources() {
+    public final ParseObjectsCollection<BaseResourceClass> getChildrenResources() {
         return (ParseObjectsCollection) getParseObject(Fields.CHILDREN_RESOURCES);
     }
 
-    public final void setChildrenResources(ParseObjectsCollection<Resource> childrenResources) {
+    public final void setChildrenResources(ParseObjectsCollection<BaseResourceClass> childrenResources) {
         put(Fields.CHILDREN_RESOURCES, childrenResources);
     }
 
