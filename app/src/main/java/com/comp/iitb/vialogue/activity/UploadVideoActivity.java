@@ -46,7 +46,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mPlayer = new VPlayer(this);
-        mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
+        mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
         mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
             private SimulationHandler mSimulationHandler;
 

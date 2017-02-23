@@ -42,10 +42,21 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mThumbnail.setImageBitmap(mValues.get(position).thumbnail);
-        if (holder.mItem.slideType == DummyContent.SlideType.IMAGE)
-            holder.mAudioMissing.setVisibility(View.VISIBLE);
-        else
-            holder.mAudioMissing.setVisibility(View.GONE);
+        if (holder.mItem.slideType == DummyContent.SlideType.IMAGE && !SharedRuntimeContent.isSelected) {
+            holder.mAudioLayer.setVisibility(View.VISIBLE);
+        } else {
+            holder.mAudioLayer.setVisibility(View.GONE);
+        }
+        if (holder.mItem.slideType == DummyContent.SlideType.VIDEO && !SharedRuntimeContent.isSelected) {
+            holder.mVideoLayer.setVisibility(View.VISIBLE);
+        } else {
+            holder.mVideoLayer.setVisibility(View.GONE);
+        }
+        if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {
+            holder.mUnselectedLayer.setVisibility(View.VISIBLE);
+        } else if(!SharedRuntimeContent.isSelected){
+            holder.mUnselectedLayer.setVisibility(View.GONE);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +85,9 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         public final View mView;
         public final ImageView mThumbnail;
-        public final ImageView mAudioMissing;
+        public final View mAudioLayer;
+        public final View mVideoLayer;
+        public final View mUnselectedLayer;
         public Slide mItem;
 
         public ViewHolder(View view) {
@@ -82,7 +95,9 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             mView = view;
             mThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             mView.setOnLongClickListener(this);
-            mAudioMissing = (ImageView) view.findViewById(R.id.audio_missing);
+            mAudioLayer = view.findViewById(R.id.audio_layer);
+            mVideoLayer = view.findViewById(R.id.play_video);
+            mUnselectedLayer = view.findViewById(R.id.unselected_layer);
         }
 
         @Override

@@ -107,13 +107,13 @@ public class ViewVideos extends Fragment {
         {
 
             recyclerView.setVisibility(View.VISIBLE);
-            new GetCategoryType().execute("Ok");
+            //new GetCategoryType().execute("Ok");
 
         }
             else {
 
             expListView.setVisibility(View.VISIBLE);
-            new GetCategories().execute("OK");
+            //new GetCategories().execute("OK");
         }
 
         //setGroupIndicatorToRight();

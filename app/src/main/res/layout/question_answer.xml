@@ -92,7 +92,7 @@
                     android:minWidth="0dp"
                     android:padding="@dimen/delete_button_padding"
                     android:text="@string/delete_button"
-                    android:textColor="@color/colorAccentLight"
+                    android:textColor="@color/colorPrimary"
                     android:visibility="invisible" />
 
                 <android.support.v7.widget.AppCompatRadioButton
@@ -117,6 +117,12 @@
                     android:hint="@string/answer_option"
                     android:paddingBottom="@dimen/answer_option_padding"
                     android:paddingTop="@dimen/answer_option_padding" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line"
+                    android:background="@color/colorAccentLight"
+                    android:layout_alignTop="@id/answer_option_1"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -135,6 +141,7 @@
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="@dimen/delete_button_padding"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/delete_button" />
 
                 <android.support.v7.widget.AppCompatRadioButton
@@ -160,6 +167,12 @@
                     android:hint="@string/answer_option"
                     android:paddingBottom="@dimen/answer_option_padding"
                     android:paddingTop="@dimen/answer_option_padding" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line"
+                    android:background="@color/colorAccentLight"
+                    android:layout_alignTop="@id/answer_option_2"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -178,6 +191,7 @@
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:padding="@dimen/delete_button_padding"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/delete_button" />
 
                 <android.support.v7.widget.AppCompatRadioButton
@@ -203,9 +217,20 @@
                     android:hint="@string/answer_option"
                     android:paddingBottom="@dimen/answer_option_padding"
                     android:paddingTop="@dimen/answer_option_padding" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line"
+                    android:background="@color/colorAccentLight"
+                    android:layout_alignTop="@id/answer_option_3"/>
             </RelativeLayout>
         </RadioGroup>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/dotted"
+            android:layerType="software"/>
         <ImageButton
             android:id="@+id/add_option"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -213,11 +238,15 @@
             android:layout_height="wrap_content"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:src="@drawable/plus"
+            app:srcCompat="@drawable/plus"
             android:textColor="@color/colorAccentLight"
             android:textSize="30sp"
             android:textStyle="bold" />
-
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/dotted"
+            android:layerType="software"/>
         <Button
             android:id="@+id/done_button"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"

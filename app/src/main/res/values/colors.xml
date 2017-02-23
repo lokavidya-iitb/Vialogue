@@ -10,4 +10,5 @@
     <color name="viewBg">#f1f5f8</color>
     <color name="whitish_grey">#ffaaaaaa</color>
     <color name="image_text_hover_color">#72ffffff</color>
+    <color name="transparent_grey">#62aaaaaa</color>
 </resources>
