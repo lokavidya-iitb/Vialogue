@@ -1,4 +1,4 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
 import com.parse.ParseClassName;
 import com.parse.ParseException;
@@ -39,6 +39,14 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
 
     public ArrayList<T> getAll() {
         return mObjectsArray;
+    }
+
+    public void removeAll() {
+        mObjectsArray = new ArrayList<T>();
+    }
+
+    public int size() {
+        return mObjectsArray.size();
     }
 
     public void saveParseObject() {

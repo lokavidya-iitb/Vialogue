@@ -50,70 +50,70 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Storage.setupLokavidyaLegacy();
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
-                MainActivity.this));
-        mViewPager.setOffscreenPageLimit(0);
-        mStorage = new Storage(this);
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        // Give the TabLayout the ViewPager
-        mTabLayout.setupWithViewPager(mViewPager);
-        SharedRuntimeContent.mainActivity = this;
-        setUpTabs();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-
-            } else {
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-            }
-        }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
-                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
-                bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
-
-                intent.putExtras(bundle);
-                startActivity(intent);*/
-            }
-        });
+//        Storage.setupLokavidyaLegacy();
+//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(mToolbar);
+//        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+//        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
+//                MainActivity.this));
+//        mViewPager.setOffscreenPageLimit(0);
+//        mStorage = new Storage(this);
+//        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+//        // Give the TabLayout the ViewPager
+//        mTabLayout.setupWithViewPager(mViewPager);
+//        SharedRuntimeContent.mainActivity = this;
+//        setUpTabs();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                    == PackageManager.PERMISSION_GRANTED) {
+//                Log.v(TAG, "Permission is granted");
+//
+//            } else {
+//                Log.v(TAG, "Permission is revoked");
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+//
+//            }
+//        }
+//
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
+//                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+//                bundle.putString(RECORD_NAME, "hello.wav");
+//                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
+//
+//                intent.putExtras(bundle);
+//                startActivity(intent);*/
+//            }
+//        });
 
         // ------------
         // TESTING CODE
         // ------------
 
-//        Project p = new Project("hello world project", "100e3r");
-//        p.setName("ironstein's first project");
-//        p.setDescription("I am Iron Man (Batman Sucks!)");
-//        p.setCategory(new Category());
-//        p.setLanguage(new Language());
-//        p.setAuthor(new Author());
-//        ArrayList<String> tags = new ArrayList();
-//        tags.add("one");
-//        tags.add("two");
-//        p.setTags(tags);
-//        ArrayList<Integer> resolution = new ArrayList<>();
-//        resolution.add(10);
-//        resolution.add(20);
-//        p.setResolution(resolution);
-//        for(int i=0; i<10; i++) {
-//            p.addSlide();
-//        }
-//
-//        p.saveParseObject();
+        Project p = new Project("hello world project", "100e3r");
+        p.setName("ironstein's first project");
+        p.setDescription("I am Iron Man (Batman Sucks!)");
+        p.setCategory(new Category());
+        p.setLanguage(new Language());
+        p.setAuthor(new Author());
+        ArrayList<String> tags = new ArrayList();
+        tags.add("one");
+        tags.add("two");
+        p.setTags(tags);
+        ArrayList<Integer> resolution = new ArrayList<>();
+        resolution.add(10);
+        resolution.add(20);
+        p.setResolution(resolution);
+        for(int i=0; i<10; i++) {
+            p.addSlide();
+        }
+
+        p.saveParseObject();
 
     }
 
