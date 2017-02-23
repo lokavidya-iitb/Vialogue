@@ -39,7 +39,7 @@ public class ProjectTextWatcher implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s != null) {
             String folderName = s.toString();
-            if (folderName.length() > 0 && folderName.length() > 50) {
+            if (folderName.length() > 0 && folderName.length() < 50) {
                 File directory = new File(mFolder.getParentFile(), folderName);
                 if (directory == null)
                     Log.d("ProjectTextWatcher", "directory is null");

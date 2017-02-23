@@ -15,6 +15,8 @@ import java.io.File;
 @ParseClassName("Image")
 public class Image extends BaseResourceClass {
 
+    public Image(){}
+
     private static final String IMAGE_RESOURCE_NAME = "image";
 
     public Image(Uri uri) {

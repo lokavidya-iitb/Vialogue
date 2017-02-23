@@ -41,7 +41,11 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mThumbnail.setImageBitmap(mValues.get(position).thumbnail);
+        //TODO: add Question Image
+        if (holder.mItem.slideType != DummyContent.SlideType.QUESTION)
+            holder.mThumbnail.setImageBitmap(mValues.get(position).thumbnail);
+        else
+            holder.mThumbnail.setImageResource(R.drawable.app_logo);
         if (holder.mItem.slideType == DummyContent.SlideType.IMAGE && !SharedRuntimeContent.isSelected) {
             holder.mAudioLayer.setVisibility(View.VISIBLE);
         } else {
@@ -54,7 +58,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         }
         if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {
             holder.mUnselectedLayer.setVisibility(View.VISIBLE);
-        } else if(!SharedRuntimeContent.isSelected){
+        } else if (!SharedRuntimeContent.isSelected) {
             holder.mUnselectedLayer.setVisibility(View.GONE);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +112,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
                     SharedRuntimeContent.getSlidePosition(mItem),
                     SharedRuntimeContent.projectAdapter);
             activity.startActionMode(actionMode);
-            SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);
+            //SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);
             return false;
         }
     }

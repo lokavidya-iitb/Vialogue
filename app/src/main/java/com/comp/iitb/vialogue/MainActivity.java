@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,8 @@ import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
+
+import java.io.File;
 
 import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
@@ -183,6 +186,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 */
             intent.putExtras(bundle);
             startActivity(intent);
+        } else if(item.slideType == DummyContent.SlideType.VIDEO){
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(item.path)), "video/*");
+            startActivity(intent);
         }
         onContextDeleteMenuNotRequired();
     }
@@ -216,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     public void onContextDeleteMenuNotRequired() {
-        mMenu.findItem(R.id.delete_option).setVisible(false);
+        //mMenu.findItem(R.id.delete_option).setVisible(false);
     }
 
     @Override

@@ -15,6 +15,9 @@ import java.io.File;
 @ParseClassName("Video")
 public class Video extends BaseResourceClass {
 
+    public Video() {
+    }
+
     private static final String VIDEO_RESOURCE_NAME = "video";
 
     public Video(Uri uri) {

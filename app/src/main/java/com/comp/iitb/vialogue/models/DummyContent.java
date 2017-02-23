@@ -59,7 +59,9 @@ public class DummyContent {
     public enum SlideType {
         IMAGE_AUDIO("IA"),
         VIDEO("V"),
-        IMAGE("I");
+        IMAGE("I"),
+        QUESTION("Q");
+
         private String mType;
         private SlideType(String type){
             mType = type;

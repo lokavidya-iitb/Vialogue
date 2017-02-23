@@ -25,6 +25,8 @@ public class Question extends BaseResourceClass {
         IS_COMPULSORY_FIELD = "is_compulsory";
     }
 
+    public Question(){}
+
     public Question(
             String questionString,
             String questionType,

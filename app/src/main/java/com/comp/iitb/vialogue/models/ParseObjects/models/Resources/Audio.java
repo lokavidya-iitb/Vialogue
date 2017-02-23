@@ -16,6 +16,9 @@ import java.io.File;
 @ParseClassName("Audio")
 public class Audio extends BaseResourceClass {
 
+    public Audio() {
+    }
+
     private static final String AUDIO_RESOURCE_NAME = "audio";
 
     public Audio(Uri uri) {
