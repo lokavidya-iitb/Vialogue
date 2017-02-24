@@ -153,7 +153,8 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         mCategories = (Spinner) findViewById(R.id.category_choice);
         String[] plants = new String[]{
-                "Select a category",
+                // TODO retrieve from Parse Database
+                "Select a category", // let this be
                 "California sycamore",
                 "Mountain mahogany",
                 "Butterfly weed",

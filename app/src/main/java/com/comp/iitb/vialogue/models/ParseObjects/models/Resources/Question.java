@@ -25,6 +25,8 @@ public class Question extends BaseResourceClass {
         IS_COMPULSORY_FIELD = "is_compulsory";
     }
 
+    public Question() {}
+
     public Question(
             String questionString,
             String questionType,
@@ -35,6 +37,14 @@ public class Question extends BaseResourceClass {
             boolean isCompulsory
             ) {
         super();
+    }
+
+    public Question(
+            String questionString,
+            ArrayList<String> options,
+            ArrayList<String> correctOptions
+    ) {
+        this(questionString, "mcq", options, correctOptions, "", new ArrayList<String>(), true);
     }
 
     public String getQuestionString() {

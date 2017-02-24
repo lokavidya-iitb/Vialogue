@@ -17,6 +17,8 @@ public class Video extends BaseResourceClass {
 
     private static final String VIDEO_RESOURCE_NAME = "video";
 
+    public Video() {}
+
     public Video(Uri uri) {
         setFile(new ParseFile(new File(uri.getPath())));
     }

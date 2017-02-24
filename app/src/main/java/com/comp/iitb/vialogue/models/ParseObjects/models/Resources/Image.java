@@ -17,6 +17,8 @@ public class Image extends BaseResourceClass {
 
     private static final String IMAGE_RESOURCE_NAME = "image";
 
+    public Image() {}
+
     public Image(Uri uri) {
         setFile(new ParseFile(new File(uri.getPath())));
     }
