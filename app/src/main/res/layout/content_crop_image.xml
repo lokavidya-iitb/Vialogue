@@ -30,7 +30,7 @@
 
     <RelativeLayout
         android:id="@+id/please_wait"
-
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/done_button">

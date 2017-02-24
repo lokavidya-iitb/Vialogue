@@ -55,10 +55,12 @@ public class SharedRuntimeContent {
     }
 
     public static void deleteSlide(int position) {
-        ITEMS.remove(position);
-        projectAdapter.notifyItemRemoved(position);
-        projectAdapter.notifyItemChanged(position,ITEMS.size());
-        if(ITEMS.size()==0)
+        if (position < ITEMS.size()) {
+            ITEMS.remove(position);
+            projectAdapter.notifyItemRemoved(position);
+            projectAdapter.notifyItemChanged(position, ITEMS.size());
+        }
+        if (ITEMS.size() == 0)
             previewFab.hide();
         //
     }
@@ -75,22 +77,22 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemChanged(SharedRuntimeContent.ITEMS.indexOf(slide));
     }
 
-    public List<PlayerModel> getPreviewList(){
+    public List<PlayerModel> getPreviewList() {
         ArrayList<PlayerModel> list = new ArrayList<>();
-        for(DummyContent.Slide item : ITEMS){
+        for (DummyContent.Slide item : ITEMS) {
             PlayerModel model = convertSlideToPlayerModel(item);
-            if(model!=null){
+            if (model != null) {
                 list.add(model);
             }
         }
         return list;
     }
 
-    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide){
-        PlayerModel model = new PlayerModel(slide.path,slide.getAudioPath());
-        if(slide.slideType == DummyContent.SlideType.IMAGE)
+    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide) {
+        PlayerModel model = new PlayerModel(slide.path, slide.getAudioPath());
+        if (slide.slideType == DummyContent.SlideType.IMAGE)
             return null;
-        switch (slide.slideType.toString()){
+        switch (slide.slideType.toString()) {
             case "IA"://Case Image and Audio
                 model.setType(PlayerModel.MediaType.IMAGE_AUDIO);
                 break;

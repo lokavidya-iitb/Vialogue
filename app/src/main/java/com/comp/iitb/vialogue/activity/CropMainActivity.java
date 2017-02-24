@@ -131,7 +131,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         }
         */
         if (item.getItemId() == android.R.id.home) {
-            done();
             finish();
             return true;
         }
@@ -150,6 +149,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     }
 
     private void done() {
+        mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
         new ProcessAsync().execute();
     }

@@ -145,12 +145,12 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
                 if (isPlaying) {
-                    if (SDK_INT >= 21)
+                    if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
                     else
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
                 } else {
-                    if (SDK_INT >= 21)
+                    if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_pause_black_24dp));
                     else
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_black_24dp));
@@ -164,7 +164,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        if (SDK_INT > 20)
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         mRecordButton.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +246,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onMediaTimeEndReached() {
         isPlaying = false;
-        if (SDK_INT >= 21)
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
         else
             mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
@@ -254,7 +254,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     private void setmTimeDisplay(int currentTime) {
         String formatTime = TimeFormater.getMinutesAndSeconds(currentTime);
-        mTimeDisplay.setText(formatTime);
+        if (isPlaying) {
+            mTimeDisplay.setText(formatTime);
+        } else if (isRecording) {
+            mRecordButton.setText(formatTime);
+        }
     }
 
     @Override
@@ -300,7 +304,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (mRecordName != null) {
             file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder, AUDIO_FOLDER_NAME), mRecordName);
         }
-        Log.d(LOG_TAG,"hello file "+String.valueOf(file.exists()));
+        Log.d(LOG_TAG, "hello file " + String.valueOf(file.exists()));
         if (!file.exists()) {
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
