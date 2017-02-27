@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lokavidya</string>
+    <string name="app_name">LVCreate</string>
     <string name="action_settings">Settings</string>
     <string name="create_project">New Project</string>
     <string name="view_videos">Videos</string>
@@ -80,4 +80,8 @@
     <string name="tags">tags</string>
     <string name="video_name">Video Name</string>
     <string name="project_string">Project Name</string>
+    <string name="loading">Hold on!</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_splash_it">SplashIt</string>
+    <string name="title_activity_video_player">View Video</string>
 </resources>

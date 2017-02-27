@@ -4,6 +4,9 @@ package com.comp.iitb.vialogue.adapters;
  * Created by jeffrey on 17/1/17.
  */
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
@@ -11,10 +14,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,10 +31,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
@@ -69,16 +79,90 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         final ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
         holder.count.setText(album.getImagesCount() + " Images");
+        Log.d("Images",""+album.getImagesCount());
         holder.AudioCount.setText(album.getAudioCount() +" Audios");
+        Log.d("Images",""+album.getAudioCount());
         Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
-        holder.overflow.setOnClickListener(new View.OnClickListener() {
+        holder.thumbnail.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* FragmentManager fm =  ((Activity) mContext).getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                CreateVideos CV = new CreateVideos();
+                ft.replace(R.id.userLayout, CV);
+                ft.commit();*/
+                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+"/Lokavidya/Projects/MyProjects/"+holder.title.toString());
+
+            }
+        });
+
+
+       /* holder.overflow.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopupMenu(holder.overflow,holder.getAdapterPosition(),album.getName());
             }
+        });*/
+
+
+        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ((Activity) mContext).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
+
+                return false;
+            }
         });
+
     }
+
+    class ActionBarCallBack implements ActionMode.Callback {
+        private String projectName;
+        private int position;
+
+
+        public ActionBarCallBack(String projectName, int position){
+            this.projectName = projectName;
+            this.position = position;
+
+        }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
+            albumList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, albumList.size());
+            Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+            mode.finish();
+            return false;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            mode.getMenuInflater().inflate(R.menu.delete_projects, menu);
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+            mode.setTitle("Seriously, delete?");
+            return false;
+        }
+
+    }
+
+
+
 
     private void showPopupMenu(View view, int listItemPosition, String projectName) {
         // inflate menu

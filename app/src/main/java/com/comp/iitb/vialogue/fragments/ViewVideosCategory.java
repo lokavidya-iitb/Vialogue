@@ -22,6 +22,9 @@ import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.models.Category;
 import com.comp.iitb.vialogue.models.CategoryType;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +64,8 @@ public class ViewVideosCategory extends Fragment {
     ExpandableListView expListView;
     RecyclerView recyclerView;
     ViewCategoryAdapter mAdapter;
+    private int limit = 5;
+    List<ParseObject> receiveEM;
     private List<CategoryType> categoryTypeList = new ArrayList<>();
     public ViewVideosCategory() {
         // Required empty public constructor
@@ -100,7 +105,7 @@ public class ViewVideosCategory extends Fragment {
         // Inflate the layout for this fragment
 
         mView= inflater.inflate(R.layout.fragment_view_videos, container, false);
-        expListView = (ExpandableListView) mView.findViewById(R.id.laptop_list);
+        expListView = (ExpandableListView) mView.findViewById(R.id.video_list);
         recyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
         if(catOrVids.equals(""))
 
@@ -181,29 +186,29 @@ public class ViewVideosCategory extends Fragment {
         @Override
         protected String doInBackground(String... params) {
 
+            try {
+                // Locate the class table named "TestLimit" in Parse.com
+                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
+                        "Category");
+                query.orderByAscending("createdAt");
+                // Add 20 results to the default limit
+                query.setLimit(limit += 5);
+                receiveEM = query.find();
+                for (ParseObject num : receiveEM) {
+                    String id=((String) num.get("ids"));
+                    String name=((String) num.get("name"));
+                    String desc=((String) num.get("desc"));
+                    String imageURL=((String) num.get("imageURL"));
 
-            catArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/categorys","");
-            Log.d("-------recieved",catArray.toString());
-            for(int iterateBuddy=0;iterateBuddy<catArray.length();iterateBuddy++)
-            {
-                String name;
-                int id;
-                String desc;
-                String imageURL;
-                try {
-                    name = catArray.getJSONObject(iterateBuddy).get("name").toString();
-                    id = catArray.getJSONObject(iterateBuddy).getInt("id");
-                    desc = catArray.getJSONObject(iterateBuddy).get("description").toString();
-                    imageURL = catArray.getJSONObject(iterateBuddy).get("image").toString();
-
-                    CategoryType tempStub = new CategoryType(id,name,desc,imageURL);
-                    categoryTypeList.add(tempStub);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    CategoryType map = new CategoryType(id, name, desc, imageURL);
+                    categoryTypeList.add(map);
                 }
-
-
+            } catch (ParseException e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
             }
+
+
             return "Executed";
         }
 

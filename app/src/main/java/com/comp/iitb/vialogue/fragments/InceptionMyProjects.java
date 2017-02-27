@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class InceptionMyProjects extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private ActionMode mActionMode;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -92,6 +94,36 @@ public class InceptionMyProjects extends Fragment {
 
         prepareProjects();
 /*
+        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
+            // Called when the user long-clicks on someView
+
+            public boolean onLongClick(View view) {
+                if (mActionMode != null) {
+
+                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                }
+
+                // Start the CAB using the ActionMode.Callback defined above
+                view.setSelected(true);
+                return true;
+            }
+        });*/
+
+/*
+        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
+            // Called when the user long-clicks on someView
+            public boolean onLongClick(View view) {
+                if (mActionMode != null) {
+                    return false;
+                }
+
+                // Start the CAB using the ActionMode.Callback defined above
+                mActionMode = getActivity().startActionMode(mActionModeCallback);
+                view.setSelected(true);
+                return true;
+            }
+        });*/
+/*
         try {
             Glide.with(this).load("https://cdn0.vox-cdn.com/uploads/blog/sbnu_logo_minimal/213/large_hammerandrails.com.minimal.png").placeholder(R.drawable.ic_computer_black_24dp).into((ImageView) getActivity().findViewById(R.id.backdrop));
         } catch (Exception e) {
@@ -100,6 +132,8 @@ public class InceptionMyProjects extends Fragment {
         // Inflate the layout for this fragment
 
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +155,7 @@ public class InceptionMyProjects extends Fragment {
         myStringArray= Storage.getMeAllTheFilesHere("/Lokavidya/Projects/MyProjects");
         for(int i=0;i<myStringArray.size();i++)
         {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"",Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").size(),Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","audios").size(),0,1);
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"", Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").size(), Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","audios").size(),0,1);
             projectList.add(a);
         }
         adapter.notifyDataSetChanged();
@@ -138,6 +172,46 @@ public class InceptionMyProjects extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
+
+/*
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.delete_projects, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.item_delete:
+                    shareCurrentItem();
+                    mode.finish(); // Action picked, so close the CAB
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mode = null;
+        }
+    };*/
 
     /*  private void initCollapsingToolbar() {
         final CollapsingToolbarLayout collapsingToolbar =

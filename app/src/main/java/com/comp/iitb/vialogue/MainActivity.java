@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
-        mViewPager.setOffscreenPageLimit(0);
+        mViewPager.setOffscreenPageLimit(4);
         mStorage = new Storage(this);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager

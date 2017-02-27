@@ -4,6 +4,10 @@ package com.comp.iitb.vialogue.GlobalStuff;
  * Created by jeffrey on 1/2/17.
  */
 public class Master {
+    public static String personName = "name";
+    public static String personPhotoUrl = "image";
+    public static String email = "email";
+    public static String signedOrNot= "isSigned";
     public static String AppName = "Lokavidya";
     public static String AppPath = "/Lokavidya" ;
     public static String ProjectsPath = "/Projects";
