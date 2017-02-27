@@ -39,6 +39,14 @@ public class Question extends BaseResourceClass {
         super();
     }
 
+    public Question(
+            String questionString,
+            ArrayList<String> options,
+            ArrayList<String> correctOptions
+    ) {
+        this(questionString, "mcq", options, correctOptions, "", new ArrayList<String>(), true);
+    }
+
     public String getQuestionString() {
         return getString(Fields.QUESTION_STRING_FIELD);
     }

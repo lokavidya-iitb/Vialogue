@@ -1,7 +1,11 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
+import android.net.Uri;
+
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.parse.ParseFile;
+
+import java.io.File;
 
 /**
  * Created by ironstein on 16/02/17.
@@ -31,5 +35,9 @@ public abstract class BaseResourceClass extends BaseParseClass {
 
     public void setFile(ParseFile file) {
         put(Fields.FILE, file);
+    }
+
+    public Uri getUri() {
+        return Uri.fromFile(new File(getFile().getUrl()));
     }
 }
