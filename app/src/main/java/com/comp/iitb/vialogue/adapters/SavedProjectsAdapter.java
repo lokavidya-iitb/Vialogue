@@ -4,6 +4,7 @@ package com.comp.iitb.vialogue.adapters;
  * Created by jeffrey on 17/1/17.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
@@ -11,7 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +80,65 @@ public class SavedProjectsAdapter extends RecyclerView.Adapter<SavedProjectsAdap
                 showPopupMenu(holder.overflow,holder.getAdapterPosition(), album.getName());
             }
         });
+
+
+        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ((Activity) mContext).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
+
+                return false;
+            }
+        });
+
     }
+
+
+    class ActionBarCallBack implements ActionMode.Callback {
+        private String projectName;
+        private int position;
+
+
+        public ActionBarCallBack(String projectName, int position){
+            this.projectName = projectName;
+            this.position = position;
+
+        }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
+            albumList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, albumList.size());
+            Storage.deleteThisFolder(Master.getSavedProjectsPath()+"/"+projectName);
+            mode.finish();
+            return false;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            mode.getMenuInflater().inflate(R.menu.delete_projects, menu);
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+            mode.setTitle("Seriously, delete?");
+            return false;
+        }
+
+    }
+
+
 
     private void showPopupMenu(View view, int listItemPosition, String projectName) {
         listItemPositionForPopupMenu = listItemPosition;

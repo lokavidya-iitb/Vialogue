@@ -7,7 +7,7 @@ package com.comp.iitb.vialogue.models;
  * Created by jeffrey on 12/2/17.
  */
 public class CategoryType {
-    public CategoryType(int id, String name, String desc,String imageURL){
+    public CategoryType(String id, String name, String desc,String imageURL){
         this.id=id;
         this.name= name;
         this.desc= desc;
@@ -21,11 +21,11 @@ public class CategoryType {
         this.name = name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -46,8 +46,8 @@ public class CategoryType {
     }
 
     private String name;
-    private int id;
+    private String id;
     private String desc;
-    private static String imageURL;
+    private String imageURL;
 
 }

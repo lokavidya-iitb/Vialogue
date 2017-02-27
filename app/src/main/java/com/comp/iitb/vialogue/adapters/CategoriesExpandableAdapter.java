@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
+import com.comp.iitb.vialogue.activity.VideoPlayer;
 import com.comp.iitb.vialogue.models.Category;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View arg0) {
 
-                Intent viewVid = new Intent(context, UploadVideoActivity.class);
+                Intent viewVid = new Intent(context, VideoPlayer.class);
 
 
                     viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
@@ -63,7 +64,7 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        TextView item = (TextView) convertView.findViewById(R.id.laptop);
+        TextView item = (TextView) convertView.findViewById(R.id.description);
 
 
         item.setText("This will be a description placeholder! This will be a description placeholder! This will be a description placeholder! This will be a description placeholder!"/*OneCategory*/);
