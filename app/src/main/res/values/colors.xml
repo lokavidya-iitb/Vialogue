@@ -2,14 +2,15 @@
 <resources>
     <color name="colorPrimary">#037766</color>
     <color name="colorPrimaryDark">#002f32</color>
-    <color name="colorAccent">#FF3A5B</color>
+    <color name="colorAccent">#FFC2185B</color>
     <color name="tabSelected">#efa733</color>
     <color name="tabUnselected">#ffffff</color>
-    <color name="colorAccentLight">#def9b2</color>
+    <color name="colorAccentLight">#62def9b2</color>
     <color name="card_title">#4c4c4c</color>
     <color name="viewBg">#f1f5f8</color>
     <color name="whitish_grey">#ffaaaaaa</color>
     <color name="image_text_hover_color">#72ffffff</color>
+
     <color name="sysBlack">#FF000000</color>
     <color name="sysBlue">#FF0000FF</color>
     <color name="sysCyan">#FF00FFFF</color>
@@ -22,5 +23,7 @@
     <color name="sysTransparent">#00000000</color>
     <color name="sysWhite">#FFFFFFFF</color>
     <color name="sysYellow">#FFFFFF00</color>
+
+    <color name="transparent_grey">#62aaaaaa</color>
 
 </resources>

@@ -70,7 +70,7 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/project_string"
-                            android:textColor="@color/tabSelected"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="20sp" />
 
                         <TextView
@@ -80,7 +80,7 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-                            android:textColor="@android:color/black"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="@dimen/small_font_size" />
 
                         <Button
@@ -128,7 +128,7 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="Create and Share"
-                            android:textColor="@color/tabSelected"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="20sp" />
 
                         <TextView
@@ -138,7 +138,7 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-                            android:textColor="@android:color/black"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="@dimen/small_font_size" />
 
                         <Button

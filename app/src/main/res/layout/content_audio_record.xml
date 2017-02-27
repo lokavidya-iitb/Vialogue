@@ -37,8 +37,6 @@
         android:layout_height="wrap_content"
         android:text="@string/stop_record_audio"
         android:layout_below="@+id/time_display"
-        android:paddingLeft="@dimen/general_button_padding"
-        android:paddingRight="@dimen/general_button_padding"
         android:layout_centerHorizontal="true"/>
     <Button
         android:id="@+id/retry"
@@ -63,11 +61,11 @@
         android:id="@+id/audio_seek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/play_button"
         android:layout_below="@+id/view_center"
         app:thumbColor="@color/colorPrimary"
         app:progressColor="@color/colorPrimary"
         android:layout_above="@+id/time_display"
+        android:layout_toRightOf="@+id/play_button"
         android:layout_alignRight="@+id/time_display"
         android:layout_alignEnd="@+id/time_display" />
 
@@ -86,7 +84,7 @@
         android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_play_arrow_black_24dp"
+        app:srcCompat="@drawable/ic_play_arrow_black_24dp"
         android:background="@android:color/transparent"
         android:paddingLeft="0dp"
         android:minWidth="0dp"

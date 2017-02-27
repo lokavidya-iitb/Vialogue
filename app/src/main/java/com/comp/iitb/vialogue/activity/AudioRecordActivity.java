@@ -26,6 +26,7 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.AudioRecorder;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.TimeFormater;
+import com.comp.iitb.vialogue.models.DummyContent;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 
@@ -40,7 +41,7 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.AUDIO_FOL
 public class AudioRecordActivity extends AppCompatActivity implements MediaTimeUpdateListener, RecordTimeUpdateListener {
 
     private static final String LOG_TAG = "AudioRecordActivity";
-    public static final String RECORD_PATH = "recordPath";
+    public static final String SLIDE_NO = "recordPath";
     public static final String IMAGE_PATH = "imagePath";
     public static final String RECORD_NAME = "recordName";
     public static final String FOLDER_PATH = "folderPath";
@@ -65,6 +66,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private Button mDone;
+    private DummyContent.Slide mSlide;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -89,8 +91,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         getSupportActionBar().setHomeButtonEnabled(true);
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            mImagePath = bundle.getString(IMAGE_PATH);
-            mRecordName = bundle.getString(RECORD_NAME);
+            int position = bundle.getInt(SLIDE_NO);
+            mSlide = SharedRuntimeContent.getSlideAt(position);
+            mImagePath = mSlide.path;
+            mRecordName = new File(mSlide.path).getName() + ".wav";
         }
 
         mDone = (Button) findViewById(R.id.done_button);
@@ -141,12 +145,12 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
                 if (isPlaying) {
-                    if (SDK_INT >= 21)
+                    if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
                     else
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
                 } else {
-                    if (SDK_INT >= 21)
+                    if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                         mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_pause_black_24dp));
                     else
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_black_24dp));
@@ -160,7 +164,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        if (SDK_INT > 20)
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         mRecordButton.setOnClickListener(new View.OnClickListener() {
@@ -242,7 +246,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onMediaTimeEndReached() {
         isPlaying = false;
-        if (SDK_INT >= 21)
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mPlayButton.setImageDrawable(getDrawable(R.drawable.ic_play_arrow_black_24dp));
         else
             mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
@@ -250,7 +254,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     private void setmTimeDisplay(int currentTime) {
         String formatTime = TimeFormater.getMinutesAndSeconds(currentTime);
-        mTimeDisplay.setText(formatTime);
+        if (isPlaying) {
+            mTimeDisplay.setText(formatTime);
+        } else if (isRecording) {
+            mRecordButton.setText(formatTime);
+        }
     }
 
     @Override
@@ -296,7 +304,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (mRecordName != null) {
             file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder, AUDIO_FOLDER_NAME), mRecordName);
         }
-        Log.d(LOG_TAG,"hello file "+String.valueOf(file.exists()));
+        Log.d(LOG_TAG, "hello file " + String.valueOf(file.exists()));
         if (!file.exists()) {
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
@@ -312,7 +320,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mSeekBar.requestLayout();
             mPlayButton.setEnabled(true);
             mRetryButton.setEnabled(true);
-
+            mSlide.setAudioPath(file.getAbsolutePath());
             mRecordButton.setEnabled(false);
             mStopButton.setEnabled(false);
         }

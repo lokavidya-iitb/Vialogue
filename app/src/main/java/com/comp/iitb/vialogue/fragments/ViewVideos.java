@@ -119,20 +119,22 @@ public class ViewVideos extends Fragment {
         {
 
             recyclerView.setVisibility(View.VISIBLE);
+
             if(isNetworkConnected())
             new GetCategoryType().execute("Ok");
             else
                 Toast.makeText(getContext(),"Check your internet connectivity",Toast.LENGTH_LONG);
 
+
         }
             else {
 
             expListView.setVisibility(View.VISIBLE);
+
             if(isNetworkConnected())
                 new GetCategories().execute("OK");
             else
                 Toast.makeText(getContext(),"Check your internet connectivity",Toast.LENGTH_LONG);
-
 
         }
 

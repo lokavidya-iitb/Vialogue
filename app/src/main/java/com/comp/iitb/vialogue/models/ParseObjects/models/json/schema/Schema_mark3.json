@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "id": {
+      "type": "string",
+      "oneOf": [
+        {
+          "pattern": "[a-z\\d]+"
+        },
+        {
+          "enum": [
+            ""
+          ]
+        }
+      ]
+    },
+    "is_edited": {
+      "type": "boolean"
+    },
+    "children_resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/resource"
+      }
+    },
+    "resource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "is_edited": {
+          "$ref": "#/definitions/is_edited"
+        },
+        "children_resources": {
+          "$ref": "#/definitions/children_resources"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "is_edited",
+        "children_resources",
+        "type",
+        "url"
+      ]
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "is_edited": {
+          "$ref": "#/definitions/is_edited"
+        },
+        "children_resources": {
+          "$ref": "#/definitions/children_resources"
+        },
+        "parent_id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "is_edited": {
+              "$ref": "#/definition/is_edited"
+            },
+            "children_resources": {
+              "$ref": "#/definitions/children_resources"
+            },
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "is_edited",
+            "children_resources",
+            "first_name",
+            "last_name",
+            "email"
+          ]
+        },
+        "category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "is_edited": {
+              "$ref": "#/definition/is_edited"
+            },
+            "children_resources": {
+              "$ref": "#/definitions/children_resources"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ]
+        },
+        "language": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "is_edited": {
+              "$ref": "#/definition/is_edited"
+            },
+            "children_resources": {
+              "$ref": "#/definitions/children_resources"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resolution": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "slide_ordering_sequence": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "slides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions/id"
+              },
+              "is_edited": {
+                "$ref": "#/definitions/is_edited"
+              },
+              "children_resources": {
+                "$ref": "#/definitions/children_resources"
+              },
+              "project_slide_id": {
+                "type": "integer"
+              },
+              "hyperlinks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/id"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "is_edited",
+              "children_resources",
+              "project_slide_id",
+              "hyperlinks"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "is_edited",
+        "children_resources",
+        "parent_id",
+        "name",
+        "author",
+        "category",
+        "language",
+        "tags",
+        "resolution",
+        "slide_ordering_sequence",
+        "slides"
+      ]
+    }
+  },
+
+  "$ref": "#/definitions/project"
+}

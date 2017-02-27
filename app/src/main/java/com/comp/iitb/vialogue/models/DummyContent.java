@@ -1,8 +1,8 @@
 package com.comp.iitb.vialogue.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import android.graphics.Bitmap;
+
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -12,68 +12,64 @@ import java.util.Map;
  */
 public class DummyContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static final ArrayList<Slide> ITEMS = new ArrayList<Slide>();
-
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, Slide> ITEM_MAP = new HashMap<String, Slide>();
-
-    private static final int COUNT = 25;
-
-    static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
-    }
-
-    private static void addItem(Slide item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
-    }
-
-    private static Slide createDummyItem(int position) {
-        return new Slide(String.valueOf(position), "Item " + position, makeDetails(position),SlideType.IMAGE_AUDIO);
-    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
-    }
 
     /**
      * A dummy item representing a piece of content.
      */
     public static class Slide {
-        public final String id;
-        public final String content;
-        public final String details;
-        public final SlideType slideType;
+        public final Bitmap thumbnail;
+        public SlideType slideType;
+        public final String path;
+        private String audioPath;
+        private boolean isSelected;
 
-
-        public Slide(String id, String content, String details, SlideType slideType) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
+        public Slide(String path,String audioPath,Bitmap thumbnail, SlideType slideType) {
+            this.path = path;
+            this.audioPath = audioPath;
+            this.thumbnail = thumbnail;
             this.slideType = slideType;
+            isSelected = false;
+        }
+
+        public void setAudioPath(String audioPath){
+            this.audioPath = audioPath;
+            if(this.slideType == SlideType.IMAGE)
+                this.slideType = SlideType.IMAGE_AUDIO;
+            if(this.audioPath!=null){
+                SharedRuntimeContent.onSlideChanged(this);
+            }
+        }
+        public void setSelected(boolean isSelected){
+            this.isSelected = isSelected;
+            if(isSelected){
+                SharedRuntimeContent.onSlideChanged(this);
+            }
         }
 
         @Override
         public String toString() {
-            return content;
+            return slideType.toString();
+        }
+
+        public String getAudioPath() {
+            return audioPath;
         }
     }
 
     public enum SlideType {
-        IMAGE_AUDIO,
-        VIDEO
+        IMAGE_AUDIO("IA"),
+        VIDEO("V"),
+        IMAGE("I"),
+        QUESTION("Q");
+
+        private String mType;
+        private SlideType(String type){
+            mType = type;
+        }
+
+        @Override
+        public String toString() {
+            return mType;
+        }
     }
 }

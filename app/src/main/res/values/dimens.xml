@@ -35,6 +35,7 @@
     <dimen name="general_button_padding">40dp</dimen>
     <dimen name="hover_margin">120dp</dimen>
     <dimen name="small_font_size">10sp</dimen>
+    <dimen name="line">2dp</dimen>
     <!--
     &lt;!&ndash; Default screen margins, per the Android Design guidelines. &ndash;&gt;
     <dimen name="activity_horizontal_margin">12dp</dimen>

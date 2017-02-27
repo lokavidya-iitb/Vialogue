@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,43 +25,64 @@ import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
 
+import java.io.File;
 
 import static android.content.ContentValues.TAG;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.FOLDER_PATH;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.IMAGE_PATH;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_NAME;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.RECORD_PATH;
+import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
-        OnProgressUpdateListener {
+        OnProgressUpdateListener, TabSelectedHelper {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private Storage mStorage;
+    private Menu mMenu;
+    private FloatingActionButton mPreviewFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Storage.setupLokavidyaLegacy();
         setContentView(R.layout.activity_main);
+        Storage.setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
+
         mViewPager.setOffscreenPageLimit(4);
+
+        //mViewPager.setOffscreenPageLimit(0);
+
         mStorage = new Storage(this);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
+        SharedRuntimeContent.mainActivity = this;
+        mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
+        mPreviewFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
+                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+                bundle.putString(RECORD_NAME, "hello.wav");
+                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
+
+                intent.putExtras(bundle);
+                startActivity(intent);*/
+            }
+        });
 
         setUpTabs();
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
@@ -72,21 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             }
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
-                bundle.putString(RECORD_PATH, SharedRuntimeContent.AUDIO_FOLDER_NAME);
-                bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
-
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+        SharedRuntimeContent.previewFab = mPreviewFab;
     }
 
     @Override
@@ -101,10 +109,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 tabNames,
                 ContextCompat.getColor(getApplicationContext(), R.color.tabSelected),
                 ContextCompat.getColor(getApplicationContext(), R.color.tabUnselected));
+        tabSelectedListener.setTabSelectedHelper(this);
         mTabLayout.addOnTabSelectedListener(tabSelectedListener);
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
-
             switch (i) {
                 case 0:
                     tab.setIcon(R.drawable.home);
@@ -126,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             ImageView tabTextView = (ImageView) relativeLayout.findViewById(R.id.tab_image);
             tabTextView.setText(tab.getText());*//*
             tab.setCustomView(relativeLayout);*/
-            //tab.select();
+            tab.select();
         }
         mTabLayout.getTabAt(0).select();
 
@@ -137,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -168,7 +177,25 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public void onListFragmentInteraction(DummyContent.Slide item) {
-
+        Log.d(getClass().getName(), item.slideType.toString());
+        //SharedRuntimeContent.ITEMS.get(SharedRuntimeContent.ITEMS.indexOf(item));
+        if (item.slideType == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
+            Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
+            /*bundle.putString(FOLDER_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath());
+            bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
+            bundle.putString(RECORD_NAME, new File(item.path).getName() + ".wav");
+            bundle.putString(IMAGE_PATH, item.path);
+*/
+            intent.putExtras(bundle);
+            startActivity(intent);
+        } else if(item.slideType == DummyContent.SlideType.VIDEO){
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(item.path)), "video/*");
+            startActivity(intent);
+        }
+        onContextDeleteMenuNotRequired();
     }
 
     @Override
@@ -192,6 +219,31 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
                 }
             }
+        }
+    }
+
+    public void onContextDeleteMenuRequired(int position) {
+        mMenu.findItem(R.id.delete_option).setVisible(true);
+    }
+
+    public void onContextDeleteMenuNotRequired() {
+        //mMenu.findItem(R.id.delete_option).setVisible(false);
+    }
+
+    @Override
+    public void onTabSelected(int tabNumber) {
+        switch (tabNumber) {
+            case 0:
+                mPreviewFab.hide();
+                break;
+            case 1:
+                mPreviewFab.show();
+                break;
+            case 2:
+                mPreviewFab.hide();
+                break;
+            case 3:
+                mPreviewFab.hide();
         }
     }
 }
