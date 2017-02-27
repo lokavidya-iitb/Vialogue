@@ -10,5 +10,20 @@
     <color name="viewBg">#f1f5f8</color>
     <color name="whitish_grey">#ffaaaaaa</color>
     <color name="image_text_hover_color">#72ffffff</color>
+
+    <color name="sysBlack">#FF000000</color>
+    <color name="sysBlue">#FF0000FF</color>
+    <color name="sysCyan">#FF00FFFF</color>
+    <color name="sysDkGray">#FF444444</color>
+    <color name="sysGray">#FF888888</color>
+    <color name="sysGreen">#FF00FF00</color>
+    <color name="sysLtGray">#FFCCCCCC</color>
+    <color name="sysMagenta">#FFFF00FF</color>
+    <color name="sysRed">#FFFF0000</color>
+    <color name="sysTransparent">#00000000</color>
+    <color name="sysWhite">#FFFFFFFF</color>
+    <color name="sysYellow">#FFFFFF00</color>
+
     <color name="transparent_grey">#62aaaaaa</color>
+
 </resources>

@@ -58,7 +58,7 @@ public class ViewCategoryAdapter extends RecyclerView.Adapter<ViewCategoryAdapte
         final CategoryType category = moviesList.get(position);
         holder.name.setText(category.getName());
         holder.desc.setText(category.getDesc());
-        Glide.with(context).load("").placeholder(R.drawable.ic_computer_black_24dp).into(holder.image);
+        Glide.with(context).load(category.getImageURL()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.image);
         holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg0) {
