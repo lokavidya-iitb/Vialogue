@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -41,6 +42,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
+import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.project;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,7 +71,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private View mView;
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
-    private File mFolder;
     private Fragment mFragment;
 
     private CameraImagePicker mCameraImagePicker;
@@ -165,25 +166,9 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     public void setUpProject() {
-        mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.my_projects));
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.create_project));
-        SharedRuntimeContent.projectFolder = mFolder;
-
         mProjectNameDisplay.setText(getString(R.string.create_project));
-        boolean success = true;
-        if (mFolder != null) {
-            if (!mFolder.exists()) {
-                success = mFolder.mkdirs();
-            }
-            if (success) {
-                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, SharedRuntimeContent.projectFolder, mProjectNameDisplay));
-            } else {
-                Snackbar.make(getView(), R.string.storage_error, Snackbar.LENGTH_LONG).show();
-                mRoot.setEnabled(false);
-            }
-        }
+        SharedRuntimeContent.project.setName(getString(R.string.create_project));
+        mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -214,69 +199,63 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(getClass().getName(), requestCode + " " + resultCode);
-        if (resultCode == RESULT_OK)
+        if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
+        } else {
+            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT);
+        }
     }
 
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
-        if (requestCode == GET_CAMERA_IMAGE && data == null) {
 
+        if (requestCode == GET_CAMERA_IMAGE && data == null) {
+            // CAPTURE IMAGE FROM CAMERA
             Intent intent = new Intent(getContext(), CropMainActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
             mFragment.startActivity(intent);
-        }
-        if (data != null) {
-            String selectedPath = null;
-            Uri imageUri;
-            if (requestCode == GET_CAMERA_IMAGE) {
-                Bundle bundle = data.getExtras();
-                Log.d(getClass().getName(), "bundle " + String.valueOf(bundle == null));
-                if (bundle != null) {
-                    Bitmap photo = (Bitmap) bundle.get("data");
-                    imageUri = mStorage.getImageUri(photo);
-                    selectedPath = mStorage.getRealPathFromURI(imageUri);
-                    Log.d(getClass().getName(), "Got selected path" + selectedPath);
-                }
+
+        } else if (requestCode == GET_IMAGE) {
+            // GET IMAGE FROM GALLERY
+            if (data != null) {
+                String selectedPath = mStorage.getRealPathFromURI(data.getData());
+                Intent intent = new Intent(getContext(), CropMainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                intent.putExtras(bundle);
+                mFragment.startActivity(intent);
             } else {
-                selectedPath = mStorage.getRealPathFromURI(data.getData());
+                // TODO maybe show a toast
             }
 
-            if (selectedPath != null) {
+        } else if (requestCode == GET_VIDEO) {
+            // GET VIDEO FROM GALLERY
+            if (data != null) {
+                String selectedPath = mStorage.getRealPathFromURI(data.getData());
                 File pickedFile = new File(selectedPath);
-                switch (requestCode) {
-                    case GET_IMAGE:
-
-                        Intent intent = new Intent(getContext(), CropMainActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
-                        intent.putExtras(bundle);
-                        mFragment.startActivity(intent);
-
-                        break;
-                    case GET_VIDEO:
-                        mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-                                SharedRuntimeContent.VIDEO_FOLDER_NAME,
-                                SharedRuntimeContent.projectFolder.getName(),
-                                pickedFile,
-                                new FileCopyUpdateListener(getContext()),
-                                new OnFileCopyCompleted() {
-                                    @Override
-                                    public void done(File file, boolean isSuccessful) {
-                                        SharedRuntimeContent.videoPathList.add(file.getName());
-                                        Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
-                                        SharedRuntimeContent.addSlide(new DummyContent.Slide(file.getAbsolutePath(),null,thumbnail, DummyContent.SlideType.VIDEO));
-                                    }
-                                });
-                        break;
-                }
+                mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
+                        SharedRuntimeContent.VIDEO_FOLDER_NAME,
+                        SharedRuntimeContent.projectFolder.getName(),
+                        pickedFile,
+                        new FileCopyUpdateListener(getContext()),
+                        new OnFileCopyCompleted() {
+                            @Override
+                            public void done(File file, boolean isSuccessful) {
+                                SharedRuntimeContent.videoPathList.add(file.getName());
+                                Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
+                                SharedRuntimeContent.addSlide(new DummyContent.Slide(file.getAbsolutePath(), null, thumbnail, DummyContent.SlideType.VIDEO));
+                            }
+                        });
+            } else {
+                // TODO maybe show a toast
             }
         }
 
+        // TODO implement question
     }
 
     @Override

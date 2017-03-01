@@ -20,13 +20,9 @@ import java.io.File;
 
 public class ProjectTextWatcher implements TextWatcher {
 
-    private File mFolder;
-    private Storage mStorage;
     private TextView mDestination;
 
-    public ProjectTextWatcher(@NonNull Storage storage, @NonNull File folder, @NonNull TextView destination) {
-        mFolder = folder;
-        mStorage = storage;
+    public ProjectTextWatcher(@NonNull TextView destination) {
         mDestination = destination;
     }
 
@@ -38,16 +34,11 @@ public class ProjectTextWatcher implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s != null) {
-            String folderName = s.toString();
-            if (folderName.length() > 0 && folderName.length() < 50) {
-                File directory = new File(mFolder.getParentFile(), folderName);
-                if (directory == null)
-                    Log.d("ProjectTextWatcher", "directory is null");
-                mFolder.renameTo(directory);
-                mDestination.setText(folderName);
-                mFolder = directory;
-                SharedRuntimeContent.projectFolder = mFolder;
-            } else if(folderName.length() >= 50){
+            String projectName = s.toString();
+            if (projectName.length() > 0 && projectName.length() < 50) {
+                mDestination.setText(projectName);
+                SharedRuntimeContent.project.setName(projectName);
+            } else if(projectName.length() >= 50){
                 Snackbar.make(mDestination, R.string.storage_error,Snackbar.LENGTH_LONG).show();
             }
         }

@@ -55,6 +55,9 @@ dependencies {
     // Parse
     compile 'com.parse:parse-android:1.13.1'
 
+    // Dependency for Google Sign-In
+    compile 'com.google.android.gms:play-services-auth:9.4.0'
+
 }
 
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

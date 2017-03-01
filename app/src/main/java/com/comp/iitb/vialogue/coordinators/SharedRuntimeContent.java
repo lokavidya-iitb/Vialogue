@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,16 +43,19 @@ public class SharedRuntimeContent {
     public static boolean isSelected;
     public static int selectedPosition;
 
-    public static void addSlide(DummyContent.Slide slide) {
-        ITEMS.add(slide);
-        projectAdapter.notifyItemInserted(ITEMS.size() - 1);
+    /*
+     * new stuff
+     */
+    public static Project project = new Project();
+
+    public static void addSlide(Slide slide) {
+        project.addSlide(slide);
+        projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         previewFab.show();
     }
 
     public static void changeSlidePosition(int current, int destination) {
-        DummyContent.Slide temp = ITEMS.get(current);
-        ITEMS.remove(current);
-        ITEMS.add(destination, temp);
+        project.moveSlideToPosition(current, destination);
         projectAdapter.notifyDataSetChanged();
     }
 

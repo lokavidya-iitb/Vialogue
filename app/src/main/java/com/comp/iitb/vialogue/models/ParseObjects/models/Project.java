@@ -4,6 +4,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseCla
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,17 +13,6 @@ import java.util.List;
 
 @ParseClassName("Project")
 public class Project extends BaseParseClass {
-
-    private String mParentId;
-    private String mName;
-    private String mDescription;
-    private Author mAuthor;
-    private Category mCategory;
-    private Language mLanguage;
-    private List<String> mTags;
-    private List<Integer> mResolution;
-    private List<Integer> mSlideOrderingSequence;
-    private List<Slide> mSlides;
 
     private static final class Fields {
         public static String
@@ -120,7 +110,7 @@ public class Project extends BaseParseClass {
      * Slide related methods
      */
 
-    private ParseObjectsCollection<Slide> getSlides() {
+    public ParseObjectsCollection<Slide> getSlides() {
         return (ParseObjectsCollection) getParseObject(Fields.SLIDES);
     }
 
@@ -128,7 +118,7 @@ public class Project extends BaseParseClass {
         put(Fields.SLIDES, slides);
     }
 
-    public void addSlide() {
+    public void addEmptySlide() {
         ParseObjectsCollection<Slide> slides = getSlides();
 
         // if 0 objects in the "slides" collection
@@ -136,9 +126,16 @@ public class Project extends BaseParseClass {
             slides = new ParseObjectsCollection<Slide>();
         }
 
-        System.out.println(slides);
-
         slides.add(new Slide());
+        setSlides(slides);
+    }
+
+    public void addSlide(Slide slide) {
+        ParseObjectsCollection<Slide> slides = getSlides();
+        if(slides == null) {
+            slides = new ParseObjectsCollection<Slide>();
+        }
+        slides.add(slide);
         setSlides(slides);
     }
 
@@ -153,7 +150,9 @@ public class Project extends BaseParseClass {
     }
 
     public void moveSlideToPosition(int initialPosition, int finalPosition) {
-//        ArrayList<Slide> slides = getSlides();
+        ParseObjectsCollection<Slide> slides = getSlides();
+        slides.move(initialPosition, finalPosition);
+        setSlides(slides);
     }
 
 }
