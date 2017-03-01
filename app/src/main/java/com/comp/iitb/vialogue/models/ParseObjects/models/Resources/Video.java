@@ -23,4 +23,8 @@ public class Video extends BaseResourceClass {
         setFile(new ParseFile(new File(uri.getPath())));
     }
 
+    public Video(byte[] bytes) {
+        setFile(new ParseFile(bytes));
+    }
+
 }

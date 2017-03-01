@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,9 +35,19 @@ import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.parse.ParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
@@ -128,7 +139,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
         mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
 
-        mCameraImagePicker = new CameraImagePicker(mStorage, this);
+        mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
         mCameraPicker.setOnClickListener(mCameraImagePicker);
 
         //Image Picker
@@ -167,7 +178,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     public void setUpProject() {
         mProjectNameDisplay.setText(getString(R.string.create_project));
-        SharedRuntimeContent.project.setName(getString(R.string.create_project));
+        SharedRuntimeContent.setName(getString(R.string.create_project));
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
     }
 
@@ -197,12 +208,13 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(getClass().getName(), requestCode + " " + resultCode);
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -235,21 +247,66 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         } else if (requestCode == GET_VIDEO) {
             // GET VIDEO FROM GALLERY
             if (data != null) {
-                String selectedPath = mStorage.getRealPathFromURI(data.getData());
-                File pickedFile = new File(selectedPath);
-                mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-                        SharedRuntimeContent.VIDEO_FOLDER_NAME,
-                        SharedRuntimeContent.projectFolder.getName(),
-                        pickedFile,
-                        new FileCopyUpdateListener(getContext()),
-                        new OnFileCopyCompleted() {
-                            @Override
-                            public void done(File file, boolean isSuccessful) {
-                                SharedRuntimeContent.videoPathList.add(file.getName());
-                                Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
-                                SharedRuntimeContent.addSlide(new DummyContent.Slide(file.getAbsolutePath(), null, thumbnail, DummyContent.SlideType.VIDEO));
-                            }
-                        });
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "MP4_" + timeStamp + "_";
+                File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+                File v = null;
+                Bitmap thumbnail = null;
+                try {
+                    v = File.createTempFile(
+                            imageFileName,  /* prefix */
+                            ".mp4",         /* suffix */
+                            storageDir      /* directory */
+                    );
+
+                    FileOutputStream newFile = new FileOutputStream (v);
+                    //path 0 = current path of the video
+                    FileInputStream oldFile = new FileInputStream (new File(mStorage.getRealPathFromURI(data.getData())));
+
+                    // Transfer bytes from in to out
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = oldFile.read(buf)) > 0) {
+                        newFile.write(buf, 0, len);
+                    }
+                    newFile.flush();
+                    newFile.close();
+
+                    thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
+                    Video video = new Video(Uri.fromFile(v));
+
+                    Slide slide = new Slide();
+                    slide.addResource(video, Slide.ResourceType.VIDEO);
+                    slide.setThumbnail(thumbnail);
+                    SharedRuntimeContent.addSlide(slide);
+
+                    v.delete();
+                } catch (java.lang.Exception e) {
+                    e.printStackTrace();
+                }
+
+//                mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
+//                        SharedRuntimeContent.VIDEO_FOLDER_NAME,
+//                        SharedRuntimeContent.projectFolder.getName(),
+//                        pickedFile,
+//                        new FileCopyUpdateListener(getContext()),
+//                        new OnFileCopyCompleted() {
+//                            @Override
+//                            public void done(File file, boolean isSuccessful) {
+//                                SharedRuntimeContent.videoPathList.add(file.getName());
+//                                Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
+//                                Slide slide = new Slide();
+//                                try {
+//                                    slide.addResource(new Video(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.VIDEO);
+//                                    slide.setThumbnail(thumbnail);
+//                                    SharedRuntimeContent.addSlide(slide);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                    Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
             } else {
                 // TODO maybe show a toast
             }

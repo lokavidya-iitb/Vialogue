@@ -32,7 +32,9 @@ public class Project extends BaseParseClass {
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
-    public Project() {}
+    public Project() {
+        setSlides(new ParseObjectsCollection<Slide>());
+    }
 
     public Project(String name, String parentId) {
         setName(name);

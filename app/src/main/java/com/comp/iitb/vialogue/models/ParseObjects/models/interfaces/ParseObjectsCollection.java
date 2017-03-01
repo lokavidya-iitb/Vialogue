@@ -88,6 +88,10 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
         }
     }
 
+    public int getObjectPosition(T object) {
+        return mObjectsArray.indexOf(object);
+    }
+
     public void saveParseObject() {
 
         remove(Fields.ELEMENTS_FIELD);

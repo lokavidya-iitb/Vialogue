@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
@@ -26,14 +27,15 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.AudioRecorder;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.TimeFormater;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 
 import java.io.File;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.AUDIO_FOLDER_NAME;
 
 /**
  * Created by shubh on 17-01-2017.
@@ -66,7 +68,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private Button mDone;
-    private DummyContent.Slide mSlide;
+    private Slide mSlide;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -93,8 +95,20 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (bundle != null) {
             int position = bundle.getInt(SLIDE_NO);
             mSlide = SharedRuntimeContent.getSlideAt(position);
-            mImagePath = mSlide.path;
-            mRecordName = new File(mSlide.path).getName() + ".wav";
+
+            Image image = (Image) mSlide.getResource();
+            mImagePath = image.getFile().getUrl();
+
+            Audio audio;
+            try {
+                audio = (Audio) image.getChildrenResources().get(0);
+                mRecordName = audio.getFile().getUrl();
+            } catch (Exception e) {
+                // Throws an error if image.getChildrenResources() is null
+                // or image.getChildrenResources().get(0) is null
+                // both of which mean that audio is not present for the corresponding slide
+                mRecordName = null;
+            }
         }
 
         mDone = (Button) findViewById(R.id.done_button);
@@ -302,10 +316,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private void setUpUI() {
         File file = null;
         if (mRecordName != null) {
-            file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder, AUDIO_FOLDER_NAME), mRecordName);
+            file = new File(mRecordName);
         }
         Log.d(LOG_TAG, "hello file " + String.valueOf(file.exists()));
-        if (!file.exists()) {
+
+        if ((file == null) || (!file.exists())) {
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
             mSeekBar.requestLayout();
@@ -320,7 +335,12 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mSeekBar.requestLayout();
             mPlayButton.setEnabled(true);
             mRetryButton.setEnabled(true);
-            mSlide.setAudioPath(file.getAbsolutePath());
+            try {
+                mSlide.addResource(new Audio(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.AUDIO);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
+            }
             mRecordButton.setEnabled(false);
             mStopButton.setEnabled(false);
         }

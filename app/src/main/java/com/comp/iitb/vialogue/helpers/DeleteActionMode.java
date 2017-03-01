@@ -16,16 +16,17 @@ import java.util.List;
  * Created by shubh on 20-02-2017.
  */
 
+/*
+ * Used for deleting a slide
+ */
 public class DeleteActionMode implements ActionMode.Callback {
 
     private final Activity mActivity;
     private final int mIndex;
-    private final List mList;
     private final RecyclerView.Adapter mAdapter;
 
-    public DeleteActionMode(Activity activity, List list, int index, RecyclerView.Adapter adapter) {
+    public DeleteActionMode(Activity activity, int index, RecyclerView.Adapter adapter) {
         mActivity = activity;
-        mList = list;
         mIndex = index;
         mAdapter = adapter;
     }
@@ -56,7 +57,7 @@ public class DeleteActionMode implements ActionMode.Callback {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        mList.remove(mIndex);
+//        mList.remove(mIndex);
         mAdapter.notifyItemRemoved(mIndex);
         return true;
     }

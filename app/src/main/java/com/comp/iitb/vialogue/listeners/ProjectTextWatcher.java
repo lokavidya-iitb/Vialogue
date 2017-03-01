@@ -37,7 +37,7 @@ public class ProjectTextWatcher implements TextWatcher {
             String projectName = s.toString();
             if (projectName.length() > 0 && projectName.length() < 50) {
                 mDestination.setText(projectName);
-                SharedRuntimeContent.project.setName(projectName);
+                SharedRuntimeContent.setName(projectName);
             } else if(projectName.length() >= 50){
                 Snackbar.make(mDestination, R.string.storage_error,Snackbar.LENGTH_LONG).show();
             }

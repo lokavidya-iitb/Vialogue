@@ -37,7 +37,7 @@ public abstract class BaseResourceClass extends BaseParseClass {
         put(Fields.FILE, file);
     }
 
-    public Uri getUri() {
-        return Uri.fromFile(new File(getFile().getUrl()));
-    }
+//    public Uri getUri() {
+//        return Uri.fromFile(new File(getFile().getUrl()));
+//    }
 }

@@ -29,6 +29,7 @@ public abstract class BaseParseClass extends ParseObject {
             }
         };
         mIsEdited = false;
+        setChildrenResources(new ParseObjectsCollection<BaseResourceClass>());
     }
 
     // ID
