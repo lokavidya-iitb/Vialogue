@@ -5,6 +5,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -21,38 +22,52 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
         ELEMENTS_FIELD = "elements";
     }
 
-    private ArrayList<T> mObjectsArray;
+    public ParseObjectsCollection() {}
 
-    public ParseObjectsCollection() {
-        mObjectsArray = new ArrayList<T>();
+    private void setList(ArrayList<T> list) {
+        remove(Fields.ELEMENTS_FIELD);
+        for(T object: list) {
+            add(Fields.ELEMENTS_FIELD, (ParseObject) object);
+        }
+    }
+
+    private ArrayList<T> getList() {
+        return (ArrayList) getList(Fields.ELEMENTS_FIELD);
     }
 
     public void add(T object) {
-        mObjectsArray.add(object);
+        add(Fields.ELEMENTS_FIELD, object);
     }
 
     public void remove(int index) {
-        mObjectsArray.remove(index);
+        ArrayList<T> list = getList();
+        list.remove(index);
+        setList(list);
     }
 
     public T get(int index) {
-        return mObjectsArray.get(index);
+        return getList().get(index);
     }
 
     public ArrayList<T> getAll() {
-        return mObjectsArray;
+        return getList();
     }
 
     public void removeAll() {
-        mObjectsArray = new ArrayList<T>();
+        setList(new ArrayList<T>());
     }
 
     public int size() {
-        return mObjectsArray.size();
+        try {
+            return getList().size();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void move(int initialPosition, int finalPosition) {
-        if(initialPosition >= mObjectsArray.size() || finalPosition >= mObjectsArray.size()) {
+        ArrayList<T> list = getList();
+        if(initialPosition >= list.size() || finalPosition >= list.size()) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -63,42 +78,37 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
         ArrayList<T> newObjectsArray = new ArrayList<T>();
         if(initialPosition > finalPosition) {
             for(int i=0; i<finalPosition; i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+                newObjectsArray.add(list.get(i));
             }
-            newObjectsArray.add(mObjectsArray.get(initialPosition));
+            newObjectsArray.add(list.get(initialPosition));
             for(int i=finalPosition; i<initialPosition; i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+                newObjectsArray.add(list.get(i));
             }
-            for(int i=initialPosition+1; i<mObjectsArray.size(); i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+            for(int i=initialPosition+1; i<list.size(); i++) {
+                newObjectsArray.add(list.get(i));
             }
-            mObjectsArray = newObjectsArray;
+            list = newObjectsArray;
         } else {
             for(int i=0; i<initialPosition; i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+                newObjectsArray.add(list.get(i));
             }
             for(int i=initialPosition+1; i<finalPosition; i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+                newObjectsArray.add(list.get(i));
             }
-            newObjectsArray.add(mObjectsArray.get(initialPosition));
-            for(int i=finalPosition; i<mObjectsArray.size(); i++) {
-                newObjectsArray.add(mObjectsArray.get(i));
+            newObjectsArray.add(list.get(initialPosition));
+            for(int i=finalPosition; i<list.size(); i++) {
+                newObjectsArray.add(list.get(i));
             }
-            mObjectsArray = newObjectsArray;
+            list = newObjectsArray;
         }
+        setList(list);
     }
 
     public int getObjectPosition(T object) {
-        return mObjectsArray.indexOf(object);
+        return getList().indexOf(object);
     }
 
     public void saveParseObject() {
-
-        remove(Fields.ELEMENTS_FIELD);
-        for(T object: mObjectsArray) {
-            add(Fields.ELEMENTS_FIELD, (ParseObject) object);
-        }
-
         try {
             save();
         } catch (ParseException e) {

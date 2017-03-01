@@ -2,10 +2,12 @@ package com.comp.iitb.vialogue.coordinators;
 
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 
@@ -52,6 +54,11 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         previewFab.show();
         calculatePreviewFabVisibility();
+
+        Image image = (Image) slide.getResource();
+        Log.d("shared runtime:image", image.toString());
+        Log.d("shared runtime:imageFil", image.getFile().toString());
+        Log.d("shared runtime:imageUrl", image.getFile().getUrl());
     }
 
     public static void changeSlidePosition(int current, int destination) {

@@ -122,6 +122,7 @@ public class Slide extends BaseParseClass {
     }
 
     public void addImage(Image image) {
+        System.out.println("addImage : called");
         ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
         childrenResources.removeAll();
         childrenResources.add(image);
