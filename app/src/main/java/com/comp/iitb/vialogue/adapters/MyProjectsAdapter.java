@@ -88,6 +88,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             public void onClick(View view) {
 
                 // TODO change implementation API
+                Master.projectName=holder.title.toString();
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
 

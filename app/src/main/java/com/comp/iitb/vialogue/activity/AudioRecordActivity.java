@@ -99,7 +99,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             int position = bundle.getInt(SLIDE_NO);
             mSlide = SharedRuntimeContent.getSlideAt(position);
             System.out.println(mSlide);
-
             Image image = (Image) mSlide.getResource();
             mImagePath = image.getResourceFile().getAbsolutePath();
 
