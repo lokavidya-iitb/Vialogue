@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -46,6 +53,7 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 public class SignIn extends AppCompatActivity implements
@@ -56,13 +64,30 @@ public class SignIn extends AppCompatActivity implements
     private String email;
     private static final String TAG = SignIn.class.getSimpleName();
     private static final int RC_SIGN_IN = 007;
-    private GoogleApiClient mGoogleApiClient;
+    public static GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
     private SignInButton btnSignIn;
     private Button skip;
     private SliderLayout mDemoSlider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                ).withListener(new MultiplePermissionsListener() {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                /*for (PermissionDeniedResponse response : report.getDeniedPermissionResponses()) {
+                    Toast.makeText(getApplicationContext(),"It is required",Toast.LENGTH_LONG).show();
+                    Intent loop = new Intent(getApplicationContext(), SignIn.class);
+                    startActivity(loop);
+                }*/
+
+                }
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+        }).check();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
         mDemoSlider = (SliderLayout)findViewById(R.id.slider);
@@ -114,12 +139,17 @@ public class SignIn extends AppCompatActivity implements
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-    private void signOut() {
+    public static void signOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        updateUI(false);
+                    }
+                });
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
                     }
                 });
     }
@@ -150,17 +180,7 @@ public class SignIn extends AppCompatActivity implements
             Log.e(TAG, "Name: " + personName + ", email: " + email+ ", Image: " + personPhotoUrl);
             savetoParse(personName,email);
             updateUI(true);
-            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-            try {
-                help.saveToSharedPref(Master.personName,personName);
-                help.saveToSharedPref(Master.email,email);
-                help.saveToSharedPref(Master.personPhotoUrl,personPhotoUrl);
-                help.saveToSharedPref(Master.signedOrNot,true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Toast.makeText(SignIn.this,
-                    "Signed in as "+ personName, Toast.LENGTH_SHORT).show();
+
         } else {
 
             updateUI(false);
@@ -246,10 +266,33 @@ public class SignIn extends AppCompatActivity implements
 
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
+            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
+            try {
+                help.saveToSharedPref(Master.personName,personName);
+                help.saveToSharedPref(Master.email,email);
+                help.saveToSharedPref(Master.personPhotoUrl,personPhotoUrl);
+                help.saveToSharedPref(Master.signedOrNot,true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(SignIn.this,
+                    "Signed in as "+ personName, Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         } else {
+            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
+            try {
+                help.saveToSharedPref(Master.personName,"");
+                help.saveToSharedPref(Master.email,"");
+                help.saveToSharedPref(Master.personPhotoUrl,"");
+                help.saveToSharedPref(Master.signedOrNot,false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(SignIn.this,
+                    "Signed in as "+ personName, Toast.LENGTH_SHORT).show();
             btnSignIn.setVisibility(View.VISIBLE);
 
             /*Toast.makeText(SignIn.this,
@@ -307,6 +350,8 @@ public class SignIn extends AppCompatActivity implements
 
 
     }
+
+
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

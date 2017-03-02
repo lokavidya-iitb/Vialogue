@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.temp.postmanCommunication;
 import com.comp.iitb.vialogue.adapters.CategoriesExpandableAdapter;
 import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
@@ -66,6 +65,7 @@ public class ViewVideosCategory extends Fragment {
     ViewCategoryAdapter mAdapter;
     private int limit = 5;
     List<ParseObject> receiveEM;
+    List<ParseObject> receivedVideos;
     private List<CategoryType> categoryTypeList = new ArrayList<>();
     public ViewVideosCategory() {
         // Required empty public constructor
@@ -243,13 +243,40 @@ public class ViewVideosCategory extends Fragment {
 
 
     private class GetCategories extends AsyncTask<String, Void, String> {
-        ProgressDialog pd;
+        ProgressDialog videoPD;
         @Override
         protected String doInBackground(String... params) {
 
-            vidArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/tutorials/search/findByCategory?category="+catOrVids,"");
-            Log.d("-------recieved",vidArray.toString());
-            for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
+
+            try{
+            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
+                    "Videos");
+            query.orderByAscending("createdAt");
+            receiveEM = query.find();
+
+            for (ParseObject num : receiveEM) {
+                Category map = new Category();
+                map.setId((String) num.get("objectId"));
+                map.setName((String) num.get("Name"));
+                map.setDesc((String) num.get("desc"));
+                map.setImageURL(((String) num.get("videoURL")));
+
+
+                categoryList.add(map);
+            }
+        } catch (ParseException e) {
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+            /*for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
             {
                 Category tempStub = new Category();
 
@@ -259,22 +286,21 @@ public class ViewVideosCategory extends Fragment {
                     tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
                     tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
                     tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
-                   /*
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*/
+                   *//*
+                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*//*
                     categoryList.add(tempStub);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
+            videoPD.dismiss();
             return "Executed";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            pd.dismiss();
-           /* createGroupList();
 
-            createCollection();*/
+
 
 
             final CategoriesExpandableAdapter expListAdapter = new CategoriesExpandableAdapter(getActivity(), categoryList);
@@ -287,9 +313,9 @@ public class ViewVideosCategory extends Fragment {
         @Override
         protected void onPreExecute() {
 
-            pd=new ProgressDialog(getContext());
-            pd.setMessage("Loading bru!");
-            pd.show();
+            videoPD=new ProgressDialog(getContext());
+            videoPD.setMessage("Loading bru!");
+            videoPD.show();
 
         }
 

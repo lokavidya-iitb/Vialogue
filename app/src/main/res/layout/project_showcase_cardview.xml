@@ -31,38 +31,12 @@
                 android:layout_below="@id/thumbnail"
                 android:paddingLeft="@dimen/card_title_padding"
                 android:paddingRight="@dimen/card_title_padding"
+                android:gravity="center"
                 android:paddingTop="@dimen/card_title_padding"
+                android:paddingBottom="@dimen/card_title_padding"
                 android:textColor="@color/card_title"
                 android:textSize="@dimen/title" />
 
-            <TextView
-                android:id="@+id/count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/title"
-                android:paddingBottom="@dimen/count_padding_bottom"
-                android:paddingLeft="@dimen/card_title_padding"
-                android:paddingRight="@dimen/card_title_padding"
-                android:textSize="@dimen/Images_count" />
-
-            <TextView
-                android:id="@+id/AudioCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/count"
-                android:layout_below="@id/title"
-                android:textSize="@dimen/Audios_count" />
-
-            <ImageView
-                android:id="@+id/overflow"
-                android:layout_width="@dimen/overflow_width"
-                android:layout_height="@dimen/overflow_height"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/thumbnail"
-                android:layout_marginTop="@dimen/overflow_margin_top"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_dots"
-                android:visibility="gone"/>
 
         </RelativeLayout>
 

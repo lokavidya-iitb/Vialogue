@@ -170,8 +170,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mFolder = mStorage.addFolder(mFolder, getString(R.string.my_projects));
         mFolder = mStorage.addFolder(mFolder, getString(R.string.create_project));
         SharedRuntimeContent.projectFolder = mFolder;
-
-        mProjectNameDisplay.setText(getString(R.string.create_project));
+/*
+        mProjectNameDisplay.setText(getString(R.string.create_project));*/
         boolean success = true;
         if (mFolder != null) {
             if (!mFolder.exists()) {

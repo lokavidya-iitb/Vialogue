@@ -18,17 +18,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
+import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.models.DummyContent;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import java.io.File;
 
@@ -40,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
     private Storage mStorage;
     private Menu mMenu;
     private FloatingActionButton mPreviewFab;
@@ -158,6 +166,47 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
+            try {
+                if(help.loadBooleanFromSharedPref(Master.signedOrNot)) {
+                    SignIn.signOut();
+                    help.saveToSharedPref(Master.personName, "");
+                    help.saveToSharedPref(Master.email, "");
+                    help.saveToSharedPref(Master.personPhotoUrl, "");
+                    help.saveToSharedPref(Master.signedOrNot, false);
+                    item.setTitle("Sign In");
+                    Toast.makeText(MainActivity.this,
+                            "Signed Out", Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+                    Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                    startActivity(intent);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+           /* Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
+                            try {
+                                help.saveToSharedPref(Master.personName,"");
+                                help.saveToSharedPref(Master.email,"");
+                                help.saveToSharedPref(Master.personPhotoUrl,"");
+                                help.saveToSharedPref(Master.signedOrNot,true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Toast.makeText(MainActivity.this,
+                                    "Signed Out", Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
+
             return true;
         }
 
@@ -243,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 break;
             case 3:
-                mPreviewFab.hide();
+                mPreviewFab.show();
         }
     }
 }

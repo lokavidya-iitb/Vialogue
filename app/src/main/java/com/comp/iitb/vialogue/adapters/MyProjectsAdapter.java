@@ -9,8 +9,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,6 +36,7 @@ import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CreateVideos;
+import com.comp.iitb.vialogue.fragments.ViewVideosCategory;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
@@ -45,18 +49,17 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     private Context mContext;
     private List<ProjectsShowcase> albumList;
     private int listItemPositionForPopupMenu;
+    private ViewPager viewpager;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count, AudioCount;
-        public ImageView thumbnail, overflow;
+        public TextView title;
+        public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
-            AudioCount = (TextView) view.findViewById(R.id.AudioCount);
+
         }
     }
 
@@ -78,21 +81,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
-        holder.count.setText(album.getImagesCount() + " Images");
-        Log.d("Images",""+album.getImagesCount());
-        holder.AudioCount.setText(album.getAudioCount() +" Audios");
-        Log.d("Images",""+album.getAudioCount());
         Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* FragmentManager fm =  ((Activity) mContext).getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                CreateVideos CV = new CreateVideos();
-                ft.replace(R.id.userLayout, CV);
-                ft.commit();*/
-                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+"/Lokavidya/Projects/MyProjects/"+holder.title.toString());
+
+                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+Master.getMyProjectsPath()+holder.title.toString());
+                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+                viewpager.setCurrentItem(1,true);
+
 
             }
         });
@@ -133,6 +131,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             albumList.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, albumList.size());
+            Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
             Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
             mode.finish();
             return false;

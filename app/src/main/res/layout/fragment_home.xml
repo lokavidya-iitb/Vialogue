@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.comp.iitb.vialogue.fragments.Home">
-
+<!--
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:orientation="vertical">-->
 
-        <LinearLayout
+     <!--   <LinearLayout
             android:id="@+id/ll1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,27 +29,32 @@
 
             </com.comp.iitb.vialogue.viewGroups.PagerContainer>
 
-        </LinearLayout>
+        </LinearLayout>-->
+<!--
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+-->
 
             <LinearLayout
                 android:id="@+id/ll2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/fab_margin">
+                android:padding="@dimen/fab_margin"
+                android:weightSum="1"
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp">
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="0.5">
 
                     <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:adjustViewBounds="true"
                         android:src="@drawable/image5" />
 
@@ -91,7 +96,8 @@
                             android:includeFontPadding="true"
                             android:minHeight="0dp"
                             android:minWidth="0dp"
-                            android:text="View Videos"
+                            android:id="@+id/viewVideos"
+                            android:text="@string/fragment_view_videos"
                             android:textAllCaps="false"
                             android:textColor="@android:color/white"
                             android:textSize="12sp" />
@@ -101,12 +107,13 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5">
 
                     <ImageView
                         android:id="@+id/image2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:adjustViewBounds="true"
                         android:src="@drawable/image11" />
 
@@ -148,6 +155,7 @@
                             android:background="@drawable/rectangle_button"
                             android:includeFontPadding="true"
                             android:minHeight="0dp"
+                            android:id="@+id/createProject"
                             android:minWidth="0dp"
                             android:text="@string/create_project"
                             android:textAllCaps="false"
@@ -158,8 +166,8 @@
                 </RelativeLayout>
 
             </LinearLayout>
-        </ScrollView>
-
+       <!-- </ScrollView>-->
+<!--
         <LinearLayout
             android:id="@+id/ll3"
             android:layout_width="match_parent"
@@ -172,8 +180,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorAccent" />
 
-        </LinearLayout>
-
-    </LinearLayout>
+        </LinearLayout>-->
+<!--
+    </LinearLayout>-->
 
 </FrameLayout>

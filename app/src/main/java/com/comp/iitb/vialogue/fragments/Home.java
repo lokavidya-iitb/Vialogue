@@ -3,17 +3,24 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.HeroAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.viewGroups.PagerContainer;
+
+import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,11 +35,12 @@ public class Home extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private ViewPager viewpager;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Button createProject;
+    private Button viewVideos;
     private View mView;
     private PagerContainer mPagerContainer;
     private OnFragmentInteractionListener mListener;
@@ -67,9 +75,29 @@ public class Home extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_home, container, false);
-        mPagerContainer = (PagerContainer) mView.findViewById(R.id.pager_container);
+        createProject=(Button)mView.findViewById(R.id.createProject);
+        viewVideos=(Button)mView.findViewById(R.id.viewVideos);
+        viewpager= (ViewPager) getActivity().findViewById(R.id.viewpager);
+
+        createProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* TODO pass value
+               SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+ Master.getMyProjectsPath()+holder.title.toString());*/
+                viewpager.setCurrentItem(1,true);
+            }
+        });
+        viewVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* TODO pass value
+                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+ Master.getMyProjectsPath()+holder.title.toString());*/
+                viewpager.setCurrentItem(2,true);
+            }
+        });
+
+        /*mPagerContainer = (PagerContainer) mView.findViewById(R.id.pager_container);
 
         ViewPager pager = mPagerContainer.getViewPager();
         PagerAdapter adapter = new HeroAdapter(getContext());
@@ -81,7 +109,7 @@ public class Home extends Fragment {
         pager.setPageMargin(15);
         //If hardware acceleration is enabled, you should also remove
         // clipping on the pager for its children.
-        pager.setClipChildren(false);
+        pager.setClipChildren(false);*/
 
         return mView;
     }
