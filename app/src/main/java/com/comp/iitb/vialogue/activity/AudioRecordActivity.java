@@ -109,6 +109,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 audio = new Audio(getBaseContext());
                 try {
                     mSlide.addResource(audio, Slide.ResourceType.AUDIO);
+                    System.out.println("added audio to slide");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
