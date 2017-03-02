@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +16,9 @@ import java.util.Collections;
 public class SlideRecyclerViewCallback extends ItemTouchHelper.Callback {
 
     private RecyclerView.Adapter<SlideRecyclerViewAdapter.ViewHolder> mAdapter;
-    private ArrayList mDataCollection;
 
-    public SlideRecyclerViewCallback(RecyclerView.Adapter<SlideRecyclerViewAdapter.ViewHolder> adapter, ArrayList<DummyContent.Slide> dataCollection) {
+    public SlideRecyclerViewCallback(RecyclerView.Adapter<SlideRecyclerViewAdapter.ViewHolder> adapter) {
         mAdapter = adapter;
-        mDataCollection = dataCollection;
     }
 
     @Override
@@ -31,7 +29,7 @@ public class SlideRecyclerViewCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        Collections.swap(mDataCollection, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        SharedRuntimeContent.changeSlidePosition(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         // and notify the adapter that its dataset has changed
         mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;

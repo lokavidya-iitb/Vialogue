@@ -72,11 +72,11 @@ public class SlideFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             //Adapter for Slides
-            SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(SharedRuntimeContent.ITEMS, mListener);
+            SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(mListener);
             recyclerView.setAdapter(adapter);
             SharedRuntimeContent.projectAdapter = adapter;
             //Reordering helper for slides
-            SlideRecyclerViewCallback callback = new SlideRecyclerViewCallback(adapter, SharedRuntimeContent.ITEMS);
+            SlideRecyclerViewCallback callback = new SlideRecyclerViewCallback(adapter);
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
             itemTouchHelper.attachToRecyclerView(recyclerView);
 

@@ -92,7 +92,8 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 CreateVideos CV = new CreateVideos();
                 ft.replace(R.id.userLayout, CV);
                 ft.commit();*/
-                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+"/Lokavidya/Projects/MyProjects/"+holder.title.toString());
+                // TODO change implementation API
+//                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+"/Lokavidya/Projects/MyProjects/"+holder.title.toString());
 
             }
         });

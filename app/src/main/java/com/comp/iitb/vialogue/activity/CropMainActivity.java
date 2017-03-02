@@ -40,7 +40,8 @@ import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CropMainFragment;
 import com.comp.iitb.vialogue.library.Storage;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
@@ -60,6 +61,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private Button mDone;
     private Uri mCropImageUri;
     private RelativeLayout mPleaseWait;
+
+    private String mCroppedImagePath;
+
     AppCompatActivity mActivity;
 
     private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
@@ -157,10 +161,21 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
         @Override
         public void onThumbnailCreated(Bitmap thumbnail) {
-
-            SharedRuntimeContent.imageThumbnails.add(thumbnail);
-            SharedRuntimeContent.addSlide(new DummyContent.Slide(mFilePath, null, thumbnail, DummyContent.SlideType.IMAGE));
+            Slide slide = new Slide();
+            try {
+                Image image = new Image(getBaseContext());
+                File i = image.getResourceFile();
+                mStorage.saveBitmapToFile()
+                slide.addResource(new Image(Uri.parse(mCroppedImagePath)), Slide.ResourceType.IMAGE);
+                slide.setThumbnail(thumbnail);
+                SharedRuntimeContent.addSlide(slide);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mPleaseWait.setVisibility(View.GONE);
+//            SharedRuntimeContent.imageThumbnails.add(thumbnail);
+//            SharedRuntimeContent.addSlide(new DummyContent.Slide(mFilePath, null, thumbnail, DummyContent.SlideType.IMAGE));
+//            mPleaseWait.setVisibility(View.GONE);
             finish();
         }
     };
@@ -171,29 +186,34 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         protected Void doInBackground(Void... params) {
 
             Bitmap photo = mCropImageCoordinator.getCroppedImage();
-            Uri imageUri = mStorage.getImageUri(photo);
-            String selectedPath = mStorage.getRealPathFromURI(imageUri);
-            File pickedFile = new File(selectedPath);
-            mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
-                    SharedRuntimeContent.projectFolder.getName(),
-                    pickedFile,
-                    null,
-                    new OnFileCopyCompleted() {
-                        @Override
-                        public void done(File file, boolean isSuccessful) {
-                            try {
-                                SharedRuntimeContent.imagePathList.add(file.getName());
-                                mFilePath = file.getAbsolutePath();
-                                mStorage.getImageThumbnailAsync(file.getAbsolutePath(), mThumbnailCreated);
-                            } catch (Exception e) {
-                                Log.d("CropMainActivity", e.getMessage());
-                                Toast.makeText(getApplicationContext(), "Error Generating Thumbnail", Toast.LENGTH_LONG).show();
-                            }
-
-                        }
-                    });
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
+            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated);
             return null;
+
+//            Bitmap photo = mCropImageCoordinator.getCroppedImage();
+//            Uri imageUri = mStorage.getImageUri(photo);
+//            String selectedPath = mStorage.getRealPathFromURI(imageUri);
+//            File pickedFile = new File(selectedPath);
+//            mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
+//                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
+//                    SharedRuntimeContent.projectFolder.getName(),
+//                    pickedFile,
+//                    null,
+//                    new OnFileCopyCompleted() {
+//                        @Override
+//                        public void done(File file, boolean isSuccessful) {
+//                            try {
+//                                SharedRuntimeContent.imagePathList.add(file.getName());
+//                                mFilePath = file.getAbsolutePath();
+//                                mStorage.getImageThumbnailAsync(file.getAbsolutePath(), mThumbnailCreated);
+//                            } catch (Exception e) {
+//                                Log.d("CropMainActivity", e.getMessage());
+//                                Toast.makeText(getApplicationContext(), "Error Generating Thumbnail", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                        }
+//                    });
+//            return null;
         }
     }
 }
