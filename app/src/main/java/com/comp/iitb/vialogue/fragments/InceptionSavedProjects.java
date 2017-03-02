@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
 import com.comp.iitb.vialogue.library.Storage;
@@ -119,7 +120,7 @@ public class InceptionSavedProjects extends Fragment {
     private void prepareProjects() {
 
         List<String> myStringArray = new ArrayList<String>();
-        myStringArray= Storage.getMeAllTheFilesHere("/Lokavidya/Projects/SavedProjects");
+        myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedProjectsPath());
         for(int i=0;i<myStringArray.size();i++)
         {
             ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"", Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(), Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);

@@ -8,8 +8,8 @@ public class Master {
     public static String personPhotoUrl = "image";
     public static String email = "email";
     public static String signedOrNot= "isSigned";
-    public static String AppName = "Lokavidya";
-    public static String AppPath = "/Lokavidya" ;
+    public static String AppName = "LVCreate";
+    public static String AppPath = "/LVCreate" ;
     public static String ProjectsPath = "/Projects";
     public static String MyProjectsPath="/MyProjects";
     public static String SavedProjectsPath="/SavedProjects";

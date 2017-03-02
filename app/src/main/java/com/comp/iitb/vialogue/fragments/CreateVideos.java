@@ -178,9 +178,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     public void setUpProject() {
+
         mProjectNameDisplay.setText(getString(R.string.create_project));
         SharedRuntimeContent.setName(getString(R.string.create_project));
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

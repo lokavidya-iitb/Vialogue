@@ -18,7 +18,6 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.temp.postmanCommunication;
 import com.comp.iitb.vialogue.adapters.CategoriesExpandableAdapter;
 import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
@@ -132,7 +131,7 @@ public class ViewVideos extends Fragment {
             expListView.setVisibility(View.VISIBLE);
 
             if(isNetworkConnected())
-                new GetCategories().execute("OK");
+            {  /*new GetCategories().execute("OK");*/}
             else
                 Toast.makeText(getContext(),"Check your internet connectivity",Toast.LENGTH_LONG);
 
@@ -276,7 +275,7 @@ public class ViewVideos extends Fragment {
 
 
 
-    private class GetCategories extends AsyncTask<String, Void, String> {
+    /*private class GetCategories extends AsyncTask<String, Void, String> {
         ProgressDialog pd;
         @Override
         protected String doInBackground(String... params) {
@@ -293,8 +292,8 @@ public class ViewVideos extends Fragment {
                    tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
                    tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
                    tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
-                   /*
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*/
+                   *//*
+                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*//*
                    categoryList.add(tempStub);
                } catch (JSONException e) {
                    e.printStackTrace();
@@ -306,9 +305,9 @@ public class ViewVideos extends Fragment {
         @Override
         protected void onPostExecute(String result) {
         pd.dismiss();
-           /* createGroupList();
+           *//* createGroupList();
 
-            createCollection();*/
+            createCollection();*//*
 
 
             final CategoriesExpandableAdapter expListAdapter = new CategoriesExpandableAdapter(getActivity(), categoryList);
@@ -329,7 +328,7 @@ public class ViewVideos extends Fragment {
 
         @Override
         protected void onProgressUpdate(Void... values) {}
-    }
+    }*/
 
 
 

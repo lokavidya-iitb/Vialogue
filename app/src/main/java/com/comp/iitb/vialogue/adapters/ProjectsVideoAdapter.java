@@ -30,15 +30,13 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
     private List<ProjectsShowcase> albumList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count;
-        public ImageView thumbnail, overflow;
+        public TextView title;
+        public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
         }
     }
 
@@ -60,48 +58,11 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
-        holder.count.setText(album.getImagesCount() + " Images");
         File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
         holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Video.getAbsolutePath()));
-        holder.overflow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupMenu(holder.overflow);
-            }
-        });
-    }
-
-    private void showPopupMenu(View view) {
-        // inflate menu
-        PopupMenu popup = new PopupMenu(mContext, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_card, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-        popup.show();
-    }
-
-    /**
-     * Click listener for popup menu items
-     */
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
         }
 
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.deleteThis:
-                    Toast.makeText(mContext, "Something1", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.renameThis:
-                    Toast.makeText(mContext, "Something2", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-            }
-            return false;
-        }
-    }
+
 
     @Override
     public int getItemCount() {

@@ -479,7 +479,8 @@ public class Storage {
 
     public static void deleteThisFolder(String projectPath) {
         File parentDirectory = new File(Environment.getExternalStorageDirectory() + projectPath);
-        deleteDirectory(parentDirectory);
+        /*deleteDirectory(parentDirectory)*/;
+        deleteContents(parentDirectory);
     }
 
     static private void deleteDirectory(File path) {
@@ -492,7 +493,23 @@ public class Storage {
                     files[i].delete();
                 }
             }
+
         }
+    }
+    public static boolean deleteContents(File dir) {
+        File[] files = dir.listFiles();
+        boolean success = true;
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    success &= deleteContents(file);
+                }
+                if (!file.delete()) {
+                    success = false;
+                }
+            }
+        }
+        return success;
     }
 
     public static void setupLokavidyaLegacy() {

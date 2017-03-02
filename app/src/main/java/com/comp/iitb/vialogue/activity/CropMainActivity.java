@@ -164,9 +164,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             Slide slide = new Slide();
             try {
                 Image image = new Image(getBaseContext());
-                File i = image.getResourceFile();
-                mStorage.saveBitmapToFile()
-                slide.addResource(new Image(Uri.parse(mCroppedImagePath)), Slide.ResourceType.IMAGE);
+                mStorage.getBitmap(mCroppedImagePath);
+                mStorage.saveBitmapToFile(image.getResourceFile(),mStorage.getBitmap(mCroppedImagePath));
+                slide.addResource(image, Slide.ResourceType.IMAGE);
                 slide.setThumbnail(thumbnail);
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {

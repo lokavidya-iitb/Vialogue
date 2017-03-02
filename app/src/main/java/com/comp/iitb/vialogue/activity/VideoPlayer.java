@@ -53,7 +53,7 @@ public class VideoPlayer extends AppCompatActivity {
         Log.d("-------URL",""+URL);
 
         mPlayer = new VPlayer(this);
-        mPlayer.play(new PlayerModel("http://"+URL, null));
+        mPlayer.play(new PlayerModel(URL, null));
         mPlayer.setTitle(URL);
         mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
             private SimulationHandler mSimulationHandler;
