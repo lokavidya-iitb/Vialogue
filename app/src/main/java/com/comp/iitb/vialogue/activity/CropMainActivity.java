@@ -163,6 +163,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         public void onThumbnailCreated(Bitmap thumbnail) {
             Slide slide = new Slide();
             try {
+                Image image = new Image(getBaseContext());
+                File i = image.getResourceFile();
+                mStorage.saveBitmapToFile()
                 slide.addResource(new Image(Uri.parse(mCroppedImagePath)), Slide.ResourceType.IMAGE);
                 slide.setThumbnail(thumbnail);
                 SharedRuntimeContent.addSlide(slide);

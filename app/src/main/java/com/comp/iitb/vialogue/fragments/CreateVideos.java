@@ -37,6 +37,7 @@ import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.parse.ParseException;
 
 import java.io.ByteArrayOutputStream;
@@ -248,17 +249,10 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             // GET VIDEO FROM GALLERY
             if (data != null) {
 
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "MP4_" + timeStamp + "_";
-                File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-                File v = null;
-                Bitmap thumbnail = null;
                 try {
-                    v = File.createTempFile(
-                            imageFileName,  /* prefix */
-                            ".mp4",         /* suffix */
-                            storageDir      /* directory */
-                    );
+
+                    Video video = new Video(getContext());
+                    File v = video.getResourceFile();
 
                     FileOutputStream newFile = new FileOutputStream (v);
                     //path 0 = current path of the video
@@ -273,15 +267,12 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                     newFile.flush();
                     newFile.close();
 
-                    thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
-                    Video video = new Video(Uri.fromFile(v));
+                    Bitmap thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
 
                     Slide slide = new Slide();
                     slide.addResource(video, Slide.ResourceType.VIDEO);
                     slide.setThumbnail(thumbnail);
                     SharedRuntimeContent.addSlide(slide);
-
-                    v.delete();
                 } catch (java.lang.Exception e) {
                     e.printStackTrace();
                 }

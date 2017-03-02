@@ -1,7 +1,9 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.Resources;
 
+import android.content.Context;
 import android.net.Uri;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -19,12 +21,11 @@ public class Video extends BaseResourceClass {
 
     public Video() {}
 
+    public Video(Context context) {
+        this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.VIDEO, context)));
+    }
+
     public Video(Uri uri) {
-        setFile(new ParseFile(new File(uri.getPath())));
+        super(uri);
     }
-
-    public Video(byte[] bytes) {
-        setFile(new ParseFile(bytes));
-    }
-
 }
