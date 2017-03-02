@@ -29,7 +29,7 @@ public abstract class BaseParseClass extends ParseObject {
             }
         };
         mIsEdited = false;
-        mChildrenResources = new ParseObjectsCollection<>();
+        setChildrenResources(new ParseObjectsCollection<BaseResourceClass>());
     }
 
     // ID
@@ -70,8 +70,6 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     // CHILDREN_RESOURCES
-    private ParseObjectsCollection<BaseResourceClass> mChildrenResources;
-
     public final ParseObjectsCollection<BaseResourceClass> getChildrenResources() {
         return (ParseObjectsCollection) getParseObject(Fields.CHILDREN_RESOURCES);
     }

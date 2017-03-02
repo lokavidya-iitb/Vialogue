@@ -87,7 +87,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public void onClick(View view) {
 
-                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+Master.getMyProjectsPath()+holder.title.toString());
+                // TODO change implementation API
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
 

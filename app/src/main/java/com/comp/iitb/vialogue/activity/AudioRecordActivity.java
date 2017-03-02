@@ -5,12 +5,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
@@ -26,14 +27,18 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.AudioRecorder;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.TimeFormater;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.AUDIO_FOLDER_NAME;
 
 /**
  * Created by shubh on 17-01-2017.
@@ -47,7 +52,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     public static final String FOLDER_PATH = "folderPath";
     private Toolbar mToolbar;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String mRecordName = null;
+    private String mRecordUrl = null;
     private SeekBar mSeekBar;
     private Button mRecordButton = null;
     private Button mStopButton = null;
@@ -66,7 +71,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private Button mDone;
-    private DummyContent.Slide mSlide;
+    private Slide mSlide;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -93,8 +98,36 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (bundle != null) {
             int position = bundle.getInt(SLIDE_NO);
             mSlide = SharedRuntimeContent.getSlideAt(position);
-            mImagePath = mSlide.path;
-            mRecordName = new File(mSlide.path).getName() + ".wav";
+            System.out.println(mSlide);
+
+            Image image = (Image) mSlide.getResource();
+            mImagePath = image.getFile().getUrl();
+
+            Audio audio;
+            try {
+                audio = (Audio) image.getChildrenResources().get(0);
+                mRecordUrl = audio.getFile().getUrl();
+            } catch (Exception e) {
+                // Throws an error if image.getChildrenResources() is null
+                // or image.getChildrenResources().get(0) is null
+                // both of which mean that audio is not present for the corresponding slide
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "WAV_" + timeStamp + "_";
+                File storageDir = getBaseContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+                File a = null;
+                try {
+                    a = File.createTempFile(
+                            imageFileName,  /* prefix */
+                            ".wav",         /* suffix */
+                            storageDir      /* directory */
+                    );
+                } catch (IOException e1) {
+                    e.printStackTrace();
+                }
+
+                // Save a file: path for use with ACTION_VIEW intents
+                mRecordUrl = a.getAbsolutePath();
+            }
         }
 
         mDone = (Button) findViewById(R.id.done_button);
@@ -184,6 +217,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 }
             }
         });
+
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -300,18 +334,15 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     }
 
     private void setUpUI() {
-        File file = null;
-        if (mRecordName != null) {
-            file = new File(mStorage.addFolder(SharedRuntimeContent.projectFolder, AUDIO_FOLDER_NAME), mRecordName);
-        }
-        Log.d(LOG_TAG, "hello file " + String.valueOf(file.exists()));
+        System.out.println("mRecordUrl : " + mRecordUrl);
+        File file = new File(mRecordUrl);
+
         if (!file.exists()) {
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
             mSeekBar.requestLayout();
             mPlayButton.setEnabled(false);
             mRetryButton.setEnabled(false);
-
             mRecordButton.setEnabled(true);
             mStopButton.setEnabled(true);
         } else {
@@ -320,10 +351,18 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mSeekBar.requestLayout();
             mPlayButton.setEnabled(true);
             mRetryButton.setEnabled(true);
-            mSlide.setAudioPath(file.getAbsolutePath());
             mRecordButton.setEnabled(false);
             mStopButton.setEnabled(false);
+
+            try {
+                mSlide.addResource(new Audio(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.AUDIO);
+                Toast.makeText(getBaseContext(), "audio saved successfully :)", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
+            }
         }
+
         if (mAudioRecorder != null && !isPlaying && !isRecording) {
             mAudioRecorder.release();
         }

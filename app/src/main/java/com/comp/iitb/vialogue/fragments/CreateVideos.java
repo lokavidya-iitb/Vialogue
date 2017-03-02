@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -33,14 +35,26 @@ import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
-import com.comp.iitb.vialogue.models.DummyContent;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
+import com.parse.ParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
+import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.project;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,7 +83,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private View mView;
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
-    private File mFolder;
     private Fragment mFragment;
 
     private CameraImagePicker mCameraImagePicker;
@@ -127,7 +140,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
         mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
 
-        mCameraImagePicker = new CameraImagePicker(mStorage, this);
+        mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
         mCameraPicker.setOnClickListener(mCameraImagePicker);
 
         //Image Picker
@@ -165,25 +178,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     public void setUpProject() {
-        mFolder = mStorage.getStorageDir(getString(R.string.app_name), true);
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.projects));
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.my_projects));
-        mFolder = mStorage.addFolder(mFolder, getString(R.string.create_project));
-        SharedRuntimeContent.projectFolder = mFolder;
-/*
-        mProjectNameDisplay.setText(getString(R.string.create_project));*/
-        boolean success = true;
-        if (mFolder != null) {
-            if (!mFolder.exists()) {
-                success = mFolder.mkdirs();
-            }
-            if (success) {
-                mProjectName.addTextChangedListener(new ProjectTextWatcher(mStorage, SharedRuntimeContent.projectFolder, mProjectNameDisplay));
-            } else {
-                Snackbar.make(getView(), R.string.storage_error, Snackbar.LENGTH_LONG).show();
-                mRoot.setEnabled(false);
-            }
-        }
+
+        mProjectNameDisplay.setText(getString(R.string.create_project));
+        SharedRuntimeContent.setName(getString(R.string.create_project));
+        mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -212,71 +211,101 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(getClass().getName(), requestCode + " " + resultCode);
-        if (resultCode == RESULT_OK)
+        if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
+        } else {
+            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
-        if (requestCode == GET_CAMERA_IMAGE && data == null) {
 
+        if (requestCode == GET_CAMERA_IMAGE && data == null) {
+            // CAPTURE IMAGE FROM CAMERA
             Intent intent = new Intent(getContext(), CropMainActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
             mFragment.startActivity(intent);
-        }
-        if (data != null) {
-            String selectedPath = null;
-            Uri imageUri;
-            if (requestCode == GET_CAMERA_IMAGE) {
-                Bundle bundle = data.getExtras();
-                Log.d(getClass().getName(), "bundle " + String.valueOf(bundle == null));
-                if (bundle != null) {
-                    Bitmap photo = (Bitmap) bundle.get("data");
-                    imageUri = mStorage.getImageUri(photo);
-                    selectedPath = mStorage.getRealPathFromURI(imageUri);
-                    Log.d(getClass().getName(), "Got selected path" + selectedPath);
-                }
+
+        } else if (requestCode == GET_IMAGE) {
+            // GET IMAGE FROM GALLERY
+            if (data != null) {
+                String selectedPath = mStorage.getRealPathFromURI(data.getData());
+                Intent intent = new Intent(getContext(), CropMainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                intent.putExtras(bundle);
+                mFragment.startActivity(intent);
             } else {
-                selectedPath = mStorage.getRealPathFromURI(data.getData());
+                // TODO maybe show a toast
             }
 
-            if (selectedPath != null) {
-                File pickedFile = new File(selectedPath);
-                switch (requestCode) {
-                    case GET_IMAGE:
+        } else if (requestCode == GET_VIDEO) {
+            // GET VIDEO FROM GALLERY
+            if (data != null) {
 
-                        Intent intent = new Intent(getContext(), CropMainActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
-                        intent.putExtras(bundle);
-                        mFragment.startActivity(intent);
+                try {
 
-                        break;
-                    case GET_VIDEO:
-                        mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-                                SharedRuntimeContent.VIDEO_FOLDER_NAME,
-                                SharedRuntimeContent.projectFolder.getName(),
-                                pickedFile,
-                                new FileCopyUpdateListener(getContext()),
-                                new OnFileCopyCompleted() {
-                                    @Override
-                                    public void done(File file, boolean isSuccessful) {
-                                        SharedRuntimeContent.videoPathList.add(file.getName());
-                                        Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
-                                        SharedRuntimeContent.addSlide(new DummyContent.Slide(file.getAbsolutePath(),null,thumbnail, DummyContent.SlideType.VIDEO));
-                                    }
-                                });
-                        break;
+                    Video video = new Video(getContext());
+                    File v = video.getResourceFile();
+
+                    FileOutputStream newFile = new FileOutputStream (v);
+                    //path 0 = current path of the video
+                    FileInputStream oldFile = new FileInputStream (new File(mStorage.getRealPathFromURI(data.getData())));
+
+                    // Transfer bytes from in to out
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = oldFile.read(buf)) > 0) {
+                        newFile.write(buf, 0, len);
+                    }
+                    newFile.flush();
+                    newFile.close();
+
+                    Bitmap thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
+
+                    Slide slide = new Slide();
+                    slide.addResource(video, Slide.ResourceType.VIDEO);
+                    slide.setThumbnail(thumbnail);
+                    SharedRuntimeContent.addSlide(slide);
+                } catch (java.lang.Exception e) {
+                    e.printStackTrace();
                 }
+
+//                mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
+//                        SharedRuntimeContent.VIDEO_FOLDER_NAME,
+//                        SharedRuntimeContent.projectFolder.getName(),
+//                        pickedFile,
+//                        new FileCopyUpdateListener(getContext()),
+//                        new OnFileCopyCompleted() {
+//                            @Override
+//                            public void done(File file, boolean isSuccessful) {
+//                                SharedRuntimeContent.videoPathList.add(file.getName());
+//                                Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
+//                                Slide slide = new Slide();
+//                                try {
+//                                    slide.addResource(new Video(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.VIDEO);
+//                                    slide.setThumbnail(thumbnail);
+//                                    SharedRuntimeContent.addSlide(slide);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                    Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+            } else {
+                // TODO maybe show a toast
             }
         }
 
+        // TODO implement question
     }
 
     @Override

@@ -12,4 +12,4 @@
 /.idea/encodings.xml
 /.idea/vcs.xml
 /build.gradle
-.idea/*
+/.idea/*

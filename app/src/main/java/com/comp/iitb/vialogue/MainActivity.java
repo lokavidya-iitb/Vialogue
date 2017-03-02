@@ -32,11 +32,8 @@ import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
-import com.comp.iitb.vialogue.models.DummyContent;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+
 
 import java.io.File;
 
@@ -225,13 +222,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.Slide item) {
-        Log.d(getClass().getName(), item.slideType.toString());
-        //SharedRuntimeContent.ITEMS.get(SharedRuntimeContent.ITEMS.indexOf(item));
-        if (item.slideType == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
+    public void onListFragmentInteraction(Slide item) {
+        Log.d(getClass().getName(), item.getSlideType().toString());
+        // TODO check if any problems here
+//        if (item.getSlideType() == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
+        if (item.getSlideType() == Slide.SlideType.IMAGE) {
+            // CLICKED AN IMAGE SLIDE
             Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putInt(SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
+            bundle.putInt(AudioRecordActivity.SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
             /*bundle.putString(FOLDER_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath());
             bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
             bundle.putString(RECORD_NAME, new File(item.path).getName() + ".wav");
@@ -239,11 +238,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 */
             intent.putExtras(bundle);
             startActivity(intent);
-        } else if(item.slideType == DummyContent.SlideType.VIDEO){
+        } else if(item.getSlideType() == Slide.SlideType.VIDEO){
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(item.path)), "video/*");
+           /*  TODO Whateves
+           intent.setDataAndType(Uri.fromFile(new File(item.getResource().getFile().getUrl())), "video*//*");*/
             startActivity(intent);
         }
+
+        // TODO add question
         onContextDeleteMenuNotRequired();
     }
 
