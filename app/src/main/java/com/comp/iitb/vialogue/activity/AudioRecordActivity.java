@@ -101,33 +101,21 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             System.out.println(mSlide);
 
             Image image = (Image) mSlide.getResource();
-            mImagePath = image.getFile().getUrl();
+            mImagePath = image.getResourceFile().getAbsolutePath();
 
             Audio audio;
-            try {
-                audio = (Audio) image.getChildrenResources().get(0);
-                mRecordUrl = audio.getFile().getUrl();
-            } catch (Exception e) {
-                // Throws an error if image.getChildrenResources() is null
-                // or image.getChildrenResources().get(0) is null
-                // both of which mean that audio is not present for the corresponding slide
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "WAV_" + timeStamp + "_";
-                File storageDir = getBaseContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-                File a = null;
+            audio = (Audio) image.getAudio();
+            if(audio == null) {
+                audio = new Audio(getBaseContext());
                 try {
-                    a = File.createTempFile(
-                            imageFileName,  /* prefix */
-                            ".wav",         /* suffix */
-                            storageDir      /* directory */
-                    );
-                } catch (IOException e1) {
+                    mSlide.addResource(audio, Slide.ResourceType.AUDIO);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                // Save a file: path for use with ACTION_VIEW intents
-                mRecordUrl = a.getAbsolutePath();
+                image = (Image) mSlide.getResource();
+                mImagePath = image.getResourceFile().getAbsolutePath();
             }
+            mRecordUrl = audio.getResourceFile().getAbsolutePath();
         }
 
         mDone = (Button) findViewById(R.id.done_button);
