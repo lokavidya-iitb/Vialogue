@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.SignIn;
+import com.comp.iitb.vialogue.activity.UploadVideoActivity;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
@@ -74,6 +75,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                switch (mViewPager.getCurrentItem())
+                {
+                    case 1:
+                        Log.d("---CreateWorking?","Yeah");
+                        Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 3:
+                        Log.d("---UserWorking?","Yeah");
+                        Master.projectName="New Project";
+                        mViewPager.setCurrentItem(1, true);
+                        break;
+
+                }
                 /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
@@ -295,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 break;
             case 3:
                 mPreviewFab.show();
+
         }
     }
 }

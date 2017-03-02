@@ -99,7 +99,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             int position = bundle.getInt(SLIDE_NO);
             mSlide = SharedRuntimeContent.getSlideAt(position);
             System.out.println(mSlide);
-
+/*
             Image image = (Image) mSlide.getResource();
             mImagePath = image.getFile().getUrl();
 
@@ -117,9 +117,9 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 File a = null;
                 try {
                     a = File.createTempFile(
-                            imageFileName,  /* prefix */
-                            ".wav",         /* suffix */
-                            storageDir      /* directory */
+                            imageFileName,  *//* prefix *//*
+                            ".wav",         *//* suffix *//*
+                            storageDir      *//* directory *//*
                     );
                 } catch (IOException e1) {
                     e.printStackTrace();
@@ -127,7 +127,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
                 // Save a file: path for use with ACTION_VIEW intents
                 mRecordUrl = a.getAbsolutePath();
-            }
+            }*/
         }
 
         mDone = (Button) findViewById(R.id.done_button);
