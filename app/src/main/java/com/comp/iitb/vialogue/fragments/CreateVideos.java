@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
@@ -179,8 +180,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     public void setUpProject() {
 
-        mProjectNameDisplay.setText(getString(R.string.create_project));
-        SharedRuntimeContent.setName(getString(R.string.create_project));
+        mProjectNameDisplay.setText( Master.projectName);
+        SharedRuntimeContent.setName( Master.projectName);
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
 
     }

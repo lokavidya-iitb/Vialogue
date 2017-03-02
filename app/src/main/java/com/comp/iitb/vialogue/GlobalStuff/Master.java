@@ -17,6 +17,8 @@ public class Master {
     public static String SavedVideosPath="/SavedVideos";
     public static String ImagesPath ="/images";
     public static String AudiosPath ="/audios";
+    public static String projectName ="";
+
 
     public static void getVideosPath(){
 

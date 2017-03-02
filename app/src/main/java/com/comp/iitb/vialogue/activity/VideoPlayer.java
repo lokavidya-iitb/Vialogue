@@ -66,11 +66,11 @@ public class VideoPlayer extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-                if (currentPosition > 20000 && isFirstTime) {
+                if (currentPosition > 2000 && isFirstTime) {
                     mSimulationHandler.blockPlay();
                     QuestionAnswer questionAnswer = new QuestionAnswer();
-                    questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
-                    questionAnswer.setQuestion("Hello World");
+                    questionAnswer.setOptions(new String[]{"1", "2", "3"});
+                    questionAnswer.setQuestion("Do you like it?");
                     questionAnswer.setIsCompulsory(false);
                     QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
                     adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
