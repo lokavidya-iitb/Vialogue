@@ -29,4 +29,12 @@ public class Image extends BaseResourceClass {
         super(uri);
     }
 
+    public Audio getAudio() {
+        try {
+            return (Audio) getChildrenResources().get(0);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
