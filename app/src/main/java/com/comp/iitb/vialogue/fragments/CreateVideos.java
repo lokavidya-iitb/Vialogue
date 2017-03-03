@@ -254,39 +254,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             // GET VIDEO FROM GALLERY
             if (data != null) {
 
-//                try {
-//
-//                    Video video = new Video(getContext());
-//                    File v = video.getResourceFile();
-//                    mStorage.
-//
-//                    FileOutputStream newFile = new FileOutputStream (v);
-//                    //path 0 = current path of the video
-//                    FileInputStream oldFile = new FileInputStream (new File(mStorage.getRealPathFromURI(data.getData())));
-//
-//                    // Transfer bytes from in to out
-//                    byte[] buf = new byte[1024];
-//                    int len;
-//                    while ((len = oldFile.read(buf)) > 0) {
-//                        newFile.write(buf, 0, len);
-//                    }
-//                    newFile.flush();
-//                    newFile.close();
-//
-//                    Intent intent = new Intent(Intent.ACTION_VIEW);
-//                    intent.setDataAndType(Uri.fromFile(v), "video/*");
-//                    startActivity(intent);
-//
-//                    Bitmap thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
-//
-//                    Slide slide = new Slide();
-//                    slide.addResource(video, Slide.ResourceType.VIDEO);
-//                    slide.setThumbnail(thumbnail);
-//                    SharedRuntimeContent.addSlide(slide);
-//                } catch (java.lang.Exception e) {
-//                    e.printStackTrace();
-//                }
-//
                 final Video video = new Video(getContext());
                 final File v = video.getResourceFile();
 //                v.getPath();
