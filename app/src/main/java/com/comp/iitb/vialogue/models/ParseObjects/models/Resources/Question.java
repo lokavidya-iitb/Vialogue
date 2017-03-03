@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @ParseClassName("Question")
 public class Question extends BaseResourceClass {
 
-    private static final class Fields {
+    public static final class Fields {
         public static final String
 
         QUESTION_STRING_FIELD = "question_string",
@@ -25,13 +25,19 @@ public class Question extends BaseResourceClass {
         IS_COMPULSORY_FIELD = "is_compulsory";
     }
 
+    public static final class Type {
+        public static final String
+
+        MCQ = "mcq";
+    }
+
     public Question(){}
 
     public Question(
             String questionString,
             String questionType,
             ArrayList<String> options,
-            ArrayList<String> correctOptions,
+            ArrayList<Integer> correctOptions,
             String solution,
             ArrayList<String> hints,
             boolean isCompulsory
@@ -42,7 +48,7 @@ public class Question extends BaseResourceClass {
     public Question(
             String questionString,
             ArrayList<String> options,
-            ArrayList<String> correctOptions
+            ArrayList<Integer> correctOptions
     ) {
         this(questionString, "mcq", options, correctOptions, "", new ArrayList<String>(), true);
     }

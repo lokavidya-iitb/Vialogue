@@ -65,26 +65,6 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             holder.mUnselectedLayer.setVisibility(View.GONE);
         }
 
-        //TODO: add Question Image
-//        if (holder.mItem.getSlideType() != Slide.SlideType.QUESTION)
-//            holder.mThumbnail.setImageBitmap(mValues.get(position).thumbnail);
-//        else
-//            holder.mThumbnail.setImageResource(R.drawable.app_logo);
-//        if (holder.mItem.slideType == DummyContent.SlideType.IMAGE && !SharedRuntimeContent.isSelected) {
-//            holder.mAudioLayer.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mAudioLayer.setVisibility(View.GONE);
-//        }
-//        if (holder.mItem.slideType == DummyContent.SlideType.VIDEO && !SharedRuntimeContent.isSelected) {
-//            holder.mVideoLayer.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mVideoLayer.setVisibility(View.GONE);
-//        }
-//        if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {
-//            holder.mUnselectedLayer.setVisibility(View.VISIBLE);
-//        } else if (!SharedRuntimeContent.isSelected) {
-//            holder.mUnselectedLayer.setVisibility(View.GONE);
-//        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,14 +76,6 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             }
         });
     }
-/*
-
-    void toggleSelection(int pos){}
-    void clearSelections(){}
-    int getSelectedItemCount(){}
-    List<Integer> getSelectedItems(){}
-*/
-
 
     @Override
     public int getItemCount() {

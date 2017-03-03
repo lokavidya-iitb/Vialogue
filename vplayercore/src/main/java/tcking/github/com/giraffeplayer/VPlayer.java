@@ -821,19 +821,6 @@ public class VPlayer implements SimulationHandler {
         }
 
         return timeMilliSec;
-
-//        if (Build.VERSION.SDK_INT >= 14)
-//            mRetriever.setDataSource(url, new HashMap<String, String>());
-//        else
-//            mRetriever.setDataSource(url);
-//        String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-//        long timeInMilliSec = 0;
-//        try {
-//            timeInMilliSec = Long.parseLong(time);
-//        } catch (Exception r) {
-//            Log.e(getClass().getName(), r.getMessage());
-//        }
-//        return timeInMilliSec;
     }
 
     private void simulatePlay(PlayerModel model, int seek) {

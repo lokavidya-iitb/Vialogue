@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,29 +230,26 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onListFragmentInteraction(Slide item) {
         Log.d(getClass().getName(), item.getSlideType().toString());
-        // TODO check if any problems here
-//        if (item.getSlideType() == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
+
         if (item.getSlideType() == Slide.SlideType.IMAGE) {
             System.out.println("showing image");
             // CLICKED AN IMAGE SLIDE
             Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt(AudioRecordActivity.SLIDE_NO, SharedRuntimeContent.getSlidePosition(item));
-            /*bundle.putString(FOLDER_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath());
-            bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
-            bundle.putString(RECORD_NAME, new File(item.path).getName() + ".wav");
-            bundle.putString(IMAGE_PATH, item.path);
-*/
             intent.putExtras(bundle);
             startActivity(intent);
+
         } else if(item.getSlideType() == Slide.SlideType.VIDEO){
             System.out.println("playing video");
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile((item.getResource().getResourceFile())), "video/*");
             startActivity(intent);
+
+        } else if(item.getSlideType() == Slide.SlideType.QUESTION) {
+            // TODO display question
         }
 
-        // TODO add question
         onContextDeleteMenuNotRequired();
     }
 

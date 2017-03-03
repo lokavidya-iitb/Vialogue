@@ -92,6 +92,7 @@
         -->
 
         <activity android:name=".activity.PermissionsActivity"></activity>
+        <activity android:name=".activity.QuestionDialogResultActivity"></activity>
     </application>
 
 </manifest>
