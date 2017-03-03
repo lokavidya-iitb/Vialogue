@@ -64,6 +64,8 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
     private String mCroppedImagePath;
 
+
+
     AppCompatActivity mActivity;
 
     private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
@@ -155,6 +157,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private void done() {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
+        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
 
@@ -187,7 +190,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
             Bitmap photo = mCropImageCoordinator.getCroppedImage();
             mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
-            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated);
+            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
             return null;
 
 //            Bitmap photo = mCropImageCoordinator.getCroppedImage();

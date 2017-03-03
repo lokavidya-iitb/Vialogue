@@ -20,12 +20,11 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
     private OnThumbnailCreated mOnThumbnailCreated;
     ProgressDialog mProgressDialog;
 
-    public ImageThumbnailAsync(@NonNull Context context, @NonNull Storage storage, @NonNull OnThumbnailCreated onThumbnailCreated) {
+    public ImageThumbnailAsync(@NonNull Context context, @NonNull Storage storage, @NonNull OnThumbnailCreated onThumbnailCreated, ProgressDialog progressDialog) {
         mContext = context;
         mStorage = storage;
         mOnThumbnailCreated = onThumbnailCreated;
-        mProgressDialog = ProgressDialog.show(mContext, "Generating Thumbnail", "Please wait...", true);
-
+        mProgressDialog = progressDialog;
     }
 
     @Override
@@ -37,6 +36,7 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         mOnThumbnailCreated.onThumbnailCreated(bitmap);
+        mProgressDialog.dismiss();
     }
 
     @Override
@@ -46,9 +46,7 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(String... params) {
-        mProgressDialog.show();
         Bitmap thumbnail = mStorage.getImageThumbnail(params[0]);
-        mProgressDialog.dismiss();
         return thumbnail;
     }
 

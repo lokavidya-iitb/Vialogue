@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.library;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -311,8 +312,8 @@ public class Storage {
         return thumbnail;
     }
 
-    public AsyncTask getImageThumbnailAsync(@NonNull String filePath, @NonNull OnThumbnailCreated thumbnailCreated) {
-        ImageThumbnailAsync imageThumbnailAsync = new ImageThumbnailAsync(mContext, this, thumbnailCreated);
+    public AsyncTask getImageThumbnailAsync(@NonNull String filePath, @NonNull OnThumbnailCreated thumbnailCreated, ProgressDialog progressDialog) {
+        ImageThumbnailAsync imageThumbnailAsync = new ImageThumbnailAsync(mContext, this, thumbnailCreated, progressDialog);
         return imageThumbnailAsync.execute(filePath);
     }
 
