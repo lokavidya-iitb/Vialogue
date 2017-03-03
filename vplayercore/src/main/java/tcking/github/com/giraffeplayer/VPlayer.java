@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -339,7 +341,6 @@ public class VPlayer implements SimulationHandler {
 
     public VPlayer(final Activity activity) {
         mPosition = 0;
-        mRetriever = new MediaMetadataRetriever();
         try {
             IjkMediaPlayer.loadLibrariesOnce(null);
             IjkMediaPlayer.native_profileBegin("libijkplayer.so");
@@ -806,18 +807,33 @@ public class VPlayer implements SimulationHandler {
     };
 
     private long getVideoDuration(String url) {
-        if (Build.VERSION.SDK_INT >= 14)
-            mRetriever.setDataSource(url, new HashMap<String, String>());
-        else
-            mRetriever.setDataSource(url);
-        String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        long timeInMilliSec = 0;
+        System.out.println("getVideoDuration : url : " + url);
+        mRetriever = new MediaMetadataRetriever();
+        long timeMilliSec = 0;
         try {
-            timeInMilliSec = Long.parseLong(time);
-        } catch (Exception r) {
-            Log.e(getClass().getName(), r.getMessage());
+            FileInputStream inputStream = new FileInputStream(url);
+            mRetriever.setDataSource(inputStream.getFD());
+            timeMilliSec = Long.parseLong(mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            inputStream.close();
+            mRetriever.release();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
         }
-        return timeInMilliSec;
+
+        return timeMilliSec;
+
+//        if (Build.VERSION.SDK_INT >= 14)
+//            mRetriever.setDataSource(url, new HashMap<String, String>());
+//        else
+//            mRetriever.setDataSource(url);
+//        String time = mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+//        long timeInMilliSec = 0;
+//        try {
+//            timeInMilliSec = Long.parseLong(time);
+//        } catch (Exception r) {
+//            Log.e(getClass().getName(), r.getMessage());
+//        }
+//        return timeInMilliSec;
     }
 
     private void simulatePlay(PlayerModel model, int seek) {

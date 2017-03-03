@@ -14,6 +14,8 @@ import com.parse.ParseClassName;
 import java.util.ArrayList;
 import java.util.List;
 
+import tcking.github.com.giraffeplayer.PlayerModel;
+
 /**
  * Created by ironstein on 16/02/17.
  */
@@ -166,6 +168,29 @@ public class Slide extends BaseParseClass {
 
     public SlideType getSlideType() {
         return mSlideType;
+    }
+
+    public PlayerModel toPlayerModel() {
+        PlayerModel playerModel = null;
+        if(mSlideType == SlideType.IMAGE) {
+            if(!(((Image) getResource()).hasAudio())) {
+                return null;
+            }
+            playerModel = new PlayerModel(
+                    getResource().getResourceFile().getAbsolutePath(),
+                    ((Image) getResource()).getAudio().getResourceFile().getAbsolutePath()
+            );
+            playerModel.setType(PlayerModel.MediaType.IMAGE_AUDIO);
+        } else if(mSlideType == SlideType.VIDEO) {
+            playerModel = new PlayerModel(
+                    getResource().getResourceFile().getAbsolutePath(),
+                    null
+            );
+            playerModel.setType(PlayerModel.MediaType.VIDEO);
+        } else if(mSlideType == SlideType.QUESTION) {
+            // TODO add implementation
+        }
+        return playerModel;
     }
 
 }
