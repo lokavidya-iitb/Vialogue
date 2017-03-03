@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -82,6 +83,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 break;
         }
         if (!permissionToRecordAccepted)
+            Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
             finish();
     }
 
@@ -185,8 +187,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if(!(ContextCompat.checkSelfPermission(AudioRecordActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+            }
+        }
 
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
