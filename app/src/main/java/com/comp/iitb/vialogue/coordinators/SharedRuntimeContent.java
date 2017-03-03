@@ -28,6 +28,7 @@ public class SharedRuntimeContent {
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
+    public static final int GET_QUESTION = 544;
 //    public static final String IMAGE_FOLDER_NAME = "images";
 //    public static final String VIDEO_FOLDER_NAME = "videos";
 //    public static final String AUDIO_FOLDER_NAME = "audio";
@@ -121,6 +122,17 @@ public class SharedRuntimeContent {
 //        }
 //        return list;
 //    }
+
+    public static List<PlayerModel> getPreviewList() {
+        ArrayList<PlayerModel> list = new ArrayList<>();
+        for(Slide slide : project.getSlides().getAll()) {
+            PlayerModel playerModel = slide.toPlayerModel();
+            if(playerModel != null) {
+                list.add(playerModel);
+            }
+        }
+        return list;
+    }
 
     // TODO change
 //    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide) {

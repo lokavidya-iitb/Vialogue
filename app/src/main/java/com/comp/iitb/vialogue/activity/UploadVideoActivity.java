@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 
@@ -143,6 +144,8 @@ public class UploadVideoActivity extends AppCompatActivity {
         };
         findViewById(R.id.btn_play_sample_1).setOnClickListener(clickListener);
         findViewById(R.id.btn_play_sample_2).setOnClickListener(clickListener);
+
+        mPlayer.play(SharedRuntimeContent.getPreviewList());
     }
 
     @Override
