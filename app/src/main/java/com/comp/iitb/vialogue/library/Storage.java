@@ -192,29 +192,29 @@ public class Storage {
     /**
      * Copies file to root directory in specified directory if present
      *
-     * @param root        : main directory
-     * @param destination : directory inside main
      * @param sourceFile  : source of the file to be copied
      * @return was success
      */
-    public boolean addFileToDirectory(@NonNull File root, String destination, @NonNull String fileName, @NonNull File sourceFile, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
+    public boolean addFileToDirectory(@NonNull File sourceFile, @NonNull File destinationFile, OnProgressUpdateListener progressUpdateListener, OnFileCopyCompleted fileCopyCompleted) {
 
-        File destinationFile = root;
-        if (destination != null) {
-            destinationFile = new File(root.getAbsolutePath(), destination);
+        File destinationPath = new File(destinationFile.getParentFile().getPath());
+        if (destinationPath != null) {
             if (!destinationFile.exists()) {
                 if (!destinationFile.mkdir()) {
-                    Log.d("Storage", sourceFile.getName() + "This is the place I failed " + destinationFile.getAbsolutePath());
+                    Log.d("Storage", sourceFile.getName() + "This is the place I failed " + destinationPath);
                     return false;
                 }
             }
         }
+
+        System.out.println("saving file : " + destinationFile.getName() + " at the location : " + destinationPath.getAbsolutePath());
+
         try {
             CopyFileAsync copyFileAsync = new CopyFileAsync(mContext.getApplicationContext());
             copyFileAsync.addProgressUpdateListener(progressUpdateListener);
             copyFileAsync.addFileCopyCompletedListener(fileCopyCompleted);
-            copyFileAsync.setFileName(fileName);
-            copyFileAsync.execute(sourceFile, destinationFile);
+            copyFileAsync.setFileName(destinationFile.getName());
+            copyFileAsync.execute(sourceFile, destinationPath);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

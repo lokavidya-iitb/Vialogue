@@ -25,8 +25,10 @@ import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.library.VideoThumbnailAsync;
 import com.comp.iitb.vialogue.listeners.CameraImagePicker;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
@@ -252,55 +254,68 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             // GET VIDEO FROM GALLERY
             if (data != null) {
 
-                try {
+//                try {
+//
+//                    Video video = new Video(getContext());
+//                    File v = video.getResourceFile();
+//                    mStorage.
+//
+//                    FileOutputStream newFile = new FileOutputStream (v);
+//                    //path 0 = current path of the video
+//                    FileInputStream oldFile = new FileInputStream (new File(mStorage.getRealPathFromURI(data.getData())));
+//
+//                    // Transfer bytes from in to out
+//                    byte[] buf = new byte[1024];
+//                    int len;
+//                    while ((len = oldFile.read(buf)) > 0) {
+//                        newFile.write(buf, 0, len);
+//                    }
+//                    newFile.flush();
+//                    newFile.close();
+//
+//                    Intent intent = new Intent(Intent.ACTION_VIEW);
+//                    intent.setDataAndType(Uri.fromFile(v), "video/*");
+//                    startActivity(intent);
+//
+//                    Bitmap thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
+//
+//                    Slide slide = new Slide();
+//                    slide.addResource(video, Slide.ResourceType.VIDEO);
+//                    slide.setThumbnail(thumbnail);
+//                    SharedRuntimeContent.addSlide(slide);
+//                } catch (java.lang.Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+                final Video video = new Video(getContext());
+                final File v = video.getResourceFile();
+//                v.getPath();
+//                v.getName()
 
-                    Video video = new Video(getContext());
-                    File v = video.getResourceFile();
+                mStorage.addFileToDirectory(
+                        new File(mStorage.getRealPathFromURI(data.getData())),
+                        v,
+                        new FileCopyUpdateListener(getContext()),
+                        new OnFileCopyCompleted() {
+                            @Override
+                            public void done(File file, boolean isSuccessful) {
 
-                    FileOutputStream newFile = new FileOutputStream (v);
-                    //path 0 = current path of the video
-                    FileInputStream oldFile = new FileInputStream (new File(mStorage.getRealPathFromURI(data.getData())));
-
-                    // Transfer bytes from in to out
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = oldFile.read(buf)) > 0) {
-                        newFile.write(buf, 0, len);
-                    }
-                    newFile.flush();
-                    newFile.close();
-
-                    Bitmap thumbnail = Storage.getVideoThumbnail(v.getAbsolutePath());
-
-                    Slide slide = new Slide();
-                    slide.addResource(video, Slide.ResourceType.VIDEO);
-                    slide.setThumbnail(thumbnail);
-                    SharedRuntimeContent.addSlide(slide);
-                } catch (java.lang.Exception e) {
-                    e.printStackTrace();
-                }
-
-//                mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-//                        SharedRuntimeContent.VIDEO_FOLDER_NAME,
-//                        SharedRuntimeContent.projectFolder.getName(),
-//                        pickedFile,
-//                        new FileCopyUpdateListener(getContext()),
-//                        new OnFileCopyCompleted() {
-//                            @Override
-//                            public void done(File file, boolean isSuccessful) {
-//                                SharedRuntimeContent.videoPathList.add(file.getName());
-//                                Bitmap thumbnail = Storage.getVideoThumbnail(file.getAbsolutePath());
-//                                Slide slide = new Slide();
-//                                try {
-//                                    slide.addResource(new Video(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.VIDEO);
-//                                    slide.setThumbnail(thumbnail);
-//                                    SharedRuntimeContent.addSlide(slide);
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                    Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
+                                new VideoThumbnailAsync(getContext(), mStorage, new OnThumbnailCreated() {
+                                    @Override
+                                    public void onThumbnailCreated(Bitmap thumbnail) {
+                                        Slide slide = new Slide();
+                                        try {
+                                            slide.addResource(video, Slide.ResourceType.VIDEO);
+                                            slide.setThumbnail(thumbnail);
+                                            SharedRuntimeContent.addSlide(slide);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }).execute(v.getAbsolutePath());
+                            }
+                        });
             } else {
                 // TODO maybe show a toast
             }

@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // TODO check if any problems here
 //        if (item.getSlideType() == DummyContent.SlideType.IMAGE || item.slideType == DummyContent.SlideType.IMAGE_AUDIO) {
         if (item.getSlideType() == Slide.SlideType.IMAGE) {
+            System.out.println("showing image");
             // CLICKED AN IMAGE SLIDE
             Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
             Bundle bundle = new Bundle();
@@ -254,9 +255,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             intent.putExtras(bundle);
             startActivity(intent);
         } else if(item.getSlideType() == Slide.SlideType.VIDEO){
+            System.out.println("playing video");
             Intent intent = new Intent(Intent.ACTION_VIEW);
-           /*  TODO Whateves
-           intent.setDataAndType(Uri.fromFile(new File(item.getResource().getFile().getUrl())), "video*//*");*/
+            intent.setDataAndType(Uri.fromFile((item.getResource().getResourceFile())), "video/*");
             startActivity(intent);
         }
 

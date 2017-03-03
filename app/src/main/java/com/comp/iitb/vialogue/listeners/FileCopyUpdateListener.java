@@ -24,6 +24,8 @@ public class FileCopyUpdateListener implements OnProgressUpdateListener {
         mProgressDialog.setMax(100);
         mProgressDialog.setProgress(0);
         mProgressDialog.setTitle(mContext.getResources().getString(R.string.file_copy_title));
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.setCancelable(false);
         try {
             mProgressDialog.show();
         } catch (Exception e) {

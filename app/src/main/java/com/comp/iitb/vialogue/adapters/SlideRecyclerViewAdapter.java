@@ -50,11 +50,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         } else if(holder.mItem.getSlideType() == Slide.SlideType.VIDEO) {
             // VIDEO
             holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
-            if (!SharedRuntimeContent.isSelected) {
-                holder.mAudioLayer.setVisibility(View.VISIBLE);
-            } else {
-                holder.mAudioLayer.setVisibility(View.GONE);
-            }
+            holder.mAudioLayer.setVisibility(View.GONE);
         } else if(holder.mItem.getSlideType() == Slide.SlideType.QUESTION) {
             // QUESTION
             holder.mThumbnail.setImageResource(R.drawable.app_logo);

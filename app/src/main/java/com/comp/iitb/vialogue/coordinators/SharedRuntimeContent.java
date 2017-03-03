@@ -54,11 +54,6 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         previewFab.show();
         calculatePreviewFabVisibility();
-
-        Image image = (Image) slide.getResource();
-        Log.d("shared runtime:image", image.toString());
-//        Log.d("shared runtime:imageFil", image.getFile().toString());
-//        Log.d("shared runtime:imageUrl", image.getFile().getUrl());
     }
 
     public static void changeSlidePosition(int current, int destination) {
