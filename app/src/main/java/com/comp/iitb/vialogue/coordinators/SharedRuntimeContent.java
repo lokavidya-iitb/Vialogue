@@ -41,7 +41,8 @@ public class SharedRuntimeContent {
     public static SlideRecyclerViewAdapter projectAdapter;
     public static MainActivity mainActivity;
     public static FloatingActionButton previewFab;
-    public static boolean isSelected;
+    // TODO change implementation for isSelected
+    public static boolean isSelected = false;
     public static int selectedPosition;
 
     /*
@@ -56,6 +57,16 @@ public class SharedRuntimeContent {
         calculatePreviewFabVisibility();
     }
 
+    public static void changeSlideAtPosition(int position, Slide slide) {
+        deleteSlide(position);
+        addSlideAtPosition(position, slide);
+    }
+
+    public static void addSlideAtPosition(int position, Slide slide) {
+        addSlide(slide);
+        changeSlidePosition(getNumberOfSlides()-1, position);
+    }
+
     public static void changeSlidePosition(int current, int destination) {
         project.moveSlideToPosition(current, destination);
         projectAdapter.notifyDataSetChanged();
@@ -65,7 +76,7 @@ public class SharedRuntimeContent {
     public static void deleteSlide(int position) {
         project.deleteSlide(position);
         projectAdapter.notifyItemRemoved(position);
-        projectAdapter.notifyItemChanged(position, project.getSlides().size());
+        updateAdapterView(position);
         calculatePreviewFabVisibility();
     }
 

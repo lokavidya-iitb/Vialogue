@@ -278,6 +278,7 @@ public class SignIn extends AppCompatActivity implements
             Toast.makeText(SignIn.this,
                     "Signed in as "+ personName, Toast.LENGTH_SHORT).show();
 
+            // launch MainActivity
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

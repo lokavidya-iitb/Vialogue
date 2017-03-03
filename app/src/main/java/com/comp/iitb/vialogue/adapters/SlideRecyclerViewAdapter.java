@@ -11,6 +11,7 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.helpers.DeleteActionMode;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.util.List;
@@ -42,10 +43,12 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         if(holder.mItem.getSlideType() == Slide.SlideType.IMAGE) {
             // IMAGE
             holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
-            if (!SharedRuntimeContent.isSelected) {
-                holder.mAudioLayer.setVisibility(View.VISIBLE);
-            } else {
+            if (SharedRuntimeContent.isSelected) {
                 holder.mAudioLayer.setVisibility(View.GONE);
+            } else if(((Image) holder.mItem.getResource()).hasAudio()) {
+                holder.mAudioLayer.setVisibility(View.GONE);
+            } else {
+                holder.mAudioLayer.setVisibility(View.VISIBLE);
             }
         } else if(holder.mItem.getSlideType() == Slide.SlideType.VIDEO) {
             // VIDEO

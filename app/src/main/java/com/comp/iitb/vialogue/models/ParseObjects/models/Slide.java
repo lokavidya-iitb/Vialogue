@@ -122,45 +122,42 @@ public class Slide extends BaseParseClass {
     }
 
     public void addImage(Image image) {
-        System.out.println("addImage : called");
-        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
-        childrenResources.removeAll();
+        ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.add(image);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.IMAGE;
     }
 
     public void addVideo(Video video) {
-        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
-        childrenResources.removeAll();
+        ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.add(video);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.VIDEO;
     }
 
     public void addQuestion(Question question) {
-        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
-        childrenResources.removeAll();
+        ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.add(question);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.QUESTION;
     }
 
     public void addAudio(Audio audio) throws Exception {
-        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
-        if(childrenResources == null || childrenResources.size() == 0) {
-            throw new Exception("trying to add audio to empty slide");
-        }
-
-        String childResourceParseClassName = ((BaseResourceClass) childrenResources.get(0)).getClassName();
-        if(!(childResourceParseClassName.equals("Video") || childResourceParseClassName.equals("Image"))) {
-            throw new Exception("trying to add audio to a slide of type : " + childResourceParseClassName);
-        }
-
-        ParseObjectsCollection<BaseResourceClass> tempChildrenResources = new ParseObjectsCollection<BaseResourceClass>();
-        tempChildrenResources.add(audio);
-        ((BaseResourceClass) childrenResources.get(0)).setChildrenResources(tempChildrenResources);
-        setChildrenResources(childrenResources);
+//        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
+//        if(childrenResources == null || childrenResources.size() == 0) {
+//            throw new Exception("trying to add audio to empty slide");
+//        }
+//
+//        String childResourceParseClassName = ((BaseResourceClass) childrenResources.get(0)).getClassName();
+//        if(!(childResourceParseClassName.equals("Video") || childResourceParseClassName.equals("Image"))) {
+//            throw new Exception("trying to add audio to a slide of type : " + childResourceParseClassName);
+//        }
+//
+//        ParseObjectsCollection<BaseResourceClass> tempChildrenResources = new ParseObjectsCollection<BaseResourceClass>();
+//        tempChildrenResources.add(audio);
+//        ((BaseResourceClass) childrenResources.get(0)).setChildrenResources(tempChildrenResources);
+//        setChildrenResources(childrenResources);
+        throw new Exception("cannot add Audio directly to a slide");
     }
 
     public BaseResourceClass getResource() {
