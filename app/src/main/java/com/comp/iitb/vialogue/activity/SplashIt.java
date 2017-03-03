@@ -2,9 +2,12 @@ package com.comp.iitb.vialogue.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -27,26 +30,20 @@ public class SplashIt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-        try {
-
-                Intent intent = new Intent(this, SignIn.class);
-                startActivity(intent);
-                finish();
-
-        } catch (NullPointerException e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
-        } catch (Exception e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
+        Intent intent = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                // permission granted
+                intent = new Intent(this, SignIn.class);
+            } else {
+                // permission not granted
+                // ask for permission
+                intent = new Intent(this, PermissionsActivity.class);
+            }
         }
 
+        startActivity(intent);
+        finish();
     }
 
 }
