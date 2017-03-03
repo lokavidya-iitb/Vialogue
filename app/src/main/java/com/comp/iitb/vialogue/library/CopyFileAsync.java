@@ -81,11 +81,14 @@ public class CopyFileAsync extends AsyncTask<File, Integer, Boolean> {
             if (mFileName == null)
                 mDestinationFile = new File(destinationFolder, sourceFile.getName());
             else {
-                int temp = 0;
-                do {
-                    mDestinationFile = new File(destinationFolder, mFileName + (temp++) + "." + getFileExtension(sourceFile.getName()));
-                } while (mDestinationFile.exists());
+//                int temp = 0;
+//                do {
+//                    mDestinationFile = new File(destinationFolder, mFileName + (temp++) + "." + getFileExtension(sourceFile.getName()));
+//                } while (mDestinationFile.exists());
+                // do nothing
+                mDestinationFile = new File(destinationFolder, mFileName);
             }
+
             out = new FileOutputStream(mDestinationFile);
 
             // Transfer bytes from in to out

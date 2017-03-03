@@ -28,20 +28,20 @@ public abstract class BaseResourceClass extends BaseParseClass {
     }
 
     public static File makeTempResourceFile(Slide.ResourceType resourceType, Context context) {
-        String extension;
-        File storageDirectory;
+        String extension = null;
+        File storageDirectory = null;
 
         if(resourceType == Slide.ResourceType.AUDIO) {
             extension = "wav";
+            storageDirectory = new File(context.getFilesDir(), extension);
         } else if(resourceType == Slide.ResourceType.IMAGE) {
             extension = "png";
+            storageDirectory = new File(context.getFilesDir(), extension);
         } else if(resourceType == Slide.ResourceType.VIDEO) {
             extension = "mp4";
-        } else {
-            extension = null;
+            storageDirectory = new File(context.getExternalFilesDir(Environment.DIRECTORY_DCIM), extension);
         }
 
-        storageDirectory = new File(context.getFilesDir(), extension);
         if(!storageDirectory.exists()) {
             storageDirectory.mkdirs();
         }
@@ -52,7 +52,7 @@ public abstract class BaseResourceClass extends BaseParseClass {
         try {
             a = File.createTempFile(
                     imageFileName,      /* prefix */
-                    extension,          /* suffix */
+                    "." + extension,    /* suffix */
                     storageDirectory    /* directory */
             );
 
@@ -76,21 +76,23 @@ public abstract class BaseResourceClass extends BaseParseClass {
         Uri uri = null;
         try {
             uri = Uri.fromFile(getParseFile(Fields.FILE).getFile());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         if(uri == null) {
+            // not stored as a ParseFile
             uri =  Uri.fromFile(new File(getString(Fields.TEMP_URL)));
+        } if(uri == null) {
+            // not instantiazed properly
+            // TODO handle this
         }
         return uri;
     }
 
-    public File getResourceFile() {
-        return new File(getUri().getPath());
-    }
-
     public void setUri(Uri uri) {
         put(Fields.TEMP_URL, new File(uri.getPath()).getAbsolutePath());
+    }
+
+    public File getResourceFile() {
+        return new File(getUri().getPath());
     }
 
     private ParseFile getFile() {

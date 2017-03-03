@@ -8,11 +8,13 @@ import android.support.annotation.NonNull;
 
 import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 
+import java.io.File;
+
 /**
- * Created by shubh on 06-02-2017.
+ * Created by ironstein on 03/03/17.
  */
 
-public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
+public class VideoThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
 
     private String mImagePath;
     private Context mContext;
@@ -20,7 +22,7 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
     private OnThumbnailCreated mOnThumbnailCreated;
     ProgressDialog mProgressDialog;
 
-    public ImageThumbnailAsync(@NonNull Context context, @NonNull Storage storage, @NonNull OnThumbnailCreated onThumbnailCreated) {
+    public VideoThumbnailAsync(@NonNull Context context, @NonNull Storage storage, @NonNull OnThumbnailCreated onThumbnailCreated) {
         mContext = context;
         mStorage = storage;
         mOnThumbnailCreated = onThumbnailCreated;
@@ -47,7 +49,7 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
         mProgressDialog.show();
-        Bitmap thumbnail = mStorage.getImageThumbnail(params[0]);
+        Bitmap thumbnail = Storage.getVideoThumbnail((new File(params[0])).getAbsolutePath());
         mProgressDialog.dismiss();
         return thumbnail;
     }
