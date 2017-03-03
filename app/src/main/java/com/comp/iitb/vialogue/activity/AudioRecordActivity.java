@@ -227,6 +227,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
                 } catch (Exception e) {}
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+                SharedRuntimeContent.updateAdapterView();
             }
         });
 

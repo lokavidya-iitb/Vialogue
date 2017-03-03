@@ -43,12 +43,12 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         if(holder.mItem.getSlideType() == Slide.SlideType.IMAGE) {
             // IMAGE
             holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
-            if (!SharedRuntimeContent.isSelected) {
-                holder.mAudioLayer.setVisibility(View.VISIBLE);
-            } else if(!((Image) holder.mItem.getResource()).hasAudio()) {
-                holder.mAudioLayer.setVisibility(View.VISIBLE);
-            } else {
+            if (SharedRuntimeContent.isSelected) {
                 holder.mAudioLayer.setVisibility(View.GONE);
+            } else if(((Image) holder.mItem.getResource()).hasAudio()) {
+                holder.mAudioLayer.setVisibility(View.GONE);
+            } else {
+                holder.mAudioLayer.setVisibility(View.VISIBLE);
             }
         } else if(holder.mItem.getSlideType() == Slide.SlideType.VIDEO) {
             // VIDEO
