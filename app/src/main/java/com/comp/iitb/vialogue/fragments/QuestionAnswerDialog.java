@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
@@ -99,9 +100,11 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ArrayList<String> options = new ArrayList<String>();
-                for(EditText editText : mAnswerOptions) {
-                    options.add(editText.getText().toString());
+                for(int i=0; i<mAnswerOptions.length; i++) {
+                    String text = mAnswerOptions[i].getText().toString();
+                    options.add(text);
                 }
                 ArrayList<Integer> correctOptions = new ArrayList<Integer>();
                 for(int i=0; i<mIsAnswerButtons.length; i++) {
