@@ -56,6 +56,16 @@ public class SharedRuntimeContent {
         calculatePreviewFabVisibility();
     }
 
+    public static void changeSlideAtPosition(int position, Slide slide) {
+        deleteSlide(position);
+        addSlideAtPosition(position, slide);
+    }
+
+    public static void addSlideAtPosition(int position, Slide slide) {
+        addSlide(slide);
+        changeSlidePosition(getNumberOfSlides()-1, position);
+    }
+
     public static void changeSlidePosition(int current, int destination) {
         project.moveSlideToPosition(current, destination);
         projectAdapter.notifyDataSetChanged();

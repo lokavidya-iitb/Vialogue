@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,7 @@ import com.comp.iitb.vialogue.library.TimeFormater;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.CanSaveAudioResource;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 
@@ -38,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -53,13 +56,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     public static final String FOLDER_PATH = "folderPath";
     private Toolbar mToolbar;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String mRecordUrl = null;
     private SeekBar mSeekBar;
     private Button mRecordButton = null;
     private Button mStopButton = null;
     private Button mRetryButton = null;
     private ImageButton mPlayButton = null;
     private ImageView mImageView;
+    private Audio mAudio;
+    CanSaveAudioResource mSlideResource;
 
     private AudioRecorder mAudioRecorder = null;
     private String mRecordPath;
@@ -71,6 +75,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     // Requesting permission to RECORD_AUDIO
     private Button mDone;
     private Slide mSlide;
+    private int mSlidePosition;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -88,8 +93,16 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     @Override
     public void onCreate(Bundle bundle) {
+
         super.onCreate(bundle);
         setContentView(R.layout.activity_audio_record);
+
+        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if(!(ContextCompat.checkSelfPermission(AudioRecordActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
+            }
+        }
+
         // Record to the external cache directory for visibility
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -97,26 +110,24 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         getSupportActionBar().setHomeButtonEnabled(true);
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            int position = bundle.getInt(SLIDE_NO);
-            mSlide = SharedRuntimeContent.getSlideAt(position);
-            System.out.println(mSlide);
-            Image image = (Image) mSlide.getResource();
-            mImagePath = image.getResourceFile().getAbsolutePath();
+            mSlidePosition = bundle.getInt(SLIDE_NO);
+            mSlide = SharedRuntimeContent.getSlideAt(mSlidePosition);
 
-            Audio audio;
-            audio = (Audio) image.getAudio();
-            if(audio == null) {
-                audio = new Audio(getBaseContext());
-                try {
-                    mSlide.addResource(audio, Slide.ResourceType.AUDIO);
-                    System.out.println("added audio to slide");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                image = (Image) mSlide.getResource();
-                mImagePath = image.getResourceFile().getAbsolutePath();
+            // TODO think of some other way to handle this
+            try {
+                CanSaveAudioResource s = (CanSaveAudioResource) mSlide.getResource();
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
+                Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
+                finish();
             }
-            mRecordUrl = audio.getResourceFile().getAbsolutePath();
+
+            mSlideResource = (CanSaveAudioResource) mSlide.getResource();
+            mImagePath = mSlideResource.getResourceFile().getAbsolutePath();
+            mAudio = mSlideResource.getAudio();
+            if(mAudio == null) {
+                mAudio = new Audio(getBaseContext());
+            }
         }
 
         mDone = (Button) findViewById(R.id.done_button);
@@ -137,8 +148,9 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mRecordButton = (Button) findViewById(R.id.record_button);
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
-        if (imagePathUri != null)
+        if (imagePathUri != null) {
             mImageView.setImageURI(imagePathUri);
+        }
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             boolean isTouch = false;
 
@@ -186,12 +198,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if(!(ContextCompat.checkSelfPermission(AudioRecordActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
-            }
-        }
-
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,8 +222,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 setUpUI();
                 mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(true);
+                mSlideResource.addAudio(mAudio);
+                try {
+                    mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
+                } catch (Exception e) {}
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
             }
         });
+
         mRetryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,10 +332,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     }
 
     private void setUpUI() {
-        System.out.println("mRecordUrl : " + mRecordUrl);
-        File file = new File(mRecordUrl);
-
-        if (!file.exists()) {
+        if (!((Image) mSlide.getResource()).hasAudio()) {
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
             mSeekBar.requestLayout();
@@ -339,21 +348,13 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mRetryButton.setEnabled(true);
             mRecordButton.setEnabled(false);
             mStopButton.setEnabled(false);
-
-            try {
-                mSlide.addResource(new Audio(Uri.parse(file.getAbsolutePath())), Slide.ResourceType.AUDIO);
-                Toast.makeText(getBaseContext(), "audio saved successfully :)", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
-            }
         }
 
         if (mAudioRecorder != null && !isPlaying && !isRecording) {
             mAudioRecorder.release();
         }
         if (!isPlaying && !isRecording)
-            mAudioRecorder = new AudioRecorder(file.getAbsolutePath(), this, this);
+            mAudioRecorder = new AudioRecorder(mAudio.getResourceFile().getAbsolutePath(), this, this);
     }
 
 }

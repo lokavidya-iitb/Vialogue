@@ -36,7 +36,11 @@ public class ImageThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         mOnThumbnailCreated.onThumbnailCreated(bitmap);
-        mProgressDialog.dismiss();
+        try {
+            mProgressDialog.dismiss();
+        } catch (Exception e) {
+            // pass
+        }
     }
 
     @Override
