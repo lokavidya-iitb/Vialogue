@@ -69,22 +69,21 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Storage mStorage;
     private TextView mTimeDisplay;
     // Requesting permission to RECORD_AUDIO
-    private boolean permissionToRecordAccepted = false;
-    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private Button mDone;
     private Slide mSlide;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         switch (requestCode) {
             case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                break;
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
         }
-        if (!permissionToRecordAccepted)
-            Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
-            finish();
+        Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override
@@ -189,7 +188,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if(!(ContextCompat.checkSelfPermission(AudioRecordActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
             }
         }
 
@@ -201,26 +200,22 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
 
-                if (permissionToRecordAccepted) {
-                    mAudioRecorder.onRecord(!isRecording);
-                    isRecording = !isRecording;
-                    mRecordButton.setEnabled(false);
-                    mStopButton.setEnabled(true);
-                    mRetryButton.setEnabled(false);
-                }
-            }
+                mAudioRecorder.onRecord(!isRecording);
+                isRecording = !isRecording;
+                mRecordButton.setEnabled(false);
+                mStopButton.setEnabled(true);
+                mRetryButton.setEnabled(false);
+        }
         });
 
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (permissionToRecordAccepted) {
-                    mAudioRecorder.onRecord(false);
-                    isRecording = false;
-                    setUpUI();
-                    mStopButton.setEnabled(false);
-                    mRetryButton.setEnabled(true);
-                }
+                mAudioRecorder.onRecord(false);
+                isRecording = false;
+                setUpUI();
+                mStopButton.setEnabled(false);
+                mRetryButton.setEnabled(true);
             }
         });
         mRetryButton.setOnClickListener(new View.OnClickListener() {
@@ -230,12 +225,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRetryButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-                if (permissionToRecordAccepted) {
-                    mAudioRecorder.onRecord(true);
-                    isRecording = true;
-                    mStopButton.setEnabled(true);
-                    mRetryButton.setEnabled(false);
-                }
+                mAudioRecorder.onRecord(true);
+                isRecording = true;
+                mStopButton.setEnabled(true);
+                mRetryButton.setEnabled(false);
             }
         });
     }

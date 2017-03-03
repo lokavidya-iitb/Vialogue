@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Storage.setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         //mViewPager.setOffscreenPageLimit(0);
 
-        mStorage = new Storage(this);
+        mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
@@ -102,19 +103,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         });
 
         setUpTabs();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-
-            } else {
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-            }
-        }
-
         SharedRuntimeContent.previewFab = mPreviewFab;
+
     }
 
     @Override
@@ -270,24 +260,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         Log.d("Progress Main Activity", "___________ ___ _" + progress);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Log.v(TAG, "Permission is granted");
-
-                } else {
-                    Log.v(TAG, "Permission is revoked");
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-                }
-            }
-        }
-    }
 
     public void onContextDeleteMenuRequired(int position) {
         mMenu.findItem(R.id.delete_option).setVisible(true);

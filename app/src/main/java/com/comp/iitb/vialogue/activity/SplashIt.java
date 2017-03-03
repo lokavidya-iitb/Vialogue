@@ -27,26 +27,9 @@ public class SplashIt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-        try {
-
-                Intent intent = new Intent(this, SignIn.class);
-                startActivity(intent);
-                finish();
-
-        } catch (NullPointerException e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
-        } catch (Exception e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
-        }
-
+        Intent intent = new Intent(this, PermissionsActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }
