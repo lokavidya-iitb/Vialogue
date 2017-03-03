@@ -38,6 +38,7 @@ import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
@@ -51,6 +52,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
@@ -119,7 +121,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mFragment = this;
-
     }
 
 
@@ -155,7 +156,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mVideoPicker.setOnClickListener(videoPickerClickListener);
 
         //Question Picker
-        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getContext());
+        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getContext(), CreateVideos.this);
         mQuestionPicker.setOnClickListener(questionPickerClickListener);
         //set SlideLayout
         mSlideFragment = SlideFragment.newInstance(3);
@@ -256,9 +257,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
                 final Video video = new Video(getContext());
                 final File v = video.getResourceFile();
-//                v.getPath();
-//                v.getName()
-
                 mStorage.addFileToDirectory(
                         new File(mStorage.getRealPathFromURI(data.getData())),
                         v,
@@ -286,9 +284,29 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             } else {
                 // TODO maybe show a toast
             }
+
+        } else if(requestCode == SharedRuntimeContent.GET_QUESTION) {
+            // GET QUESTION
+            Question question = new Question(
+                    data.getStringExtra(Question.Fields.QUESTION_STRING_FIELD),
+                    data.getStringExtra(Question.Fields.QUESTION_TYPE_FIELD),
+                    data.getStringArrayListExtra(Question.Fields.OPTIONS_FIELD),
+                    data.getIntegerArrayListExtra(Question.Fields.CORRECT_OPTIONS_FIELD),
+                    data.getStringExtra(Question.Fields.SOLUTION_FIELD),
+                    data.getStringArrayListExtra(Question.Fields.HINTS_FIELD),
+                    data.getBooleanExtra(Question.Fields.IS_COMPULSORY_FIELD, true)
+            );
+
+            Slide slide = new Slide();
+            try {
+                slide.addResource(question, Slide.ResourceType.QUESTION);
+                SharedRuntimeContent.addSlide(slide);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT);
+            }
         }
 
-        // TODO implement question
     }
 
     @Override

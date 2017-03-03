@@ -18,6 +18,9 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityClick;
 import com.comp.iitb.vialogue.listeners.MinimumConditionOnTextChangeListener;
+import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by shubh on 31-01-2017.
@@ -38,8 +41,11 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
     private Button mDoneButton;
     private int mConditionSatisfiedCount;
 
-    public QuestionAnswerDialog(Context context) {
+    private QuestionDoneListener mQuestionDoneListener;
+
+    public QuestionAnswerDialog(Context context, QuestionDoneListener questionDoneListener) {
         super(context);
+        mQuestionDoneListener = questionDoneListener;
     }
 
     public QuestionAnswerDialog(Context context, int themeResId) {
@@ -70,6 +76,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
 
         mAnswerOptions[2] = (EditText) findViewById(R.id.answer_option_2);
         mAnswerOptions[2].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[2]));
+
         mAnswerOptions[3] = (EditText) findViewById(R.id.answer_option_3);
         mAnswerOptions[3].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[3]));
 
@@ -92,6 +99,21 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<String> options = new ArrayList<String>();
+                for(EditText editText : mAnswerOptions) {
+                    options.add(editText.getText().toString());
+                }
+                ArrayList<Integer> correctOptions = new ArrayList<Integer>();
+                for(int i=0; i<mIsAnswerButtons.length; i++) {
+                    if(mIsAnswerButtons[i].isChecked()) {
+                        correctOptions.add(i);
+                    }
+                }
+                mQuestionDoneListener.onDone(
+                        mQuestion.getText().toString(),
+                        options,
+                        correctOptions
+                );
                 dismiss();
             }
         });
