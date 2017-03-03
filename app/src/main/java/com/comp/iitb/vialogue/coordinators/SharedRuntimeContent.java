@@ -122,6 +122,17 @@ public class SharedRuntimeContent {
 //        return list;
 //    }
 
+    public static List<PlayerModel> getPreviewList() {
+        ArrayList<PlayerModel> list = new ArrayList<>();
+        for(Slide slide : project.getSlides().getAll()) {
+            PlayerModel playerModel = slide.toPlayerModel();
+            if(playerModel != null) {
+                list.add(playerModel);
+            }
+        }
+        return list;
+    }
+
     // TODO change
 //    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide) {
 //        PlayerModel model = new PlayerModel(slide.path, slide.getAudioPath());
