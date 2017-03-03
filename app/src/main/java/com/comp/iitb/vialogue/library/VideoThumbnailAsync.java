@@ -26,18 +26,18 @@ public class VideoThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
         mContext = context;
         mStorage = storage;
         mOnThumbnailCreated = onThumbnailCreated;
-        mProgressDialog = ProgressDialog.show(mContext, "Generating Thumbnail", "Please wait...", true);
-
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        mProgressDialog = ProgressDialog.show(mContext, "Generating Thumbnail", "Please wait...", true);
     }
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
+        mProgressDialog.dismiss();
         mOnThumbnailCreated.onThumbnailCreated(bitmap);
     }
 
@@ -48,9 +48,7 @@ public class VideoThumbnailAsync extends AsyncTask<String, Integer, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(String... params) {
-        mProgressDialog.show();
         Bitmap thumbnail = Storage.getVideoThumbnail((new File(params[0])).getAbsolutePath());
-        mProgressDialog.dismiss();
         return thumbnail;
     }
 
