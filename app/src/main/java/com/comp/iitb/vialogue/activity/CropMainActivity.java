@@ -143,7 +143,8 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private void done() {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
-        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
+        // TODO this leads to the main thread hanging
+//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
 
