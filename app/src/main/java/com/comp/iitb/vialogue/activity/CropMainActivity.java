@@ -52,23 +52,17 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     //region: Fields and Consts
 
     DrawerLayout mDrawerLayout;
-
     private ActionBarDrawerToggle mDrawerToggle;
-
     private Fragment mCurrentFragment;
     private CropImageCoordinator mCropImageCoordinator;
     private Storage mStorage;
     private Button mDone;
     private Uri mCropImageUri;
     private RelativeLayout mPleaseWait;
-
     private String mCroppedImagePath;
-
-
-
+    private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
     AppCompatActivity mActivity;
 
-    private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
     //endregion
 
     public static final String IMAGE_PATH = "imagePath";
@@ -84,7 +78,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
     public void setCurrentOptions(CropImageViewOptions options) {
         mCropImageViewOptions = options;
-        //updateDrawerTogglesByOptions(options);
     }
 
     @Override
@@ -118,8 +111,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-//        mDrawerToggle.syncState();
-//        mCurrentFragment.updateCurrentCropViewOptions();
     }
 
     @Override
@@ -131,11 +122,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        */
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
@@ -176,9 +162,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 e.printStackTrace();
             }
             mPleaseWait.setVisibility(View.GONE);
-//            SharedRuntimeContent.imageThumbnails.add(thumbnail);
-//            SharedRuntimeContent.addSlide(new DummyContent.Slide(mFilePath, null, thumbnail, DummyContent.SlideType.IMAGE));
-//            mPleaseWait.setVisibility(View.GONE);
             finish();
         }
     };
@@ -193,30 +176,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
             return null;
 
-//            Bitmap photo = mCropImageCoordinator.getCroppedImage();
-//            Uri imageUri = mStorage.getImageUri(photo);
-//            String selectedPath = mStorage.getRealPathFromURI(imageUri);
-//            File pickedFile = new File(selectedPath);
-//            mStorage.addFileToDirectory(SharedRuntimeContent.projectFolder,
-//                    SharedRuntimeContent.IMAGE_FOLDER_NAME,
-//                    SharedRuntimeContent.projectFolder.getName(),
-//                    pickedFile,
-//                    null,
-//                    new OnFileCopyCompleted() {
-//                        @Override
-//                        public void done(File file, boolean isSuccessful) {
-//                            try {
-//                                SharedRuntimeContent.imagePathList.add(file.getName());
-//                                mFilePath = file.getAbsolutePath();
-//                                mStorage.getImageThumbnailAsync(file.getAbsolutePath(), mThumbnailCreated);
-//                            } catch (Exception e) {
-//                                Log.d("CropMainActivity", e.getMessage());
-//                                Toast.makeText(getApplicationContext(), "Error Generating Thumbnail", Toast.LENGTH_LONG).show();
-//                            }
-//
-//                        }
-//                    });
-//            return null;
         }
     }
 }
