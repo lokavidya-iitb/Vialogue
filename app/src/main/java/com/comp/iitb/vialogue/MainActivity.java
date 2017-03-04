@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
+        SharedRuntimeContent.calculatePreviewFabVisibility();
 
     }
 
@@ -306,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 break;
             case 1:
-                mPreviewFab.show();
+                SharedRuntimeContent.calculatePreviewFabVisibility();
                 break;
             case 2:
                 mPreviewFab.hide();
