@@ -35,11 +35,17 @@ import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 
 import java.io.File;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
@@ -314,7 +320,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 break;
             case 3:
                 mPreviewFab.show();
-
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SharedRuntimeContent.pinProject(MainActivity.this);
     }
 }

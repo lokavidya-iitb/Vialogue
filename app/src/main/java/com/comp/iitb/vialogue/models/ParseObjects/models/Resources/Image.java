@@ -19,10 +19,14 @@ import java.io.File;
 @ParseClassName("Image")
 public class Image extends CanSaveAudioResource {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public Image() {}
+
     private static final String IMAGE_RESOURCE_NAME = "image";
     private Context mContext;
-
-    public Image() {}
 
     public Image(Context context) {
         this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, context)));

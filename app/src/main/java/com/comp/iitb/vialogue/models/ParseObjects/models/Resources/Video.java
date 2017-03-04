@@ -17,9 +17,13 @@ import java.io.File;
 @ParseClassName("Video")
 public class Video extends BaseResourceClass {
 
-    private static final String VIDEO_RESOURCE_NAME = "video";
-
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Video() {}
+
+    private static final String VIDEO_RESOURCE_NAME = "video";
 
     public Video(Context context) {
         this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.VIDEO, context)));

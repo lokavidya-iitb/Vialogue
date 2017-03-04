@@ -18,9 +18,13 @@ import java.io.File;
 @ParseClassName("Audio")
 public class Audio extends BaseResourceClass {
 
-    private static final String AUDIO_RESOURCE_NAME = "audio";
-
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public Audio() {}
+
+    private static final String AUDIO_RESOURCE_NAME = "audio";
 
     public Audio(Context context) {
         this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.AUDIO, context)));

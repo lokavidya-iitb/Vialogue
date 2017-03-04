@@ -16,13 +16,17 @@ import java.util.Collections;
 @ParseClassName("Collection")
 public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObject {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public ParseObjectsCollection() {}
+
     private static final class Fields {
         public static final String
 
         ELEMENTS_FIELD = "elements";
     }
-
-    public ParseObjectsCollection() {}
 
     private void setList(ArrayList<T> list) {
         remove(Fields.ELEMENTS_FIELD);
@@ -32,7 +36,15 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
     }
 
     private ArrayList<T> getList() {
-        return (ArrayList) getList(Fields.ELEMENTS_FIELD);
+        ArrayList<T> list = null;
+        try {
+            list = (ArrayList) getList(Fields.ELEMENTS_FIELD);
+        } catch(Exception e) {}
+        if(list == null) {
+            list = new ArrayList<T>();
+            setList(list);
+        }
+        return list;
     }
 
     public void add(T object) {
@@ -58,11 +70,7 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
     }
 
     public int size() {
-        try {
-            return getList().size();
-        } catch (Exception e) {
-            return 0;
-        }
+        return getList().size();
     }
 
     public void move(int initialPosition, int finalPosition) {
@@ -108,12 +116,13 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
         return getList().indexOf(object);
     }
 
-    public void saveParseObject() {
-        try {
-            save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
+    // TODO implement
+//    public void saveParseObject() {
+//        try {
+//            save();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 }
