@@ -43,6 +43,13 @@ public class Question extends BaseResourceClass {
             boolean isCompulsory
             ) {
         super();
+        setQuestionString(questionString);
+        setQuestionType(questionType);
+        setOptions(options);
+        setCorrectOptions(correctOptions);
+        setSolution(solution);
+        setHints(hints);
+        setIsCompulsory(isCompulsory);
     }
 
     public Question(
@@ -81,11 +88,11 @@ public class Question extends BaseResourceClass {
         put(Fields.OPTIONS_FIELD, options);
     }
 
-    public ArrayList<String> getCorrectOptions() {
+    public ArrayList<Integer> getCorrectOptions() {
         return (ArrayList) getList(Fields.CORRECT_OPTIONS_FIELD);
     }
 
-    public void setCorrectOptions(ArrayList<String> correctOptions) {
+    public void setCorrectOptions(ArrayList<Integer> correctOptions) {
         put(Fields.CORRECT_OPTIONS_FIELD, correctOptions);
     }
 
@@ -140,5 +147,20 @@ public class Question extends BaseResourceClass {
             put(Fields.NAME, name);
         }
 
+    }
+
+    @Override
+    public String toString() {
+        String returnString = "";
+        returnString +=
+                Fields.QUESTION_STRING_FIELD + " : " + getQuestionString() + "\n" +
+                Fields.QUESTION_TYPE_FIELD + " : " + getQuestionType() + "\n" +
+                Fields.OPTIONS_FIELD + " : " + getOptions() + "\n" +
+                Fields.CORRECT_OPTIONS_FIELD + " : " + getCorrectOptions() + "\n" +
+                Fields.SOLUTION_FIELD + " : " + getSolution() + "\n" +
+                Fields.HINTS_FIELD + " : " + getHints() + "\n" +
+                Fields.IS_COMPULSORY_FIELD + " : " + getIsCompulsory() + "\n";
+
+        return returnString;
     }
 }

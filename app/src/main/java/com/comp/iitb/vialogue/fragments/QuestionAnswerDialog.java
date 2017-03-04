@@ -20,6 +20,7 @@ import com.comp.iitb.vialogue.coordinators.ConditionListener;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityClick;
 import com.comp.iitb.vialogue.listeners.MinimumConditionOnTextChangeListener;
 import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 
 import java.util.ArrayList;
 
@@ -41,20 +42,35 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
     private CompoundButton mSelectedAnswer;
     private Button mDoneButton;
     private int mConditionSatisfiedCount;
+    private Context mContext;
+    private Question mQuestionObject = null;
+    private int mSlideNumber = -1;
 
     private QuestionDoneListener mQuestionDoneListener;
 
     public QuestionAnswerDialog(Context context, QuestionDoneListener questionDoneListener) {
         super(context);
         mQuestionDoneListener = questionDoneListener;
+        mContext = context;
     }
 
-    public QuestionAnswerDialog(Context context, int themeResId) {
+    public QuestionAnswerDialog(Context context, QuestionDoneListener questionDoneListener, Question question, int slideNumber) {
+        super(context);
+        mQuestionDoneListener = questionDoneListener;
+        mQuestionObject = question;
+        mSlideNumber = slideNumber;
+    }
+
+    public QuestionAnswerDialog(Context context, int themeResId, QuestionDoneListener questionDoneListener) {
         super(context, themeResId);
+        mQuestionDoneListener = questionDoneListener;
+        mContext = context;
     }
 
-    protected QuestionAnswerDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
+    protected QuestionAnswerDialog(Context context, boolean cancelable, OnCancelListener cancelListener, QuestionDoneListener questionDoneListener) {
         super(context, cancelable, cancelListener);
+        mQuestionDoneListener = questionDoneListener;
+        mContext = context;
     }
 
     @Override
@@ -63,84 +79,105 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.question_answer);
 
+        // initialization
         mConditionSatisfiedCount = 0;
-
         mQuestion = (EditText) findViewById(R.id.question_text);
-        mQuestion.addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mQuestion));
         mAddOptionButton = (ImageButton) findViewById(R.id.add_option);
-
         mAnswerOptions[0] = (EditText) findViewById(R.id.answer_option_0);
-        mAnswerOptions[0].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[0]));
-
         mAnswerOptions[1] = (EditText) findViewById(R.id.answer_option_1);
-        mAnswerOptions[1].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[1]));
-
         mAnswerOptions[2] = (EditText) findViewById(R.id.answer_option_2);
-        mAnswerOptions[2].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[2]));
-
         mAnswerOptions[3] = (EditText) findViewById(R.id.answer_option_3);
-        mAnswerOptions[3].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[3]));
-
         mIsAnswerButtons[0] = (AppCompatRadioButton) findViewById(R.id.is_answer_0);
         mIsAnswerButtons[1] = (AppCompatRadioButton) findViewById(R.id.is_answer_1);
         mIsAnswerButtons[2] = (AppCompatRadioButton) findViewById(R.id.is_answer_2);
         mIsAnswerButtons[3] = (AppCompatRadioButton) findViewById(R.id.is_answer_3);
-        setUpRadioButtonsGroup();
-        mIsAnswerButtons[0].setChecked(true);
-
         mOptionalLayout[0] = (RelativeLayout) findViewById(R.id.answer_option_view_2);
         mOptionalLayout[1] = (RelativeLayout) findViewById(R.id.answer_option_view_3);
-
         mRemoveOption[0] = (Button) findViewById(R.id.delete_button_2);
         mRemoveOption[1] = (Button) findViewById(R.id.delete_button_3);
-        setUpRemoveButtons();
-
-        setUpAddButton();
         mDoneButton = (Button) findViewById(R.id.done_button);
+
+        // load state
+        if(mQuestionObject != null) {
+            loadFromQuestionObject(mQuestionObject);
+        }
+
+        // add listeners
+        mQuestion.addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mQuestion));
+        mAnswerOptions[0].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[0]));
+        mAnswerOptions[1].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[1]));
+        mAnswerOptions[2].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[2]));
+        mAnswerOptions[3].addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mAnswerOptions[3]));
+        setUpRadioButtonsGroup();
+        mIsAnswerButtons[0].setChecked(true);
+        setUpRemoveButtons();
+        setUpAddButton();
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ArrayList<String> options = new ArrayList<String>();
-                for(int i=0; i<mAnswerOptions.length; i++) {
-                    String text = mAnswerOptions[i].getText().toString();
-                    options.add(text);
-                }
-                ArrayList<Integer> correctOptions = new ArrayList<Integer>();
-                for(int i=0; i<mIsAnswerButtons.length; i++) {
-                    if(mIsAnswerButtons[i].isChecked()) {
-                        correctOptions.add(i);
-                    }
-                }
-                mQuestionDoneListener.onDone(
-                        mQuestion.getText().toString(),
-                        options,
-                        correctOptions
-                );
-                dismiss();
+                done();
             }
         });
-
     }
 
     private void setUpAddButton() {
         mAddOptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < OPTIONAL_LAYOUT_COUNT; i++) {
-                    if (mOptionalLayout[i].getVisibility() != View.VISIBLE) {
-                        mOptionalLayout[i].setVisibility(View.VISIBLE);
-                        mAnswerOptions[i + 2].setText("");
-                        for (int j = i + 3; j < mAnswerOptions.length; j++) {
-                            mAnswerOptions[j - 1].setText(mAnswerOptions[j].getText());
-                            mAnswerOptions[j].setText("");
-                        }
-                        break;
-                    }
-                }
+                addOption();
             }
         });
     }
+
+    public void addOption() {
+        for (int i = 0; i < OPTIONAL_LAYOUT_COUNT; i++) {
+            if (mOptionalLayout[i].getVisibility() != View.VISIBLE) {
+                mOptionalLayout[i].setVisibility(View.VISIBLE);
+                mAnswerOptions[i + 2].setText("");
+                for (int j = i + 3; j < mAnswerOptions.length; j++) {
+                    mAnswerOptions[j - 1].setText(mAnswerOptions[j].getText());
+                    mAnswerOptions[j].setText("");
+                }
+                break;
+            }
+        }
+    }
+
+    public void addOptionWithText(String text) {
+        for (int i = 0; i < OPTIONAL_LAYOUT_COUNT; i++) {
+            if (mOptionalLayout[i].getVisibility() != View.VISIBLE) {
+                mOptionalLayout[i].setVisibility(View.VISIBLE);
+                mAnswerOptions[i + 2].setText(text);
+                for (int j = i + 3; j < mAnswerOptions.length; j++) {
+                    mAnswerOptions[j - 1].setText(mAnswerOptions[j].getText());
+                    mAnswerOptions[j].setText("");
+                }
+                break;
+            }
+        }
+    }
+
+    public void done() {
+        ArrayList<String> options = new ArrayList<String>();
+        for(int i=0; i<mAnswerOptions.length; i++) {
+            String text = mAnswerOptions[i].getText().toString();
+            options.add(text);
+        }
+        ArrayList<Integer> correctOptions = new ArrayList<Integer>();
+        for(int i=0; i<mIsAnswerButtons.length; i++) {
+            if(mIsAnswerButtons[i].isChecked()) {
+                correctOptions.add(i);
+            }
+        }
+        mQuestionDoneListener.onDone(
+                mQuestion.getText().toString(),
+                options,
+                correctOptions,
+                mSlideNumber
+        );
+        dismiss();
+    }
+
 
     private void setUpRadioButtonsGroup() {
         for (RadioButton radioButton : mIsAnswerButtons) {
@@ -220,5 +257,22 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
                 mDoneButton.setEnabled(false);
             }
         }
+    }
+
+    public void loadFromQuestionObject(Question question) {
+        System.out.println("loadFromQuestionObject : called");
+        System.out.println(question.toString());
+        mQuestion.setText(question.getQuestionString());
+        ArrayList<String> options = question.getOptions();
+        for(int i=0; i<4; i++) {
+            String option;
+            try {
+                option = options.get(i);
+            } catch (Exception e) {
+                option = "";
+            }
+            mAnswerOptions[i].setText(option);
+        }
+        mDoneButton.setEnabled(true);
     }
 }
