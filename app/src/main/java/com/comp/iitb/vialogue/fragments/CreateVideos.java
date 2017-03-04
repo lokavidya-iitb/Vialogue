@@ -182,11 +182,10 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     public void setUpProject() {
-
         mProjectNameDisplay.setText( Master.projectName);
         SharedRuntimeContent.setName( Master.projectName);
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
-
+        SharedRuntimeContent.calculatePreviewFabVisibility();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -287,14 +286,15 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
         } else if(requestCode == SharedRuntimeContent.GET_QUESTION) {
             // GET QUESTION
+            Bundle extras = data.getExtras();
             Question question = new Question(
-                    data.getStringExtra(Question.Fields.QUESTION_STRING_FIELD),
-                    data.getStringExtra(Question.Fields.QUESTION_TYPE_FIELD),
-                    data.getStringArrayListExtra(Question.Fields.OPTIONS_FIELD),
-                    data.getIntegerArrayListExtra(Question.Fields.CORRECT_OPTIONS_FIELD),
-                    data.getStringExtra(Question.Fields.SOLUTION_FIELD),
-                    data.getStringArrayListExtra(Question.Fields.HINTS_FIELD),
-                    data.getBooleanExtra(Question.Fields.IS_COMPULSORY_FIELD, true)
+                    extras.getString(Question.Fields.QUESTION_STRING_FIELD),
+                    extras.getString(Question.Fields.QUESTION_TYPE_FIELD),
+                    extras.getStringArrayList(Question.Fields.OPTIONS_FIELD),
+                    extras.getIntegerArrayList(Question.Fields.CORRECT_OPTIONS_FIELD),
+                    extras.getString(Question.Fields.SOLUTION_FIELD),
+                    extras.getStringArrayList(Question.Fields.HINTS_FIELD),
+                    extras.getBoolean(Question.Fields.IS_COMPULSORY_FIELD, true)
             );
 
             Slide slide = new Slide();

@@ -46,9 +46,6 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
 
-    /*
-     * new stuff
-     */
     public static Project project = new Project();
 
     public static void addSlide(Slide slide) {
@@ -82,9 +79,26 @@ public class SharedRuntimeContent {
     }
 
     public static void calculatePreviewFabVisibility() {
-        if(project.getSlides().size() == 0) {
-            previewFab.hide();
+
+        if(previewFab == null) {
+            return;
         }
+
+        if(getNumberOfSlides() == 0) {} else {
+            for(Slide s : project.getSlides().getAll()) {
+                if(s.getSlideType() == Slide.SlideType.VIDEO) {
+                    previewFab.show();
+                    return;
+                } else if(s.getSlideType() == Slide.SlideType.IMAGE) {
+                    if(((Image) s.getResource()).hasAudio()) {
+                        previewFab.show();
+                        return;
+                    }
+                }
+            }
+        }
+
+        previewFab.hide();
     }
 
     public static void setName(String name) {
@@ -125,10 +139,12 @@ public class SharedRuntimeContent {
 
     public static List<PlayerModel> getPreviewList() {
         ArrayList<PlayerModel> list = new ArrayList<>();
-        for(Slide slide : project.getSlides().getAll()) {
-            PlayerModel playerModel = slide.toPlayerModel();
-            if(playerModel != null) {
-                list.add(playerModel);
+        if(project.getSlides().getAll() != null) {
+            for(Slide slide : project.getSlides().getAll()) {
+                PlayerModel playerModel = slide.toPlayerModel();
+                if(playerModel != null) {
+                    list.add(playerModel);
+                }
             }
         }
         return list;
@@ -157,5 +173,9 @@ public class SharedRuntimeContent {
 
     public static void updateAdapterView() {
         projectAdapter.notifyDataSetChanged();
+    }
+
+    public static void hidePreviewFab() {
+        previewFab.hide();
     }
 }
