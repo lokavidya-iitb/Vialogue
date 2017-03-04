@@ -23,6 +23,12 @@ import tcking.github.com.giraffeplayer.PlayerModel;
 @ParseClassName("Slide")
 public class Slide extends BaseParseClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public Slide() {}
+
     private static class Fields {
         public static final String
 
@@ -63,14 +69,6 @@ public class Slide extends BaseParseClass {
         mThumbnail = thumbnail;
     }
 
-    // default constructor required by Parse
-    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
-    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
-    // INSTANTIATING THE OBJECT
-    public Slide() {
-        setHyperlinks(new ArrayList<String>());
-    }
-
 //    public Slide(String path, String audioPath, Bitmap thumbnail, SlideType slideType) {
 //        addResource(new);
 //        this.path = path;
@@ -81,7 +79,11 @@ public class Slide extends BaseParseClass {
 //    }
 
     public ArrayList<String> getHyperlinks() {
-        return (ArrayList) getList(Fields.HYPERLINKS);
+        ArrayList<String> hyperlinks = null;
+        try {
+            hyperlinks = (ArrayList) getList(Fields.HYPERLINKS);
+        } catch (Exception e) {}
+        return hyperlinks;
     }
 
     private void setHyperlinks(List<String> hyperlinks) {
@@ -93,20 +95,12 @@ public class Slide extends BaseParseClass {
         // if the slideId passed corresponds to a valid slide in the Slide class in the database
 
         ArrayList<String> hyperlinks = getHyperlinks();
-        // if hyperlinks array not initialized
-        if(hyperlinks == null) {
-            hyperlinks = new ArrayList<String>();
-        }
         hyperlinks.add(slideId);
         setHyperlinks(hyperlinks);
     }
 
     public void deleteHyperlink(int slideIndex) {
         ArrayList<String> hyperlinks = getHyperlinks();
-        if(slideIndex >= hyperlinks.size()) {
-            throw new ArrayIndexOutOfBoundsException("slideIndex greater than length of {hyperlinks} array");
-        }
-
         hyperlinks.remove(slideIndex);
         setHyperlinks(hyperlinks);
     }
@@ -144,21 +138,7 @@ public class Slide extends BaseParseClass {
         mSlideType = SlideType.QUESTION;
     }
 
-    public void addAudio(Audio audio) throws Exception {
-//        ParseObjectsCollection<BaseResourceClass> childrenResources = getChildrenResources();
-//        if(childrenResources == null || childrenResources.size() == 0) {
-//            throw new Exception("trying to add audio to empty slide");
-//        }
-//
-//        String childResourceParseClassName = ((BaseResourceClass) childrenResources.get(0)).getClassName();
-//        if(!(childResourceParseClassName.equals("Video") || childResourceParseClassName.equals("Image"))) {
-//            throw new Exception("trying to add audio to a slide of type : " + childResourceParseClassName);
-//        }
-//
-//        ParseObjectsCollection<BaseResourceClass> tempChildrenResources = new ParseObjectsCollection<BaseResourceClass>();
-//        tempChildrenResources.add(audio);
-//        ((BaseResourceClass) childrenResources.get(0)).setChildrenResources(tempChildrenResources);
-//        setChildrenResources(childrenResources);
+    private void addAudio(Audio audio) throws Exception {
         throw new Exception("cannot add Audio directly to a slide");
     }
 

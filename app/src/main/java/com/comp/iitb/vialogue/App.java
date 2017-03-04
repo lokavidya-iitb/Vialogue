@@ -42,6 +42,8 @@ public class App extends Application {
         String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
         String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
 
+        Parse.enableLocalDatastore(getBaseContext());
+
         // setup Parse
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
             .applicationId(appId)
@@ -49,7 +51,5 @@ public class App extends Application {
             .enableLocalDataStore()
             .build()
         );
-
     }
-
 }

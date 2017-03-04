@@ -13,6 +13,12 @@ import java.util.ArrayList;
 @ParseClassName("Question")
 public class Question extends BaseResourceClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public Question(){}
+
     public static final class Fields {
         public static final String
 
@@ -30,8 +36,6 @@ public class Question extends BaseResourceClass {
 
         MCQ = "mcq";
     }
-
-    public Question(){}
 
     public Question(
             String questionString,

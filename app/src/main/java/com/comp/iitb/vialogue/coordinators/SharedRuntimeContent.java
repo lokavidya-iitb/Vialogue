@@ -1,8 +1,10 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
@@ -10,6 +12,9 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -101,8 +106,62 @@ public class SharedRuntimeContent {
         previewFab.hide();
     }
 
-    public static void setName(String name) {
+    public static void setProjectName(String name) {
         project.setName(name);
+    }
+
+    public static String getProjectName() {
+        return project.getName();
+    }
+
+    public static void pinProject(Context context) {
+        // save project with a temporary name
+        if((getProjectName() == null) || (getProjectName() == "")) {
+            String newProjectName = getNewUndefinedProjectName();
+            System.out.println("setting project name : " + newProjectName);
+            setProjectName(newProjectName);
+        } else {
+            System.out.println("projectName : " + getProjectName());
+        }
+
+        if(getNumberOfSlides() != 0) {
+            System.out.println("pinning project");
+            try {
+                project.pinParseObject();
+//                project.save();
+//                Toast.makeText(context, "Project saved succcessfully :)", Toast.LENGTH_SHORT).show();
+            } catch (ParseException e) {
+                Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static String getNewUndefinedProjectName() {
+        String regex = "(^)Untitled Project ([0-9].*$)";
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+        query.fromLocalDatastore();
+        int maxNum = 0;
+        String returnString = "Untitled Project 0";
+        try {
+            List<ParseObject> localProjects = query.find();
+            for(ParseObject object : localProjects) {
+                Project project = (Project) object;
+                if(project.getName().matches(regex)) {
+                    try {
+                        int number = Integer.parseInt(project.getName().substring(17));
+                        if(number > maxNum) {
+                            maxNum = number + 1;
+                        }
+                    } catch (Exception e) {}
+                }
+            }
+            returnString = "Untitled Project " + maxNum;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return returnString;
     }
 
     public static int getNumberOfSlides() {

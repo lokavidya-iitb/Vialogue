@@ -10,17 +10,17 @@ import com.parse.ParseClassName;
 @ParseClassName("Category")
 public class Category extends BaseParseClass {
 
-    private static final class Fields {
-        public static final String
-
-        NAME = "name";
-    }
-
     // default constructor required by Parse
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
     public Category() {}
+
+    private static final class Fields {
+        public static final String
+
+        NAME = "name";
+    }
 
     public String getName() {
         return getString(Fields.NAME);
