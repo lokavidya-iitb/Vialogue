@@ -20,6 +20,12 @@ import java.util.Date;
 
 public abstract class BaseResourceClass extends BaseParseClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public BaseResourceClass() {}
+
     private static final class Fields {
         public static final String
 
@@ -62,12 +68,6 @@ public abstract class BaseResourceClass extends BaseParseClass {
         return a;
     }
 
-    // default constructor required by Parse
-    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
-    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
-    // INSTANTIATING THE OBJECT
-    public BaseResourceClass() {}
-
     public BaseResourceClass(Uri uri) {
         setUri(uri);
     }
@@ -95,15 +95,4 @@ public abstract class BaseResourceClass extends BaseParseClass {
         return new File(getUri().getPath());
     }
 
-    private ParseFile getFile() {
-        return getParseFile(Fields.FILE);
-    }
-
-    private void setFile(ParseFile file) {
-        put(Fields.FILE, file);
-    }
-
-//    public Uri getUri() {
-//        return Uri.fromFile(new File(getFile().getUrl()));
-//    }
 }

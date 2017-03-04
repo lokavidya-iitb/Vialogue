@@ -10,6 +10,12 @@ import com.parse.ParseClassName;
 @ParseClassName("Author")
 public class Author extends BaseParseClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public Author() {}
+
     private static final class Fields {
         public static final String
 
@@ -17,12 +23,6 @@ public class Author extends BaseParseClass {
         LAST_NAME = "last_name",
         EMAIL = "email";
     }
-
-    // default constructor required by Parse
-    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
-    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
-    // INSTANTIATING THE OBJECT
-    public Author() {}
 
     public String getFirstName() {
         return getString(Fields.FIRST_NAME);

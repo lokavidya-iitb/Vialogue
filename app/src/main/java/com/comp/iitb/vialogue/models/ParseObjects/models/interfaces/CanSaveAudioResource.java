@@ -10,6 +10,10 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 
 public abstract class CanSaveAudioResource extends BaseResourceClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
     public CanSaveAudioResource() {}
 
     public CanSaveAudioResource(Uri uri) {
@@ -17,11 +21,12 @@ public abstract class CanSaveAudioResource extends BaseResourceClass {
     }
 
     public Audio getAudio() {
+        Audio audio = null;
         try {
-            return (Audio) getChildrenResources().get(0);
-        } catch (Exception e) {
-            return null;
-        }
+            audio = (Audio) getChildrenResources().get(0);
+        } catch (Exception e) {}
+
+        return audio;
     }
 
     public void addAudio(Audio audio) {
@@ -35,7 +40,7 @@ public abstract class CanSaveAudioResource extends BaseResourceClass {
     }
 
     public boolean hasAudio() {
-        if(getChildrenResources().size() == 0) {
+        if(getAudio() == null) {
             return false;
         } return true;
     }

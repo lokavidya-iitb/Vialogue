@@ -14,6 +14,12 @@ import java.util.List;
 @ParseClassName("Project")
 public class Project extends BaseParseClass {
 
+    // default constructor required by Parse
+    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
+    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
+    // INSTANTIATING THE OBJECT
+    public Project() {}
+
     private static final class Fields {
         public static String
 
@@ -26,14 +32,6 @@ public class Project extends BaseParseClass {
         TAGS =                          "tags",
         RESOLUTION =                    "resolution",
         SLIDES =                        "slides";
-    }
-
-    // default constructor required by Parse
-    // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
-    // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
-    // INSTANTIATING THE OBJECT
-    public Project() {
-        setSlides(new ParseObjectsCollection<Slide>());
     }
 
     public Project(String name, String parentId) {
@@ -113,7 +111,15 @@ public class Project extends BaseParseClass {
      */
 
     public ParseObjectsCollection<Slide> getSlides() {
-        return (ParseObjectsCollection) getParseObject(Fields.SLIDES);
+        ParseObjectsCollection<Slide> slides = null;
+        try {
+            slides =  (ParseObjectsCollection) getParseObject(Fields.SLIDES);
+        } catch (Exception e) {}
+        if(slides == null) {
+            slides = new ParseObjectsCollection<Slide>();
+            setSlides(slides);
+        }
+        return slides;
     }
 
     private void setSlides(ParseObjectsCollection<Slide> slides) {
@@ -122,21 +128,12 @@ public class Project extends BaseParseClass {
 
     public void addEmptySlide() {
         ParseObjectsCollection<Slide> slides = getSlides();
-
-        // if 0 objects in the "slides" collection
-        if(slides == null) {
-            slides = new ParseObjectsCollection<Slide>();
-        }
-
         slides.add(new Slide());
         setSlides(slides);
     }
 
     public void addSlide(Slide slide) {
         ParseObjectsCollection<Slide> slides = getSlides();
-        if(slides == null) {
-            slides = new ParseObjectsCollection<Slide>();
-        }
         slides.add(slide);
         setSlides(slides);
     }

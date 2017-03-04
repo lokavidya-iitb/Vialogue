@@ -134,6 +134,14 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mProjectName = (EditText) mView.findViewById(R.id.project_name);
         mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
+        System.out.println("outside...");
+        if(SharedRuntimeContent.getProjectName() != null) {
+            System.out.println("inside...");
+            mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
+            mProjectName.setText(SharedRuntimeContent.getProjectName());
+            mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());
+            mProjectName.setHint(SharedRuntimeContent.getProjectName());
+        }
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
 
@@ -183,7 +191,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
     public void setUpProject() {
         mProjectNameDisplay.setText( Master.projectName);
-        SharedRuntimeContent.setName( Master.projectName);
+        SharedRuntimeContent.setProjectName(Master.projectName);
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         SharedRuntimeContent.calculatePreviewFabVisibility();
     }
