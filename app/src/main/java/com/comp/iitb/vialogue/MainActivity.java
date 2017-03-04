@@ -29,10 +29,13 @@ import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.fragments.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
+import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
+        SharedRuntimeContent.calculatePreviewFabVisibility();
 
     }
 
@@ -220,6 +224,32 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("Main Activity", "resultCode " + resultCode + " request code " + requestCode);
+
+        if(requestCode == SharedRuntimeContent.GET_QUESTION) {
+            Bundle extras = data.getExtras();
+            System.out.println("MainActivity : slideNumber : " + extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD));
+            Question question = new Question(
+                    extras.getString(Question.Fields.QUESTION_STRING_FIELD),
+                    extras.getString(Question.Fields.QUESTION_TYPE_FIELD),
+                    extras.getStringArrayList(Question.Fields.OPTIONS_FIELD),
+                    extras.getIntegerArrayList(Question.Fields.CORRECT_OPTIONS_FIELD),
+                    extras.getString(Question.Fields.SOLUTION_FIELD),
+                    extras.getStringArrayList(Question.Fields.HINTS_FIELD),
+                    extras.getBoolean(Question.Fields.IS_COMPULSORY_FIELD, true)
+            );
+            try {
+                Slide slide = new Slide();
+                slide.addResource(question, Slide.ResourceType.QUESTION);
+                SharedRuntimeContent.changeSlideAtPosition(
+                        extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
+                        slide
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     @Override
@@ -248,6 +278,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         } else if(item.getSlideType() == Slide.SlideType.QUESTION) {
             // TODO display question
+            System.out.println("MainActivity : slideNumber : " + SharedRuntimeContent.getSlidePosition(item));
+            QuestionAnswerDialog qaDialog = new QuestionAnswerDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
+            qaDialog.show();
         }
 
         onContextDeleteMenuNotRequired();
@@ -274,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 break;
             case 1:
-                mPreviewFab.show();
+                SharedRuntimeContent.calculatePreviewFabVisibility();
                 break;
             case 2:
                 mPreviewFab.hide();
