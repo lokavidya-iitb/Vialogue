@@ -66,18 +66,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     public class ProjectView {
 
-        private String mProjectId;
-        private String mProjectName;
+        private Project mProject;
         private Bitmap mThumbnail = null;
 
         public ProjectView(Project project) {
-            mProjectId = project.getObjectId();
-            mProjectName = project.getName();
+            mProject = project;
             generateThumbnail();
         }
 
         public String getProjectName() {
-            return mProjectName;
+            return mProject.getName();
         }
 
         public Bitmap getThumbnail() {
@@ -88,29 +86,27 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         }
 
         public Bitmap generateThumbnail() {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
-            query.fromLocalDatastore();
             mThumbnail = null;
-            try {
-                Project project = (Project) query.get(mProjectId);
-                for(Slide s : project.getSlides().getAll()) {
-                    if(s.getSlideType() == Slide.SlideType.IMAGE) {
-                        // get thumbnail from image
-                        mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                        break;
-                    } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
-                        // get thumbnail from video
-                        mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                    } else {
-                        // use the default thumbnail
-                    }
+            System.out.println(mProject.getSlides().size());
+            for(Slide s : mProject.getSlides().getAll()) {
+                System.out.println("slideType : " + s.getSlideType());
+                if(s.getSlideType() == Slide.SlideType.IMAGE) {
+                    // get thumbnail from image
+                    mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                    break;
+                } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
+                    // get thumbnail from video
+                    mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                } else {
+                    // use the default thumbnail
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
             if(mThumbnail == null) {
+                System.out.println("thumbnail null");
                 return BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_computer_black_24dp);
-            } return mThumbnail;
+            }
+            System.out.println("thumbnail not null");
+            return mThumbnail;
         }
     }
 

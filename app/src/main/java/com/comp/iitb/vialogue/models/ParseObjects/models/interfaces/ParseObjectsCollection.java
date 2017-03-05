@@ -1,9 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
+import android.app.Application;
+
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -14,7 +17,7 @@ import java.util.Collections;
  */
 
 @ParseClassName("Collection")
-public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObject {
+public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseClass {
 
     // default constructor required by Parse
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
@@ -22,7 +25,7 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
     // INSTANTIATING THE OBJECT
     public ParseObjectsCollection() {}
 
-    private static final class Fields {
+    public static final class Fields {
         public static final String
 
         ELEMENTS_FIELD = "elements";
@@ -45,6 +48,8 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
             e.printStackTrace();
         }
         if(list == null) {
+            System.out.println(has(Fields.ELEMENTS_FIELD));
+            System.out.println("list is null");
             list = new ArrayList<T>();
             setList(list);
         }
@@ -52,7 +57,7 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
     }
 
     public void add(T object) {
-        add(Fields.ELEMENTS_FIELD, object);
+        add(Fields.ELEMENTS_FIELD, (ParseObject) object);
     }
 
     public void remove(int index) {
@@ -118,6 +123,45 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
 
     public int getObjectPosition(T object) {
         return getList().indexOf(object);
+    }
+
+    @Override
+    public void pinParseObject() {
+        for(T object : getList()) {
+            try {
+                object.pinParseObject();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void fetchChildrenParseObjects() {
+        super.fetchChildrenParseObjects();
+        ArrayList<T> newList = new ArrayList<T>();
+        for(T object : getList()) {
+            ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
+            objectQuery.fromLocalDatastore();
+            try {
+                T o = (T) objectQuery.get(object.getObjectId());
+                // TODO find out infinite loop
+                o.fetchChildrenParseObjects();
+                newList.add(o);
+                System.out.println("fetchChildrenParseObjects : no eerror");
+            } catch (ParseException e) {
+                System.out.println("fetchChildrenParseObjects : error");
+                e.printStackTrace();
+            }
+        }
+        setList(newList);
+        System.out.println(getList());
+
+//        try {
+//            put(Fields.ELEMENTS_FIELD, ParseObject.f((ArrayList) getList(Fields.ELEMENTS_FIELD)));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 
     // TODO implement

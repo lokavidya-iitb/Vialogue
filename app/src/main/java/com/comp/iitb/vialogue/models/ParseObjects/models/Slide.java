@@ -147,6 +147,15 @@ public class Slide extends BaseParseClass {
     }
 
     public SlideType getSlideType() {
+        if(mSlideType == null) {
+            if(getResource() instanceof Image) {
+                mSlideType = SlideType.IMAGE;
+            } else if(getResource() instanceof Video) {
+                mSlideType = SlideType.VIDEO;
+            } else if(getResource() instanceof Question) {
+                mSlideType = SlideType.QUESTION;
+            }
+        }
         return mSlideType;
     }
 

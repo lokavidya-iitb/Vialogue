@@ -11,7 +11,9 @@ import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -121,17 +123,13 @@ public class SharedRuntimeContent {
         // save project with a temporary name
         if((getProjectName() == null) || (getProjectName() == "")) {
             String newProjectName = getNewUndefinedProjectName();
-            System.out.println("setting project name : " + newProjectName);
             setProjectName(newProjectName);
-        } else {
-            System.out.println("projectName : " + getProjectName());
-        }
+        } else {}
 
         if(getNumberOfSlides() != 0) {
-            System.out.println("pinning project");
             try {
                 project.pinParseObject();
-//                project.save();
+                project.save();
 //                Toast.makeText(context, "Project saved succcessfully :)", Toast.LENGTH_SHORT).show();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
@@ -143,14 +141,26 @@ public class SharedRuntimeContent {
     public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
+        query.include("Project." + BaseParseClass.Fields.CHILDREN_RESOURCES);
+        query.include("Project." + Project.Fields.AUTHOR);
+        query.include("Project." + Project.Fields.CATEGORY);
+        query.include("Project." + Project.Fields.LANGUAGE);
+        query.include("Project." + Project.Fields.SLIDES);
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();
             for(ParseObject localObject : localObjects) {
-                localProjects.add((Project) localObject);
+                Project project = (Project) localObject;
+                project.fetchChildrenParseObjects();
+                localProjects.add(project);
             }
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+        System.out.println("lkasjdf;laksdnbal;sdfm");
+        for(Project p : localProjects) {
+            System.out.println(p.getSlides());
+            System.out.println(p.getSlides().getAll());
         }
         return localProjects;
     }
