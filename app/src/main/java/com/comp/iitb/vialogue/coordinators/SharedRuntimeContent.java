@@ -11,7 +11,9 @@ import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -27,6 +29,9 @@ import tcking.github.com.giraffeplayer.PlayerModel;
  */
 
 public class SharedRuntimeContent {
+
+    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
+
     public static List<String> videoPathList = new ArrayList<>();
     public static List<String> imagePathList = new ArrayList<>();
     public static List<Bitmap> imageThumbnails = new ArrayList<>();
@@ -118,17 +123,13 @@ public class SharedRuntimeContent {
         // save project with a temporary name
         if((getProjectName() == null) || (getProjectName() == "")) {
             String newProjectName = getNewUndefinedProjectName();
-            System.out.println("setting project name : " + newProjectName);
             setProjectName(newProjectName);
-        } else {
-            System.out.println("projectName : " + getProjectName());
-        }
+        } else {}
 
         if(getNumberOfSlides() != 0) {
-            System.out.println("pinning project");
             try {
                 project.pinParseObject();
-//                project.save();
+                project.save();
 //                Toast.makeText(context, "Project saved succcessfully :)", Toast.LENGTH_SHORT).show();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
@@ -137,31 +138,50 @@ public class SharedRuntimeContent {
         }
     }
 
-    public static String getNewUndefinedProjectName() {
-        String regex = "(^)Untitled Project ([0-9].*$)";
-
+    public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
-        int maxNum = 0;
-        String returnString = "Untitled Project 0";
+        query.include("Project." + BaseParseClass.Fields.CHILDREN_RESOURCES);
+        query.include("Project." + Project.Fields.AUTHOR);
+        query.include("Project." + Project.Fields.CATEGORY);
+        query.include("Project." + Project.Fields.LANGUAGE);
+        query.include("Project." + Project.Fields.SLIDES);
+        ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
-            List<ParseObject> localProjects = query.find();
-            for(ParseObject object : localProjects) {
-                Project project = (Project) object;
-                if(project.getName().matches(regex)) {
-                    try {
-                        int number = Integer.parseInt(project.getName().substring(17));
-                        if(number > maxNum) {
-                            maxNum = number + 1;
-                        }
-                    } catch (Exception e) {}
-                }
+            List<ParseObject> localObjects = query.find();
+            for(ParseObject localObject : localObjects) {
+                Project project = (Project) localObject;
+                project.fetchChildrenParseObjects();
+                localProjects.add(project);
             }
-            returnString = "Untitled Project " + maxNum;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return returnString;
+        System.out.println("lkasjdf;laksdnbal;sdfm");
+        for(Project p : localProjects) {
+            System.out.println(p.getSlides());
+            System.out.println(p.getSlides().getAll());
+        }
+        return localProjects;
+    }
+
+    public static String getNewUndefinedProjectName() {
+
+        ArrayList<Project> localProjects = getLocalProjects();
+        int maxNum = 0;
+        for(Project project: localProjects) {
+            if(project.getName().matches(untitledProjectNameRegex)) {
+                try {
+                    int number = Integer.parseInt(project.getName().substring(17));
+                    if(number >= maxNum) {
+                        maxNum = number + 1;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return "Untitled Project " + maxNum;
     }
 
     public static int getNumberOfSlides() {
