@@ -9,9 +9,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,7 +45,10 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +98,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             mThumbnail = null;
             System.out.println(mProject.getSlides().size());
             for(Slide s : mProject.getSlides().getAll()) {
-                System.out.println("slideType : " + s.getSlideType());
                 if(s.getSlideType() == Slide.SlideType.IMAGE) {
                     // get thumbnail from image
                     mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
@@ -101,11 +109,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                     // use the default thumbnail
                 }
             }
-            if(mThumbnail == null) {
-                System.out.println("thumbnail null");
-                return BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_computer_black_24dp);
-            }
-            System.out.println("thumbnail not null");
+
             return mThumbnail;
         }
     }
@@ -138,8 +142,39 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 //        final ProjectsShowcase album = mAlbumList.get(position);
         final ProjectView projectView = mProjectViewsList.get(position);
         holder.title.setText(projectView.getProjectName());
-        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
-//        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+//        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
+
+        //create a file to write bitmap data
+        File f = new File(mContext.getCacheDir(), "temp.png");
+        Bitmap bitmap = mProjectViewsList.get(position).getThumbnail();
+
+        if(bitmap != null) {
+            try {
+                if(f.exists()) {
+                    f.delete();
+                }
+                f.createNewFile();
+                //Convert bitmap to byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                //write the bytes in file
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Bitmap thumbnail = mProjectViewsList.get(position).getThumbnail();
+        if(thumbnail == null) {
+            thumbnail = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo);
+        }
+        holder.thumbnail.setImageBitmap(thumbnail);
+//        Glide.with(mContext).load(f).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
