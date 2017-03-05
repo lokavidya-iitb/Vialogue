@@ -29,7 +29,9 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
     }
 
     private void setList(ArrayList<T> list) {
-        remove(Fields.ELEMENTS_FIELD);
+        try {
+            remove(Fields.ELEMENTS_FIELD);
+        } catch (Exception e) {}
         for(T object: list) {
             add(Fields.ELEMENTS_FIELD, (ParseObject) object);
         }
@@ -39,7 +41,9 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends ParseObjec
         ArrayList<T> list = null;
         try {
             list = (ArrayList) getList(Fields.ELEMENTS_FIELD);
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         if(list == null) {
             list = new ArrayList<T>();
             setList(list);

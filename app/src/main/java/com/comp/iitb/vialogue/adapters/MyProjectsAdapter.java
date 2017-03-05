@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
@@ -39,15 +40,17 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
 
     private Context mContext;
     private Storage mStorage;
-    private List<ProjectsShowcase> mAlbumList;
+//    private List<ProjectsShowcase> mAlbumList;
     private int listItemPositionForPopupMenu;
     private ViewPager viewpager;
+    private ArrayList<ProjectView> mProjectViewsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
@@ -70,6 +73,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         public ProjectView(Project project) {
             mProjectId = project.getObjectId();
             mProjectName = project.getName();
+            generateThumbnail();
         }
 
         public String getProjectName() {
@@ -85,6 +89,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
         public Bitmap generateThumbnail() {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+            query.fromLocalDatastore();
             mThumbnail = null;
             try {
                 Project project = (Project) query.get(mProjectId);
@@ -112,7 +117,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     public MyProjectsAdapter(Context context, List<ProjectsShowcase> albumList) {
         mContext = context;
         mStorage = new Storage(mContext);
-        mAlbumList = albumList;
+        populateProjectsList();
+    }
+
+    public void populateProjectsList() {
+        // populate mProjectViewsList
+        mProjectViewsList = new ArrayList<ProjectView>();
+        ArrayList<Project> localProjects = SharedRuntimeContent.getLocalProjects();
+        for(Project project : localProjects) {
+            mProjectViewsList.add(new ProjectView(project));
+        }
     }
 
     @Override
@@ -125,9 +139,11 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final ProjectsShowcase album = mAlbumList.get(position);
-        holder.title.setText(album.getName());
-        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+//        final ProjectsShowcase album = mAlbumList.get(position);
+        final ProjectView projectView = mProjectViewsList.get(position);
+        holder.title.setText(projectView.getProjectName());
+        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
+//        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
@@ -175,12 +191,12 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // TODO Auto-generated method stub
-            mAlbumList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mAlbumList.size());
-            Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
-            Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-            mode.finish();
+//            mAlbumList.remove(position);
+//            notifyItemRemoved(position);
+//            notifyItemRangeChanged(position, mAlbumList.size());
+//            Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
+//            Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+//            mode.finish();
             return false;
         }
 
@@ -234,60 +250,60 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.deleteThis:
-                    int newPosition = listItemPosition;
-                    mAlbumList.remove(newPosition);
-                    notifyItemRemoved(newPosition);
-                    notifyItemRangeChanged(newPosition, mAlbumList.size());
-                    Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-                    return true;
-                case R.id.renameThis:
-                    showChangeLangDialog(projectName, listItemPosition);
-
-                    return true;
-                default:
-            }
+//            switch (menuItem.getItemId()) {
+//                case R.id.deleteThis:
+//                    int newPosition = listItemPosition;
+//                    mAlbumList.remove(newPosition);
+//                    notifyItemRemoved(newPosition);
+//                    notifyItemRangeChanged(newPosition, mAlbumList.size());
+//                    Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+//                    return true;
+//                case R.id.renameThis:
+//                    showChangeLangDialog(projectName, listItemPosition);
+//
+//                    return true;
+//                default:
+//            }
             return false;
         }
     }
 
     public void showChangeLangDialog(final String projectName, final int listItemPosition) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
-        dialogBuilder.setView(dialogView);
-
-        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
-
-        dialogBuilder.setTitle("Rename the project?");
-        dialogBuilder.setMessage("Enter the new project name:");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
-                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
-                boolean success = oldName.renameTo(newName);
-                ProjectsShowcase renamingStub = mAlbumList.get(listItemPosition);
-                mAlbumList.remove(listItemPosition);
-                renamingStub.setName(edt.getText().toString());
-                mAlbumList.add(renamingStub);
-                Log.d("Renaming stub working","---------Yea");
-                notifyDataSetChanged();
-            }
-        });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //Just close the dialog
-            }
-        });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+//        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
+//        dialogBuilder.setView(dialogView);
+//
+//        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
+//
+//        dialogBuilder.setTitle("Rename the project?");
+//        dialogBuilder.setMessage("Enter the new project name:");
+//        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
+//                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
+//                boolean success = oldName.renameTo(newName);
+//                ProjectsShowcase renamingStub = mAlbumList.get(listItemPosition);
+//                mAlbumList.remove(listItemPosition);
+//                renamingStub.setName(edt.getText().toString());
+//                mAlbumList.add(renamingStub);
+//                Log.d("Renaming stub working","---------Yea");
+//                notifyDataSetChanged();
+//            }
+//        });
+//        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                //Just close the dialog
+//            }
+//        });
+//        AlertDialog b = dialogBuilder.create();
+//        b.show();
     }
 
 
     @Override
     public int getItemCount() {
-        return mAlbumList.size();
+        return mProjectViewsList.size();
     }
 }

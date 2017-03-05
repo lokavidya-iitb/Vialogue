@@ -134,9 +134,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mProjectName = (EditText) mView.findViewById(R.id.project_name);
         mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
-        System.out.println("outside...");
         if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(SharedRuntimeContent.untitledProjectNameRegex))) {
-            System.out.println("inside...");
             mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
             mProjectName.setText(SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());

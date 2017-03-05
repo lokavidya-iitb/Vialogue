@@ -140,37 +140,38 @@ public class SharedRuntimeContent {
         }
     }
 
-    public static String getNewUndefinedProjectName() {
-
+    public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
-        int maxNum = 0;
-        String returnString = "Untitled Project 0";
+        ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
-            List<ParseObject> localProjects = query.find();
-            System.out.println("localProjects : " + localProjects);
-            for(ParseObject object : localProjects) {
-                Project project = (Project) object;
-                if(project.getName().matches(untitledProjectNameRegex)) {
-                    System.out.println("got a match");
-                    System.out.println(project.getName());
-                    try {
-                        int number = Integer.parseInt(project.getName().substring(17));
-                        System.out.println(number);
-                        if(number >= maxNum) {
-                            maxNum = number + 1;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+            List<ParseObject> localObjects = query.find();
+            for(ParseObject localObject : localObjects) {
+                localProjects.add((Project) localObject);
             }
-            returnString = "Untitled Project " + maxNum;
-            System.out.println(returnString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return returnString;
+        return localProjects;
+    }
+
+    public static String getNewUndefinedProjectName() {
+
+        ArrayList<Project> localProjects = getLocalProjects();
+        int maxNum = 0;
+        for(Project project: localProjects) {
+            if(project.getName().matches(untitledProjectNameRegex)) {
+                try {
+                    int number = Integer.parseInt(project.getName().substring(17));
+                    if(number >= maxNum) {
+                        maxNum = number + 1;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return "Untitled Project " + maxNum;
     }
 
     public static int getNumberOfSlides() {
