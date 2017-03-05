@@ -27,6 +27,9 @@ import tcking.github.com.giraffeplayer.PlayerModel;
  */
 
 public class SharedRuntimeContent {
+
+    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
+
     public static List<String> videoPathList = new ArrayList<>();
     public static List<String> imagePathList = new ArrayList<>();
     public static List<Bitmap> imageThumbnails = new ArrayList<>();
@@ -138,7 +141,6 @@ public class SharedRuntimeContent {
     }
 
     public static String getNewUndefinedProjectName() {
-        String regex = "(^)Untitled Project ([0-9].*$)";
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
@@ -146,18 +148,25 @@ public class SharedRuntimeContent {
         String returnString = "Untitled Project 0";
         try {
             List<ParseObject> localProjects = query.find();
+            System.out.println("localProjects : " + localProjects);
             for(ParseObject object : localProjects) {
                 Project project = (Project) object;
-                if(project.getName().matches(regex)) {
+                if(project.getName().matches(untitledProjectNameRegex)) {
+                    System.out.println("got a match");
+                    System.out.println(project.getName());
                     try {
                         int number = Integer.parseInt(project.getName().substring(17));
-                        if(number > maxNum) {
+                        System.out.println(number);
+                        if(number >= maxNum) {
                             maxNum = number + 1;
                         }
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             returnString = "Untitled Project " + maxNum;
+            System.out.println(returnString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
