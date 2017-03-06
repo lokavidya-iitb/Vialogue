@@ -88,7 +88,7 @@ public class InceptionMyProjects extends Fragment {
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
 
         projectList = new ArrayList<>();
-        adapter = new MyProjectsAdapter(getContext(), projectList);
+        adapter = new MyProjectsAdapter(getContext());
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);

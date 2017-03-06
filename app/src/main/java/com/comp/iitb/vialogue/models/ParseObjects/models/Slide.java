@@ -1,7 +1,11 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
@@ -63,6 +67,19 @@ public class Slide extends BaseParseClass {
 
     public Bitmap getThumbnail() {
         return mThumbnail;
+    }
+
+    public void setThumbnail(Context context, Storage storage) {
+        if(mThumbnail == null) {
+            if(getSlideType() == SlideType.IMAGE) {
+                mThumbnail = storage.getImageThumbnail(getResource().getResourceFile().getAbsolutePath());
+            } else if(getSlideType() == SlideType.VIDEO) {
+                mThumbnail = storage.getVideoThumbnail(getResource().getResourceFile().getAbsolutePath());
+            } else if(getSlideType() == SlideType.QUESTION) {
+                mThumbnail = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_logo);
+
+            }
+        }
     }
 
     public void setThumbnail(Bitmap thumbnail) {
@@ -147,6 +164,15 @@ public class Slide extends BaseParseClass {
     }
 
     public SlideType getSlideType() {
+        if(mSlideType == null) {
+            if(getResource() instanceof Image) {
+                mSlideType = SlideType.IMAGE;
+            } else if(getResource() instanceof Video) {
+                mSlideType = SlideType.VIDEO;
+            } else if(getResource() instanceof Question) {
+                mSlideType = SlideType.QUESTION;
+            }
+        }
         return mSlideType;
     }
 

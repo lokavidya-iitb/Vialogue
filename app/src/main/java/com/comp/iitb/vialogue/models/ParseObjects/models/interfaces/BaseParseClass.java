@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -20,7 +21,7 @@ public abstract class BaseParseClass extends ParseObject {
     // INSTANTIATING THE OBJECT
     public BaseParseClass() {}
 
-    private static class Fields {
+    public static class Fields {
         public static final String
 
         CHILDREN_RESOURCES = "children_resources";
@@ -101,8 +102,8 @@ public abstract class BaseParseClass extends ParseObject {
 //    }
 
     public void pinParseObject() throws ParseException {
-        for(String key : this.keySet()) {
-            if(this.get(key) instanceof BaseParseClass) {
+        for(String key : keySet()) {
+            if(get(key) instanceof BaseParseClass) {
                 // is an instance of BaseParseClass
                 ((BaseParseClass) this.getParseObject(key)).pinParseObject();
             }
@@ -110,6 +111,23 @@ public abstract class BaseParseClass extends ParseObject {
 
         // to pin this object
         pin();
+    }
+
+    public void fetchChildrenParseObjects() {
+        for(String key : keySet()) {
+            if(get(key) instanceof BaseParseClass) {
+                BaseParseClass object = (BaseParseClass) get(key);
+                ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
+                objectQuery.fromLocalDatastore();
+                try {
+                    BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
+                    newObject.fetchChildrenParseObjects();
+                    put(key, newObject);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     // TODO implement

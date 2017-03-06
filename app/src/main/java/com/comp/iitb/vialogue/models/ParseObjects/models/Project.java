@@ -1,5 +1,9 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import android.content.Context;
+
+import com.comp.iitb.vialogue.MainActivity;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
@@ -20,7 +24,7 @@ public class Project extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Project() {}
 
-    private static final class Fields {
+    public static final class Fields {
         public static String
 
         PARENT_ID =                     "parent_id",
@@ -116,13 +120,16 @@ public class Project extends BaseParseClass {
             slides =  (ParseObjectsCollection) getParseObject(Fields.SLIDES);
         } catch (Exception e) {}
         if(slides == null) {
+            System.out.println("creating new slides");
             slides = new ParseObjectsCollection<Slide>();
             setSlides(slides);
+        } else {
+            System.out.println("using existing slides");
         }
         return slides;
     }
 
-    private void setSlides(ParseObjectsCollection<Slide> slides) {
+    public void setSlides(ParseObjectsCollection<Slide> slides) {
         put(Fields.SLIDES, slides);
     }
 

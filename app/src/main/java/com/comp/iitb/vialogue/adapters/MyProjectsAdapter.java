@@ -5,19 +5,22 @@ package com.comp.iitb.vialogue.adapters;
  */
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,21 +38,30 @@ import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
-import com.comp.iitb.vialogue.fragments.CreateVideos;
-import com.comp.iitb.vialogue.fragments.ViewVideosCategory;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<ProjectsShowcase> albumList;
+    private Storage mStorage;
+//    private List<ProjectsShowcase> mAlbumList;
     private int listItemPositionForPopupMenu;
     private ViewPager viewpager;
+    private ArrayList<ProjectView> mProjectViewsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
@@ -59,14 +71,67 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-
         }
     }
 
+    public class ProjectView {
 
-    public MyProjectsAdapter(Context mContext, List<ProjectsShowcase> albumList) {
-        this.mContext = mContext;
-        this.albumList = albumList;
+        private Project mProject;
+        private Bitmap mThumbnail = null;
+
+        public ProjectView(Project project) {
+            mProject = project;
+            generateThumbnail();
+        }
+
+        public String getProjectName() {
+            return mProject.getName();
+        }
+
+        public Project getProject() {
+            return mProject;
+        }
+
+        public Bitmap getThumbnail() {
+            if(mThumbnail == null) {
+                generateThumbnail();
+            }
+            return mThumbnail;
+        }
+
+        public Bitmap generateThumbnail() {
+            mThumbnail = null;
+            System.out.println(mProject.getSlides().size());
+            for(Slide s : mProject.getSlides().getAll()) {
+                if(s.getSlideType() == Slide.SlideType.IMAGE) {
+                    // get thumbnail from image
+                    mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                    break;
+                } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
+                    // get thumbnail from video
+                    mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                } else {
+                    // use the default thumbnail
+                }
+            }
+
+            return mThumbnail;
+        }
+    }
+
+    public MyProjectsAdapter(Context context) {
+        mContext = context;
+        mStorage = new Storage(mContext);
+        populateProjectsList();
+    }
+
+    public void populateProjectsList() {
+        // populate mProjectViewsList
+        mProjectViewsList = new ArrayList<ProjectView>();
+        ArrayList<Project> localProjects = SharedRuntimeContent.getLocalProjects();
+        for(Project project : localProjects) {
+            mProjectViewsList.add(new ProjectView(project));
+        }
     }
 
     @Override
@@ -78,24 +143,35 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final ProjectsShowcase album = albumList.get(position);
-        holder.title.setText(album.getName());
-        Glide.with(mContext).load(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+//        final ProjectsShowcase album = mAlbumList.get(position);
+        final ProjectView projectView = mProjectViewsList.get(position);
+        holder.title.setText(projectView.getProjectName());
+//        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
+
+        Bitmap thumbnail = mProjectViewsList.get(position).getThumbnail();
+        if(thumbnail == null) {
+            thumbnail = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo);
+        }
+        holder.thumbnail.setImageBitmap(thumbnail);
+//        Glide.with(mContext).load(f).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                // TODO change implementation API
+//                // TODO change implementation API
+//                Master.projectName=holder.title.toString();
+//                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+//                viewpager.setCurrentItem(1,true);
+                Project project = mProjectViewsList.get(position).getProject();
+                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+                SharedRuntimeContent.updateAdapterView();
 
-                SharedRuntimeContent.setProjectName(album.getName());
-                Log.d("--projectName",""+album.getName());
-                Log.d("--setprojectName",""+SharedRuntimeContent.getProjectName());
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
-
-
             }
         });
 
@@ -129,16 +205,29 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             this.position = position;
 
         }
+
+        public boolean deleteProject(int position) {
+            try {
+                mProjectViewsList.get(position).getProject().unpin();
+                mProjectViewsList.get(position).getProject().delete();
+                mProjectViewsList.remove(position);
+            } catch (com.parse.ParseException e) {
+                Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                return false;
+            } return true;
+        }
+
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            // TODO Auto-generated method stub
-            albumList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, albumList.size());
-            Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
-            Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-            mode.finish();
-            return false;
+            // delete project
+            if(deleteProject(position)) {
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mProjectViewsList.size());
+                Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
+                Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+                mode.finish();
+            } return false;
+
         }
 
         @Override
@@ -194,13 +283,21 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             switch (menuItem.getItemId()) {
                 case R.id.deleteThis:
                     int newPosition = listItemPosition;
-                    albumList.remove(newPosition);
-                    notifyItemRemoved(newPosition);
-                    notifyItemRangeChanged(newPosition, albumList.size());
-                    Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-                    return true;
-                case R.id.renameThis:
-                    showChangeLangDialog(projectName, listItemPosition);
+                    try {
+                        mProjectViewsList.get(newPosition).getProject().unpin();
+                        mProjectViewsList.get(newPosition).getProject().delete();
+                        mProjectViewsList.remove(newPosition);
+                        notifyItemRemoved(newPosition);
+                        notifyItemRangeChanged(newPosition, mProjectViewsList.size());
+                        Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+                        return true;
+                    } catch (Exception e) {
+                        Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                    }
+
+
+//                case R.id.renameThis:
+//                    showChangeLangDialog(projectName, listItemPosition);
 
                     return true;
                 default:
@@ -209,42 +306,42 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         }
     }
 
-    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
-        dialogBuilder.setView(dialogView);
-
-        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
-
-        dialogBuilder.setTitle("Rename the project?");
-        dialogBuilder.setMessage("Enter the new project name:");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
-                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
-                boolean success = oldName.renameTo(newName);
-                ProjectsShowcase renamingStub = albumList.get(listItemPosition);
-                albumList.remove(listItemPosition);
-                renamingStub.setName(edt.getText().toString());
-                albumList.add(renamingStub);
-                Log.d("Renaming stub working","---------Yea");
-                notifyDataSetChanged();
-            }
-        });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //Just close the dialog
-            }
-        });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
-    }
+//    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+//        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
+//        dialogBuilder.setView(dialogView);
+//
+//        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
+//
+//        dialogBuilder.setTitle("Rename the project?");
+//        dialogBuilder.setMessage("Enter the new project name:");
+//        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
+//                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
+//                boolean success = oldName.renameTo(newName);
+//                ProjectsShowcase renamingStub = mAlbumList.get(listItemPosition);
+//                mAlbumList.remove(listItemPosition);
+//                renamingStub.setName(edt.getText().toString());
+//                mAlbumList.add(renamingStub);
+//                Log.d("Renaming stub working","---------Yea");
+//                notifyDataSetChanged();
+//            }
+//        });
+//        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                //Just close the dialog
+//            }
+//        });
+//        AlertDialog b = dialogBuilder.create();
+//        b.show();
+//    }
 
 
     @Override
     public int getItemCount() {
-        return albumList.size();
+        return mProjectViewsList.size();
     }
 }
