@@ -31,7 +31,7 @@ public abstract class CanSaveAudioResource extends BaseResourceClass {
 
     public void addAudio(Audio audio) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
-        childrenResources.add(audio);
+        childrenResources.addObject(audio);
         setChildrenResources(childrenResources);
     }
 

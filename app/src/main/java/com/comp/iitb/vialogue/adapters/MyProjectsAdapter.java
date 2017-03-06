@@ -101,18 +101,22 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
         public Bitmap generateThumbnail() {
             mThumbnail = null;
-            System.out.println(mProject.getSlides().size());
-            for(Slide s : mProject.getSlides().getAll()) {
-                if(s.getSlideType() == Slide.SlideType.IMAGE) {
-                    // get thumbnail from image
-                    mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                    break;
-                } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
-                    // get thumbnail from video
-                    mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                } else {
-                    // use the default thumbnail
+            try {
+                for(Slide s : mProject.getSlides().getAll()) {
+                    if(s.getSlideType() == Slide.SlideType.IMAGE) {
+                        // get thumbnail from image
+                        mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        break;
+                    } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
+                        // get thumbnail from video
+                        mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                    } else {
+                        // use the default thumbnail
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(mProject.getSlides().getAll());
             }
 
             return mThumbnail;
@@ -164,7 +168,8 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 //                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
 //                viewpager.setCurrentItem(1,true);
                 Project project = mProjectViewsList.get(position).getProject();
-                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+//                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+                SharedRuntimeContent.project = project;
                 SharedRuntimeContent.updateAdapterView();
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
