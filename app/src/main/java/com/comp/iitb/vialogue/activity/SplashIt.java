@@ -40,25 +40,25 @@ public class SplashIt extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // --------------------------------------------------------------
-        ArrayList<Project> projects = new ArrayList<Project>();
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
-        query.fromLocalDatastore();
-        try {
-            List<ParseObject> localObjects = query.find();
-            for(ParseObject object: localObjects) {
-                projects.add((Project) object);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Project project = projects.get(0);
-        project.fetchChildrenObjects();
-        try {
-            project.saveParseObject();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        ArrayList<Project> projects = new ArrayList<Project>();
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+//        query.fromLocalDatastore();
+//        try {
+//            List<ParseObject> localObjects = query.find();
+//            for(ParseObject object: localObjects) {
+//                projects.add((Project) object);
+//            }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Project project = projects.get(0);
+//        project.fetchChildrenObjects();
+//        try {
+//            project.saveParseObject();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 //        project.fetchChildrenObjects();
 //        System.out.println(project.toString());
 //        System.out.println(project.keySet());
@@ -100,20 +100,20 @@ public class SplashIt extends AppCompatActivity {
 //        finish();
         // --------------------------------------------------------------
 
-//        Intent intent = null;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                // permission granted
-//                intent = new Intent(this, SignIn.class);
-//            } else {
-//                // permission not granted
-//                // ask for permission
-//                intent = new Intent(this, PermissionsActivity.class);
-//            }
-//        }
-//
-//        startActivity(intent);
-//        finish();
+        Intent intent = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                // permission granted
+                intent = new Intent(this, SignIn.class);
+            } else {
+                // permission not granted
+                // ask for permission
+                intent = new Intent(this, PermissionsActivity.class);
+            }
+        }
+
+        startActivity(intent);
+        finish();
     }
 
 }

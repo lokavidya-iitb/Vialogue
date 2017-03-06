@@ -143,15 +143,12 @@ public class SharedRuntimeContent {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
 
-        for(String s : new Project().getAllFields()) {
-            query.include(s);
-        }
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();
             for(ParseObject localObject : localObjects) {
                 Project project = (Project) localObject;
-//                project.fetchChildrenParseObjects();
+                project.fetchChildrenObjects();
                 localProjects.add(project);
             }
         } catch (ParseException e) {

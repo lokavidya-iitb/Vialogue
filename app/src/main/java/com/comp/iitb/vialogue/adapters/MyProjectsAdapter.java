@@ -105,11 +105,19 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 for(Slide s : mProject.getSlides().getAll()) {
                     if(s.getSlideType() == Slide.SlideType.IMAGE) {
                         // get thumbnail from image
-                        mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        if(s.getThumbnail() == null) {
+                            mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        } else {
+                            mThumbnail = s.getThumbnail();
+                        }
                         break;
                     } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
                         // get thumbnail from video
-                        mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        if(s.getThumbnail() == null) {
+                            mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        } else {
+                            mThumbnail = s.getThumbnail();
+                        }
                     } else {
                         // use the default thumbnail
                     }
