@@ -9,9 +9,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
@@ -34,12 +41,16 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +71,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-
         }
     }
 
@@ -78,6 +88,10 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             return mProject.getName();
         }
 
+        public Project getProject() {
+            return mProject;
+        }
+
         public Bitmap getThumbnail() {
             if(mThumbnail == null) {
                 generateThumbnail();
@@ -89,7 +103,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             mThumbnail = null;
             System.out.println(mProject.getSlides().size());
             for(Slide s : mProject.getSlides().getAll()) {
-                System.out.println("slideType : " + s.getSlideType());
                 if(s.getSlideType() == Slide.SlideType.IMAGE) {
                     // get thumbnail from image
                     mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
@@ -101,16 +114,12 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                     // use the default thumbnail
                 }
             }
-            if(mThumbnail == null) {
-                System.out.println("thumbnail null");
-                return BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_computer_black_24dp);
-            }
-            System.out.println("thumbnail not null");
+
             return mThumbnail;
         }
     }
 
-    public MyProjectsAdapter(Context context, List<ProjectsShowcase> albumList) {
+    public MyProjectsAdapter(Context context) {
         mContext = context;
         mStorage = new Storage(mContext);
         populateProjectsList();
@@ -134,23 +143,31 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
 //        final ProjectsShowcase album = mAlbumList.get(position);
         final ProjectView projectView = mProjectViewsList.get(position);
         holder.title.setText(projectView.getProjectName());
-        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
-//        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+//        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
+
+        Bitmap thumbnail = mProjectViewsList.get(position).getThumbnail();
+        if(thumbnail == null) {
+            thumbnail = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo);
+        }
+        holder.thumbnail.setImageBitmap(thumbnail);
+//        Glide.with(mContext).load(f).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // TODO change implementation API
-                Master.projectName=holder.title.toString();
+//                // TODO change implementation API
+//                Master.projectName=holder.title.toString();
+//                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+//                viewpager.setCurrentItem(1,true);
+                Project project = mProjectViewsList.get(position).getProject();
+                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+                SharedRuntimeContent.updateAdapterView();
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
-
-
             }
         });
 
@@ -184,16 +201,29 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             this.position = position;
 
         }
+
+        public boolean deleteProject(int position) {
+            try {
+                mProjectViewsList.get(position).getProject().unpin();
+                mProjectViewsList.get(position).getProject().delete();
+                mProjectViewsList.remove(position);
+            } catch (com.parse.ParseException e) {
+                Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                return false;
+            } return true;
+        }
+
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            // TODO Auto-generated method stub
-//            mAlbumList.remove(position);
-//            notifyItemRemoved(position);
-//            notifyItemRangeChanged(position, mAlbumList.size());
-//            Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
-//            Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-//            mode.finish();
-            return false;
+            // delete project
+            if(deleteProject(position)) {
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mProjectViewsList.size());
+                Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
+                Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+                mode.finish();
+            } return false;
+
         }
 
         @Override
@@ -246,25 +276,33 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-//            switch (menuItem.getItemId()) {
-//                case R.id.deleteThis:
-//                    int newPosition = listItemPosition;
-//                    mAlbumList.remove(newPosition);
-//                    notifyItemRemoved(newPosition);
-//                    notifyItemRangeChanged(newPosition, mAlbumList.size());
-//                    Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
-//                    return true;
+            switch (menuItem.getItemId()) {
+                case R.id.deleteThis:
+                    int newPosition = listItemPosition;
+                    try {
+                        mProjectViewsList.get(newPosition).getProject().unpin();
+                        mProjectViewsList.get(newPosition).getProject().delete();
+                        mProjectViewsList.remove(newPosition);
+                        notifyItemRemoved(newPosition);
+                        notifyItemRangeChanged(newPosition, mProjectViewsList.size());
+                        Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
+                        return true;
+                    } catch (Exception e) {
+                        Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                    }
+
+
 //                case R.id.renameThis:
 //                    showChangeLangDialog(projectName, listItemPosition);
-//
-//                    return true;
-//                default:
-//            }
+
+                    return true;
+                default:
+            }
             return false;
         }
     }
 
-    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
+//    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
 //        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
 //        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 //        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
@@ -295,7 +333,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 //        });
 //        AlertDialog b = dialogBuilder.create();
 //        b.show();
-    }
+//    }
 
 
     @Override

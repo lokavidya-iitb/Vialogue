@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
@@ -129,8 +130,6 @@ public class SharedRuntimeContent {
         if(getNumberOfSlides() != 0) {
             try {
                 project.pinParseObject();
-                project.save();
-//                Toast.makeText(context, "Project saved succcessfully :)", Toast.LENGTH_SHORT).show();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -157,12 +156,26 @@ public class SharedRuntimeContent {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        System.out.println("lkasjdf;laksdnbal;sdfm");
-        for(Project p : localProjects) {
-            System.out.println(p.getSlides());
-            System.out.println(p.getSlides().getAll());
-        }
         return localProjects;
+    }
+
+    public static ArrayList<Project> getLocalProjectsWithThumbnails(Context context, Storage storage) {
+        ArrayList<Project> localProjects = getLocalProjects();
+        ArrayList<Project> localProjectsWithThumbnails = new ArrayList<Project>();
+        for(Project localProject : localProjects) {
+            localProjectsWithThumbnails.add(addThumbnailsToProject(project, context, storage));
+        }
+        return localProjectsWithThumbnails;
+    }
+
+    public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
+        ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
+        for(Slide s : project.getSlides().getAll()) {
+            s.setThumbnail(context, storage);
+            slides.add(s);
+        }
+        project.setSlides(slides);
+        return project;
     }
 
     public static String getNewUndefinedProjectName() {
