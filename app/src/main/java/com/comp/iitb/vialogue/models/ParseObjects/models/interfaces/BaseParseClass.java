@@ -125,55 +125,32 @@ public abstract class BaseParseClass extends ParseObject {
         pin();
     }
 
-    public void fetchChildrenParseObjects() {
-        System.out.println("fetchChildrenParseObjects : called for : " + this.getClassName());
-        for(String key : keySet()) {
-            if(get(key) instanceof BaseParseClass) {
-                BaseParseClass object = (BaseParseClass) get(key);
-//                BaseParseClass object = (BaseParseClass) get(key);
-                System.out.println("fetching : " + key + " : " + object);
-                System.out.println("objectId : " + object.getObjectId());
-                System.out.println("keymap" + object.keySet());
-//                object.fetchChildrenParseObjects();
-                System.out.println("keymap" + object.keySet());
-
-                if(object.getObjectId() != null) {
-                    ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
-                    objectQuery.fromLocalDatastore();
-
-                    // add includes
-                    for(String s : object.getAllFields()) {
-                        objectQuery.include(s);
-                    }
-
-                    try {
-                        BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
-                        System.out.println("newObject : " + newObject.getClassName());
-                        newObject.fetchChildrenParseObjects();
-                        put(key, newObject);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
     // TODO implement
-    public void saveParseObject() {
+    public void saveParseObject() throws ParseException {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
-            if(this.get(key) instanceof BaseParseClass) {
+            if(this.get(key) instanceof ParseObjectsCollection) {
                 // is an instance of BaseParseClass
-                ((BaseParseClass) this.getParseObject(key)).saveParseObject();
+                ((ParseObjectsCollection) getParseObject(key)).saveParseObject();
             }
         }
 
         // now save this
-        try {
-            save();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        save();
+    }
+
+    public void fetchChildrenObjects() {
+        System.out.println("fetching : " + getClassName());
+        System.out.println(keySet());
+        for(String key : keySet()) {
+            if(get(key) instanceof BaseParseClass) {
+                try {
+                    getParseObject(key).fetchFromLocalDatastore();
+                    ((BaseParseClass) getParseObject(key)).fetchChildrenObjects();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -130,6 +130,7 @@ public class SharedRuntimeContent {
         if(getNumberOfSlides() != 0) {
             try {
                 project.pinParseObject();
+                System.out.println("project pinned");
 //                project.saveParseObject();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
@@ -141,17 +142,16 @@ public class SharedRuntimeContent {
     public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
-        query.include(BaseParseClass.Fields.CHILDREN_RESOURCES);
-        query.include(Project.Fields.AUTHOR);
-        query.include(Project.Fields.CATEGORY);
-        query.include(Project.Fields.LANGUAGE);
-        query.include(Project.Fields.SLIDES);
+
+        for(String s : new Project().getAllFields()) {
+            query.include(s);
+        }
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();
             for(ParseObject localObject : localObjects) {
                 Project project = (Project) localObject;
-                project.fetchChildrenParseObjects();
+//                project.fetchChildrenParseObjects();
                 localProjects.add(project);
             }
         } catch (ParseException e) {
