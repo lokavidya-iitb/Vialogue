@@ -136,21 +136,21 @@ public class Slide extends BaseParseClass {
 
     public void addImage(Image image) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
-        childrenResources.add(image);
+        childrenResources.addObject(image);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.IMAGE;
     }
 
     public void addVideo(Video video) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
-        childrenResources.add(video);
+        childrenResources.addObject(video);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.VIDEO;
     }
 
     public void addQuestion(Question question) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
-        childrenResources.add(question);
+        childrenResources.addObject(question);
         setChildrenResources(childrenResources);
         mSlideType = SlideType.QUESTION;
     }

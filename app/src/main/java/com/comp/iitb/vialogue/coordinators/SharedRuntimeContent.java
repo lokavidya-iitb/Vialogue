@@ -130,6 +130,7 @@ public class SharedRuntimeContent {
         if(getNumberOfSlides() != 0) {
             try {
                 project.pinParseObject();
+//                project.saveParseObject();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -172,7 +173,7 @@ public class SharedRuntimeContent {
         ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
         for(Slide s : project.getSlides().getAll()) {
             s.setThumbnail(context, storage);
-            slides.add(s);
+            slides.addObject(s);
         }
         project.setSlides(slides);
         return project;
@@ -202,6 +203,8 @@ public class SharedRuntimeContent {
         if(slides == null) {
             return 0;
         }
+        System.out.println("slides.size : " + slides.size());
+        System.out.println("slides.size : " + slides.size());
         return slides.size();
     }
 

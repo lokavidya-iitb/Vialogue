@@ -114,39 +114,45 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     public void fetchChildrenParseObjects() {
+        System.out.println("fetchChildrenParseObjects : called");
         for(String key : keySet()) {
             if(get(key) instanceof BaseParseClass) {
-                BaseParseClass object = (BaseParseClass) get(key);
-                ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
-                objectQuery.fromLocalDatastore();
-                try {
-                    BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
-                    newObject.fetchChildrenParseObjects();
-                    put(key, newObject);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                BaseParseClass object = ((BaseParseClass) get(key));
+//                BaseParseClass object = (BaseParseClass) get(key);
+                System.out.println("fetching : " + key + " : " + object);
+                System.out.println("objectId : " + object.getObjectId());
+                object.fetchChildrenParseObjects();
+//                ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
+//                objectQuery.fromLocalDatastore();
+//                try {
+//                    BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
+//                    System.out.println("newObject : " + newObject.getClassName());
+//                    newObject.fetchChildrenParseObjects();
+//                    put(key, newObject);
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
     }
 
     // TODO implement
-//    public void saveParseObject() {
-//        // call the mySave method for all the children BaseParseClass instances
-//        for(String key : this.keySet()) {
-//            if(this.get(key) instanceof BaseParseClass) {
-//                // is an instance of BaseParseClass
-//                ((BaseParseClass) this.getParseObject(key)).saveParseObject();
-//            }
-//        }
-//
-//        // now save this
-//        try {
-//            save();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void saveParseObject() {
+        // call the mySave method for all the children BaseParseClass instances
+        for(String key : this.keySet()) {
+            if(this.get(key) instanceof BaseParseClass) {
+                // is an instance of BaseParseClass
+                ((BaseParseClass) this.getParseObject(key)).saveParseObject();
+            }
+        }
+
+        // now save this
+        try {
+            save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String toString() {
