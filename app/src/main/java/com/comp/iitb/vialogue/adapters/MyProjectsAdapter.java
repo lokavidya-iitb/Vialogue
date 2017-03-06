@@ -105,22 +105,11 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 for(Slide s : mProject.getSlides().getAll()) {
                     if(s.getSlideType() == Slide.SlideType.IMAGE) {
                         // get thumbnail from image
-                        if(s.getThumbnail() == null) {
-                            mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                        } else {
-                            mThumbnail = s.getThumbnail();
-                        }
+                        mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
                         break;
                     } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
-                        // get thumbnail from video
-                        if(s.getThumbnail() == null) {
-                            mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
-                        } else {
-                            mThumbnail = s.getThumbnail();
-                        }
-                    } else {
-                        // use the default thumbnail
-                    }
+                        mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                    } else {}
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -172,12 +161,9 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public void onClick(View view) {
 //                // TODO change implementation API
-//                Master.projectName=holder.title.toString();
-//                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
-//                viewpager.setCurrentItem(1,true);
                 Project project = mProjectViewsList.get(position).getProject();
-//                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
-                SharedRuntimeContent.project = project;
+                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+//                SharedRuntimeContent.project = project;
                 SharedRuntimeContent.updateAdapterView();
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
@@ -232,8 +218,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             if(deleteProject(position)) {
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mProjectViewsList.size());
-                Log.d("---deleted?",Master.getMyProjectsPath()+"/"+projectName);
-                Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
                 mode.finish();
             } return false;
 
@@ -298,7 +282,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                         mProjectViewsList.remove(newPosition);
                         notifyItemRemoved(newPosition);
                         notifyItemRangeChanged(newPosition, mProjectViewsList.size());
-                        Storage.deleteThisFolder(Master.getMyProjectsPath()+"/"+projectName);
                         return true;
                     } catch (Exception e) {
                         Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);

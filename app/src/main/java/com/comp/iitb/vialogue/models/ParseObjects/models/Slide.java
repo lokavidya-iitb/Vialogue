@@ -85,6 +85,9 @@ public class Slide extends BaseParseClass {
     }
 
     public void setThumbnail(Context context, Storage storage) {
+        if(mSlideType == null) {
+            mSlideType = getSlideType();
+        }
         if(mThumbnail == null) {
             if(getSlideType() == SlideType.IMAGE) {
                 mThumbnail = storage.getImageThumbnail(getResource().getResourceFile().getAbsolutePath());
