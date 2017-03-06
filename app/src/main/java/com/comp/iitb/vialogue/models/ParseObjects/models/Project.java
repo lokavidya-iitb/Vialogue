@@ -1,5 +1,9 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import android.content.Context;
+
+import com.comp.iitb.vialogue.MainActivity;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
@@ -125,7 +129,7 @@ public class Project extends BaseParseClass {
         return slides;
     }
 
-    private void setSlides(ParseObjectsCollection<Slide> slides) {
+    public void setSlides(ParseObjectsCollection<Slide> slides) {
         put(Fields.SLIDES, slides);
     }
 
