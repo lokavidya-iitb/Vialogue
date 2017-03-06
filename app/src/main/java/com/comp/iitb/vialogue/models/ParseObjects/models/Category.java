@@ -1,7 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.parse.ParseClassName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by ironstein on 16/02/17.
@@ -16,10 +21,23 @@ public class Category extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Category() {}
 
-    private static final class Fields {
+    private static final class Fields implements BaseFieldsClass {
         public static final String
 
         NAME = "name";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    NAME
+            }));
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
     }
 
     public String getName() {
