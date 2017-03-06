@@ -135,13 +135,13 @@ public class Project extends BaseParseClass {
 
     public void addEmptySlide() {
         ParseObjectsCollection<Slide> slides = getSlides();
-        slides.add(new Slide());
+        slides.addObject(new Slide());
         setSlides(slides);
     }
 
     public void addSlide(Slide slide) {
         ParseObjectsCollection<Slide> slides = getSlides();
-        slides.add(slide);
+        slides.addObject(slide);
         setSlides(slides);
     }
 
