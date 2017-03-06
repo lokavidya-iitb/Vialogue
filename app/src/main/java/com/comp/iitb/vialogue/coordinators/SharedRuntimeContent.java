@@ -157,15 +157,6 @@ public class SharedRuntimeContent {
         return localProjects;
     }
 
-    public static ArrayList<Project> getLocalProjectsWithThumbnails(Context context, Storage storage) {
-        ArrayList<Project> localProjects = getLocalProjects();
-        ArrayList<Project> localProjectsWithThumbnails = new ArrayList<Project>();
-        for(Project localProject : localProjects) {
-            localProjectsWithThumbnails.add(addThumbnailsToProject(project, context, storage));
-        }
-        return localProjectsWithThumbnails;
-    }
-
     public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
         ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
         for(Slide s : project.getSlides().getAll()) {
