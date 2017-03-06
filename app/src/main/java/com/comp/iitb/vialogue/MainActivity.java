@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
                 MainActivity.this));
 
-        mViewPager.setOffscreenPageLimit(4);
+        mViewPager.setOffscreenPageLimit(1);
 
         //mViewPager.setOffscreenPageLimit(0);
 

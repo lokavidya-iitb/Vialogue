@@ -1,21 +1,26 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -39,7 +44,8 @@ public class UploadVideoActivity extends AppCompatActivity {
     private Spinner mCategories;
     private FloatingActionButton mUploadButton;
     public static String URL;
-
+    private EditText name, description, language, tags;
+    private final int MAX_WORD_LIMIT = 50;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +62,36 @@ public class UploadVideoActivity extends AppCompatActivity {
         mPlayer.setTitle(URL);*/
 
         mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
+        name= (EditText) findViewById(R.id.video_name);
+        description= (EditText) findViewById(R.id.video_description);
+        language= (EditText) findViewById(R.id.video_language);
+        tags= (EditText) findViewById(R.id.video_tags);
+        mUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                startActivity(intent);
+            }
+        });
+
+
+        tags.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                // Nothing
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Nothing
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String[] words = s.toString().split(" "); // Get all words
+                if (words.length > MAX_WORD_LIMIT) {
+                    tags.setText("");
+                }
+            }
+        });
 
         mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
             private SimulationHandler mSimulationHandler;
@@ -167,10 +203,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         String[] plants = new String[]{
                 // TODO retrieve from Parse Database
                 "Select a category", // let this be
-                "California sycamore",
-                "Mountain mahogany",
-                "Butterfly weed",
-                "Carrot weed"
+                "Agriculture",
+                "Something",
+                "Nothing",
+                "Manything"
         };
 
         final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));

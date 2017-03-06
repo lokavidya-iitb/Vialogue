@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -20,7 +21,11 @@ import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,13 +157,29 @@ public class InceptionMyProjects extends Fragment {
     }
 
     private void prepareProjects() {
+
+        List<String> myStringArray = new ArrayList<String>();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+        query.fromLocalDatastore();
+        try {
+            List<ParseObject> localProjects = query.find();
+            for(ParseObject object : localProjects) {
+                Project project = (Project) object;
+                Log.d("--projects offline",""+project.getName());
+                ProjectsShowcase a = new ProjectsShowcase(project.getName());
+                projectList.add(a);
+                          }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+/*
         List<String> myStringArray = new ArrayList<String>();
         myStringArray= Storage.getMeAllTheFilesHere(Master.getMyProjectsPath());
         for(int i=0;i<myStringArray.size();i++)
         {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"", Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").size(), Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","audios").size(),0,1);
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
-        }
+        }*/
         adapter.notifyDataSetChanged();
     }
 

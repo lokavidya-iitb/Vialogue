@@ -82,13 +82,15 @@
                     android:id="@+id/btn_play_sample_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="play sample 1" />
+                    android:text="play sample 1"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btn_play_sample_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="play sample 2" />
+                    android:text="play sample 2"
+                    android:visibility="gone"/>
 
             </LinearLayout>
             </ScrollView>

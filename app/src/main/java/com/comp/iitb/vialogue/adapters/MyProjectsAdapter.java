@@ -81,14 +81,17 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
-        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+        Glide.with(mContext).load(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 // TODO change implementation API
-                Master.projectName=holder.title.toString();
+
+                SharedRuntimeContent.setProjectName(album.getName());
+                Log.d("--projectName",""+album.getName());
+                Log.d("--setprojectName",""+SharedRuntimeContent.getProjectName());
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
 

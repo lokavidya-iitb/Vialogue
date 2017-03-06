@@ -80,7 +80,7 @@
     <string name="skip">Skip</string>
     <string name="description">description</string>
     <string name="language">language</string>
-    <string name="tags">tags</string>
+    <string name="tags">Enter only 50 tags</string>
     <string name="video_name">Video Name</string>
     <string name="project_string">Project Name</string>
     <string name="loading">Hold on!</string>

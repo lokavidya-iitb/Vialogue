@@ -124,7 +124,7 @@ public class InceptionSavedVideos extends Fragment {
         myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedVideosPath());
         for(int i=0;i<myStringArray.size();i++)
         {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i), Storage.getMeTheeseInThisProject(myStringArray.get(i),"MyProjects","images").get(0), Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(), Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
         }
 

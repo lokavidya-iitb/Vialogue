@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,11 +40,15 @@ import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
+import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +60,7 @@ import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
@@ -89,6 +96,18 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
     private Fragment mFragment;
+
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
 
     private CameraImagePicker mCameraImagePicker;
 
@@ -137,6 +156,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         System.out.println("outside...");
         if(SharedRuntimeContent.getProjectName() != null) {
             System.out.println("inside...");
+            Log.d("--receivedprojectNmae",""+SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
             mProjectName.setText(SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());
@@ -147,6 +167,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
 
 
         //Load Pickers
+
+        mProjectName.setFilters(new InputFilter[] { filter });
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
         mVideoPicker = (Button) mView.findViewById(R.id.video_picker);
         mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
@@ -164,7 +186,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         mVideoPicker.setOnClickListener(videoPickerClickListener);
 
         //Question Picker
-        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getContext(), CreateVideos.this);
+        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getActivity(), CreateVideos.this);
         mQuestionPicker.setOnClickListener(questionPickerClickListener);
         //set SlideLayout
         mSlideFragment = SlideFragment.newInstance(3);
@@ -190,8 +212,35 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
     public void setUpProject() {
-        mProjectNameDisplay.setText( Master.projectName);
-        SharedRuntimeContent.setProjectName(Master.projectName);
+
+       try{
+
+
+           ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+           query.fromLocalDatastore();
+           try {
+               List<ParseObject> localProjects = query.find();
+               for(ParseObject object : localProjects) {
+                   Project project = (Project) object;
+                   Log.d("--receivedprojectNmae",""+SharedRuntimeContent.getProjectName());
+                   Log.d("--Number of Slides",""+SharedRuntimeContent.getNumberOfSlides());
+               }
+           } catch (ParseException e) {
+               e.printStackTrace();
+           }
+
+           if(!SharedRuntimeContent.getProjectName().equals(null))
+           {
+               mProjectNameDisplay.setText( SharedRuntimeContent.getProjectName());
+               SharedRuntimeContent.setProjectName(SharedRuntimeContent.getProjectName());
+           }
+           else
+           throw new NullPointerException();
+       }
+        catch(NullPointerException e) {
+            mProjectNameDisplay.setText(SharedRuntimeContent.getNewUndefinedProjectName());
+            SharedRuntimeContent.setProjectName(SharedRuntimeContent.getNewUndefinedProjectName());
+        }
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         SharedRuntimeContent.calculatePreviewFabVisibility();
     }

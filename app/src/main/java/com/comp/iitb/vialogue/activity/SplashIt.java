@@ -34,7 +34,7 @@ public class SplashIt extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 // permission granted
-                intent = new Intent(this, SignIn.class);
+                intent = new Intent(this, MainActivity.class);
             } else {
                 // permission not granted
                 // ask for permission

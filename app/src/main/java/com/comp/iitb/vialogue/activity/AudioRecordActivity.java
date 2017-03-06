@@ -143,9 +143,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mStopButton = (Button) findViewById(R.id.stop_button);
         mRetryButton = (Button) findViewById(R.id.retry);
         mSeekBar = (SeekBar) findViewById(R.id.audio_seek);
+
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
         mTimeDisplay = (TextView) findViewById(R.id.time_display);
         mRecordButton = (Button) findViewById(R.id.record_button);
+        mTimeDisplay.setVisibility(View.GONE);
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
@@ -287,8 +289,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     private void setmTimeDisplay(int currentTime) {
         String formatTime = TimeFormater.getMinutesAndSeconds(currentTime);
-        if (isPlaying) {
-            mTimeDisplay.setText(formatTime);
+        if (isPlaying) {/*
+            mTimeDisplay.setText(formatTime);*/
         } else if (isRecording) {
             mRecordButton.setText(formatTime);
         }

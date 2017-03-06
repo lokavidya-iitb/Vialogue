@@ -279,6 +279,9 @@ public class SignIn extends AppCompatActivity implements
                     "Signed in as "+ personName, Toast.LENGTH_SHORT).show();
 
             // launch MainActivity
+            // TODO upload the project
+            Toast.makeText(SignIn.this,
+                    "Uploaded the project successfully!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();

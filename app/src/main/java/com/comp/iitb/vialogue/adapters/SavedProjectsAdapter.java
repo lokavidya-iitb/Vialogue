@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
@@ -37,7 +39,7 @@ public class SavedProjectsAdapter extends RecyclerView.Adapter<SavedProjectsAdap
     private Context mContext;
     private List<ProjectsShowcase> albumList;
     private int listItemPositionForPopupMenu;
-
+    private ViewPager viewpager;
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageView thumbnail;
@@ -67,9 +69,21 @@ public class SavedProjectsAdapter extends RecyclerView.Adapter<SavedProjectsAdap
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
-        Glide.with(mContext).load(album.getImageFile()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+        Glide.with(mContext).load(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
+
+        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // TODO change implementation API
+                SharedRuntimeContent.setProjectName(album.getName());
+                Log.d("--projectNmae",""+album.getName());
+                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+                viewpager.setCurrentItem(1,true);
 
 
+            }
+        });
         holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
