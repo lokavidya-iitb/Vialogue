@@ -12,7 +12,12 @@ import com.parse.ParseFile;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
+import static com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass.Fields.CHILDREN_RESOURCES;
 
 /**
  * Created by ironstein on 16/02/17.
@@ -26,12 +31,32 @@ public abstract class BaseResourceClass extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public BaseResourceClass() {}
 
-    private static final class Fields {
+    private static final class Fields implements BaseFieldsClass {
         public static final String
 
         FILE = "file",
         TEMP_URL = "temp_url";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    FILE,
+                    TEMP_URL
+            }));
+        }
     }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
+    }
+
+//    @Override
+//    public ArrayList<String> getAllFields() {
+//        ArrayList<String> allFields = new ArrayList<String>(Arrays.asList(new String[] {Fields.FILE, Fields.TEMP_URL}));
+//        return allFields.addAll(super.getAllFields());
+//    }
 
     public static File makeTempResourceFile(Slide.ResourceType resourceType, Context context) {
         String extension = null;

@@ -57,7 +57,7 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
 
-    public static Project project = new Project();
+    public static Project project = new Project("Iron man");
 
     public static void addSlide(Slide slide) {
         project.addSlide(slide);
@@ -141,11 +141,11 @@ public class SharedRuntimeContent {
     public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
-        query.include("Project." + BaseParseClass.Fields.CHILDREN_RESOURCES);
-        query.include("Project." + Project.Fields.AUTHOR);
-        query.include("Project." + Project.Fields.CATEGORY);
-        query.include("Project." + Project.Fields.LANGUAGE);
-        query.include("Project." + Project.Fields.SLIDES);
+        query.include(BaseParseClass.Fields.CHILDREN_RESOURCES);
+        query.include(Project.Fields.AUTHOR);
+        query.include(Project.Fields.CATEGORY);
+        query.include(Project.Fields.LANGUAGE);
+        query.include(Project.Fields.SLIDES);
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();

@@ -10,12 +10,14 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -33,10 +35,23 @@ public class Slide extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Slide() {}
 
-    private static class Fields {
+    private static class Fields implements BaseFieldsClass {
         public static final String
 
         HYPERLINKS = "hyperlinks";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    HYPERLINKS
+            }));
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
     }
 
     public static enum ResourceType {
@@ -198,5 +213,6 @@ public class Slide extends BaseParseClass {
         }
         return playerModel;
     }
+
 
 }

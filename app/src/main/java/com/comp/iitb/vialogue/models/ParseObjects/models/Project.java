@@ -4,10 +4,14 @@ import android.content.Context;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +28,7 @@ public class Project extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Project() {}
 
-    public static final class Fields {
+    public static final class Fields implements BaseFieldsClass {
         public static String
 
         PARENT_ID =                     "parent_id",
@@ -36,13 +40,31 @@ public class Project extends BaseParseClass {
         TAGS =                          "tags",
         RESOLUTION =                    "resolution",
         SLIDES =                        "slides";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    PARENT_ID,
+                    NAME,
+                    DESCRIPTION,
+                    AUTHOR,
+                    CATEGORY,
+                    LANGUAGE,
+                    TAGS,
+                    RESOLUTION,
+                    SLIDES
+            }));
+        }
     }
 
-    public Project(String name, String parentId) {
-        setName(name);
-        if(!(parentId == null || parentId.equals(""))) {
-            setParentId(parentId);
-        }
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
+    }
+
+    public Project(String name) {
+        setAuthor(new Author());
     }
 
     // getters and setters

@@ -10,6 +10,7 @@ import com.parse.ParseQuery;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -25,10 +26,23 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     // INSTANTIATING THE OBJECT
     public ParseObjectsCollection() {}
 
-    public static final class Fields {
+    public static final class Fields implements BaseFieldsClass {
         public static final String
 
         ELEMENTS_FIELD = "elements";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    ELEMENTS_FIELD
+            }));
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
     }
 
     private void setList(ArrayList<T> list) {
@@ -153,6 +167,17 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void fetchChildrenParseObjects() {
+        System.out.println("ParseObjectsCollection : fetchChildrenParseObjects : called");
+        ArrayList<T> newList = new ArrayList<T>();
+        for(T object: getList_()) {
+            object.fetchChildrenParseObjects();
+            newList.add(object);
+        }
+        setList(newList);
     }
 
 //    @Override

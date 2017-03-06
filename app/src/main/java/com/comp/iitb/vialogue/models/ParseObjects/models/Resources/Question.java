@@ -1,10 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.Resources;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.parse.ParseClassName;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by ironstein on 20/02/17.
@@ -19,7 +21,7 @@ public class Question extends BaseResourceClass {
     // INSTANTIATING THE OBJECT
     public Question(){}
 
-    public static final class Fields {
+    public static final class Fields implements BaseFieldsClass {
         public static final String
 
         QUESTION_STRING_FIELD = "question_string",
@@ -29,6 +31,25 @@ public class Question extends BaseResourceClass {
         SOLUTION_FIELD = "solution",
         HINTS_FIELD = "hints",
         IS_COMPULSORY_FIELD = "is_compulsory";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    QUESTION_STRING_FIELD,
+                    QUESTION_TYPE_FIELD,
+                    OPTIONS_FIELD,
+                    CORRECT_OPTIONS_FIELD,
+                    SOLUTION_FIELD,
+                    HINTS_FIELD,
+                    IS_COMPULSORY_FIELD
+            }));
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
     }
 
     public static final class Type {
@@ -153,18 +174,18 @@ public class Question extends BaseResourceClass {
 
     }
 
-    @Override
-    public String toString() {
-        String returnString = "";
-        returnString +=
-                Fields.QUESTION_STRING_FIELD + " : " + getQuestionString() + "\n" +
-                Fields.QUESTION_TYPE_FIELD + " : " + getQuestionType() + "\n" +
-                Fields.OPTIONS_FIELD + " : " + getOptions() + "\n" +
-                Fields.CORRECT_OPTIONS_FIELD + " : " + getCorrectOptions() + "\n" +
-                Fields.SOLUTION_FIELD + " : " + getSolution() + "\n" +
-                Fields.HINTS_FIELD + " : " + getHints() + "\n" +
-                Fields.IS_COMPULSORY_FIELD + " : " + getIsCompulsory() + "\n";
-
-        return returnString;
-    }
+//    @Override
+//    public String toString() {
+//        String returnString = "";
+//        returnString +=
+//                Fields.QUESTION_STRING_FIELD + " : " + getQuestionString() + "\n" +
+//                Fields.QUESTION_TYPE_FIELD + " : " + getQuestionType() + "\n" +
+//                Fields.OPTIONS_FIELD + " : " + getOptions() + "\n" +
+//                Fields.CORRECT_OPTIONS_FIELD + " : " + getCorrectOptions() + "\n" +
+//                Fields.SOLUTION_FIELD + " : " + getSolution() + "\n" +
+//                Fields.HINTS_FIELD + " : " + getHints() + "\n" +
+//                Fields.IS_COMPULSORY_FIELD + " : " + getIsCompulsory() + "\n";
+//
+//        return returnString;
+//    }
 }

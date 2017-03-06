@@ -6,6 +6,8 @@ import com.parse.ParseQuery;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,10 +23,20 @@ public abstract class BaseParseClass extends ParseObject {
     // INSTANTIATING THE OBJECT
     public BaseParseClass() {}
 
-    public static class Fields {
+    public static class Fields implements BaseFieldsClass {
         public static final String
 
         CHILDREN_RESOURCES = "children_resources";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    CHILDREN_RESOURCES
+            }));
+        }
+    }
+
+    public ArrayList<String> getAllFields() {
+        return new Fields().getAllFields();
     }
 
 //    public BaseParseClass() {
@@ -114,24 +126,35 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     public void fetchChildrenParseObjects() {
-        System.out.println("fetchChildrenParseObjects : called");
+        System.out.println("fetchChildrenParseObjects : called for : " + this.getClassName());
         for(String key : keySet()) {
             if(get(key) instanceof BaseParseClass) {
-                BaseParseClass object = ((BaseParseClass) get(key));
+                BaseParseClass object = (BaseParseClass) get(key);
 //                BaseParseClass object = (BaseParseClass) get(key);
                 System.out.println("fetching : " + key + " : " + object);
                 System.out.println("objectId : " + object.getObjectId());
-                object.fetchChildrenParseObjects();
-//                ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
-//                objectQuery.fromLocalDatastore();
-//                try {
-//                    BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
-//                    System.out.println("newObject : " + newObject.getClassName());
-//                    newObject.fetchChildrenParseObjects();
-//                    put(key, newObject);
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
+                System.out.println("keymap" + object.keySet());
+//                object.fetchChildrenParseObjects();
+                System.out.println("keymap" + object.keySet());
+
+                if(object.getObjectId() != null) {
+                    ParseQuery<ParseObject> objectQuery = ParseQuery.getQuery(object.getClassName());
+                    objectQuery.fromLocalDatastore();
+
+                    // add includes
+                    for(String s : object.getAllFields()) {
+                        objectQuery.include(s);
+                    }
+
+                    try {
+                        BaseParseClass newObject = (BaseParseClass) objectQuery.get(object.getObjectId());
+                        System.out.println("newObject : " + newObject.getClassName());
+                        newObject.fetchChildrenParseObjects();
+                        put(key, newObject);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -158,4 +181,5 @@ public abstract class BaseParseClass extends ParseObject {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }
