@@ -39,67 +39,6 @@ public class SplashIt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --------------------------------------------------------------
-//        ArrayList<Project> projects = new ArrayList<Project>();
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
-//        query.fromLocalDatastore();
-//        try {
-//            List<ParseObject> localObjects = query.find();
-//            for(ParseObject object: localObjects) {
-//                projects.add((Project) object);
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Project project = projects.get(0);
-//        project.fetchChildrenObjects();
-//        try {
-//            project.saveParseObject();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        project.fetchChildrenObjects();
-//        System.out.println(project.toString());
-//        System.out.println(project.keySet());
-//        System.out.println(project.getSlides().get(0).keySet());
-//        ParseObjectsCollection<BaseResourceClass> slides = (ParseObjectsCollection) project.getSlides().get(0).getParseObject(BaseParseClass.Fields.CHILDREN_RESOURCES);
-//        System.out.println(slides);
-//        System.out.println(slides.get(0));
-
-
-
-
-//        System.out.println(project.getSlides().get(0).getResource());
-
-//        ParseObjectsCollection<Slide> slides = null;
-//        try {
-//            Project project = projects.get(0);
-//            slides = (ParseObjectsCollection) project.getParseObject(Project.Fields.SLIDES);
-////            System.out.println(slides);
-//            projects.get(0).getParseObject(Project.Fields.SLIDES).fetchFromLocalDatastore();
-////            System.out.println(slides);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Slide slide = slides.get(1);
-//        System.out.println(slide);
-//        System.out.println(slide.keySet());
-//        try {
-//            slide.fetchFromLocalDatastore();
-////            slide.getParseObject(BaseParseClass.Fields.CHILDREN_RESOURCES).fetchFromLocalDatastore();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println(slide);
-//        System.out.println(slide.keySet());
-//
-//        System.out.println(slides);
-
-//        finish();
-        // --------------------------------------------------------------
-
         Intent intent = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
