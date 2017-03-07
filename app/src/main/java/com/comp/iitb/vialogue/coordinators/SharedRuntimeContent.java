@@ -40,6 +40,7 @@ public class SharedRuntimeContent {
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
+    public static String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%";
 //    public static final String IMAGE_FOLDER_NAME = "images";
 //    public static final String VIDEO_FOLDER_NAME = "videos";
 //    public static final String AUDIO_FOLDER_NAME = "audio";
@@ -261,4 +262,10 @@ public class SharedRuntimeContent {
     public static void hidePreviewFab() {
         previewFab.hide();
     }
+
+
+
+
+
+
 }

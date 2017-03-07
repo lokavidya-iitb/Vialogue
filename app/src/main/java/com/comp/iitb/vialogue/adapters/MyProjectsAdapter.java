@@ -144,6 +144,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     }
 
     @Override
+
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 //        final ProjectsShowcase album = mAlbumList.get(position);
         final ProjectView projectView = mProjectViewsList.get(position);
@@ -157,13 +158,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         holder.thumbnail.setImageBitmap(thumbnail);
 //        Glide.with(mContext).load(f).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
 
+
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
 //                // TODO change implementation API
                 Project project = mProjectViewsList.get(position).getProject();
                 SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
                 SharedRuntimeContent.updateAdapterView();
+
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
             }

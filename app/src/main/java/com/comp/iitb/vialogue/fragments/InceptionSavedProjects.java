@@ -123,7 +123,7 @@ public class InceptionSavedProjects extends Fragment {
         myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedProjectsPath());
         for(int i=0;i<myStringArray.size();i++)
         {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i),"", Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","images").size(), Storage.getMeTheeseInThisProject(myStringArray.get(i),"SavedProjects","audios").size(),0,1);
+            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
         }
         adapter.notifyDataSetChanged();

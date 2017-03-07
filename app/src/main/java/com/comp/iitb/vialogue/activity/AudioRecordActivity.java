@@ -143,9 +143,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mStopButton = (Button) findViewById(R.id.stop_button);
         mRetryButton = (Button) findViewById(R.id.retry);
         mSeekBar = (SeekBar) findViewById(R.id.audio_seek);
+
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
         mTimeDisplay = (TextView) findViewById(R.id.time_display);
         mRecordButton = (Button) findViewById(R.id.record_button);
+        mTimeDisplay.setVisibility(View.GONE);
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
@@ -205,7 +207,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRecordButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-
+                mRecordButton.setBackgroundColor(getResources().getColor(R.color.sysWhite));
                 mAudioRecorder.onRecord(!isRecording);
                 isRecording = !isRecording;
                 mRecordButton.setEnabled(false);
@@ -238,9 +240,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRetryButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-                mAudioRecorder.onRecord(true);
-                isRecording = true;
-                mStopButton.setEnabled(true);
+                mRecordButton.setEnabled(true);
+                mRecordButton.setText(R.string.record_audio);
+                mPlayButton.setEnabled(false);
+                isRecording = false;
+                mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(false);
             }
         });
@@ -287,8 +291,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     private void setmTimeDisplay(int currentTime) {
         String formatTime = TimeFormater.getMinutesAndSeconds(currentTime);
-        if (isPlaying) {
-            mTimeDisplay.setText(formatTime);
+        if (isPlaying) {/*
+            mTimeDisplay.setText(formatTime);*/
         } else if (isRecording) {
             mRecordButton.setText(formatTime);
         }
@@ -340,7 +344,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mPlayButton.setEnabled(false);
             mRetryButton.setEnabled(false);
             mRecordButton.setEnabled(true);
-            mStopButton.setEnabled(true);
+            mStopButton.setEnabled(false);
         } else {
             mSeekBar.setEnabled(true);
             mSeekBar.invalidate();

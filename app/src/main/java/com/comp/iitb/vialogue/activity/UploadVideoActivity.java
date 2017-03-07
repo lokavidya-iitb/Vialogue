@@ -1,21 +1,28 @@
 package com.comp.iitb.vialogue.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -25,6 +32,8 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -39,7 +48,9 @@ public class UploadVideoActivity extends AppCompatActivity {
     private Spinner mCategories;
     private FloatingActionButton mUploadButton;
     public static String URL;
-
+    private EditText name, description, language, tags;
+    private final int MAX_WORD_LIMIT = 50;
+    private List<QuestionAnswer> questionLists= new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,12 +61,47 @@ public class UploadVideoActivity extends AppCompatActivity {
         Log.d("-------URL",""+URL);
 
         mPlayer = new VPlayer(this);
+        QuestionAnswer questionAnswer = new QuestionAnswer();
+        questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
+        questionAnswer.setQuestion("Hello World");
+        questionAnswer.setIsCompulsory(false);
+        questionLists.add(questionAnswer);
 
        /* mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
         mPlayer.play(new PlayerModel("http://"+URL, null));
         mPlayer.setTitle(URL);*/
 
         mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
+        name= (EditText) findViewById(R.id.video_name);
+        description= (EditText) findViewById(R.id.video_description);
+        language= (EditText) findViewById(R.id.video_language);
+        tags= (EditText) findViewById(R.id.video_tags);
+        mUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                startActivity(intent);
+            }
+        });
+
+
+        tags.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                // Nothing
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Nothing
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String[] words = s.toString().split(" "); // Get all words
+                if (words.length > MAX_WORD_LIMIT) {
+                    tags.setText("");
+                }
+            }
+        });
 
         mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
             private SimulationHandler mSimulationHandler;
@@ -68,22 +114,9 @@ public class UploadVideoActivity extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-                if (currentPosition > 20000 && isFirstTime) {
-                    mSimulationHandler.blockPlay();
-                    QuestionAnswer questionAnswer = new QuestionAnswer();
-                    questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
-                    questionAnswer.setQuestion("Hello World");
-                    questionAnswer.setIsCompulsory(false);
-                    QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
-                    adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            mSimulationHandler.notifyProcessComplete();
-                        }
-                    });
-                    adapter.show();
-                    isFirstTime = false;
-                }
+               /*popupQuestion(currentPosition,1000 ,isUser, mSimulationHandler);*//*
+                popupQuestion(currentPosition,2000 ,isUser, mSimulationHandler);*/
+                new DialogOpener().execute();
             }
 
             @Override
@@ -121,31 +154,9 @@ public class UploadVideoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "video play error", Toast.LENGTH_SHORT).show();
             }
         });
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.btn_play_sample_1) {
-                    //String url = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8";
-                    String url = URL;
-                    mPlayer.play(new PlayerModel("http://"+url, null));
-                    mPlayer.setTitle(url);
-                } else if (v.getId() == R.id.btn_play_sample_2) {
-                    String url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-                    List<PlayerModel> playerModels = new ArrayList<>();
-                    playerModels.add(new PlayerModel(url, null));
-                    playerModels.add(new PlayerModel(url, null));
-                    playerModels.add(new PlayerModel("http://www.planwallpaper.com/static/images/1080p-wallpaper-14854-15513-hd-wallpapers.jpg",
-                            "http://dl.smp3dl.com/files/convert/29363/128/08%20Zaalima%20-%20Abhijeet%20Sawant%20Version%20(SongsMp3.Com).mp3"));
-                    mPlayer.play(playerModels);
-                    mPlayer.setTitle(url);
-                    mPlayer.setShowNavIcon(false);
-                }
-            }
-        };
-        findViewById(R.id.btn_play_sample_1).setOnClickListener(clickListener);
-        findViewById(R.id.btn_play_sample_2).setOnClickListener(clickListener);
-
         mPlayer.play(SharedRuntimeContent.getPreviewList());
+        /*if(mPlayer.isPlaying())
+        new DialogOpener().execute();*/
     }
 
     @Override
@@ -167,10 +178,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         String[] plants = new String[]{
                 // TODO retrieve from Parse Database
                 "Select a category", // let this be
-                "California sycamore",
-                "Mountain mahogany",
-                "Butterfly weed",
-                "Carrot weed"
+                "Agriculture",
+                "Something",
+                "Nothing",
+                "Manything"
         };
 
         final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
@@ -251,4 +262,52 @@ public class UploadVideoActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
+    public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler)
+    {
+
+        if ((currentPosition > popUpAt && currentPosition < popUpAt+500 || currentPosition > 2000 && currentPosition < 2000+500 )) {
+            mSimulationHandler.blockPlay();
+
+            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionLists.get(0));
+            adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mSimulationHandler.notifyProcessComplete();
+                }
+            });
+            adapter.show();
+        }
+
+    }
+
+
+    private class DialogOpener extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            while (mPlayer.isPlaying()) {
+                if(mPlayer.getDuration()>2000 && mPlayer.getDuration()<2500)
+                Log.d("---getting time",""+mPlayer.getCurrentPosition());
+                    /*final Dialog dialog = new Dialog(getBaseContext());
+                    dialog.setContentView(R.layout.question_answer_layout);
+                    dialog.setTitle("Question");
+                    dialog.show();*/
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // might want to change "executed" for the returned string passed
+            // into onPostExecute() but that is upto you
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+    }
+
 }
