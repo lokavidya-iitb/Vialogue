@@ -30,6 +30,8 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -104,22 +106,7 @@ public class UploadVideoActivity extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-                if (currentPosition > 20000 && isFirstTime) {
-                    mSimulationHandler.blockPlay();
-                    QuestionAnswer questionAnswer = new QuestionAnswer();
-                    questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
-                    questionAnswer.setQuestion("Hello World");
-                    questionAnswer.setIsCompulsory(false);
-                    QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
-                    adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            mSimulationHandler.notifyProcessComplete();
-                        }
-                    });
-                    adapter.show();
-                    isFirstTime = false;
-                }
+               popupQuestion(currentPosition,1000 ,isUser, mSimulationHandler);
             }
 
             @Override
@@ -157,31 +144,23 @@ public class UploadVideoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "video play error", Toast.LENGTH_SHORT).show();
             }
         });
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == R.id.btn_play_sample_1) {
-                    //String url = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8";
-                    String url = URL;
-                    mPlayer.play(new PlayerModel("http://"+url, null));
-                    mPlayer.setTitle(url);
-                } else if (v.getId() == R.id.btn_play_sample_2) {
-                    String url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-                    List<PlayerModel> playerModels = new ArrayList<>();
-                    playerModels.add(new PlayerModel(url, null));
-                    playerModels.add(new PlayerModel(url, null));
-                    playerModels.add(new PlayerModel("http://www.planwallpaper.com/static/images/1080p-wallpaper-14854-15513-hd-wallpapers.jpg",
-                            "http://dl.smp3dl.com/files/convert/29363/128/08%20Zaalima%20-%20Abhijeet%20Sawant%20Version%20(SongsMp3.Com).mp3"));
-                    mPlayer.play(playerModels);
-                    mPlayer.setTitle(url);
-                    mPlayer.setShowNavIcon(false);
-                }
-            }
-        };
-        findViewById(R.id.btn_play_sample_1).setOnClickListener(clickListener);
-        findViewById(R.id.btn_play_sample_2).setOnClickListener(clickListener);
-
         mPlayer.play(SharedRuntimeContent.getPreviewList());
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                if(mPlayer.isPlaying())
+                {
+                    Log.d("---getting time",""+mPlayer.getCurrentPosition());
+
+
+                }
+                else
+                    this.cancel();
+            }
+        }, 0, 1000);
     }
 
     @Override
@@ -287,4 +266,27 @@ public class UploadVideoActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
+    public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler)
+    {
+
+        if ((currentPosition > popUpAt && currentPosition < popUpAt+500)) {
+            mSimulationHandler.blockPlay();
+            QuestionAnswer questionAnswer = new QuestionAnswer();
+            questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
+            questionAnswer.setQuestion("Hello World");
+            questionAnswer.setIsCompulsory(false);
+            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
+            adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mSimulationHandler.notifyProcessComplete();
+                }
+            });
+            adapter.show();/*
+            isFirstTime = false;*/
+        }
+
+    }
+
 }
