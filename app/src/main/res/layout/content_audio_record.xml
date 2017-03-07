@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/view_center"
         android:layout_marginTop="8dp"
+        android:layout_margin="12dp"
         app:thumbColor="@color/colorPrimary"
         app:progressColor="@color/colorPrimary"
         android:layout_above="@+id/time_display"
@@ -52,26 +53,26 @@
         android:layout_alignRight="@+id/time_display"
         android:layout_alignEnd="@+id/time_display" />
 
-    <Button
-        android:id="@+id/record_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/record_audio"
-        android:layout_below="@+id/time_display"
-        android:layout_margin="@dimen/fab_margin"
-        android:gravity="center_horizontal"
-        android:paddingTop="@dimen/text_margin"
-        android:paddingBottom="@dimen/text_margin"
-        />
+
     <LinearLayout
-        android:layout_below="@id/record_button"
+        android:layout_below="@id/audio_seek"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1">
         <Button
+            android:id="@+id/record_button"
+            android:layout_width="0dp"
+            android:layout_weight="0.33"
+            android:layout_height="wrap_content"
+            android:text="@string/record_audio"
+            android:layout_below="@+id/time_display"
+            android:layout_margin="@dimen/fab_margin"
+            android:gravity="center_horizontal"
+            />
+        <Button
             android:id="@+id/stop_button"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.33"
             android:layout_margin="@dimen/fab_margin"
             android:textAlignment="center"
             android:layout_height="wrap_content"
@@ -81,7 +82,7 @@
         <Button
             android:id="@+id/retry"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.33"
             android:layout_margin="@dimen/fab_margin"
             android:textAlignment="center"
             android:layout_height="wrap_content"

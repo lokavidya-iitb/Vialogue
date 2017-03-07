@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.ProjectsVideoAdapter;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
@@ -82,7 +83,7 @@ public class InceptionSavedVideos extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        SharedRuntimeContent.previewFab.hide();
         return inflater.inflate(R.layout.fragment_inception_saved_videos, container, false);
     }
 

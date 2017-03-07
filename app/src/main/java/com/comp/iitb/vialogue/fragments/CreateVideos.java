@@ -299,6 +299,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 String selectedPath = mStorage.getRealPathFromURI(data.getData());
                 Intent intent = new Intent(getContext(), CropMainActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("from", "CreateVideos");
                 bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
                 intent.putExtras(bundle);
                 mFragment.startActivity(intent);
