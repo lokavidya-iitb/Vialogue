@@ -207,7 +207,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRecordButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-
+                mRecordButton.setBackgroundColor(getResources().getColor(R.color.sysWhite));
                 mAudioRecorder.onRecord(!isRecording);
                 isRecording = !isRecording;
                 mRecordButton.setEnabled(false);
@@ -240,9 +240,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRetryButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-                mAudioRecorder.onRecord(true);
-                isRecording = true;
-                mStopButton.setEnabled(true);
+                mRecordButton.setEnabled(true);
+                mRecordButton.setText(R.string.record_audio);
+                mPlayButton.setEnabled(false);
+                isRecording = false;
+                mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(false);
             }
         });
@@ -342,7 +344,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mPlayButton.setEnabled(false);
             mRetryButton.setEnabled(false);
             mRecordButton.setEnabled(true);
-            mStopButton.setEnabled(true);
+            mStopButton.setEnabled(false);
         } else {
             mSeekBar.setEnabled(true);
             mSeekBar.invalidate();

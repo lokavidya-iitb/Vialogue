@@ -1,9 +1,11 @@
 package com.comp.iitb.vialogue.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +50,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     public static String URL;
     private EditText name, description, language, tags;
     private final int MAX_WORD_LIMIT = 50;
+    private List<QuestionAnswer> questionLists= new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,11 @@ public class UploadVideoActivity extends AppCompatActivity {
         Log.d("-------URL",""+URL);
 
         mPlayer = new VPlayer(this);
+        QuestionAnswer questionAnswer = new QuestionAnswer();
+        questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
+        questionAnswer.setQuestion("Hello World");
+        questionAnswer.setIsCompulsory(false);
+        questionLists.add(questionAnswer);
 
        /* mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
         mPlayer.play(new PlayerModel("http://"+URL, null));
@@ -106,7 +114,9 @@ public class UploadVideoActivity extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-               popupQuestion(currentPosition,1000 ,isUser, mSimulationHandler);
+               /*popupQuestion(currentPosition,1000 ,isUser, mSimulationHandler);*//*
+                popupQuestion(currentPosition,2000 ,isUser, mSimulationHandler);*/
+                new DialogOpener().execute();
             }
 
             @Override
@@ -145,22 +155,8 @@ public class UploadVideoActivity extends AppCompatActivity {
             }
         });
         mPlayer.play(SharedRuntimeContent.getPreviewList());
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                if(mPlayer.isPlaying())
-                {
-                    Log.d("---getting time",""+mPlayer.getCurrentPosition());
-
-
-                }
-                else
-                    this.cancel();
-            }
-        }, 0, 1000);
+        /*if(mPlayer.isPlaying())
+        new DialogOpener().execute();*/
     }
 
     @Override
@@ -270,23 +266,48 @@ public class UploadVideoActivity extends AppCompatActivity {
     public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler)
     {
 
-        if ((currentPosition > popUpAt && currentPosition < popUpAt+500)) {
+        if ((currentPosition > popUpAt && currentPosition < popUpAt+500 || currentPosition > 2000 && currentPosition < 2000+500 )) {
             mSimulationHandler.blockPlay();
-            QuestionAnswer questionAnswer = new QuestionAnswer();
-            questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
-            questionAnswer.setQuestion("Hello World");
-            questionAnswer.setIsCompulsory(false);
-            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
+
+            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionLists.get(0));
             adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     mSimulationHandler.notifyProcessComplete();
                 }
             });
-            adapter.show();/*
-            isFirstTime = false;*/
+            adapter.show();
         }
 
+    }
+
+
+    private class DialogOpener extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            while (mPlayer.isPlaying()) {
+                if(mPlayer.getDuration()>2000 && mPlayer.getDuration()<2500)
+                Log.d("---getting time",""+mPlayer.getCurrentPosition());
+                    /*final Dialog dialog = new Dialog(getBaseContext());
+                    dialog.setContentView(R.layout.question_answer_layout);
+                    dialog.setTitle("Question");
+                    dialog.show();*/
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // might want to change "executed" for the returned string passed
+            // into onPostExecute() but that is upto you
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 
 }
