@@ -26,6 +26,7 @@ import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
+import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -67,6 +68,7 @@ public class SignIn extends AppCompatActivity implements
     public static GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
     private SignInButton btnSignIn;
+    private Button btnPhoneNumberSignIn;
     private Button skip;
     private SliderLayout mDemoSlider;
     @Override
@@ -120,6 +122,7 @@ public class SignIn extends AppCompatActivity implements
         mDemoSlider.setDuration(4000);
         mDemoSlider.addOnPageChangeListener(this);
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        btnPhoneNumberSignIn = (Button) findViewById(R.id.btn_phone_number_sign_in);
         skip = (Button) findViewById(R.id.skip);
         btnSignIn.setOnClickListener(this);
         skip.setOnClickListener(this);
@@ -133,6 +136,14 @@ public class SignIn extends AppCompatActivity implements
                 .build();
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
+
+        btnPhoneNumberSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignIn.this, PhoneNumberSigninActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
     private void signIn() {
@@ -307,7 +318,6 @@ public class SignIn extends AppCompatActivity implements
 
 
     private void savetoParse(String name, String email) {
-
 
         ParseUser user = new ParseUser();
         user.setUsername(name);

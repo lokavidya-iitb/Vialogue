@@ -26,18 +26,24 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SplashIt extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         Intent intent = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -49,6 +55,8 @@ public class SplashIt extends AppCompatActivity {
                 // ask for permission
                 intent = new Intent(this, PermissionsActivity.class);
             }
+        } else {
+            intent = new Intent(this, MainActivity.class);
         }
 
         startActivity(intent);

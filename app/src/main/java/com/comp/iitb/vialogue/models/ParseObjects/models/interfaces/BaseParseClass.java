@@ -129,9 +129,12 @@ public abstract class BaseParseClass extends ParseObject {
     public void saveParseObject() throws ParseException {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
-            if(this.get(key) instanceof ParseObjectsCollection) {
+            if(get(key) instanceof ParseObjectsCollection) {
                 // is an instance of BaseParseClass
                 ((ParseObjectsCollection) getParseObject(key)).saveParseObject();
+            } else if(get(key) instanceof BaseResourceClass) {
+                // is an instance of BaseResourceClass
+                ((BaseResourceClass) get(key)).saveParseObject();
             }
         }
 
@@ -140,8 +143,6 @@ public abstract class BaseParseClass extends ParseObject {
     }
 
     public void fetchChildrenObjects() {
-        System.out.println("fetching : " + getClassName());
-        System.out.println(keySet());
         for(String key : keySet()) {
             if(get(key) instanceof BaseParseClass) {
                 try {

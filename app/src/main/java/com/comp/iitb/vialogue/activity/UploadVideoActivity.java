@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -25,8 +26,10 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
+import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
+import com.comp.iitb.vialogue.library.SaveParseObjectAsync;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 
 import java.util.ArrayList;
@@ -80,8 +83,25 @@ public class UploadVideoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getApplicationContext(), SignIn.class);
-                startActivity(intent);
+                new SaveParseObjectAsync(
+                        UploadVideoActivity.this,
+                        new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Saving Project", "Please wait...", true),
+                        new OnProjectSaved() {
+                            @Override
+                            public void done(boolean isSaved) {
+                                if(isSaved) {
+                                    Toast.makeText(UploadVideoActivity.this, "Project saved successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UploadVideoActivity.this, "Could not upload project. Please check your network connection.", Toast.LENGTH_LONG).show();
+                                }
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                            }
+                        },
+                        SharedRuntimeContent.project
+                ).execute();
+//                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+//                startActivity(intent);
             }
         });
 
