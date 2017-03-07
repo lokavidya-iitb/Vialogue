@@ -10,6 +10,7 @@ import com.parse.ParseQuery;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -25,34 +26,35 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     // INSTANTIATING THE OBJECT
     public ParseObjectsCollection() {}
 
-    public static final class Fields {
+    public static final class Fields implements BaseFieldsClass {
         public static final String
 
         ELEMENTS_FIELD = "elements";
+
+        public ArrayList<String> getAllFields() {
+            return new ArrayList<String>(Arrays.asList(new String[] {
+                    ELEMENTS_FIELD
+            }));
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllFields() {
+        ArrayList<String> fields = new Fields().getAllFields();
+        fields.addAll(super.getAllFields());
+        return fields;
     }
 
     private void setList(ArrayList<T> list) {
-        System.out.println("setList : called");
         try {
             remove(Fields.ELEMENTS_FIELD);
         } catch (Exception e) {}
-        System.out.println("setList : list.size() : " + list.size());
         for(T object: list) {
-            System.out.println("----");
             add(Fields.ELEMENTS_FIELD, object);
         }
     }
 
     private ArrayList<T> getList_() {
-        System.out.println("getList_ : called");
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        System.out.println("----------------------");
-        for(StackTraceElement s : stackTraceElements) {
-
-            System.out.println(s);
-        }
-        System.out.println("----------------------");
-        System.out.println(stackTraceElements);
         ArrayList<T> list = null;
         try {
             list = (ArrayList) getList(Fields.ELEMENTS_FIELD);
@@ -60,23 +62,17 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
             e.printStackTrace();
         }
         if(list == null) {
-            System.out.println(has(Fields.ELEMENTS_FIELD));
-            System.out.println("list is null");
             list = new ArrayList<T>();
-            System.out.println("getLIst : inside if : list.size() : " + list.size());
             setList(list);
         }
-        System.out.println("getList : outside if : list.size() : " + list.size());
         return list;
     }
 
     public void addObject(T object) {
-        System.out.println("addObject : called");
         add(Fields.ELEMENTS_FIELD, object);
     }
 
     public void remove(int index) {
-        System.out.println("remove : called");
         ArrayList<T> list = getList_();
         list.remove(index);
         setList(list);
@@ -95,12 +91,10 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     }
 
     public int size() {
-        System.out.println("size : called");
         return getList_().size();
     }
 
     public void move(int initialPosition, int finalPosition) {
-        System.out.println("move : called");
         ArrayList<T> list = getList_();
         if(initialPosition >= list.size() || finalPosition >= list.size()) {
             throw new IndexOutOfBoundsException();
@@ -140,63 +134,38 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     }
 
     public int getObjectPosition(T object) {
-        System.out.println("getObjectPosition : called");
         return getList_().indexOf(object);
     }
 
     @Override
-    public void pinParseObject() {
+    public void pinParseObject() throws ParseException {
+        super.pinParseObject();
         for(T object : getList_()) {
+            object.pinParseObject();
+        }
+    }
+
+    public void fetchChildrenObjects() {
+        super.fetchChildrenObjects();
+        System.out.println("fetching : " + getClassName());
+        System.out.println((ArrayList) getList(Fields.ELEMENTS_FIELD));
+        System.out.println(getList_().size());
+        for(T object: getList_()) {
             try {
-                object.pinParseObject();
+                object.fetchFromLocalDatastore();
+                System.out.println(object);
+                object.fetchChildrenObjects();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
     }
 
-//    @Override
-//    public void fetchChildrenParseObjects() {
-//        System.out.println("fetchChildrenParseObjects : called");
-////        super.fetchChildrenParseObjects();
-//        ArrayList<T> newList = new ArrayList<T>();
-//        System.out.println("before calling getList");
-//        ArrayList<T> list = getList_();
-//        System.out.println("fetchChildrenParseObjects : list.size : " + list.size());
-//        for(T object : list) {
-////            System.out.println(new GenericClass<T>().getMyType());
-//            System.out.println(object.getClassName());
-//            System.out.println(object);
-//            ParseQuery<T> objectQuery = ParseQuery.getQuery(object.getClassName());
-//            objectQuery.fromLocalDatastore();
-//            try {
-//                T o = (T) objectQuery.get(object.getObjectId());
-//                System.out.println(o);
-//                o.fetchChildrenParseObjects();
-//                newList.add(o);
-//                System.out.println("fetchChildrenParseObjects : no eerror");
-//            } catch (ParseException e) {
-//                System.out.println("fetchChildrenParseObjects : error");
-//                e.printStackTrace();
-//            }
-//        }
-//        setList(newList);
-//        System.out.println(getList_());
-
-//        try {
-//            put(Fields.ELEMENTS_FIELD, ParseObject.f((ArrayList) getList(Fields.ELEMENTS_FIELD)));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     // TODO implement
-//    public void saveParseObject() {
-//        try {
-//            save();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
+    public void saveParseObject() throws ParseException {
+        for(T object: getList_()) {
+            object.saveParseObject();
+        }
+        save();
+    }
 }

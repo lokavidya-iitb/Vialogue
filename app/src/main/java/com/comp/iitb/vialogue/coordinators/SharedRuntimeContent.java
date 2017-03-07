@@ -58,7 +58,7 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
 
-    public static Project project = new Project();
+    public static Project project = new Project("Iron man");
 
     public static void addSlide(Slide slide) {
         project.addSlide(slide);
@@ -131,6 +131,7 @@ public class SharedRuntimeContent {
         if(getNumberOfSlides() != 0) {
             try {
                 project.pinParseObject();
+                System.out.println("project pinned");
 //                project.saveParseObject();
             } catch (ParseException e) {
                 Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
@@ -142,32 +143,19 @@ public class SharedRuntimeContent {
     public static ArrayList<Project> getLocalProjects() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
-        query.include("Project." + BaseParseClass.Fields.CHILDREN_RESOURCES);
-        query.include("Project." + Project.Fields.AUTHOR);
-        query.include("Project." + Project.Fields.CATEGORY);
-        query.include("Project." + Project.Fields.LANGUAGE);
-        query.include("Project." + Project.Fields.SLIDES);
+
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();
             for(ParseObject localObject : localObjects) {
                 Project project = (Project) localObject;
-                project.fetchChildrenParseObjects();
+                project.fetchChildrenObjects();
                 localProjects.add(project);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return localProjects;
-    }
-
-    public static ArrayList<Project> getLocalProjectsWithThumbnails(Context context, Storage storage) {
-        ArrayList<Project> localProjects = getLocalProjects();
-        ArrayList<Project> localProjectsWithThumbnails = new ArrayList<Project>();
-        for(Project localProject : localProjects) {
-            localProjectsWithThumbnails.add(addThumbnailsToProject(project, context, storage));
-        }
-        return localProjectsWithThumbnails;
     }
 
     public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
