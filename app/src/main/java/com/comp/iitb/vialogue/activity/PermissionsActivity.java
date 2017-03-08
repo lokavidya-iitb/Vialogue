@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 
@@ -53,23 +54,8 @@ public class PermissionsActivity extends AppCompatActivity {
     }
 
     public void onAllPermissionsGranted() {
-        SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-        try {
-
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-
-        } catch (NullPointerException e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
-        } catch (Exception e) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

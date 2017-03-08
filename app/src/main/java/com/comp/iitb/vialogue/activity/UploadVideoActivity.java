@@ -31,6 +31,7 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.library.SaveParseObjectAsync;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,23 +84,33 @@ public class UploadVideoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                new SaveParseObjectAsync(
-                        UploadVideoActivity.this,
-                        new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Saving Project", "Please wait...", true),
-                        new OnProjectSaved() {
-                            @Override
-                            public void done(boolean isSaved) {
-                                if(isSaved) {
-                                    Toast.makeText(UploadVideoActivity.this, "Project saved successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(UploadVideoActivity.this, "Could not upload project. Please check your network connection.", Toast.LENGTH_LONG).show();
+                if(ParseUser.getCurrentUser() == null) {
+                     // User not signed in
+                    Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
+                    startActivity(intent);
+                } else {
+                    // User signed in, save project
+                    SharedRuntimeContent.project.put("user", ParseUser.getCurrentUser());
+                    new SaveParseObjectAsync(
+                            UploadVideoActivity.this,
+                            new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Saving Project", "Please wait...", true),
+                            new OnProjectSaved() {
+                                @Override
+                                public void done(boolean isSaved) {
+                                    if(isSaved) {
+                                        Toast.makeText(UploadVideoActivity.this, "Project saved successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(UploadVideoActivity.this, "Could not upload project. Please check your network connection.", Toast.LENGTH_LONG).show();
+                                    }
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
                                 }
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                            }
-                        },
-                        SharedRuntimeContent.project
-                ).execute();
+                            },
+                            SharedRuntimeContent.project
+                    ).execute();
+                }
+
+
 //                Intent intent = new Intent(getApplicationContext(), SignIn.class);
 //                startActivity(intent);
             }
