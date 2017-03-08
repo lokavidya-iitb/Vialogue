@@ -120,4 +120,11 @@ public abstract class BaseResourceClass extends BaseParseClass {
         return new File(getUri().getPath());
     }
 
+    @Override
+    public void saveParseObject() throws ParseException {
+        ParseFile file = new ParseFile(new File(getUri().getPath()));
+        file.save();
+        put(Fields.FILE, file);
+    }
+
 }

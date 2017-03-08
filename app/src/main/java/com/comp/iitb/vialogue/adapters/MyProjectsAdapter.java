@@ -109,6 +109,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                         break;
                     } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
                         mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        break;
                     } else {}
                 }
             } catch (Exception e) {

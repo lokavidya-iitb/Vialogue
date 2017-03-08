@@ -15,6 +15,7 @@ import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
+import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -49,6 +50,7 @@ public class SignIn extends AppCompatActivity implements
     private ProgressDialog mProgressDialog;
     private SignInButton btnSignIn;
     private Button cancel;
+    private Button btnPhoneNumberSignIn;
     private SliderLayout mDemoSlider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class SignIn extends AppCompatActivity implements
         mDemoSlider.addOnPageChangeListener(this);
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         cancel = (Button) findViewById(R.id.cancel);
+        btnPhoneNumberSignIn = (Button) findViewById(R.id.btn_phone_number_sign_in);
         btnSignIn.setOnClickListener(this);
         cancel.setOnClickListener(this);
 
@@ -97,6 +100,14 @@ public class SignIn extends AppCompatActivity implements
                 .build();
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
+
+        btnPhoneNumberSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignIn.this, PhoneNumberSigninActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
     private void signIn() {
@@ -269,7 +280,6 @@ public class SignIn extends AppCompatActivity implements
 
 
     private void savetoParse(String name, String email) {
-
 
         ParseUser user = new ParseUser();
         user.setUsername(name);

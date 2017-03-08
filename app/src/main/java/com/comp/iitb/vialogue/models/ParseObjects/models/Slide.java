@@ -94,7 +94,7 @@ public class Slide extends BaseParseClass {
             } else if(getSlideType() == SlideType.VIDEO) {
                 mThumbnail = storage.getVideoThumbnail(getResource().getResourceFile().getAbsolutePath());
             } else if(getSlideType() == SlideType.QUESTION) {
-                mThumbnail = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_logo);
+                mThumbnail = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_question);
             }
         }
     }
