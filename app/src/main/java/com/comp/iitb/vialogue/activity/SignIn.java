@@ -195,25 +195,29 @@ public class SignIn extends AppCompatActivity implements
     }
 
     public static void signOut(Context context, final OnSignedOut onSignedOut) {
+        final Context context_ = context;
         mProgressDialog = ProgressDialog.show(context, "Logging Out", "Please wait ...");
-//        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-//                new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(Status status) {
-//                    }
-//                });
-//        Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback(
-//                new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(Status status) {}
-//                });
+//        try {
+//            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+//                    new ResultCallback<Status>() {
+//                        @Override
+//                        public void onResult(Status status) {
+//                        }
+//                    });
+//            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+//                    new ResultCallback<Status>() {
+//                        @Override
+//                        public void onResult(Status status) {}
+//                    });
+//        } catch (Exception e) {}
+
         ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
             @Override
             public void done(ParseException e) {
                 if(e == null) {
-                    onLoggedOut();
+                    onLoggedOut(context_);
                 } else {
-                    onCouldNotLogOut();
+                    onCouldNotLogOut(context_);
                 }
                 onSignedOut.done(e);
             }
@@ -231,9 +235,23 @@ public class SignIn extends AppCompatActivity implements
                 mProfilePictureUrl = "";
                 e.printStackTrace();
             }
+
+            // sign out of Google
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                        }
+                    });
+            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {}
+                    });
+
+            // sign into Parse
             signInParseUser();
         } else {
-            System.out.println(result.);
             onCouldNotSignIn();
         }
     }
@@ -357,11 +375,12 @@ public class SignIn extends AppCompatActivity implements
         if(mEmail == null) {
             // SIGN IN WITH PHONE NUMBER
             userName = mPhoneNumber;
+            Toast.makeText(SignIn.this, "Successfully signed in with user mobile number : " + userName, Toast.LENGTH_LONG).show();
         } else {
             // SIGN IN WITH EMAIL ID
+            Toast.makeText(SignIn.this, "Successfully signed in with Email ID : " + userName, Toast.LENGTH_LONG).show();
             userName = mEmail;
         }
-        Toast.makeText(SignIn.this, "Successfully signed in with user name : " + userName, Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
@@ -375,15 +394,15 @@ public class SignIn extends AppCompatActivity implements
         } catch (Exception e) {}
     }
 
-    private static void onLoggedOut() {
-        Toast.makeText(mSignInActivity, "Successfully logged out", Toast.LENGTH_LONG).show();
+    private static void onLoggedOut(Context context) {
+        Toast.makeText(context, "Successfully logged out", Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
     }
 
-    private static void onCouldNotLogOut() {
-        Toast.makeText(mSignInActivity, "An error occured while signing out", Toast.LENGTH_LONG).show();
+    private static void onCouldNotLogOut(Context context) {
+        Toast.makeText(context, "An error occured while signing out", Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
