@@ -289,6 +289,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             // CAPTURE IMAGE FROM CAMERA
             Intent intent = new Intent(getContext(), CropMainActivity.class);
             Bundle bundle = new Bundle();
+            bundle.putString("from", "CreateVideos");
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
             mFragment.startActivity(intent);

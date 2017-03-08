@@ -97,8 +97,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         if (bundle != null) {
             try
             {
-            mFilePath = bundle.getString(IMAGE_PATH);
-                switch(bundle.getString("from"))
+                from=bundle.getString("from");
+                mFilePath = bundle.getString(IMAGE_PATH);
+                switch(from)
                 {
                     case "AudioRecording":
                         mSlidePosition=bundle.getInt("SlidePosition");
@@ -169,17 +170,30 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
         @Override
         public void onThumbnailCreated(Bitmap thumbnail) {
-            if()
             Slide slide = new Slide();
-            try {
+            try
+            {
                 Image image = new Image(getBaseContext());
                 mStorage.getBitmap(mCroppedImagePath);
-                mStorage.saveBitmapToFile(image.getResourceFile(),mStorage.getBitmap(mCroppedImagePath));
+                mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*/
                 slide.addResource(image, Slide.ResourceType.IMAGE);
                 slide.setThumbnail(thumbnail);
-                SharedRuntimeContent.addSlide(slide);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
+            }
+            if(from.equals("AudioRecording")) {
+
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+            }
+
+            else {
+                try {
+                    SharedRuntimeContent.addSlide(slide);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             mPleaseWait.setVisibility(View.GONE);
             finish();
