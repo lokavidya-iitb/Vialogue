@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,10 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
-import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
@@ -79,7 +79,12 @@ public class InceptionMyProjects extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            SharedRuntimeContent.previewFab.setImageDrawable(getResources().getDrawable(R.drawable.plus_png, getContext().getTheme()));
+        } else {
+            SharedRuntimeContent.previewFab.setImageDrawable(getResources().getDrawable(R.drawable.plus_png));
+        }
+        SharedRuntimeContent.previewFab.show();
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         /*Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
