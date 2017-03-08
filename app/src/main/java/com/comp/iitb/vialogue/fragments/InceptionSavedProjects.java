@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
@@ -105,7 +106,7 @@ public class InceptionSavedProjects extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_inception_saved_projects, container, false);
-
+        SharedRuntimeContent.previewFab.hide();
         return view;
     }
 

@@ -45,6 +45,8 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.io.File;
 
 public class CropMainActivity extends AppCompatActivity implements FragmentBinder {
@@ -62,11 +64,10 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private String mCroppedImagePath;
     private CropImageViewOptions mCropImageViewOptions = new CropImageViewOptions();
     AppCompatActivity mActivity;
-
-    //endregion
-
     public static final String IMAGE_PATH = "imagePath";
     private String mFilePath;
+    private String from;
+    private int mSlidePosition;
     private ProgressDialog mProgressDialog;
 
 
@@ -94,7 +95,25 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            mFilePath = bundle.getString(IMAGE_PATH);
+            try
+            {
+                from=bundle.getString("from");
+                mFilePath = bundle.getString(IMAGE_PATH);
+                switch(from)
+                {
+                    case "AudioRecording":
+                        mSlidePosition=bundle.getInt("SlidePosition");
+                        break;
+                    case "CreateVideos":
+                        mSlidePosition=-1;
+                        break;
+                }
+
+            }
+            catch (NullPointerException e)
+            {
+                e.printStackTrace();
+            }
         }
         mDone = (Button) findViewById(R.id.done_button);
         mDone.setOnClickListener(new View.OnClickListener() {
@@ -152,15 +171,29 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         @Override
         public void onThumbnailCreated(Bitmap thumbnail) {
             Slide slide = new Slide();
-            try {
+            try
+            {
                 Image image = new Image(getBaseContext());
                 mStorage.getBitmap(mCroppedImagePath);
-                mStorage.saveBitmapToFile(image.getResourceFile(),mStorage.getBitmap(mCroppedImagePath));
+                mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*/
                 slide.addResource(image, Slide.ResourceType.IMAGE);
                 slide.setThumbnail(thumbnail);
-                SharedRuntimeContent.addSlide(slide);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
+            }
+            if(from.equals("AudioRecording")) {
+
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+            }
+
+            else {
+                try {
+                    SharedRuntimeContent.addSlide(slide);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             mPleaseWait.setVisibility(View.GONE);
             finish();

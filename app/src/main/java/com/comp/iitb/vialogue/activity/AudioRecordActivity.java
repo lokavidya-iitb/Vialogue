@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -153,6 +154,21 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (imagePathUri != null) {
             mImageView.setImageURI(imagePathUri);
         }
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selectedPath = mSlideResource.getResourceFile().getAbsolutePath();
+                Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("SlidePosition",mSlidePosition);
+                bundle.putString("from", "AudioRecording");
+                bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
+            }
+        });
+
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             boolean isTouch = false;
 
@@ -207,7 +223,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     Snackbar.make(mRecordButton, R.string.cannot_record, Snackbar.LENGTH_LONG).show();
                     return;
                 }
-                mRecordButton.setBackgroundColor(getResources().getColor(R.color.sysWhite));
+                /*mRecordButton.setBackgroundColor(getResources().getColor(R.color.sysWhite));*/
                 mAudioRecorder.onRecord(!isRecording);
                 isRecording = !isRecording;
                 mRecordButton.setEnabled(false);

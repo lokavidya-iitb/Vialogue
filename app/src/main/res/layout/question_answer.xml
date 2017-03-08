@@ -243,7 +243,7 @@
             android:layout_height="wrap_content"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            app:srcCompat="@drawable/plus"
+            app:srcCompat="@drawable/plus_png"
             android:textColor="@color/colorAccentLight"
             android:textSize="30sp"
             android:textStyle="bold" />
