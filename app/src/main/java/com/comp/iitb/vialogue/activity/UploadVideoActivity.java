@@ -86,6 +86,7 @@ public class UploadVideoActivity extends AppCompatActivity {
 
                 if(ParseUser.getCurrentUser() == null) {
                      // User not signed in
+                    Toast.makeText(UploadVideoActivity.this, "You need to be signed in to be able to upload the project", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
                     startActivity(intent);
                 } else {

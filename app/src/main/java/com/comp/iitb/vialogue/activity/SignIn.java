@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -72,6 +74,7 @@ public class SignIn extends AppCompatActivity implements
     private String mProfilePictureUrl = null;
     private String mEmail = null;
     public static GoogleApiClient mGoogleApiClient;
+    private boolean mSilentSignIn = false;
 
     // UI Elements
     private SignInButton btnSignIn;
@@ -190,8 +193,24 @@ public class SignIn extends AppCompatActivity implements
     }
 
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if(isNetworkAvailable()) {
+            // network available
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } else {
+            onCouldNotSignIn();
+        }
+
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
 
     public static void signOut(Context context, final OnSignedOut onSignedOut) {
@@ -231,10 +250,7 @@ public class SignIn extends AppCompatActivity implements
             mEmail = acct.getEmail();
             try {
                 mProfilePictureUrl = acct.getPhotoUrl().toString();
-            } catch (NullPointerException e) {
-                mProfilePictureUrl = "";
-                e.printStackTrace();
-            }
+            } catch (NullPointerException e) {mProfilePictureUrl = "";}
 
             // sign out of Google
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -252,7 +268,11 @@ public class SignIn extends AppCompatActivity implements
             // sign into Parse
             signInParseUser();
         } else {
-            onCouldNotSignIn();
+            if(mSilentSignIn || isNetworkAvailable()) {
+                mSilentSignIn = false;
+            } else {
+                onCouldNotSignIn();
+            }
         }
     }
 
@@ -342,6 +362,11 @@ public class SignIn extends AppCompatActivity implements
                         case ParseException.USERNAME_TAKEN :
                             // User already exists in the database, so just log him in
                             logInParseUser();
+                            break;
+                        default:
+                            // some other error
+                            onCouldNotSignIn();
+                            break;
                     }
                 } else {
                     onSignedIn();
@@ -374,12 +399,10 @@ public class SignIn extends AppCompatActivity implements
         String userName = null;
         if(mEmail == null) {
             // SIGN IN WITH PHONE NUMBER
-            userName = mPhoneNumber;
-            Toast.makeText(SignIn.this, "Successfully signed in with user mobile number : " + userName, Toast.LENGTH_LONG).show();
+            Toast.makeText(SignIn.this, "Successfully signed in with user mobile number : " + mPhoneNumber, Toast.LENGTH_LONG).show();
         } else {
             // SIGN IN WITH EMAIL ID
-            Toast.makeText(SignIn.this, "Successfully signed in with Email ID : " + userName, Toast.LENGTH_LONG).show();
-            userName = mEmail;
+            Toast.makeText(SignIn.this, "Successfully signed in with Email ID : " + mEmail, Toast.LENGTH_LONG).show();
         }
         try {
             mProgressDialog.dismiss();
@@ -388,7 +411,7 @@ public class SignIn extends AppCompatActivity implements
     }
 
     public void onCouldNotSignIn() {
-        Toast.makeText(SignIn.this, "An error occurred while signing in", Toast.LENGTH_LONG).show();
+        Toast.makeText(SignIn.this, "An error occurred while signing in. Please check your network connection", Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
@@ -457,6 +480,7 @@ public class SignIn extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
+        mSilentSignIn = true;
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
@@ -469,11 +493,16 @@ public class SignIn extends AppCompatActivity implements
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            showProgressDialog();
+
+            try {
+                showProgressDialog();
+            } catch (Exception e) {}
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
+                    try {
+                        hideProgressDialog();
+                    } catch (Exception e) {}
                     handleSignInResult(googleSignInResult);
                 }
             });
