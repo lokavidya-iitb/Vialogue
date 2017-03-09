@@ -76,7 +76,7 @@ public class SavedProjectsAdapter extends RecyclerView.Adapter<SavedProjectsAdap
             public void onClick(View view) {
 
                 // TODO change implementation API
-                SharedRuntimeContent.setProjectName(album.getName());
+//                SharedRuntimeContent.setProjectName(album.getName());
                 Log.d("--projectNmae",""+album.getName());
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);

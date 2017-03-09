@@ -9,31 +9,65 @@
     android:weightSum="1"
     tools:context=".activity.SignIn">
 
+    <TextView
+        android:layout_marginTop="90dp"
+        android:textSize="25dp"
+        android:layout_gravity="center"
+        android:text="Log in to your"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <TextView
+            android:textSize="25dp"
+            android:layout_gravity="center"
+            android:text="Lokavidya "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:textSize="25dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account"/>
+
+    </LinearLayout>
+
     <RelativeLayout
+        android:layout_marginTop="70dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.9">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/btn_sign_in"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="30dp" />
+                <Button
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="center"
+                    android:id="@+id/btn_sign_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Google Sign In"/>
 
             <TextView
+                android:id="@+id/or_text_view"
+                android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
                 android:text="OR"
-                android:textSize="30dp" />
+                android:textSize="25dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -48,16 +82,20 @@
                     android:textSize="20dp" />
 
                 <EditText
+                    android:layout_marginTop="0dp"
+                    android:paddingTop="0dp"
                     android:id="@+id/phone_number_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/black"
-                    android:hint="ENTER PHONE NUMBER"
-                    android:inputType="phone" />
-
+                    android:hint="x x x x x x x x x x"
+                    android:inputType="phone"
+                    android:maxLength="10"/>
             </LinearLayout>
 
             <Button
+                android:layout_marginTop="24dp"
+                android:textColor="@android:color/white"
                 android:id="@+id/generate_otp_button"
                 android:layout_width="141dp"
                 android:layout_height="wrap_content"
@@ -71,11 +109,13 @@
                 android:layout_width="133dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:gravity="center"
                 android:hint="Enter OTP"
                 android:inputType="phone"
                 android:visibility="gone" />
 
             <Button
+                android:layout_marginTop="24dp"
                 android:id="@+id/verify_otp_button"
                 android:layout_width="129dp"
                 android:layout_height="wrap_content"

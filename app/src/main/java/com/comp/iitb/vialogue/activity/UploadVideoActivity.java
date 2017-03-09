@@ -88,7 +88,11 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
         name= (EditText) findViewById(R.id.video_name);
+
         name.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
+
+        name.setText(SharedRuntimeContent.getProjectName());
+
         description= (EditText) findViewById(R.id.video_description);
         description.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         language= (EditText) findViewById(R.id.video_language);
@@ -144,7 +148,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                     SharedRuntimeContent.project.setTags(tagsToUpload);
                     new SaveParseObjectAsync(
                             UploadVideoActivity.this,
-                            new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
+                            new ProgressDialog(UploadVideoActivity.this),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {
@@ -317,7 +321,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                 if (position > 0) {
                     // Notify the selected item text
                     Toast.makeText
-                            (getApplicationContext(), R.string.selected + selectedItemText, Toast.LENGTH_SHORT)
+                            (getApplicationContext(), getResources().getString(R.string.selected) + selectedItemText, Toast.LENGTH_SHORT)
                             .show();
                 }
             }
