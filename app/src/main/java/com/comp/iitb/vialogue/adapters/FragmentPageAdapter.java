@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.comp.iitb.vialogue.fragments.CreateVideos;
+import com.comp.iitb.vialogue.fragments.DummyFragment;
 import com.comp.iitb.vialogue.fragments.Home;
 import com.comp.iitb.vialogue.fragments.UserAccount;
 import com.comp.iitb.vialogue.fragments.ViewVideos;
@@ -42,7 +43,7 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
             case CREATE_PROJECT:
                 return CreateVideos.newInstance();
             case VIEW_VIDEOS:
-                return ViewVideos.newInstance("");
+                return /*ViewVideos.newInstance("")*/DummyFragment.newInstance();
             case USER_ACCOUNT:
                 return UserAccount.newInstance();
         }

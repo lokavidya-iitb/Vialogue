@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +31,13 @@ import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.library.SaveParseObjectAsync;
+import com.comp.iitb.vialogue.models.CategoryType;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -49,12 +56,16 @@ public class UploadVideoActivity extends AppCompatActivity {
 
     public VPlayer mPlayer;
     private boolean isFirstTime;
+    private int goodToGo=0;
     private Spinner mCategories;
     private FloatingActionButton mUploadButton;
     public static String URL;
     private EditText name, description, language, tags;
     private final int MAX_WORD_LIMIT = 50;
     private List<QuestionAnswer> questionLists= new ArrayList();
+    List<String> tagsToUpload = new ArrayList<>();
+    List<String> categories = new ArrayList<>();
+    List<ParseObject> receiveEM;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,28 +88,67 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
         name= (EditText) findViewById(R.id.video_name);
+        name.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         description= (EditText) findViewById(R.id.video_description);
+        description.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         language= (EditText) findViewById(R.id.video_language);
+        language.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         tags= (EditText) findViewById(R.id.video_tags);
+        tags.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(ParseUser.getCurrentUser() == null) {
-                     // User not signed in
-                    Toast.makeText(UploadVideoActivity.this,R.string.signIn, Toast.LENGTH_LONG).show();
+                if (name.getText().toString().trim().length() == 0) {
+                    name.setError("Required");
+                }
+                if (description.getText().toString().trim().length() == 0) {
+                    description.setError("Required");
+
+                }
+               /* if(mCategories.getSelectedItem().toString().equals("Select a category"))
+                {
+                    mCategories.set
+                }*/
+
+                if (language.getText().toString().trim().length() == 0) {
+                    language.setError("Required");
+
+                }
+                if (tags.getText().toString().trim().length() == 0) {
+                    tags.setError("Required");
+
+                }
+
+                /*
+                else if (tags.getText().toString().trim().length() == 0) {
+                    name.setError("Required");
+
+                }*/
+                else
+                {
+
+                if (ParseUser.getCurrentUser() == null) {
+                    // User not signed in
+                    Toast.makeText(UploadVideoActivity.this, R.string.signIn, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
                     startActivity(intent);
                 } else {
                     // User signed in, save project
                     SharedRuntimeContent.project.put("user", ParseUser.getCurrentUser());
+                    SharedRuntimeContent.project.setName(name.getText().toString());
+                    SharedRuntimeContent.project.setDescription(description.getText().toString());
+                    Language lang = new Language(name.getText().toString());
+                    SharedRuntimeContent.project.setLanguage(lang);
+                    tagsToUpload= Arrays.asList(tags.getText().toString().split(" "));
+                    SharedRuntimeContent.project.setTags(tagsToUpload);
                     new SaveParseObjectAsync(
                             UploadVideoActivity.this,
                             new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {
-                                    if(isSaved) {
+                                    if (isSaved) {
                                         Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
@@ -110,6 +160,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                             SharedRuntimeContent.project
                     ).execute();
                 }
+            }
 
 
 //                Intent intent = new Intent(getApplicationContext(), SignIn.class);
@@ -130,7 +181,7 @@ public class UploadVideoActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String[] words = s.toString().split(" "); // Get all words
                 if (words.length > MAX_WORD_LIMIT) {
-                    tags.setText("");
+                    return;
                 }
             }
         });
@@ -205,16 +256,28 @@ public class UploadVideoActivity extends AppCompatActivity {
         if (mPlayer != null) {
             mPlayer.onResume();
         }
+        try {
+            // Locate the class table named "TestLimit" in Parse.com
+            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
+                    "CategoryType");
+            query.orderByAscending("createdAt");
+            receiveEM = query.find();
+            categories.add("Select a category");
+            for (ParseObject num : receiveEM) {
+                String name=((String) num.get("name"));
+                categories.add(name);
+            }
+        } catch (ParseException e) {
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
 
         mCategories = (Spinner) findViewById(R.id.category_choice);
-        String[] plants = new String[]{
-                // TODO retrieve from Parse Database
-                "Select a category", // let this be
-                "Agriculture",
-                "Something",
-                "Nothing",
-                "Manything"
-        };
+
+        String[] plants = new String[categories.size()];
+        plants = categories.toArray(plants);
+        /*
+        String[] plants = (String[]) categories.toArray();*/
 
         final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
 
