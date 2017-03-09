@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
@@ -109,7 +110,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
         }
-        Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
+        Toast.makeText(AudioRecordActivity.this, R.string.gimmeAudio, Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -140,7 +141,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             try {
                 CanSaveAudioResource s = (CanSaveAudioResource) mSlide.getResource();
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                 Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
                 finish();
             }
@@ -153,7 +154,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         }
         mCameraPicker = (Button)findViewById(R.id.camera_image_picker);
-
         mCameraImagePicker = new CameraImagePickerActivity(mStorage,getBaseContext(),this);
         mCameraPicker.setOnClickListener(mCameraImagePicker);
         mImagePicker = (Button)findViewById(R.id.image_picker);
@@ -177,7 +177,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
-            mImageView.setImageURI(imagePathUri);
+            Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
+
         }
 
         mImagePicker.setOnClickListener(new View.OnClickListener() {
@@ -400,7 +401,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -413,7 +414,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             selectedPath =mCameraImagePicker.getCameraFile().getAbsolutePath();
             Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
             if (imagePathUri != null) {
-                mImageView.setImageURI(imagePathUri);
+               /* mImageView.setImageURI(imagePathUri);*/
+                Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
             }
 
 
@@ -423,7 +425,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
                 Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
                 if (imagePathUri != null) {
-                    mImageView.setImageURI(imagePathUri);
+                   /* mImageView.setImageURI(imagePathUri);*/
+                    Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
                 }
 
             }

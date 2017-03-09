@@ -144,7 +144,7 @@ public class SignIn extends AppCompatActivity implements
             // CANCEL
             case R.id.cancel:
                 Toast.makeText(SignIn.this,
-                        "Sign In to upload your projects.", Toast.LENGTH_SHORT).show();
+                        R.string.signIn, Toast.LENGTH_SHORT).show();
                 finish();
                 break;
 
@@ -169,7 +169,7 @@ public class SignIn extends AppCompatActivity implements
                     }
                 }
 
-                Toast.makeText(getBaseContext(), "verifying OTP", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
                 mPhoneNumber = "+91" + mPhoneNumberEditText.getText().toString();
                 verifyOtp(mPhoneNumber);
                 mOtpEditText.setVisibility(View.VISIBLE);
@@ -187,7 +187,7 @@ public class SignIn extends AppCompatActivity implements
                         }
                     }
                 } catch (Exception e) {}
-                Toast.makeText(SignIn.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignIn.this, R.string.invalidOTP, Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -286,7 +286,7 @@ public class SignIn extends AppCompatActivity implements
                     mOtp.add((Integer) object);
                 } else {
                     // otp could not be generated
-                    Toast.makeText(SignIn.this, "Could not generate OTP, please try again in some time.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignIn.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
@@ -305,7 +305,7 @@ public class SignIn extends AppCompatActivity implements
     }
 
     public void onOtpVerified() {
-        Toast.makeText(SignIn.this, "OTP Verified", Toast.LENGTH_SHORT).show();
+        Toast.makeText(SignIn.this, R.string.otpVerified, Toast.LENGTH_SHORT).show();
         signInParseUser();
     }
 
@@ -399,10 +399,10 @@ public class SignIn extends AppCompatActivity implements
         String userName = null;
         if(mEmail == null) {
             // SIGN IN WITH PHONE NUMBER
-            Toast.makeText(SignIn.this, "Successfully signed in with user mobile number : " + mPhoneNumber, Toast.LENGTH_LONG).show();
+            Toast.makeText(SignIn.this, R.string.mobileSignedSuccess + mPhoneNumber, Toast.LENGTH_LONG).show();
         } else {
             // SIGN IN WITH EMAIL ID
-            Toast.makeText(SignIn.this, "Successfully signed in with Email ID : " + mEmail, Toast.LENGTH_LONG).show();
+            Toast.makeText(SignIn.this, R.string.emailSignedSuccess + mEmail, Toast.LENGTH_LONG).show();
         }
         try {
             mProgressDialog.dismiss();
@@ -411,21 +411,21 @@ public class SignIn extends AppCompatActivity implements
     }
 
     public void onCouldNotSignIn() {
-        Toast.makeText(SignIn.this, "An error occurred while signing in. Please check your network connection", Toast.LENGTH_LONG).show();
+        Toast.makeText(SignIn.this, R.string.network_signIn, Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
     }
 
     private static void onLoggedOut(Context context) {
-        Toast.makeText(context, "Successfully logged out", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.loggedOut, Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
     }
 
     private static void onCouldNotLogOut(Context context) {
-        Toast.makeText(context, "An error occured while signing out", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, R.string.cannotSignIn, Toast.LENGTH_LONG).show();
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
@@ -468,11 +468,11 @@ public class SignIn extends AppCompatActivity implements
         switch(requestCode) {
             case SMS_READ_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(SignIn.this, "Permission to read SMS is required to automatically read OTP", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
             case SMS_RECEIVE_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(SignIn.this, "Permission to receive SMS is required to automatically read OTP", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
         }
     }

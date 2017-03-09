@@ -277,7 +277,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -333,7 +333,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                                             SharedRuntimeContent.addSlide(slide);
                                         } catch (Exception e) {
                                             e.printStackTrace();
-                                            Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }).execute(v.getAbsolutePath());
@@ -363,7 +363,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Something went wrong :(", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),  R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
         }
     }
