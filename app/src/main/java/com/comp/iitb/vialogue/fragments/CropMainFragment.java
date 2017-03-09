@@ -21,17 +21,24 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.CropImageCoordinator;
+import com.comp.iitb.vialogue.dataStructures.LIFOSet;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.cropper.CropImage;
 import com.comp.iitb.vialogue.library.cropper.CropImageView;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
+
+import java.util.Stack;
 
 
 /**
@@ -42,7 +49,9 @@ public final class CropMainFragment extends Fragment
     private static final String CROP_IMAGE_PATH = "crop_image_path";
     private static String LOG_TAG = "CropMainFragment";
     //region: Fields and Consts
+    LIFOSet<Bitmap> sequence = new LIFOSet<>();
     private Storage mStorage;
+    private Button done;
     private CropDemoPreset mDemoPreset;
     private CropImageView mCropImageView;
     private String mCropImagePath;
@@ -65,8 +74,18 @@ public final class CropMainFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView;
         rootView = inflater.inflate(R.layout.fragment_main_rect, container, false);
+        setHasOptionsMenu(true);
+
+        ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCropImageView.getCroppedImageAsync();
+                ((CropMainActivity)getActivity()).done();
+            }
+        });
         mStorage = new Storage(getContext());
         mCroppedImage = mStorage.getBitmap(mCropImagePath);
+        sequence.push( mStorage.getBitmap(mCropImagePath));
         return rootView;
     }
 
@@ -82,12 +101,26 @@ public final class CropMainFragment extends Fragment
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.undo);
+        if(sequence.size()==0)
+        item.setVisible(false);
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.main_action_crop) {
             mCropImageView.getCroppedImageAsync();
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
             mCropImageView.rotateImage(-90);
+            return true;
+        }
+        else if (item.getItemId() == R.id.undo) {
+            if(sequence.size()!=0)
+            mCropImageView.setImageBitmap(sequence.pop());
+            else {
+                Toast.makeText(getContext(), "Seriously?!", Toast.LENGTH_LONG).show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -135,7 +168,10 @@ public final class CropMainFragment extends Fragment
 
     private void handleCropResult(CropImageView.CropResult result) {
         if (result.getError() == null) {
+
             mCroppedImage = result.getBitmap();
+            sequence.push(mCroppedImage);
+            System.out.println(""+ sequence.size());
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {
             Log.e(LOG_TAG, "Failed to crop image", result.getError());

@@ -93,14 +93,34 @@
             android:layout_alignRight="@+id/done_button"
             android:layout_alignEnd="@+id/done_button" />
     </LinearLayout>
-
+    <Button
+        android:id="@+id/image_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/image"
+        android:textAllCaps="false"
+        android:paddingTop="@dimen/picker_padding"
+        android:paddingBottom="@dimen/picker_padding"
+        android:textColor="@android:color/white"/>
+    <Button
+        android:id="@+id/camera_image_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/camera"
+        android:textAllCaps="false"
+        android:layout_below="@id/image_picker"
+        android:paddingTop="@dimen/picker_padding"
+        android:paddingBottom="@dimen/picker_padding"
+        android:textColor="@android:color/white"/>
     <ImageButton
         android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_play_arrow_black_24dp"
         android:background="@android:color/transparent"
-        android:paddingLeft="0dp"
+        android:paddingLeft="8dp"
         android:minWidth="0dp"
         android:tint="@color/colorPrimary"
         android:layout_below="@+id/selected_image"

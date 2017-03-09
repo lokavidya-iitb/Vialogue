@@ -11,5 +11,10 @@
         android:title="@string/main_action_crop"
         app:showAsAction="always"
         android:icon="@drawable/crop"/>
+    <item
+        android:id="@+id/undo"
+        android:title="@string/main_action_crop"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_stop_white_24dp"/>
 
 </menu>

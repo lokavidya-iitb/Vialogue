@@ -58,7 +58,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     private Fragment mCurrentFragment;
     private CropImageCoordinator mCropImageCoordinator;
     private Storage mStorage;
-    private Button mDone;
+    public Button mDone;
     private Uri mCropImageUri;
     private RelativeLayout mPleaseWait;
     private String mCroppedImagePath;
@@ -66,7 +66,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     AppCompatActivity mActivity;
     public static final String IMAGE_PATH = "imagePath";
     private String mFilePath;
-    private String from;
+    public String from;
     private int mSlidePosition;
     private ProgressDialog mProgressDialog;
 
@@ -103,6 +103,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 {
                     case "AudioRecording":
                         mSlidePosition=bundle.getInt("SlidePosition");
+                        AudioRecordActivity.traitor.finish();
                         break;
                     case "CreateVideos":
                         mSlidePosition=-1;
@@ -116,12 +117,12 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             }
         }
         mDone = (Button) findViewById(R.id.done_button);
-        mDone.setOnClickListener(new View.OnClickListener() {
+        /*mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 done();
             }
-        });
+        });*/
         mPleaseWait = (RelativeLayout) findViewById(R.id.please_wait);
         setMainFragmentByPreset(CropDemoPreset.RECT);
 
@@ -159,13 +160,21 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 .commit();
     }
 
-    private void done() {
+    public void done() {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
         // TODO this leads to the main thread hanging
 //        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
+    public void done(Bitmap bitmap) {
+        mDone.setEnabled(false);
+        mPleaseWait.setVisibility(View.VISIBLE);
+        // TODO this leads to the main thread hanging
+//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
+        new ProcessAsyncAfteCrop(bitmap).execute();
+    }
+
 
     private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
         @Override
@@ -176,7 +185,10 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 Image image = new Image(getBaseContext());
                 mStorage.getBitmap(mCroppedImagePath);
                 mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
-                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*/
+                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
+
+                TODO Look into this Jeffrey
+                slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
                 slide.addResource(image, Slide.ResourceType.IMAGE);
                 slide.setThumbnail(thumbnail);
             }
@@ -206,6 +218,23 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         protected Void doInBackground(Void... params) {
 
             Bitmap photo = mCropImageCoordinator.getCroppedImage();
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
+            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
+            return null;
+
+        }
+    }
+
+    private class ProcessAsyncAfteCrop extends AsyncTask<Void, Void, Void> {
+        Bitmap bitmap;
+        ProcessAsyncAfteCrop(Bitmap bitmap)
+        {
+            this.bitmap= bitmap;
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            Bitmap photo = bitmap;
             mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
             mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
             return null;

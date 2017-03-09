@@ -193,6 +193,17 @@ public class Slide extends BaseParseClass {
         return mSlideType;
     }
 
+    public Audio getAudio() {
+        Audio audio = null;
+        if(getSlideType()==SlideType.IMAGE)
+
+        try {
+            audio = (Audio) getChildrenResources().get(0);
+        } catch (Exception e) {}
+
+        return audio;
+    }
+
     public PlayerModel toPlayerModel() {
         PlayerModel playerModel = null;
         if(mSlideType == SlideType.IMAGE) {
