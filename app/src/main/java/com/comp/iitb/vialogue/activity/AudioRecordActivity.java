@@ -111,7 +111,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 }
         }
         Toast.makeText(AudioRecordActivity.this, R.string.gimmeAudio, Toast.LENGTH_LONG).show();
-        finish();
+        endActivity();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             } catch (Exception e) {
                 Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                 Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
-                finish();
+                endActivity();
             }
 
             mSlideResource = (CanSaveAudioResource) mSlide.getResource();
@@ -161,8 +161,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                finish();
+                endActivity();
             }
         });
         mStorage = new Storage(getApplicationContext());
@@ -278,6 +277,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(true);
                 mSlideResource.addAudio(mAudio);
+                mPlayButton.setEnabled(true);
                 try {
                     mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
                 } catch (Exception e) {}
@@ -299,12 +299,20 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 isRecording = false;
                 mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(false);
+
+                // remove audio from slide
+                mSlideResource.removeAudio();
+                try {
+                    mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
+                } catch (Exception e) {}
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+                SharedRuntimeContent.updateAdapterView();
             }
         });
 
         mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
-        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter());
-        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
+        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter(AudioRecordActivity.this));
+        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
     }
 
     @Override
@@ -331,7 +339,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                endActivity();
                 break;
         }
         return true;
@@ -474,6 +482,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         }
         if (!isPlaying && !isRecording)
             mAudioRecorder = new AudioRecorder(mAudio.getResourceFile().getAbsolutePath(), this, this);
+    }
+
+    public void endActivity() {
+        finish();
     }
 
 }

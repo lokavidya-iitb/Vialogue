@@ -140,7 +140,24 @@ public class SharedRuntimeContent {
             try {
                 project.pinParseObject();
                 System.out.println("project pinned");
-//                project.saveParseObject();
+            } catch (ParseException e) {
+                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void pinProjectInBackground(Context context) {
+        // save project with a temporary name
+        if ((getProjectName() == null) || (getProjectName() == "")) {
+            String newProjectName = getNewUndefinedProjectName();
+            setProjectName(newProjectName);
+        } else {}
+
+        if (getNumberOfSlides() != 0) {
+            try {
+                project.pinParseObjectInBackground();
+                System.out.println("project pinned");
             } catch (ParseException e) {
                 Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -269,6 +286,10 @@ public class SharedRuntimeContent {
 
     public static void hidePreviewFab() {
         previewFab.hide();
+    }
+
+    public void createEmptyProject() {
+
     }
 
 

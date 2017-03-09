@@ -145,6 +145,14 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
         }
     }
 
+    @Override
+    public void pinParseObjectInBackground() throws ParseException {
+        super.pinParseObjectInBackground();
+        for(T object : getList_()) {
+            object.pinParseObjectInBackground();
+        }
+    }
+
     public void fetchChildrenObjects() {
         super.fetchChildrenObjects();
         System.out.println("fetching : " + getClassName());

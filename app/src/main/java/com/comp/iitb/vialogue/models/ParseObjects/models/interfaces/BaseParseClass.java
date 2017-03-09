@@ -125,6 +125,18 @@ public abstract class BaseParseClass extends ParseObject {
         pin();
     }
 
+    public void pinParseObjectInBackground() throws ParseException {
+        for(String key : keySet()) {
+            if(get(key) instanceof BaseParseClass) {
+                // is an instance of BaseParseClass
+                ((BaseParseClass) this.getParseObject(key)).pinParseObjectInBackground();
+            }
+        }
+
+        // to pin this object
+        pinInBackground();
+    }
+
     // TODO implement
     public void saveParseObject() throws ParseException {
         // call the mySave method for all the children BaseParseClass instances

@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.library;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -15,9 +16,11 @@ public class SetSlideThumbnailsRecyclerViewAdapterAsyncTask extends AsyncTask<St
     private RecyclerView mRecyclerView;
     private SlideThumbnailsRecyclerViewAdapter mSlideThumbnailsRecyclerViewAdapter;
     private Context mContext;
+    private Activity mActivity;
     private int mCurrentPosition;
 
-    public SetSlideThumbnailsRecyclerViewAdapterAsyncTask(Context context, int currentPosition, RecyclerView recyclerView) {
+    public SetSlideThumbnailsRecyclerViewAdapterAsyncTask(Activity activity, Context context, int currentPosition, RecyclerView recyclerView) {
+        mActivity = activity;
         mRecyclerView = recyclerView;
         mContext = context;
         mCurrentPosition = currentPosition;
@@ -25,7 +28,7 @@ public class SetSlideThumbnailsRecyclerViewAdapterAsyncTask extends AsyncTask<St
 
     @Override
     public Boolean doInBackground(String... params) {
-        mSlideThumbnailsRecyclerViewAdapter = new SlideThumbnailsRecyclerViewAdapter(mContext, mCurrentPosition);
+        mSlideThumbnailsRecyclerViewAdapter = new SlideThumbnailsRecyclerViewAdapter(mActivity, mContext, mCurrentPosition);
         return true;
     }
 

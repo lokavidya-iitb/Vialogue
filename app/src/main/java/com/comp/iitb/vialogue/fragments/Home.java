@@ -85,7 +85,7 @@ public class Home extends Fragment {
             public void onClick(View view) {
                /* TODO pass value
                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+ Master.getMyProjectsPath()+holder.title.toString());*/
-                SharedRuntimeContent.project.setName(SharedRuntimeContent.getNewUndefinedProjectName());
+//                SharedRuntimeContent.project.setName(SharedRuntimeContent.getNewUndefinedProjectName());
                 viewpager.setCurrentItem(1,true);
             }
         });
