@@ -213,7 +213,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
                 // required permissions granted, start crop image activity
                 mCropImageView.setImageUriAsync(mCropImageUri);
             } else {
-                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.imagePermissiondenied, Toast.LENGTH_LONG).show();
                 setResultCancel();
             }
         }

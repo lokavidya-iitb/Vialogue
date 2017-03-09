@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getBaseContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
             }
         }
 

@@ -27,7 +27,9 @@ public class MinimumConditionOnTextChangeListener implements TextWatcher{
     public void setTextLengthLimit(int mTextLengthLimit) {
         this.mTextLengthLimit = mTextLengthLimit;
     }
-
+    public int doesItReallyHaveChars(CharSequence s) {
+        return s.toString().trim().length();
+    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -44,6 +46,11 @@ public class MinimumConditionOnTextChangeListener implements TextWatcher{
 
     @Override
     public void afterTextChanged(Editable s) {
+        if(doesItReallyHaveChars(s)==0) {
+            mEditText.setError("Cannot be Blank");
+
+        }
+
 
     }
 }

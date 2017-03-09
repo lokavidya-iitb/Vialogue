@@ -42,6 +42,6 @@ public class ChildFragment extends Fragment implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(v.getContext(), "Clicked Position: " + position, Toast.LENGTH_LONG).show();
+        Toast.makeText(v.getContext(), R.string.childPosition + position, Toast.LENGTH_LONG).show();
     }
 }

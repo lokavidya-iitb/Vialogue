@@ -73,7 +73,7 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
         mGenerateOtpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "verifying OTP", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
                 String phoneNumber = "+91" + mPhoneNumberEditText.getText().toString();
                 verifyOtp(phoneNumber);
                 mOtpEditText.setVisibility(View.VISIBLE);
@@ -103,7 +103,7 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception e) {}
-                Toast.makeText(PhoneNumberSigninActivity.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PhoneNumberSigninActivity.this, R.string.invalidOTP, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -119,7 +119,7 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
                     mOtp.add((Integer) object);
                 } else {
                     // otp could not be generated
-                    Toast.makeText(PhoneNumberSigninActivity.this, "Could not generate OTP, please try again in some time.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhoneNumberSigninActivity.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
@@ -144,17 +144,17 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
         switch(requestCode) {
             case SMS_READ_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(PhoneNumberSigninActivity.this, "Permission to read SMS is required to automatically read OTP", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhoneNumberSigninActivity.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
             case SMS_RECEIVE_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(PhoneNumberSigninActivity.this, "Permission to receive SMS is required to automatically read OTP", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhoneNumberSigninActivity.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
         }
     }
 
     public void onOtpVerified() {
-        Toast.makeText(PhoneNumberSigninActivity.this, "OTP Verified", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PhoneNumberSigninActivity.this, R.string.otpVerified, Toast.LENGTH_SHORT).show();
         finish();
     }
 
