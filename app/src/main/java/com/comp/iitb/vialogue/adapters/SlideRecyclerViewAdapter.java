@@ -56,7 +56,8 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             holder.mAudioLayer.setVisibility(View.GONE);
         } else if(holder.mItem.getSlideType() == Slide.SlideType.QUESTION) {
             // QUESTION
-            holder.mThumbnail.setImageResource(R.drawable.app_logo);
+            holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
+            holder.mAudioLayer.setVisibility(View.GONE);
         }
 
         if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {
