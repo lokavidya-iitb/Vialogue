@@ -98,16 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (mViewPager.getCurrentItem())
-                {
+                switch (mViewPager.getCurrentItem()) {
                     case 1:
                         Log.d("---CreateWorking?","Yeah");
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
                         startActivity(intent);
                         break;
                     case 3:
-                        Log.d("---UserWorking?","Yeah");
-                        Master.projectName="New Project";
+                        SharedRuntimeContent.createEmptyProject(MainActivity.this);
                         mViewPager.setCurrentItem(1, true);
                         break;
 
