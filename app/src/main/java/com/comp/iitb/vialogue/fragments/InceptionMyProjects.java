@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.library.SetMyProjectsAdapterAsync;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
@@ -101,7 +102,9 @@ public class InceptionMyProjects extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+
+        new SetMyProjectsAdapterAsync(getContext(), recyclerView).execute();
+//        recyclerView.setAdapter(adapter);
 
         prepareProjects();
 /*

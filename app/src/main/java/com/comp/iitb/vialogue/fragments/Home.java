@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
@@ -39,7 +41,9 @@ public class Home extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private RelativeLayout createProjectRelativeLayout;
     private Button createProject;
+    private RelativeLayout viewVideosRelativeLayout;
     private Button viewVideos;
     private View mView;
     private PagerContainer mPagerContainer;
@@ -78,22 +82,20 @@ public class Home extends Fragment {
         mView = inflater.inflate(R.layout.fragment_home, container, false);
         createProject=(Button)mView.findViewById(R.id.createProject);
         viewVideos=(Button)mView.findViewById(R.id.viewVideos);
+        createProjectRelativeLayout = (RelativeLayout) mView.findViewById(R.id.create_projects_relative_layout);
+        viewVideosRelativeLayout = (RelativeLayout) mView.findViewById(R.id.view_videos_relative_layout);
         viewpager= (ViewPager) getActivity().findViewById(R.id.viewpager);
 
-        createProject.setOnClickListener(new View.OnClickListener() {
+        createProjectRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* TODO pass value
-               SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+ Master.getMyProjectsPath()+holder.title.toString());*/
-//                SharedRuntimeContent.project.setName(SharedRuntimeContent.getNewUndefinedProjectName());
+                SharedRuntimeContent.createEmptyProject(getContext());
                 viewpager.setCurrentItem(1,true);
             }
         });
-        viewVideos.setOnClickListener(new View.OnClickListener() {
+        viewVideosRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* TODO pass value
-                SharedRuntimeContent.projectFolder=new File(Environment.getExternalStorageDirectory()+ Master.getMyProjectsPath()+holder.title.toString());*/
                 viewpager.setCurrentItem(2,true);
             }
         });
