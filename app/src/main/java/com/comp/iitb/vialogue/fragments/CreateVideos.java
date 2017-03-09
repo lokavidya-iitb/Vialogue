@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -283,6 +284,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private String mFilePath = null;
 
     public void handlePickedData(int requestCode, Intent data) {
+        System.out.println("handlePickedData : called");
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
 
         if (requestCode == GET_CAMERA_IMAGE && data == null) {
@@ -293,7 +295,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
             mFragment.startActivity(intent);
-
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY
             if (data != null) {
@@ -358,6 +359,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             Slide slide = new Slide();
             try {
                 slide.addResource(question, Slide.ResourceType.QUESTION);
+                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();

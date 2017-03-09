@@ -13,3 +13,4 @@
 /.idea/vcs.xml
 /build.gradle
 /.idea/*
+/app/google-services.json

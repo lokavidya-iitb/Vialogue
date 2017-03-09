@@ -14,6 +14,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,12 +29,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.RecordTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.AudioRecorder;
+import com.comp.iitb.vialogue.library.SetSlideThumbnailsRecyclerViewAdapterAsyncTask;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.TimeFormater;
 import com.comp.iitb.vialogue.library.VideoThumbnailAsync;
@@ -81,6 +85,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Button mImagePicker;
     private Button mCameraPicker;
     CanSaveAudioResource mSlideResource;
+    private RecyclerView mSlideThumbnailsRecyclerView;
 
     private AudioRecorder mAudioRecorder = null;
     private String mRecordPath;
@@ -88,7 +93,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private boolean isRecording = false;
     private boolean isPlaying = false;
     private Storage mStorage;
-    private TextView mTimeDisplay;
     // Requesting permission to RECORD_AUDIO
     private Button mDone;
     private Slide mSlide;
@@ -169,9 +173,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mSeekBar = (SeekBar) findViewById(R.id.audio_seek);
 
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
-        mTimeDisplay = (TextView) findViewById(R.id.time_display);
         mRecordButton = (Button) findViewById(R.id.record_button);
-        mTimeDisplay.setVisibility(View.GONE);
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
@@ -180,13 +182,13 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         }
 
         mImagePicker.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                                startActivityForResult(galleryIntent, GET_IMAGE);
-                                            }
-                                        });
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, GET_IMAGE);
+            }
+        });
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,6 +301,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mRetryButton.setEnabled(false);
             }
         });
+
+        mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
+        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter());
+        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
     }
 
     @Override
