@@ -243,7 +243,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
 
-            mode.setTitle("Are you sure you want to delete?");
+            mode.setTitle("Confirm delete?");
             return false;
         }
 

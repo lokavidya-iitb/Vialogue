@@ -3,6 +3,8 @@ package com.comp.iitb.vialogue.coordinators;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -42,7 +44,7 @@ public class SharedRuntimeContent {
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
-    public static String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%";
+    public static String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
 //    public static final String IMAGE_FOLDER_NAME = "images";
 //    public static final String VIDEO_FOLDER_NAME = "videos";
 //    public static final String AUDIO_FOLDER_NAME = "audio";
@@ -296,6 +298,22 @@ public class SharedRuntimeContent {
         pinProjectInBackground(context);
         project = new Project();
         updateAdapterView();
+    }
+    public static InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
+
+    public static boolean validateEditTextForNull(EditText E)
+    {
+        return true;
     }
 
 

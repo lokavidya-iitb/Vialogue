@@ -262,7 +262,7 @@ public class ViewVideos extends Fragment {
         protected void onPreExecute() {
 
             pd=new ProgressDialog(getContext());
-            pd.setMessage("Loading bru!");
+            pd.setMessage("Loading..");
             pd.show();
 
         }
