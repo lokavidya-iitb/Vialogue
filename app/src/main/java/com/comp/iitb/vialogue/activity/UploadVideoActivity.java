@@ -86,7 +86,6 @@ public class UploadVideoActivity extends AppCompatActivity {
 
                 if(ParseUser.getCurrentUser() == null) {
                      // User not signed in
-                    Toast.makeText(UploadVideoActivity.this, "You need to be signed in to be able to upload the project", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
                     startActivity(intent);
                 } else {
@@ -295,8 +294,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler)
-    {
+    public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler) {
 
         if ((currentPosition > popUpAt && currentPosition < popUpAt+500 || currentPosition > 2000 && currentPosition < 2000+500 )) {
             mSimulationHandler.blockPlay();
