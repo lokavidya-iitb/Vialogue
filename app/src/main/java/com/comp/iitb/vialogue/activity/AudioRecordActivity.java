@@ -25,6 +25,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
@@ -149,7 +150,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         }
         mCameraPicker = (Button)findViewById(R.id.camera_image_picker);
-
         mCameraImagePicker = new CameraImagePickerActivity(mStorage,getBaseContext(),this);
         mCameraPicker.setOnClickListener(mCameraImagePicker);
         mImagePicker = (Button)findViewById(R.id.image_picker);
@@ -175,7 +175,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
-            mImageView.setImageURI(imagePathUri);
+            Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
+
         }
 
         mImagePicker.setOnClickListener(new View.OnClickListener() {
@@ -407,7 +408,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             selectedPath =mCameraImagePicker.getCameraFile().getAbsolutePath();
             Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
             if (imagePathUri != null) {
-                mImageView.setImageURI(imagePathUri);
+               /* mImageView.setImageURI(imagePathUri);*/
+                Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
             }
 
 
@@ -417,7 +419,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
                 Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
                 if (imagePathUri != null) {
-                    mImageView.setImageURI(imagePathUri);
+                   /* mImageView.setImageURI(imagePathUri);*/
+                    Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
                 }
 
             }

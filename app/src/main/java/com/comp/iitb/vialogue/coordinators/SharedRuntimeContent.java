@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
@@ -74,7 +75,7 @@ public class SharedRuntimeContent {
 
     public static void addSlideAtPosition(int position, Slide slide) {
         addSlide(slide);
-        changeSlidePosition(getNumberOfSlides()-1, position);
+        changeSlidePosition(getNumberOfSlides() - 1, position);
     }
 
     public static void changeSlidePosition(int current, int destination) {
@@ -92,17 +93,18 @@ public class SharedRuntimeContent {
 
     public static void calculatePreviewFabVisibility() {
 
-        if(previewFab == null) {
+        if (previewFab == null) {
             return;
         }
 
-        if(getNumberOfSlides() == 0) {} else {
-            for(Slide s : project.getSlides().getAll()) {
-                if(s.getSlideType() == Slide.SlideType.VIDEO) {
+        if (getNumberOfSlides() == 0) {
+        } else {
+            for (Slide s : project.getSlides().getAll()) {
+                if (s.getSlideType() == Slide.SlideType.VIDEO) {
                     previewFab.show();
                     return;
-                } else if(s.getSlideType() == Slide.SlideType.IMAGE) {
-                    if(((Image) s.getResource()).hasAudio()) {
+                } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
+                    if (((Image) s.getResource()).hasAudio()) {
                         previewFab.show();
                         return;
                     }
@@ -123,12 +125,13 @@ public class SharedRuntimeContent {
 
     public static void pinProject(Context context) {
         // save project with a temporary name
-        if((getProjectName() == null) || (getProjectName() == "")) {
+        if ((getProjectName() == null) || (getProjectName() == "")) {
             String newProjectName = getNewUndefinedProjectName();
             setProjectName(newProjectName);
-        } else {}
+        } else {
+        }
 
-        if(getNumberOfSlides() != 0) {
+        if (getNumberOfSlides() != 0) {
             try {
                 project.pinParseObject();
                 System.out.println("project pinned");
@@ -147,7 +150,7 @@ public class SharedRuntimeContent {
         ArrayList<Project> localProjects = new ArrayList<Project>();
         try {
             List<ParseObject> localObjects = query.find();
-            for(ParseObject localObject : localObjects) {
+            for (ParseObject localObject : localObjects) {
                 Project project = (Project) localObject;
                 project.fetchChildrenObjects();
                 localProjects.add(project);
@@ -160,7 +163,7 @@ public class SharedRuntimeContent {
 
     public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
         ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
-        for(Slide s : project.getSlides().getAll()) {
+        for (Slide s : project.getSlides().getAll()) {
             s.setThumbnail(context, storage);
             slides.addObject(s);
         }
@@ -172,11 +175,11 @@ public class SharedRuntimeContent {
 
         ArrayList<Project> localProjects = getLocalProjects();
         int maxNum = 0;
-        for(Project project: localProjects) {
-            if(project.getName().matches(untitledProjectNameRegex)) {
+        for (Project project : localProjects) {
+            if (project.getName().matches(untitledProjectNameRegex)) {
                 try {
                     int number = Integer.parseInt(project.getName().substring(17));
-                    if(number >= maxNum) {
+                    if (number >= maxNum) {
                         maxNum = number + 1;
                     }
                 } catch (Exception e) {
@@ -189,7 +192,7 @@ public class SharedRuntimeContent {
 
     public static int getNumberOfSlides() {
         ParseObjectsCollection<Slide> slides = project.getSlides();
-        if(slides == null) {
+        if (slides == null) {
             return 0;
         }
         System.out.println("slides.size : " + slides.size());
@@ -223,10 +226,10 @@ public class SharedRuntimeContent {
 
     public static List<PlayerModel> getPreviewList() {
         ArrayList<PlayerModel> list = new ArrayList<>();
-        if(project.getSlides().getAll() != null) {
-            for(Slide slide : project.getSlides().getAll()) {
+        if (project.getSlides().getAll() != null) {
+            for (Slide slide : project.getSlides().getAll()) {
                 PlayerModel playerModel = slide.toPlayerModel();
-                if(playerModel != null) {
+                if (playerModel != null) {
                     list.add(playerModel);
                 }
             }
@@ -262,9 +265,6 @@ public class SharedRuntimeContent {
     public static void hidePreviewFab() {
         previewFab.hide();
     }
-
-
-
 
 
 

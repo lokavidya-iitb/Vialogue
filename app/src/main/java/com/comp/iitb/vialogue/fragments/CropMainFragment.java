@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -101,12 +102,6 @@ public final class CropMainFragment extends Fragment
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.undo);
-        if(sequence.size()==0)
-        item.setVisible(false);
-    }
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.main_action_crop) {
             mCropImageView.getCroppedImageAsync();
@@ -143,6 +138,13 @@ public final class CropMainFragment extends Fragment
             mCropImageView.setOnCropImageCompleteListener(null);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sequence.clear();
+    }
+
 
     @Override
     public void onSetImageUriComplete(CropImageView view, Uri uri, Exception error) {
