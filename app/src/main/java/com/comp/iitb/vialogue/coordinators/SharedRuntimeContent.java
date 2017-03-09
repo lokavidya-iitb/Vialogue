@@ -77,6 +77,10 @@ public class SharedRuntimeContent {
         changeSlidePosition(getNumberOfSlides()-1, position);
     }
 
+    public static ArrayList<Slide> getAllSlides() {
+        return project.getSlides().getAll();
+    }
+
     public static void changeSlidePosition(int current, int destination) {
         project.moveSlideToPosition(current, destination);
         projectAdapter.notifyDataSetChanged();

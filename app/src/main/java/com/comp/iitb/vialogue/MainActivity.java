@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
@@ -39,6 +41,10 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -47,6 +53,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 
 import java.io.File;
@@ -56,7 +63,7 @@ import static android.content.ContentValues.TAG;
 import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
-        OnProgressUpdateListener, TabSelectedHelper {
+        OnProgressUpdateListener, TabSelectedHelper, GoogleApiClient.OnConnectionFailedListener {
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
@@ -183,29 +190,25 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        final MenuItem item_ = item;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-            try {
-                if(help.loadBooleanFromSharedPref(Master.signedOrNot)) {
-                    SignIn.signOut();
-                    help.saveToSharedPref(Master.personName, "");
-                    help.saveToSharedPref(Master.email, "");
-                    help.saveToSharedPref(Master.personPhotoUrl, "");
-                    help.saveToSharedPref(Master.signedOrNot, false);
-                    item.setTitle("Sign In");
-                    Toast.makeText(MainActivity.this,
-                            "Signed Out", Toast.LENGTH_SHORT).show();
-
-                }
-                else
-                {
-                    Intent intent = new Intent(getApplicationContext(), SignIn.class);
-                    startActivity(intent);
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(ParseUser.getCurrentUser() != null) {
+                // already Signed in, Sign out
+                SignIn.signOut(
+                        MainActivity.this,
+                        new OnSignedOut() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e == null) {
+                                    item_.setTitle("Sign In");
+                                }
+                        }
+                });
+            } else {
+                // already Signed out, Sign in
+                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                startActivity(intent);
             }
 
            /* Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
@@ -252,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             try {
                 Slide slide = new Slide();
                 slide.addResource(question, Slide.ResourceType.QUESTION);
+                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.changeSlideAtPosition(
                         extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
                         slide
@@ -333,5 +337,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public void onStop() {
         super.onStop();
         SharedRuntimeContent.pinProject(MainActivity.this);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 }

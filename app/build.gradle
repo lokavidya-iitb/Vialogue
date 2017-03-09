@@ -58,6 +58,9 @@ dependencies {
     // Dependency for Google Sign-In
     compile 'com.google.android.gms:play-services-auth:9.2.1'
 
+    // Horizntal Linear Layout
+    compile 'it.sephiroth.android.library.horizontallistview:hlistview:1.2.2'
+
 }
 
 //apply plugin: 'com.google.gms.google-services'

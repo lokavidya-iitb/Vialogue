@@ -24,13 +24,14 @@ import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.comp.iitb.vialogue.listeners.SmsOtpListener;
 import com.parse.ParseException;
 
+import java.util.ArrayList;
+
 public class PhoneNumberSigninActivity extends AppCompatActivity {
 
     // constants
     private static final int SMS_READ_PERMISSION = 1235;
     private static final int SMS_RECEIVE_PERMISSION = 1236;
-    private static final String PHONE_NUMBER_REGEX = "(^)(?:\\+91)([\\d]){10}$";
-    private Integer mOtp = null;
+    private ArrayList<Integer> mOtp;
 
     private EditText mPhoneNumberEditText;
     private Button mGenerateOtpButton;
@@ -48,6 +49,7 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
         mGenerateOtpButton = (Button) findViewById(R.id.generate_otp_button);
         mOtpEditText = (EditText) findViewById(R.id.enter_otp_edit_text);
         mVerifyOtpButton = (Button) findViewById(R.id.verify_otp_button);
+        mOtp = new ArrayList<Integer>();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
@@ -94,9 +96,11 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     Integer otp = Integer.parseInt(mOtpEditText.getText().toString());
-                    if(otp.equals(mOtp)) {
-                        onOtpVerified();
-                        return;
+                    for(Integer generatedOtp: mOtp) {
+                        if(otp.equals(generatedOtp)) {
+                            onOtpVerified();
+                            return;
+                        }
                     }
                 } catch (Exception e) {}
                 Toast.makeText(PhoneNumberSigninActivity.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
@@ -112,7 +116,7 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
             public void onDone(Object object, ParseException e) {
                 if(e == null) {
                     // otp generated successfully
-                    mOtp = (Integer) object;
+                    mOtp.add((Integer) object);
                 } else {
                     // otp could not be generated
                     Toast.makeText(PhoneNumberSigninActivity.this, "Could not generate OTP, please try again in some time.", Toast.LENGTH_LONG).show();
@@ -124,8 +128,10 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
         SmsOtpListener.bindListener(new OnOtpReceived() {
             @Override
             public void onDone(Integer otp) {
-                if(mOtp.equals(otp)) {
-                    onOtpVerified();
+                for(Integer generatedOtp: mOtp) {
+                    if(otp.equals(generatedOtp)) {
+                        onOtpVerified();
+                    }
                 }
             }
         });
