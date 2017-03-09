@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -254,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             try {
                 Slide slide = new Slide();
                 slide.addResource(question, Slide.ResourceType.QUESTION);
+                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.changeSlideAtPosition(
                         extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
                         slide
