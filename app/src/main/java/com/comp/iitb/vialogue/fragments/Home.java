@@ -93,7 +93,20 @@ public class Home extends Fragment {
                 viewpager.setCurrentItem(1,true);
             }
         });
+        createProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedRuntimeContent.createEmptyProject(getContext());
+                viewpager.setCurrentItem(1,true);
+            }
+        });
         viewVideosRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewpager.setCurrentItem(2,true);
+            }
+        });
+        viewVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 viewpager.setCurrentItem(2,true);
