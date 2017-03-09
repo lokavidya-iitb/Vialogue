@@ -110,7 +110,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     return;
                 }
         }
-        Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
+        Toast.makeText(AudioRecordActivity.this, R.string.gimmeAudio, Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -141,7 +141,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             try {
                 CanSaveAudioResource s = (CanSaveAudioResource) mSlide.getResource();
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                 Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
                 finish();
             }
@@ -401,7 +401,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(this, "Something went wrong :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 

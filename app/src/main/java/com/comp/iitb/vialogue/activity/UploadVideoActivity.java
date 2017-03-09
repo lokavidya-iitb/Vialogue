@@ -86,7 +86,7 @@ public class UploadVideoActivity extends AppCompatActivity {
 
                 if(ParseUser.getCurrentUser() == null) {
                      // User not signed in
-                    Toast.makeText(UploadVideoActivity.this, "You need to sign in to be able to upload your project", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UploadVideoActivity.this,R.string.signIn, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
                     startActivity(intent);
                 } else {
@@ -94,14 +94,14 @@ public class UploadVideoActivity extends AppCompatActivity {
                     SharedRuntimeContent.project.put("user", ParseUser.getCurrentUser());
                     new SaveParseObjectAsync(
                             UploadVideoActivity.this,
-                            new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Saving Project", "Please wait...", true),
+                            new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {
                                     if(isSaved) {
-                                        Toast.makeText(UploadVideoActivity.this, "Project saved successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(UploadVideoActivity.this, "Could not upload project. Please check your network connection.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                                     }
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
@@ -166,7 +166,7 @@ public class UploadVideoActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //callback when video is finish
-                Toast.makeText(getApplicationContext(), "video play completed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.videoCompleted, Toast.LENGTH_SHORT).show();
             }
         }).onInfo(new VPlayer.OnInfoListener() {
             @Override
@@ -183,7 +183,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         }).onError(new VPlayer.OnErrorListener() {
             @Override
             public void onError(int what, int extra) {
-                Toast.makeText(getApplicationContext(), "video play error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.videoError, Toast.LENGTH_SHORT).show();
             }
         });
         mPlayer.play(SharedRuntimeContent.getPreviewList());
@@ -254,7 +254,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                 if (position > 0) {
                     // Notify the selected item text
                     Toast.makeText
-                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
+                            (getApplicationContext(), R.string.selected + selectedItemText, Toast.LENGTH_SHORT)
                             .show();
                 }
             }

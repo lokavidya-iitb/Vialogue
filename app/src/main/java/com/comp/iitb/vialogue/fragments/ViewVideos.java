@@ -122,7 +122,7 @@ public class ViewVideos extends Fragment {
             if(isNetworkConnected())
             new GetCategoryType().execute("Ok");
             else
-                Toast.makeText(getContext(),"Check your internet connectivity",Toast.LENGTH_LONG);
+                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
 
 
         }
@@ -133,7 +133,7 @@ public class ViewVideos extends Fragment {
             if(isNetworkConnected())
             {  /*new GetCategories().execute("OK");*/}
             else
-                Toast.makeText(getContext(),"Check your internet connectivity",Toast.LENGTH_LONG);
+                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
 
         }
 

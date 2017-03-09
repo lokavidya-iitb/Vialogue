@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
+import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
@@ -141,7 +142,7 @@ public class SharedRuntimeContent {
                 System.out.println("project pinned");
 //                project.saveParseObject();
             } catch (ParseException e) {
-                Toast.makeText(context, "Something went wrong while saving project :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }

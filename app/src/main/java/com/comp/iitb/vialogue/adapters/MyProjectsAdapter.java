@@ -211,7 +211,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 mProjectViewsList.get(position).getProject().delete();
                 mProjectViewsList.remove(position);
             } catch (com.parse.ParseException e) {
-                Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                Toast.makeText(mContext, R.string.wrongBuddy, Toast.LENGTH_SHORT);
                 return false;
             } return true;
         }
@@ -288,7 +288,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                         notifyItemRangeChanged(newPosition, mProjectViewsList.size());
                         return true;
                     } catch (Exception e) {
-                        Toast.makeText(mContext, "Something went wrong :(", Toast.LENGTH_SHORT);
+                        Toast.makeText(mContext, R.string.wrongBuddy, Toast.LENGTH_SHORT);
                     }
 
 

@@ -114,7 +114,7 @@ public final class CropMainFragment extends Fragment
             if(sequence.size()!=0)
             mCropImageView.setImageBitmap(sequence.pop());
             else {
-                Toast.makeText(getContext(), "Seriously?!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.cannotUndo, Toast.LENGTH_LONG).show();
             }
             return true;
         }

@@ -99,7 +99,7 @@ public class VideoPlayer extends AppCompatActivity {
             @Override
             public void run() {
                 //callback when video is finish
-                Toast.makeText(getApplicationContext(), "video play completed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.videoCompleted, Toast.LENGTH_SHORT).show();
             }
         }).onInfo(new VPlayer.OnInfoListener() {
             @Override
@@ -116,7 +116,7 @@ public class VideoPlayer extends AppCompatActivity {
         }).onError(new VPlayer.OnErrorListener() {
             @Override
             public void onError(int what, int extra) {
-                Toast.makeText(getApplicationContext(), "video play error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.videoError, Toast.LENGTH_SHORT).show();
             }
         });
 
