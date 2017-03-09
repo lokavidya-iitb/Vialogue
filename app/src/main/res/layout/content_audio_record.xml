@@ -117,20 +117,20 @@
         android:tint="@color/colorPrimary"
         android:layout_below="@+id/selected_image" />
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/slide_thumbnails_recycler_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:scrollbars="horizontal"-->
-        <!--android:paddingLeft="10dp"-->
-        <!--android:paddingRight="10dp"-->
-        <!--android:layout_below="@+id/buttons_list"-->
-        <!--android:layout_alignLeft="@+id/done_button"-->
-        <!--android:layout_alignStart="@+id/done_button"-->
-        <!--android:layout_alignRight="@+id/done_button"-->
-        <!--android:layout_alignEnd="@+id/done_button"-->
-        <!--android:orientation="horizontal"-->
-        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager">-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/slide_thumbnails_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/buttons_list"
+        android:layout_alignLeft="@+id/done_button"
+        android:layout_alignStart="@+id/done_button"
+        android:layout_alignRight="@+id/done_button"
+        android:layout_alignEnd="@+id/done_button"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager">
 
-    <!--</android.support.v7.widget.RecyclerView>-->
+    </android.support.v7.widget.RecyclerView>
 </RelativeLayout>

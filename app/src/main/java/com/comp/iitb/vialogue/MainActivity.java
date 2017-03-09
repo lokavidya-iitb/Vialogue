@@ -336,7 +336,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onStop() {
         super.onStop();
-        SharedRuntimeContent.pinProject(MainActivity.this);
+        SharedRuntimeContent.pinProjectInBackground(MainActivity.this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

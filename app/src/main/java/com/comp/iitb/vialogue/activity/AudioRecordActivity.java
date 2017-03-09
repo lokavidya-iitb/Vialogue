@@ -127,10 +127,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         }
 
-//        mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
-//        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter(AudioRecordActivity.this));
-//        System.out.println("adapter set 9999999999999999999999");
-
         // Record to the external cache directory for visibility
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -281,6 +277,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(true);
                 mSlideResource.addAudio(mAudio);
+                mPlayButton.setEnabled(true);
                 try {
                     mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
                 } catch (Exception e) {}
@@ -302,10 +299,20 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 isRecording = false;
                 mStopButton.setEnabled(false);
                 mRetryButton.setEnabled(false);
+
+                // remove audio from slide
+                mSlideResource.removeAudio();
+                try {
+                    mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
+                } catch (Exception e) {}
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+                SharedRuntimeContent.updateAdapterView();
             }
         });
 
-//        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
+        mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
+        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter(AudioRecordActivity.this));
+        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
     }
 
     @Override

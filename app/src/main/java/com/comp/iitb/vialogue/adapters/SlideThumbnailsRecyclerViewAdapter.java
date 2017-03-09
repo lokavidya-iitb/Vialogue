@@ -37,7 +37,6 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
     private boolean LOAD_SLIDES = false;
 
     public SlideThumbnailsRecyclerViewAdapter(Activity activity, Context context, int currentSlidePosition) {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         mActivity = activity;
         mContext = context;
         mCurrentSlidePosition = currentSlidePosition;
@@ -49,17 +48,14 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
             mByteArrayList.add(stream.toByteArray());
         }
         LOAD_SLIDES = true;
-        System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
 
     }
 
     public SlideThumbnailsRecyclerViewAdapter(Context context) {
-        System.out.println("ccccccccccccccccccccccccccccccccccc");
         mContext = context;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo).compress(Bitmap.CompressFormat.PNG, 100, stream);
         mDefaultImageByteArray = stream.toByteArray();
-        System.out.println("ddddddddddddddddddddddddddddddddddddd");
     }
 
     public class SlideViewHolder extends RecyclerView.ViewHolder {
@@ -79,7 +75,6 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
 
     @Override
     public void onBindViewHolder(SlideViewHolder slideViewHolder, int position) {
-        System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
         Slide slide = SharedRuntimeContent.getSlideAt(position);
 
         if(!LOAD_SLIDES) {
@@ -125,7 +120,6 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
                 slideViewHolder.thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // White Tint
             }
         }
-        System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
     }
 
     @Override

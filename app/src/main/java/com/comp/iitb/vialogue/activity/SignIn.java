@@ -464,16 +464,17 @@ public class SignIn extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         switch(requestCode) {
             case SMS_READ_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
+                break;
             case SMS_RECEIVE_PERMISSION :
                 if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
                 }
+                break;
         }
     }
 

@@ -196,7 +196,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         FrameLayout touchInterceptor = (FrameLayout) mView.findViewById(R.id.touch_interceptor);
         touchInterceptor.setOnTouchListener(new ClearFocusTouchListener(mProjectName));
 
-        setUpProject();
+        setUpNewProject();
         return mView;
     }
 
@@ -204,30 +204,26 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            Log.d("Create Videos", "Visible");
-            // setUpProject();
-        } else {
-            Log.d("Create Videos", "Not visible");
-        }
+            SharedRuntimeContent.previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            SharedRuntimeContent.calculatePreviewFabVisibility();
+        } else {}
     }
 
-    public void setUpProject() {
-
+    public void setUpNewProject() {
        try{
-
-
-           ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
-           query.fromLocalDatastore();
-           try {
-               List<ParseObject> localProjects = query.find();
-               for(ParseObject object : localProjects) {
-                   Project project = (Project) object;
-                   Log.d("--receivedprojectNmae",""+SharedRuntimeContent.getProjectName());
-                   Log.d("--Number of Slides",""+SharedRuntimeContent.getNumberOfSlides());
-               }
-           } catch (ParseException e) {
-               e.printStackTrace();
-           }
+           // TODO check if this is required
+//           ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+//           query.fromLocalDatastore();
+//           try {
+//               List<ParseObject> localProjects = query.find();
+//               for(ParseObject object : localProjects) {
+//                   Project project = (Project) object;
+//                   Log.d("--receivedprojectNmae",""+SharedRuntimeContent.getProjectName());
+//                   Log.d("--Number of Slides",""+SharedRuntimeContent.getNumberOfSlides());
+//               }
+//           } catch (ParseException e) {
+//               e.printStackTrace();
+//           }
 
            if(!SharedRuntimeContent.getProjectName().equals(null))
            {
@@ -243,6 +239,14 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
         }
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         SharedRuntimeContent.calculatePreviewFabVisibility();
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+            // ...
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
