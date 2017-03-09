@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
+import com.comp.iitb.vialogue.coordinators.ConditionListener;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -37,6 +38,7 @@ import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
 import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
 import com.comp.iitb.vialogue.listeners.ImagePickerClick;
+import com.comp.iitb.vialogue.listeners.MinimumConditionOnTextChangeListener;
 import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
@@ -77,7 +79,7 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.project;
  * Use the {@link CreateVideos#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreateVideos extends Fragment implements OnProgressUpdateListener {
+public class CreateVideos extends Fragment implements OnProgressUpdateListener, ConditionListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -98,17 +100,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     private LinearLayout mRoot;
     private Fragment mFragment;
 
-    private InputFilter filter = new InputFilter() {
 
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            return null;
-        }
-    };
 
     private CameraImagePicker mCameraImagePicker;
 
@@ -162,13 +154,15 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
             mProjectName.setHint(SharedRuntimeContent.getProjectName());
         }
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
+
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
+
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
 
 
         //Load Pickers
 
-        mProjectName.setFilters(new InputFilter[] { filter });
+        mProjectName.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
         mVideoPicker = (Button) mView.findViewById(R.id.video_picker);
         mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
@@ -350,4 +344,13 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener {
     }
 
 
+    @Override
+    public void conditionSatisfied(EditText sender) {
+
+    }
+
+    @Override
+    public void conditionFailed(EditText sender) {
+
+    }
 }

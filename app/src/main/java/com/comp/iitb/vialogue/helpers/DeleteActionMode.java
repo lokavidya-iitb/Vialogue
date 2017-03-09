@@ -32,7 +32,7 @@ public class DeleteActionMode implements ActionMode.Callback {
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+    public boolean onCreateActionMode(final ActionMode mode, Menu menu) {
         System.out.println("onCreateActionMode : called");
         mode.getMenuInflater().inflate(R.menu.create_project_action, menu);
         MenuItem item = menu.findItem(R.id.delete_option);
@@ -43,6 +43,7 @@ public class DeleteActionMode implements ActionMode.Callback {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 SharedRuntimeContent.deleteSlide(mIndex);
+                mode.finish();
                 return true;
             }
         });

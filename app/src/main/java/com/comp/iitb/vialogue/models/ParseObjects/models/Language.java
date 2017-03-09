@@ -20,7 +20,9 @@ public class Language extends BaseParseClass {
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
     public Language() {}
-
+    public Language(String name) {
+        setName(name);
+    }
     private static final class Fields implements BaseFieldsClass {
         public static final String
 
