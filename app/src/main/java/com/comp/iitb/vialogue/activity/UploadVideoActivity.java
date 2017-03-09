@@ -88,7 +88,11 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         mUploadButton = (FloatingActionButton) findViewById(R.id.preview_fab);
         name= (EditText) findViewById(R.id.video_name);
+
         name.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
+
+        name.setText(SharedRuntimeContent.getProjectName());
+
         description= (EditText) findViewById(R.id.video_description);
         description.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
         language= (EditText) findViewById(R.id.video_language);

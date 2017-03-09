@@ -47,6 +47,7 @@
                 >
 
                 <RelativeLayout
+                    android:id="@+id/view_videos_relative_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
@@ -106,6 +107,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/create_projects_relative_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5">

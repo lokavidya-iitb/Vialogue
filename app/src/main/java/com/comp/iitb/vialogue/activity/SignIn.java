@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.GlobalStuff.Master;
@@ -77,12 +78,13 @@ public class SignIn extends AppCompatActivity implements
     private boolean mSilentSignIn = false;
 
     // UI Elements
-    private SignInButton btnSignIn;
+    private Button btnSignIn;
     private Button btnCancel;
     private EditText mPhoneNumberEditText;
     private Button mGenerateOtpButton;
     private EditText mOtpEditText;
     private Button mVerifyOtpButton;
+    private TextView mOrTextView;
 
     // Others
     private PhoneNumberEditTextValidityListener mPhoneNumberEditTextValidityListener;
@@ -95,12 +97,13 @@ public class SignIn extends AppCompatActivity implements
         mSignInActivity = this;
 
         // Initialize UI Components
-        btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
+        btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnCancel = (Button) findViewById(R.id.cancel);
         mPhoneNumberEditText = (EditText) findViewById(R.id.phone_number_edit_text);
         mGenerateOtpButton = (Button) findViewById(R.id.generate_otp_button);
         mOtpEditText = (EditText) findViewById(R.id.enter_otp_edit_text);
         mVerifyOtpButton = (Button) findViewById(R.id.verify_otp_button);
+        mOrTextView = (TextView) findViewById(R.id.or_text_view);
         mOtp = new ArrayList<Integer>();
 
         // Add Listeners
@@ -126,8 +129,6 @@ public class SignIn extends AppCompatActivity implements
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-        btnSignIn.setSize(SignInButton.SIZE_STANDARD);
-        btnSignIn.setScopes(gso.getScopeArray());
 
     }
 
@@ -174,6 +175,8 @@ public class SignIn extends AppCompatActivity implements
                 verifyOtp(mPhoneNumber);
                 mOtpEditText.setVisibility(View.VISIBLE);
                 mVerifyOtpButton.setVisibility(View.VISIBLE);
+                btnSignIn.setVisibility(View.GONE);
+                mOrTextView.setVisibility(View.GONE);
                 break;
 
             // VERIFY OTP
@@ -464,17 +467,21 @@ public class SignIn extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode) {
-            case SMS_READ_PERMISSION :
-                if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
-                }
-                break;
-            case SMS_RECEIVE_PERMISSION :
-                if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
-                }
-                break;
+        if(grantResults.length != 0) {
+            switch(requestCode) {
+                case SMS_READ_PERMISSION :
+                    if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case SMS_RECEIVE_PERMISSION :
+                    if(!(grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(SignIn.this, R.string.gimmeSMS, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+            }
+        } else {
+            // TODO handle this (first understand when this happens exactly)
         }
     }
 

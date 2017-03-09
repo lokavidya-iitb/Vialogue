@@ -62,7 +62,7 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
 
-    public static Project project = new Project("Iron man");
+    public static Project project = new Project();
 
     public static void addSlide(Slide slide) {
         project.addSlide(slide);
@@ -229,7 +229,15 @@ public class SharedRuntimeContent {
     }
 
     public static void updateAdapterView(int position) {
-        projectAdapter.notifyItemChanged(position);
+        if(projectAdapter != null) {
+            projectAdapter.notifyItemChanged(position);
+        }
+    }
+
+    public static void updateAdapterView() {
+        if(projectAdapter != null) {
+            projectAdapter.notifyDataSetChanged();
+        }
     }
 
     public static void onSlideChanged(Slide slide) {
@@ -282,16 +290,14 @@ public class SharedRuntimeContent {
         return project.getSlides().getObjectPosition(item);
     }
 
-    public static void updateAdapterView() {
-        projectAdapter.notifyDataSetChanged();
-    }
-
     public static void hidePreviewFab() {
         previewFab.hide();
     }
 
-    public void createEmptyProject() {
-
+    public static void createEmptyProject(Context context) {
+        pinProjectInBackground(context);
+        project = new Project();
+        updateAdapterView();
     }
     public static InputFilter filter = new InputFilter() {
 

@@ -148,14 +148,15 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
 
         if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(SharedRuntimeContent.untitledProjectNameRegex))) {
-
             mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
             mProjectName.setText(SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());
             mProjectName.setHint(SharedRuntimeContent.getProjectName());
         }
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
-        mProjectName.addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mProjectName));
+
+        mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
+
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
 
 
@@ -189,7 +190,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         FrameLayout touchInterceptor = (FrameLayout) mView.findViewById(R.id.touch_interceptor);
         touchInterceptor.setOnTouchListener(new ClearFocusTouchListener(mProjectName));
 
-        setUpNewProject();
+        SharedRuntimeContent.calculatePreviewFabVisibility();
         return mView;
     }
 
@@ -203,35 +204,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     }
 
     public void setUpNewProject() {
-       try{
-           // TODO check if this is required
-//           ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
-//           query.fromLocalDatastore();
-//           try {
-//               List<ParseObject> localProjects = query.find();
-//               for(ParseObject object : localProjects) {
-//                   Project project = (Project) object;
-//                   Log.d("--receivedprojectNmae",""+SharedRuntimeContent.getProjectName());
-//                   Log.d("--Number of Slides",""+SharedRuntimeContent.getNumberOfSlides());
-//               }
-//           } catch (ParseException e) {
-//               e.printStackTrace();
-//           }
 
-           if(!SharedRuntimeContent.getProjectName().equals(null))
-           {
-               mProjectNameDisplay.setText( SharedRuntimeContent.getProjectName());
-               SharedRuntimeContent.setProjectName(SharedRuntimeContent.getProjectName());
-           }
-           else
-           throw new NullPointerException();
-       }
-        catch(NullPointerException e) {
-            mProjectNameDisplay.setText(SharedRuntimeContent.getNewUndefinedProjectName());
-            SharedRuntimeContent.setProjectName(SharedRuntimeContent.getNewUndefinedProjectName());
-        }
-        mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
-        SharedRuntimeContent.calculatePreviewFabVisibility();
     }
 
     @Override
