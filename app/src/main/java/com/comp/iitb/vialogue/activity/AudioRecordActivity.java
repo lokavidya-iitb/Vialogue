@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
@@ -110,7 +111,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 }
         }
         Toast.makeText(AudioRecordActivity.this, "Audio record feature can only be used if Microphone permission is granted", Toast.LENGTH_LONG).show();
-        finish();
+        endActivity();
     }
 
     @Override
@@ -125,6 +126,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
             }
         }
+
+//        mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
+//        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter(AudioRecordActivity.this));
+//        System.out.println("adapter set 9999999999999999999999");
 
         // Record to the external cache directory for visibility
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -142,7 +147,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             } catch (Exception e) {
                 Toast.makeText(getBaseContext(), "something went wrong :(", Toast.LENGTH_SHORT).show();
                 Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
-                finish();
+                endActivity();
             }
 
             mSlideResource = (CanSaveAudioResource) mSlide.getResource();
@@ -161,8 +166,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                finish();
+                endActivity();
             }
         });
         mStorage = new Storage(getApplicationContext());
@@ -301,9 +305,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
-        mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
-        mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter());
-        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
+//        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
     }
 
     @Override
@@ -330,7 +332,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                endActivity();
                 break;
         }
         return true;
@@ -471,6 +473,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         }
         if (!isPlaying && !isRecording)
             mAudioRecorder = new AudioRecorder(mAudio.getResourceFile().getAbsolutePath(), this, this);
+    }
+
+    public void endActivity() {
+        finish();
     }
 
 }
