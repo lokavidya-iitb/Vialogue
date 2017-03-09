@@ -50,6 +50,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Toolbar mToolbar;
     public ViewPager mViewPager;
     private Storage mStorage;
-    private Menu mMenu;
+    private static Menu mMenu;
     private FloatingActionButton mPreviewFab;
 
     @Override
@@ -125,14 +126,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
         SharedRuntimeContent.calculatePreviewFabVisibility();
-
+        refreshSignInOutOptions();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        refreshSignInOutOptions();
     }
 
     private void setUpTabs() {
@@ -178,7 +179,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
+        refreshSignInOutOptions();
         return true;
+    }
+
+    public static void refreshSignInOutOptions() {
+        try {
+            if(ParseUser.getCurrentUser() == null) {
+                // signed out
+                mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_in);
+            } else {
+                // signed in
+                mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_out);
+            }
+        } catch (Exception e) {}
     }
 
     @Override
@@ -198,9 +212,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                         new OnSignedOut() {
                             @Override
                             public void done(ParseException e) {
-                                if(e == null) {
-                                    item_.setTitle("Sign In");
-                                }
+                                if(e == null) {}
+                                refreshSignInOutOptions();
                         }
                 });
             } else {

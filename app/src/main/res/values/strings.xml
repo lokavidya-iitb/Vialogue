@@ -2,6 +2,7 @@
     <string name="app_name">LVCreate</string>
     <string name="action_settings">Settings</string>
     <string name="sign_out">Sign Out</string>
+    <string name="sign_in">Sign In</string>
     <string name="create_project">Create Project</string>
     <string name="fragment_view_videos">View Videos</string>
     <string name="view_videos">Videos</string>
