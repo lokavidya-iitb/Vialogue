@@ -169,11 +169,17 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
         }
     }
 
-    // TODO implement
     public void saveParseObject() throws ParseException {
         for(T object: getList_()) {
             object.saveParseObject();
         }
         save();
+    }
+
+    public void saveParseObjectEventually() {
+        for(T object: getList_()) {
+            object.saveParseObjectEventually();
+        }
+        saveEventually();
     }
 }

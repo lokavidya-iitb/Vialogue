@@ -137,7 +137,6 @@ public abstract class BaseParseClass extends ParseObject {
         pinInBackground();
     }
 
-    // TODO implement
     public void saveParseObject() throws ParseException {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
@@ -152,6 +151,22 @@ public abstract class BaseParseClass extends ParseObject {
 
         // now save this
         save();
+    }
+
+    public void saveParseObjectEventually() {
+        // call the mySave method for all the children BaseParseClass instances
+        for(String key : this.keySet()) {
+            if(get(key) instanceof ParseObjectsCollection) {
+                // is an instance of BaseParseClass
+                ((ParseObjectsCollection) getParseObject(key)).saveParseObjectEventually();
+            } else if(get(key) instanceof BaseResourceClass) {
+                // is an instance of BaseResourceClass
+                ((BaseResourceClass) get(key)).saveParseObjectEventually();
+            }
+        }
+
+        // now save this
+        saveEventually();
     }
 
     public void fetchChildrenObjects() {

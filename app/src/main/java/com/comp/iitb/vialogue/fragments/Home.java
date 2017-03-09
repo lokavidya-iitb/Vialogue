@@ -100,6 +100,7 @@ public class Home extends Fragment {
                 viewpager.setCurrentItem(1,true);
             }
         });
+        
         viewVideosRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
