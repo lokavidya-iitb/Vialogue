@@ -40,6 +40,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +57,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 public class UploadVideoActivity extends AppCompatActivity {
 
     public VPlayer mPlayer;
+    List<Integer> time = new ArrayList<>();
     private boolean isFirstTime;
     private int goodToGo=0;
     private Spinner mCategories;
@@ -73,15 +76,11 @@ public class UploadVideoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         URL=getIntent().getStringExtra("URL");
-        Log.d("-------URL",""+URL);
+        Log.d("---size of questions",""+SharedRuntimeContent.questionsList.size());
 
         mPlayer = new VPlayer(this);
-        QuestionAnswer questionAnswer = new QuestionAnswer();
-        questionAnswer.setOptions(new String[]{"O1", "O2", "O3"});
-        questionAnswer.setQuestion("Hello World");
-        questionAnswer.setIsCompulsory(false);
-        questionLists.add(questionAnswer);
 
+        questionLists = SharedRuntimeContent.questionsList;
        /* mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
         mPlayer.play(new PlayerModel("http://"+URL, null));
         mPlayer.setTitle(URL);*/
@@ -201,9 +200,24 @@ public class UploadVideoActivity extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-               /*popupQuestion(currentPosition,1000 ,isUser, mSimulationHandler);*//*
-                popupQuestion(currentPosition,2000 ,isUser, mSimulationHandler);*/
-                new DialogOpener().execute();
+                Log.d("---is time changing","good question"+ currentPosition);
+               /* QuestionAnswer questionAnswer = new QuestionAnswer();
+                try{
+                    if(questionLists.size()!=0)
+                    {
+                questionAnswer = questionLists.get(0);
+
+                Log.d("time now",""+questionLists.get(0).getTime());
+                if(currentPosition> questionLists.get(0).getTime()) {
+                    popupQuestion(currentPosition, questionLists.get(0).getTime(), mSimulationHandler, questionAnswer);
+                }
+                }
+                }
+                catch(NullPointerException e)
+                {
+                    e.printStackTrace();
+                }
+                    */
             }
 
             @Override
@@ -362,50 +376,23 @@ public class UploadVideoActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void popupQuestion(int currentPosition, int popUpAt, boolean isUser, final SimulationHandler mSimulationHandler) {
+    public void popupQuestion(int currentPosition,long intendedPosition, SimulationHandler mSimulationHandler, QuestionAnswer question)
+    {
+        if (currentPosition > intendedPosition  && currentPosition<intendedPosition+500) {
+            mPlayer.pause();
 
-        if ((currentPosition > popUpAt && currentPosition < popUpAt+500 || currentPosition > 2000 && currentPosition < 2000+500 )) {
-            mSimulationHandler.blockPlay();
-
-            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionLists.get(0));
+        /*questionAnswer.setIsCompulsory(false);*/
+            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), question);
             adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    mSimulationHandler.notifyProcessComplete();
+                    mPlayer.start();
+                    Log.d("popped time",""+questionLists.remove(0));
+
                 }
             });
             adapter.show();
         }
-
-    }
-
-
-    private class DialogOpener extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            while (mPlayer.isPlaying()) {
-                if(mPlayer.getDuration()>2000 && mPlayer.getDuration()<2500)
-                Log.d("---getting time",""+mPlayer.getCurrentPosition());
-                    /*final Dialog dialog = new Dialog(getBaseContext());
-                    dialog.setContentView(R.layout.question_answer_layout);
-                    dialog.setTitle("Question");
-                    dialog.show();*/
-            }
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
     }
 
 }

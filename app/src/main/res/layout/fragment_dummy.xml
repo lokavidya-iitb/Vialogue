@@ -9,9 +9,11 @@
         android:layout_marginBottom="8dp"
         android:ellipsize="end"
         android:maxLines="2"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="200dp"
         android:text="Under development"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/small_font_size" />
+        android:textSize="35sp" />
 
 </LinearLayout>
 

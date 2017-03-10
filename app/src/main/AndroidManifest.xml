@@ -24,7 +24,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.SplashIt"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,10 +34,12 @@
         </activity>
         <activity
             android:name=".activity.SignIn"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
@@ -74,6 +77,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".library.cropper.CropImageActivity"
+            android:screenOrientation="portrait"
             android:label="@string/add_audio" />
         <activity
             android:name=".activity.UploadVideoActivity"

@@ -402,10 +402,10 @@ public class SignIn extends AppCompatActivity implements
         String userName = null;
         if(mEmail == null) {
             // SIGN IN WITH PHONE NUMBER
-            Toast.makeText(SignIn.this, R.string.mobileSignedSuccess + mPhoneNumber, Toast.LENGTH_LONG).show();
+            Toast.makeText(SignIn.this, getResources().getString(R.string.mobileSignedSuccess) + mPhoneNumber, Toast.LENGTH_LONG).show();
         } else {
             // SIGN IN WITH EMAIL ID
-            Toast.makeText(SignIn.this, R.string.emailSignedSuccess + mEmail, Toast.LENGTH_LONG).show();
+            Toast.makeText(SignIn.this, getResources().getString(R.string.emailSignedSuccess) + mEmail, Toast.LENGTH_LONG).show();
         }
         try {
             mProgressDialog.dismiss();

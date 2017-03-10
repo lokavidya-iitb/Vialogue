@@ -74,6 +74,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     public static final String RECORD_NAME = "recordName";
     public static final String FOLDER_PATH = "folderPath";
     private Toolbar mToolbar;
+    private String currentImagePath;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private SeekBar mSeekBar;
     private Button mRecordButton = null;
@@ -176,6 +177,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         setUpUI();
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
+            currentImagePath=mImagePath;
             Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
 
         }
@@ -197,7 +199,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 Bundle bundle = new Bundle();
                 bundle.putInt("SlidePosition",mSlidePosition);
                 bundle.putString("from", "AudioRecording");
-                bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
+                bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
                 intent.putExtras(bundle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
@@ -421,6 +423,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             // CAPTURE IMAGE FROM CAMERA
             selectedPath =mCameraImagePicker.getCameraFile().getAbsolutePath();
             Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
+            currentImagePath=selectedPath;
             if (imagePathUri != null) {
                /* mImageView.setImageURI(imagePathUri);*/
                 Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
@@ -432,6 +435,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             if (data != null) {
                 selectedPath = mStorage.getRealPathFromURI(data.getData());
                 Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
+                currentImagePath=selectedPath;
                 if (imagePathUri != null) {
                    /* mImageView.setImageURI(imagePathUri);*/
                     Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);

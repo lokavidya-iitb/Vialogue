@@ -23,11 +23,13 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -40,6 +42,7 @@ public class VideoPlayer extends AppCompatActivity {
 
     public VPlayer mPlayer;
     private boolean isFirstTime;
+    List<Integer> time = new ArrayList<>();
 
     public static String URL;
 
@@ -66,21 +69,18 @@ public class VideoPlayer extends AppCompatActivity {
 
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
-                if (currentPosition > 2000 && isFirstTime) {
-                    mSimulationHandler.blockPlay();
-                    QuestionAnswer questionAnswer = new QuestionAnswer();
-                    questionAnswer.setOptions(new String[]{"1", "2", "3"});
-                    questionAnswer.setQuestion("Do you like it?");
-                    questionAnswer.setIsCompulsory(false);
-                    QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
-                    adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            mSimulationHandler.notifyProcessComplete();
-                        }
-                    });
-                    adapter.show();
-                    isFirstTime = false;
+                Log.d("---is time changing","good question"+ currentPosition);
+                QuestionAnswer questionAnswer = new QuestionAnswer();
+                questionAnswer.setOptions(new String[]{"1", "2", "3"});
+                questionAnswer.setQuestion("Do you like it?");
+
+                time.add(2000);
+                time.add(4000);
+                time.add(6000);
+                time.add(8000);
+                Log.d("time now",""+time.get(0));
+                if(currentPosition> time.get(0)) {
+                    popupQuestion(currentPosition, time.get(0), mSimulationHandler, questionAnswer);
                 }
             }
 
@@ -165,4 +165,24 @@ public class VideoPlayer extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
+    public void popupQuestion(int currentPosition,int intendedPosition, SimulationHandler mSimulationHandler, QuestionAnswer question)
+    {
+    if (currentPosition > intendedPosition  && currentPosition<intendedPosition+500) {
+        mPlayer.pause();
+
+        /*questionAnswer.setIsCompulsory(false);*/
+        QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), question);
+        adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mPlayer.start();
+                Log.d("popped time",""+time.remove(0));
+
+            }
+        });
+        adapter.show();
+    }
+    }
+
 }

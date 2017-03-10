@@ -91,13 +91,13 @@ public class UserAccount extends Fragment {
         Bundle arg2 = new Bundle();
         arg2.putInt(ChildFragment.POSITION_KEY, 2);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag2").setIndicator("Saved Videos"),
-                InceptionSavedVideos.class, arg2);
+                DummyFragment.class, arg2);
 
 
         Bundle arg3 = new Bundle();
         arg3.putInt(ChildFragment.POSITION_KEY, 3);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag3").setIndicator("Saved Projects"),
-                InceptionSavedProjects.class, arg3);
+                DummyFragment.class, arg3);
 
         return fragmentTabHost;
     }
