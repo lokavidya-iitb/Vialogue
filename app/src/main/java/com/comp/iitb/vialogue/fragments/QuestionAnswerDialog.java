@@ -21,6 +21,7 @@ import com.comp.iitb.vialogue.listeners.ChangeVisibilityClick;
 import com.comp.iitb.vialogue.listeners.MinimumConditionOnTextChangeListener;
 import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
+import com.parse.ParseFile;
 
 import java.util.ArrayList;
 
@@ -41,7 +42,6 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
     private ImageButton mAddOptionButton;
     private CompoundButton mSelectedAnswer;
     private Button mDoneButton;
-    private int mConditionSatisfiedCount;
     private Context mContext;
     private Question mQuestionObject = null;
     private int mSlideNumber = -1;
@@ -80,7 +80,6 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         setContentView(R.layout.question_answer);
 
         // initialization
-        mConditionSatisfiedCount = 0;
         mQuestion = (EditText) findViewById(R.id.question_text);
         mAddOptionButton = (ImageButton) findViewById(R.id.add_option);
         mAnswerOptions[0] = (EditText) findViewById(R.id.answer_option_0);
@@ -118,6 +117,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
                 done();
             }
         });
+
     }
 
     private void setUpAddButton() {
@@ -163,6 +163,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
             String text = mAnswerOptions[i].getText().toString();
             options.add(text);
         }
+        System.out.println("options : " + options);
         ArrayList<Integer> correctOptions = new ArrayList<Integer>();
         for(int i=0; i<mIsAnswerButtons.length; i++) {
             if(mIsAnswerButtons[i].isChecked()) {
@@ -203,7 +204,6 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
 
     @Override
     public void conditionSatisfied(EditText sender) {
-        Log.d("Audio Recorder", String.valueOf(sender.equals(mQuestion)) + " " + mConditionSatisfiedCount);
         switch (sender.getId()) {
             case R.id.question_text:
                 mFlag[0] = true;
@@ -233,8 +233,6 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
 
     @Override
     public void conditionFailed(EditText sender) {
-        Log.d("Audio Recorder", String.valueOf(sender.equals(mQuestion)) + " " + mConditionSatisfiedCount);
-
         switch (sender.getId()) {
             case R.id.question_text:
                 mFlag[0] = false;
@@ -264,14 +262,19 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         System.out.println(question.toString());
         mQuestion.setText(question.getQuestionString());
         ArrayList<String> options = question.getOptions();
+        System.out.println("Options : " + options);
         for(int i=0; i<4; i++) {
             String option;
             try {
                 option = options.get(i);
+                mOptionalLayout[i].setVisibility(View.VISIBLE);
             } catch (Exception e) {
+                e.printStackTrace();
                 option = "";
             }
+
             mAnswerOptions[i].setText(option);
+
         }
         mDoneButton.setEnabled(true);
     }

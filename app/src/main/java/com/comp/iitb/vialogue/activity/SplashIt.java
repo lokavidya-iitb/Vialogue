@@ -15,7 +15,9 @@ import android.view.View;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
+import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
@@ -61,6 +63,9 @@ public class SplashIt extends AppCompatActivity {
 
         startActivity(intent);
         finish();
+//
+//        SingleChoiceQuestionDialog questionDialog = new SingleChoiceQuestionDialog(SplashIt.this, new QuestionDoneListener(SplashIt.this, SplashIt.this));
+//        questionDialog.show();
     }
 
 }

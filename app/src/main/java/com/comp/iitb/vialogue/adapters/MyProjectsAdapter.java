@@ -168,6 +168,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 Project project = mProjectViewsList.get(position).getProject();
                 SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
                 SharedRuntimeContent.updateAdapterView();
+                SharedRuntimeContent.setProjectName(project.getName());
                 viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
                 viewpager.setCurrentItem(1,true);
             }
