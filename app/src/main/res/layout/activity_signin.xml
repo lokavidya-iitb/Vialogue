@@ -127,14 +127,4 @@
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_weight="0.1"
-        android:text="Cancel" />
-
-
 </LinearLayout>

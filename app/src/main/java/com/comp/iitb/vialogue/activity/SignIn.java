@@ -79,7 +79,6 @@ public class SignIn extends AppCompatActivity implements
 
     // UI Elements
     private Button btnSignIn;
-    private Button btnCancel;
     private EditText mPhoneNumberEditText;
     private Button mGenerateOtpButton;
     private EditText mOtpEditText;
@@ -98,7 +97,6 @@ public class SignIn extends AppCompatActivity implements
 
         // Initialize UI Components
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
-        btnCancel = (Button) findViewById(R.id.cancel);
         mPhoneNumberEditText = (EditText) findViewById(R.id.phone_number_edit_text);
         mGenerateOtpButton = (Button) findViewById(R.id.generate_otp_button);
         mOtpEditText = (EditText) findViewById(R.id.enter_otp_edit_text);
@@ -108,7 +106,6 @@ public class SignIn extends AppCompatActivity implements
 
         // Add Listeners
         btnSignIn.setOnClickListener(this);
-        btnCancel.setOnClickListener(this);
         mGenerateOtpButton.setOnClickListener(this);
         mVerifyOtpButton.setOnClickListener(this);
 
@@ -140,13 +137,6 @@ public class SignIn extends AppCompatActivity implements
             // SIGN IN
             case R.id.btn_sign_in:
                 signIn();
-                break;
-
-            // CANCEL
-            case R.id.cancel:
-                Toast.makeText(SignIn.this,
-                        R.string.signIn, Toast.LENGTH_SHORT).show();
-                finish();
                 break;
 
             // GENERATE OTP
