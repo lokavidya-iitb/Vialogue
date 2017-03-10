@@ -166,6 +166,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
 //                // TODO change implementation API
                 Project project = mProjectViewsList.get(position).getProject();
+                SharedRuntimeContent.questionsList.clear();
                 SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
                 SharedRuntimeContent.updateAdapterView();
                 SharedRuntimeContent.setProjectName(project.getName());

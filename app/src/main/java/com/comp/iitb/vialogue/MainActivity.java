@@ -102,11 +102,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
                         Log.d("---CreateWorking?","Yeah");
+                        SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
                         startActivity(intent);
                         break;
                     case 3:
                         SharedRuntimeContent.createEmptyProject(MainActivity.this);
+                        SharedRuntimeContent.questionsList.clear();
                         mViewPager.setCurrentItem(1, true);
                         break;
 

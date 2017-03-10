@@ -85,7 +85,19 @@ public class Home extends Fragment {
         createProjectRelativeLayout = (RelativeLayout) mView.findViewById(R.id.create_projects_relative_layout);
         viewVideosRelativeLayout = (RelativeLayout) mView.findViewById(R.id.view_videos_relative_layout);
         viewpager= (ViewPager) getActivity().findViewById(R.id.viewpager);
-
+        createProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedRuntimeContent.createEmptyProject(getContext());
+                viewpager.setCurrentItem(1,true);
+            }
+        });
+        viewVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewpager.setCurrentItem(2,true);
+            }
+        });
         createProjectRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

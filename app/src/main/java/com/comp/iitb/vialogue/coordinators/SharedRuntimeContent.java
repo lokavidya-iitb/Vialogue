@@ -15,9 +15,11 @@ import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -40,6 +42,7 @@ public class SharedRuntimeContent {
     public static List<String> videoPathList = new ArrayList<>();
     public static List<String> imagePathList = new ArrayList<>();
     public static List<Bitmap> imageThumbnails = new ArrayList<>();
+    public static List<QuestionAnswer> questionsList = new ArrayList<>();
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
@@ -316,6 +319,26 @@ public class SharedRuntimeContent {
         return true;
     }
 
-
+    public static List<QuestionAnswer> getQuestions() {
+        int i=0;
+        ArrayList<QuestionAnswer> list = new ArrayList<>();
+        if (project.getSlides().getAll() != null) {
+            for (Slide slide : project.getSlides().getAll()) {
+                if(slide.getSlideType().equals(Slide.SlideType.QUESTION)){
+                    Question question = (Question) slide.getResource();
+                    QuestionAnswer questionAnswer = new QuestionAnswer();
+                    String[] optionsArray = new String[question.getOptions().size()];
+                    optionsArray = question.getOptions().toArray(optionsArray);
+                    questionAnswer.setOptions(optionsArray);
+                    questionAnswer.setTime(i+2000);
+                    questionAnswer.setQuestion(question.getQuestionString());
+                    list.add(questionAnswer);
+                    Log.d("--questionString",""+question.getQuestionString());
+                }
+            }
+        }
+        Log.d("---size while returning",""+list.size());
+        return list;
+    }
 
 }
