@@ -9,8 +9,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/content_single_choice_question_option"></include>
-        <include layout="@layout/content_single_choice_question_option"></include>
+        <include
+            android:id="@+id/first_option"
+            layout="@layout/content_single_choice_question_option" />
+        <include layout="@layout/content_single_choice_question_option" />
 
     </RadioGroup>
 

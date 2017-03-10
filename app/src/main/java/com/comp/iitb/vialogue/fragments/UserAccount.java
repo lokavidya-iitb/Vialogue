@@ -85,18 +85,18 @@ public class UserAccount extends Fragment {
 
         Bundle arg1 = new Bundle();
         arg1.putInt(ChildFragment.POSITION_KEY, 1);
-        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag1").setIndicator("My projects"),
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag1").setIndicator(getResources().getString(R.string.my_projects)),
                 InceptionMyProjects.class, arg1);
 
         Bundle arg2 = new Bundle();
         arg2.putInt(ChildFragment.POSITION_KEY, 2);
-        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag2").setIndicator("Saved Videos"),
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag2").setIndicator(getResources().getString(R.string.saved_videos)),
                 DummyFragment.class, arg2);
 
 
         Bundle arg3 = new Bundle();
         arg3.putInt(ChildFragment.POSITION_KEY, 3);
-        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag3").setIndicator("Saved Projects"),
+        fragmentTabHost.addTab(fragmentTabHost.newTabSpec("ChildTag3").setIndicator(getResources().getString(R.string.saved_projects)),
                 DummyFragment.class, arg3);
 
         return fragmentTabHost;

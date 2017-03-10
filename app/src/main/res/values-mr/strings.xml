@@ -1,0 +1,127 @@
+<resources>
+    <string name="app_name">LVCreate</string>
+    <string name="action_settings">सेटीन्ग्स </string>
+    <string name="sign_out">साइन आऊट</string>
+    <string name="create_project">प्रकल्प तयार करा</string>
+    <string name="fragment_view_videos">व्हिडिओ पहा</string>
+    <string name="view_videos">व्हिडिओ</string>
+    <string name="user_account">प्रोफाइल</string>
+    <string name="camera">फोटो घ्या</string>
+    <string name="image">रतिमा चूस करा </string>
+    <string name="choose_video">विडिओ चूस करा </string>
+    <string name="play_video">विडिओ प्ले करा</string>
+    <string name="add_audio">ऑडिओ ऍड करा</string>
+    <string name="captured_image_name">लोकविद्या</string>
+    <string name="question">प्रसन्न लिहा </string>
+    <string name="storage_error">स्टोरेज ऍक्सेस करणे शक्य नाही</string>
+    <string name="permission_storage_rationale">आपल्या फोनवरील प्रकल्प आणि व्हिडिओ जतन करण्यासाठी आपल्या परवानग्यांची आवश्यकता आहे</string>
+    <string name="button_allow">परवानगी दिली</string>
+    <string name="button_deny">नाही </string>
+    <string name="record_audio">रेकॉर्ड </string>
+    <string name="stop_record_audio">थांबा </string>
+    <string name="done">झाले</string>
+    <string name="retry">पुन्हा प्रयत्न करा </string>
+    <string name="cannot_record">प्ले करत असताना रेकॉर्ड करू शकत नाही</string>
+    <string name="cannot_play">रेकॉर्डिंग करत असताना प्ले करू शकत नाही  </string>
+    <string-array name="tab_titles">
+        <item>LVCreate</item>
+        <item>व्हिडिओ तयार करा</item>
+        <item>व्हिडिओ</item>
+        <item>माझे खाते</item>
+    </string-array>
+    <string name="hello_blank_fragment">हॅलो - रिक्त तुकडा</string>
+
+    <string name="title_activity_audio_record">ऑडिओ ऍड करा </string>
+    <string name="title_activity_crop_image">इमेज एडिट करा </string>
+    <string name="projects">प्रकल्प</string>
+    <string name="my_projects">माझे प्रकल्प</string>
+    <string name="saved_projects">जतन प्रकल्प</string>
+    <string name="saved_videos">जतन व्हिडिओ</string>
+    <!---->
+
+    <string name="crop_image_activity_title">इमेज एडिट करा</string>
+    <string name="crop_image_menu_rotate_left">योग्य दिशेने फिरवा</string>
+    <string name="crop_image_menu_rotate_right">फिरवा</string>
+    <string name="crop_image_menu_crop">क्रॉप करा </string>
+    <string name="pick_image_intent_chooser_title">पर्याय निवडा</string>
+
+    <string name="main_drawer_load">क्रॉप करण्यासाठी प्रतिमा लोड करा</string>
+    <string name="main_drawer_open">नेव्हिगेशन ड्रॉवर उघडा</string>
+    <string name="main_drawer_close">नेव्हिगेशन ड्रॉवर बंद करा</string>
+
+    <string name="main_action_crop">क्रॉप</string>
+    <string name="main_action_rotate">९० अंश उजवीकडे फिरवा</string>
+    <string name="drawer_option_title">क्रॉप केलेली प्रतिमा पहा </string>
+    <string name="drawer_option_oval">परिपत्रक</string>
+    <string name="drawer_option_rect">आयताकृती</string>
+    
+    
+    
+
+    <string name="drawer_option_min_max">Min/Max limits override</string>
+    <string name="drawer_option_customized_overlay">Customized Overlay</string>
+    <string name="drawer_option_scale_center">Scale Center Inside</string>
+    <string name="drawer_option_title2">Customization Toggles</string>
+    <string name="drawer_option_toggle_scale">Image Scale: %1s</string>
+    <string name="drawer_option_toggle_shape">Crop Shape: %1s</string>
+    <string name="drawer_option_toggle_guidelines">Guidelines: %1s</string>
+    <string name="drawer_option_toggle_aspect_ratio">Aspect Ratio: %1s</string>
+    <string name="drawer_option_toggle_auto_zoom">Auto zoom: %1s</string>
+    <string name="drawer_option_toggle_max_zoom">Max zoom level: %1s</string>
+    <string name="drawer_option_set_initial_crop_rect">Set initial crop rectangle</string>
+    <string name="drawer_option_reset_crop_rect">Reset crop rectangle to initial</string>
+    <string name="drawer_option_toggle_multitouch">Multitouch: %1s</string>
+    <string name="drawer_option_toggle_show_overlay">Show Overlay: %1s</string>
+    <string name="drawer_option_toggle_show_progress_bar">Show Progress Bar: %1s</string>
+    
+    
+    <string name="result_image_desc">हॅलो संसाधन</string>
+    <string name="crop_failed">प्रतिमा पक्रोप्पीन्ग अयशस्वी</string>
+    <string name="image_load_failed">प्रतिमा लोड करणे अयशस्वी</string>
+    <string name="answer_option">उत्तर पर्याय</string>
+    <string name="delete_button">X</string>
+    <string name="add_option">+</string>
+    <string name="file_copy_title">फाइल कॉपी</string>
+    <string name="please_wait">कृपया थांबा</string>
+    <string name="processing_image">प्रतिमा प्रक्रिया होत आहे</string>
+    <string name="title_activity_upload_video">व्हिडिओ अपलोड करा</string>
+    <string name="skip">वगळू</string>
+    <string name="description"> वर्णन </string>
+    <string name="language">भाषा </string>
+    <string name="tags">केवळ ५० टॅग प्रविष्ट करा </string>
+    <string name="video_name">व्हिडिओचे नाव</string>
+    <string name="project_string">प्रकल्पाचे नाव</string>
+    <string name="loading">कृपया थांबा</string>
+    <string name="title_activity_main2">मुख्य क्रियाकलाप</string>
+    
+    <string name="title_activity_splash_it">SplashIt</string>
+    
+    <string name="title_activity_video_player">विडिओ पहा </string>
+    <string name="project_title">प्रकल्पाला शीर्षक द्या</string>
+    <string name="undo">पूर्ववत</string>
+    <string name="wrongBuddy">ऑपरेशन पूर्ण नाही</string>
+    <string name="gimmeAudio">मायक्रोफोन परवानगी दिली  तरच फक्त ऑडिओ रेकॉर्ड वैशिष्ट्य वापरले जाऊ शकते</string>
+    <string name="gimmeStorage">लोकविद्या योग्यपणे कार्य करण्यासाठी संचयन परवानगी आवश्यक आहे</string>
+    <string name="otpVerification">ओ टी पी  तपासणी</string>
+    <string name="invalidOTP">ओ टी पी  अवैध</string>
+    <string name="otpVerified">ओ टी पी  सत्यापित</string>
+    <string name="gimmeSMS">आपोआप ओ टी पी वाचण्यासाठी एस एम एस च्या परवानगीची आवश्यकता आहे </string>
+    <string name="cannotGenOTP">ओ टी पी निर्माण करू शकत नाही, काही वेळाने पुन्हा प्रयत्न करा.</string>
+    <string name="signIn">आपल्या प्रकल्पांला अपलोड करण्यासाठी साइन इन करा.</string>
+    <string name="cannotSignIn">साइन इन करताना त्रुटी आली</string>
+    <string name="loggedOut">यशस्वीपणे लॉग आऊट</string>
+    <string name="network_signIn">साइन इन करताना त्रुटी आली. कृपया आपले नेटवर्क कनेक्शन तपासा</string>
+    <string name="mobileSignedSuccess">यशस्वीरित्या मोबाइल नंबर साइन इन :</string>
+    <string name="emailSignedSuccess">यशस्वीरित्या ईमेल आयडी साइन इन :</string>
+    <string name="projectSaved">प्रकल्प यशस्वीरित्या अपलोड</string>
+    <string name="couldntUpload">प्रकल्प अपलोड करणे शक्य नाही. आपले नेटवर्क कनेक्शन तपासा</string>
+    <string name="videoCompleted">व्हिडिओ प्ले पूर्ण</string>
+    <string name="videoError">व्हिडिओ प्ले त्रुटी</string>
+    <string name="selected">निवडलेले :</string>
+    <string name="wrongWhileSaving">प्रकल्प जतन करताना काहीतरी चूक झाली :(</string>
+    <string name="childPosition">क्लिक केलेली  स्थिती :</string>
+    <string name="cannotUndo">आपण मूळ फाइल गाठली आहे</string>
+    <string name="networkConnect">आपले इंटरनेट कनेक्टिव्हिटी तपासा</string>
+    <string name="imagePermissiondenied"> रद्द, आवश्यक परवानगी मंजूर केलेली नाही </string>
+    <string name="create_and_share">तयार आणि शेअर करा</string>
+</resources>
