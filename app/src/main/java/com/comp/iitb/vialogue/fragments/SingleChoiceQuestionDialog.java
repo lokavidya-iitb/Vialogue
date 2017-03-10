@@ -67,6 +67,12 @@ public class SingleChoiceQuestionDialog extends Dialog implements View.OnClickLi
 
         mQuestionOptionsRadioGroup.addView(getLayoutInflater().inflate(R.layout.content_single_choice_question_option, null));
 
+        ((RadioButton) mQuestionOptionsRadioGroup
+                .findViewById(R.id.options)
+                .findViewById(R.id.first_option)
+                .findViewById(R.id.radio_button))
+                .setChecked(true);
+
         // Setup Listeners
         mQuestionOptionsRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

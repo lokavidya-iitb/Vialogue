@@ -45,8 +45,6 @@ public class SplashIt extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         Intent intent = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -63,7 +61,7 @@ public class SplashIt extends AppCompatActivity {
 
         startActivity(intent);
         finish();
-//
+
 //        SingleChoiceQuestionDialog questionDialog = new SingleChoiceQuestionDialog(SplashIt.this, new QuestionDoneListener(SplashIt.this, SplashIt.this));
 //        questionDialog.show();
     }

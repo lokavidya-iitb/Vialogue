@@ -335,7 +335,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                 if (position > 0) {
                     // Notify the selected item text
                     Toast.makeText
-                            (getApplicationContext(), R.string.selected + selectedItemText, Toast.LENGTH_SHORT)
+                            (getApplicationContext(), getResources().getString(R.string.selected) + selectedItemText, Toast.LENGTH_SHORT)
                             .show();
                 }
             }

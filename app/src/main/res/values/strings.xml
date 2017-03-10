@@ -36,6 +36,8 @@
     <string name="title_activity_crop_image">Edit Image</string>
     <string name="projects">Projects</string>
     <string name="my_projects">MyProjects</string>
+    <string name="saved_projects">Saved Projects</string>
+    <string name="saved_videos">Saved Videos</string>
     <!---->
 
     <string name="crop_image_activity_title">Edit Image</string>
@@ -114,4 +116,5 @@
     <string name="cannotUndo">You have reached the origin the file.</string>
     <string name="networkConnect">Check your internet connectivity.</string>
     <string name="imagePermissiondenied">Cancelling, required permissions are not granted</string>
+    <string name="create_and_share">Create and Share</string>
 </resources>
