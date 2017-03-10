@@ -202,9 +202,14 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
             @Override
             public void onClick(View view) {
                 mAnswerOptions[2].setText("");
-                ArrayList<String> newOptions = mQuestionObject.getOptions();
-                newOptions.set(2, "");
-                mQuestionObject.setOptions(newOptions);
+                if(mQuestion != null) {
+                    try {
+                        ArrayList<String> newOptions = mQuestionObject.getOptions();
+                        newOptions.set(2, "");
+                        mQuestionObject.setOptions(newOptions);
+                    } catch (Exception e) {}
+                }
+
                 mOptionalLayout[0].setVisibility(View.GONE);
 
                 mDoneButton.setEnabled(true);
@@ -225,13 +230,19 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
 
             }
         });
+
         mRemoveOption[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mAnswerOptions[3].setText("");
-                ArrayList<String> newOptions = mQuestionObject.getOptions();
-                newOptions.set(3, "");
-                mQuestionObject.setOptions(newOptions);
+
+                if(mQuestion != null) {
+                    try {
+                        ArrayList<String> newOptions = mQuestionObject.getOptions();
+                        newOptions.set(3, "");
+                        mQuestionObject.setOptions(newOptions);
+                    } catch (Exception e) {}
+                }
                 mOptionalLayout[1].setVisibility(View.GONE);
 
                 mDoneButton.setEnabled(true);
