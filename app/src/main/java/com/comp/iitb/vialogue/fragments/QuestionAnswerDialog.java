@@ -41,7 +41,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
     private Button[] mRemoveOption = new Button[OPTIONAL_LAYOUT_COUNT];
     private ImageButton mAddOptionButton;
     private CompoundButton mSelectedAnswer;
-    private Button mDoneButton;
+    private static Button mDoneButton;
     private Context mContext;
     private Question mQuestionObject = null;
     private int mSlideNumber = -1;
@@ -121,6 +121,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
     }
 
     private void setUpAddButton() {
+
         mAddOptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +142,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
                 break;
             }
         }
+        mDoneButton.setEnabled(true);
     }
 
     public void addOptionWithText(String text) {
@@ -196,8 +198,63 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
 
 
     private void setUpRemoveButtons() {
-        mRemoveOption[0].setOnClickListener(new ChangeVisibilityClick(mOptionalLayout[0], View.GONE));
-        mRemoveOption[1].setOnClickListener(new ChangeVisibilityClick(mOptionalLayout[1], View.GONE));
+        mRemoveOption[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAnswerOptions[2].setText("");
+                ArrayList<String> newOptions = mQuestionObject.getOptions();
+                newOptions.set(2, "");
+                mQuestionObject.setOptions(newOptions);
+                mOptionalLayout[0].setVisibility(View.GONE);
+
+                mDoneButton.setEnabled(true);
+
+//                boolean flag = true;
+//                for(int i=0; i<2; i++) {
+//                    if(mAnswerOptions[i].getText().length() == 0) {
+//                        flag = false;
+//                        break;
+//                    }
+//                }
+//                if(flag) {
+//                    if((mAnswerOptions[3].getText().length() == 0) && (mAnswerOptions[3].getVisibility() != View.GONE)) {
+//                        flag = false;
+//                    }
+//                }
+//                mDoneButton.setEnabled(flag);
+
+            }
+        });
+        mRemoveOption[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAnswerOptions[3].setText("");
+                ArrayList<String> newOptions = mQuestionObject.getOptions();
+                newOptions.set(3, "");
+                mQuestionObject.setOptions(newOptions);
+                mOptionalLayout[1].setVisibility(View.GONE);
+
+                mDoneButton.setEnabled(true);
+
+
+//                boolean flag = true;
+//                for(int i=0; i<2; i++) {
+//                    if(mAnswerOptions[i].getText().length() == 0) {
+//                        flag = false;
+//                        break;
+//                    }
+//                }
+//                if(flag) {
+//                    if((mAnswerOptions[2].getText().length() == 0) && (mAnswerOptions[2].getVisibility() != View.GONE)) {
+//                        flag = false;
+//                    }
+//                }
+//                mDoneButton.setEnabled(flag);
+            }
+        });
+
+//        mRemoveOption[0].setOnClickListener(new ChangeVisibilityClick(mOptionalLayout[0], View.GONE));
+//        mRemoveOption[1].setOnClickListener(new ChangeVisibilityClick(mOptionalLayout[1], View.GONE));
     }
 
     private boolean[] mFlag = new boolean[MAX_OPTIONS + 1];
@@ -252,7 +309,7 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
         }
         for (int i=0;i<3;i++ ) {
             if(!mFlag[i]){
-                mDoneButton.setEnabled(false);
+//                mDoneButton.setEnabled(false);
             }
         }
     }
@@ -267,12 +324,18 @@ public class QuestionAnswerDialog extends Dialog implements ConditionListener {
             String option;
             try {
                 option = options.get(i);
-                mOptionalLayout[i].setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 e.printStackTrace();
                 option = "";
             }
 
+            if(i >= 2) {
+                if(!option.equals("") && !question.equals(null)) {
+                    mOptionalLayout[i-2].setVisibility(View.VISIBLE);
+                } else {
+                    mOptionalLayout[i-2].setVisibility(View.GONE);
+                }
+            }
             mAnswerOptions[i].setText(option);
 
         }

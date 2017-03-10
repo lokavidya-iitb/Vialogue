@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.listeners;
 
 import android.view.View;
+import android.widget.EditText;
 
 /**
  * Created by shubh on 01-02-2017.
@@ -23,9 +24,11 @@ public class ChangeVisibilityClick implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (mDestination.getVisibility() == View.VISIBLE)
+        if (mDestination.getVisibility() == View.VISIBLE) {
             mDestination.setVisibility(mSetVisibility);
-        else
+            try {((EditText) mDestination).setText(""); } catch (Exception e) {}
+        } else {
             mDestination.setVisibility(View.VISIBLE);
+        }
     }
 }
