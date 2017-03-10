@@ -127,4 +127,11 @@ public abstract class BaseResourceClass extends BaseParseClass {
         put(Fields.FILE, file);
     }
 
+    @Override
+    public void saveParseObjectEventually() {
+        ParseFile file = new ParseFile(new File(getUri().getPath()));
+        // TODO think how to implement this
+        saveEventually();
+    }
+
 }

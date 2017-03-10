@@ -154,8 +154,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             mProjectName.setHint(SharedRuntimeContent.getProjectName());
         }
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
-/*
-        mProjectName.addTextChangedListener(new MinimumConditionOnTextChangeListener(this, mProjectName));*/
+
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
 
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
