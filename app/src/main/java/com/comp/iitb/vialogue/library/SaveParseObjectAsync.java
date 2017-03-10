@@ -40,7 +40,7 @@ public class SaveParseObjectAsync extends AsyncTask<String, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean isSaved) {
         super.onPostExecute(isSaved);
-        mProgressDialog.dismiss();
+        try {mProgressDialog.dismiss();} catch (Exception e) {}
         mOnProjectSaved.done(isSaved);
     }
 

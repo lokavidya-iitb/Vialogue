@@ -147,7 +147,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                     SharedRuntimeContent.project.setTags(tagsToUpload);
                     new SaveParseObjectAsync(
                             UploadVideoActivity.this,
-                            new ProgressDialog(UploadVideoActivity.this).show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
+                            ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {

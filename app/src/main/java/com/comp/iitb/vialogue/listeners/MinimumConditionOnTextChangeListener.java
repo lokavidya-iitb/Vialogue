@@ -48,8 +48,8 @@ public class MinimumConditionOnTextChangeListener implements TextWatcher{
     public void afterTextChanged(Editable s) {
         if(doesItReallyHaveChars(s)==0) {
             mEditText.setError("Cannot be Blank");
-
         }
+        mConditionListener.conditionSatisfied(mEditText);
 
 
     }
