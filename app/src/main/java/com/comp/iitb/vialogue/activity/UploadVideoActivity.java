@@ -201,7 +201,7 @@ public class UploadVideoActivity extends AppCompatActivity {
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
                 Log.d("---is time changing","good question"+ currentPosition);
-               /* QuestionAnswer questionAnswer = new QuestionAnswer();
+                QuestionAnswer questionAnswer = new QuestionAnswer();
                 try{
                     if(questionLists.size()!=0)
                     {
@@ -217,7 +217,6 @@ public class UploadVideoActivity extends AppCompatActivity {
                 {
                     e.printStackTrace();
                 }
-                    */
             }
 
             @Override
@@ -255,10 +254,46 @@ public class UploadVideoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), R.string.videoError, Toast.LENGTH_SHORT).show();
             }
         });
-        mPlayer.play(SharedRuntimeContent.getPreviewList());
+        new playHandler().execute();
+
         /*if(mPlayer.isPlaying())
         new DialogOpener().execute();*/
     }
+
+
+    private class playHandler extends AsyncTask<String, String, String> {
+
+        private String resp ="";
+        ProgressDialog progressDialog;
+
+        @Override
+        protected String doInBackground(String... params) {
+            mPlayer.play(SharedRuntimeContent.getPreviewList());
+            return resp;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            progressDialog.dismiss();
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+
+            progressDialog = ProgressDialog.show(UploadVideoActivity.this,
+                    "ProgressDialog","Loading the preview");
+            progressDialog.setCancelable(false);
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... text) {
+
+        }
+    }
+
 
     @Override
     protected void onPause() {

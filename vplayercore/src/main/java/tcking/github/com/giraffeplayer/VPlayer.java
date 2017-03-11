@@ -729,7 +729,7 @@ public class VPlayer implements SimulationHandler {
     }
 
     @Override
-    public void notifyProcessComplete() {
+    public void notifyProcessComplete() {/*
         Log.d(getClass().getName(), "is playing " + mVideoView.isPlaying());
         if (!mVideoView.isPlaying())
             mVideoView.start();
@@ -737,7 +737,7 @@ public class VPlayer implements SimulationHandler {
             int seekTo = mPlayerDialogAdapter.moveTo(playerModels, mCurrentPosition, mediaIndex);
             simulationSeek(seekTo);
         }
-        mHandler.postDelayed(mTimeUpdate, UPDATE_INTERVAL);
+        mHandler.postDelayed(mTimeUpdate, UPDATE_INTERVAL);*/
     }
 
     @Override
@@ -806,7 +806,7 @@ public class VPlayer implements SimulationHandler {
         }
     };
 
-    private long getVideoDuration(String url) {
+    public long getVideoDuration(String url) {
         System.out.println("getVideoDuration : url : " + url);
         mRetriever = new MediaMetadataRetriever();
         long timeMilliSec = 0;
