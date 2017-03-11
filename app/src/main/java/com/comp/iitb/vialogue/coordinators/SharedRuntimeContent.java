@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.coordinators;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -17,15 +18,13 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -323,6 +322,7 @@ public class SharedRuntimeContent {
         int i=0;
         ArrayList<QuestionAnswer> list = new ArrayList<>();
         if (project.getSlides().getAll() != null) {
+            int positionThatSaves = 0;
             for (Slide slide : project.getSlides().getAll()) {
                 if(slide.getSlideType().equals(Slide.SlideType.QUESTION)){
                     Question question = (Question) slide.getResource();
@@ -330,15 +330,59 @@ public class SharedRuntimeContent {
                     String[] optionsArray = new String[question.getOptions().size()];
                     optionsArray = question.getOptions().toArray(optionsArray);
                     questionAnswer.setOptions(optionsArray);
-                    questionAnswer.setTime(i+2000);
+                    positionThatSaves = getSlidePosition(slide);
+                    Log.d("--position",""+positionThatSaves);
+                    questionAnswer.setTime(getDurationThatSavesQuestion(positionThatSaves));
                     questionAnswer.setQuestion(question.getQuestionString());
                     list.add(questionAnswer);
-                    Log.d("--questionString",""+question.getQuestionString());
                 }
             }
         }
         Log.d("---size while returning",""+list.size());
         return list;
     }
+
+
+    public static int getDurationThatSavesQuestion(int position)
+    {
+        Log.d("---whats the position",""+ position);
+        int totalTime=0;
+        List<Slide> slides = getAllSlides();
+        for(int stub=0;stub<position;stub++)
+        {
+            if(slides.get(stub).getSlideType() == Slide.SlideType.IMAGE) {
+                if(!(((Image) slides.get(stub).getResource()).hasAudio())) {
+                    continue;
+                }
+                else
+                    totalTime+= getASlideDuration(((Image) slides.get(stub).getResource()).getAudio().getResourceFile().getAbsolutePath());
+
+            } else if(slides.get(stub).getSlideType() == Slide.SlideType.VIDEO) {
+
+                totalTime+= getASlideDuration((slides.get(stub).getResource().getResourceFile().getAbsolutePath()));
+            } else  {
+            }
+        }
+        Log.d("---time for a question",""+ totalTime);
+        return totalTime;
+    }
+
+
+    public static long getASlideDuration(String url) {
+        MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+        long timeMilliSec = 0;
+        try {
+            FileInputStream inputStream = new FileInputStream(url);
+            mRetriever.setDataSource(inputStream.getFD());
+            timeMilliSec = Long.parseLong(mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            inputStream.close();
+            mRetriever.release();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
+        return timeMilliSec;
+    }
+
 
 }
