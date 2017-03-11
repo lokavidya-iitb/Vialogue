@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RadioGroup
         android:id="@+id/radio_group"
@@ -9,10 +9,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/first_option"
-            layout="@layout/content_single_choice_question_option" />
-        <include layout="@layout/content_single_choice_question_option" />
+        <!--<include-->
+            <!--android:id="@+id/first_option"-->
+            <!--layout="@layout/content_single_choice_question_option" />-->
+        <!--<include layout="@layout/content_single_choice_question_option" />-->
 
     </RadioGroup>
 

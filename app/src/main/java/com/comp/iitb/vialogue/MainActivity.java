@@ -31,7 +31,7 @@ import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
-import com.comp.iitb.vialogue.fragments.QuestionAnswerDialog;
+import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         } else if(item.getSlideType() == Slide.SlideType.QUESTION) {
             // TODO display question
             System.out.println("MainActivity : slideNumber : " + SharedRuntimeContent.getSlidePosition(item));
-            QuestionAnswerDialog qaDialog = new QuestionAnswerDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
+            SingleChoiceQuestionDialog qaDialog = new SingleChoiceQuestionDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
             qaDialog.show();
         }
 

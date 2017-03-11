@@ -2,33 +2,48 @@ package com.comp.iitb.vialogue.listeners;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
+import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
+
+import java.util.ArrayList;
 
 /**
  * Created by shubh on 03-02-2017.
  */
 
 public class MinimumConditionOnTextChangeListener implements TextWatcher{
-    private ConditionListener mConditionListener;
-    private int mTextLengthLimit;
+    private SingleChoiceQuestionConditionListener mConditionListener;
+    private int mMinimumTextLength;
+    private int mMaximumTextLength;
     private EditText mEditText;
-    public MinimumConditionOnTextChangeListener(ConditionListener conditionListener, EditText editText){
+    private boolean mIsConditionSatisfied = false;
+    private int mIndex;
+
+    public MinimumConditionOnTextChangeListener(SingleChoiceQuestionConditionListener conditionListener, EditText editText, int index){
         mConditionListener = conditionListener;
-        mTextLengthLimit = 0;
         mEditText = editText;
+        mMinimumTextLength = 1;
+        mMaximumTextLength = 200;
+        mIndex = index;
     }
 
-    public int getTextLengthLimit() {
-        return mTextLengthLimit;
+    public int getMinimumTextLength() {
+        return mMinimumTextLength;
     }
 
-    public void setTextLengthLimit(int mTextLengthLimit) {
-        this.mTextLengthLimit = mTextLengthLimit;
+    public void setMinimumTextLength(int minimumTextLength) {
+        this.mMinimumTextLength = minimumTextLength;
     }
-    public int doesItReallyHaveChars(CharSequence s) {
-        return s.toString().trim().length();
+
+    public int getMaximumTextLength() {
+        return mMaximumTextLength;
+    }
+
+    public void setMaximumTextLength(int maximumTextLength) {
+        mMaximumTextLength = maximumTextLength;
     }
 
     @Override
@@ -38,19 +53,36 @@ public class MinimumConditionOnTextChangeListener implements TextWatcher{
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if(s.length()<=mTextLengthLimit)
-            mConditionListener.conditionFailed(mEditText);
-        else
-            mConditionListener.conditionSatisfied(mEditText);
+        if(satisfiesMinimumCondition(s.toString(), mMinimumTextLength, mMaximumTextLength)) {
+            if(!mIsConditionSatisfied) {
+                mIsConditionSatisfied = !mIsConditionSatisfied;
+                mConditionListener.conditionSatisfied(mIndex);
+            }
+        } else {
+            if(mIsConditionSatisfied) {
+                mIsConditionSatisfied = !mIsConditionSatisfied;
+                mConditionListener.conditionFailed(mIndex);
+            }
+        }
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        if(doesItReallyHaveChars(s)==0) {
+        if(!doesItReallyHaveChars(s)) {
             mEditText.setError("Cannot be Blank");
         }
-        mConditionListener.conditionSatisfied(mEditText);
+    }
 
+    public static boolean satisfiesMinimumCondition(String string, int min, int max) {
+        int length = string.length();
+        return((length >= min) && (length <= max) && (doesItReallyHaveChars(string)));
+    }
 
+    public static boolean satisfiesMinimumCondition(EditText editText, int min, int max) {
+        return satisfiesMinimumCondition(editText.getText().toString(), min, max);
+    }
+
+    public static boolean doesItReallyHaveChars(CharSequence s) {
+        return (s.toString().trim().length() != 0);
     }
 }
