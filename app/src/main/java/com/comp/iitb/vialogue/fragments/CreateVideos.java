@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
@@ -80,13 +81,6 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.project;
  * create an instance of this fragment.
  */
 public class CreateVideos extends Fragment implements OnProgressUpdateListener, ConditionListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private Storage mStorage;
     private Button mImagePicker;
     private Button mVideoPicker;
@@ -104,10 +98,8 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
 
     private CameraImagePicker mCameraImagePicker;
 
-    public CreateVideos() {
-
-        // Required empty public constructor
-    }
+    // Required empty public constructor
+    public CreateVideos() {}
 
     /**
      * Use this factory method to create a new instance of
@@ -115,12 +107,9 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
      *
      * @return A new instance of fragment CreateVideos.
      */
-    // TODO: Rename and change types and number of parameters
     public static CreateVideos newInstance() {
         CreateVideos fragment = new CreateVideos();
-        Bundle args = new Bundle();/*
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);*/
+        Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
@@ -128,60 +117,53 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         mFragment = this;
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_create_videos, container, false);
+
         //Initialize Storage
         mStorage = new Storage(getContext());
+
+        // Initialize UI Components
         mProjectName = (EditText) mView.findViewById(R.id.project_name);
         mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
+        mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
+        //Load Pickers
+        mImagePicker = (Button) mView.findViewById(R.id.image_picker);
+        mVideoPicker = (Button) mView.findViewById(R.id.video_picker);
+        mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
+        mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
 
+        // Initialize State
         if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(SharedRuntimeContent.untitledProjectNameRegex))) {
             mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
             mProjectName.setText(SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());
             mProjectName.setHint(SharedRuntimeContent.getProjectName());
         }
+
+        // Add Listeners
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
-
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
-
-        mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
-
-
-        //Load Pickers
-
         mProjectName.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
-        mImagePicker = (Button) mView.findViewById(R.id.image_picker);
-        mVideoPicker = (Button) mView.findViewById(R.id.video_picker);
-        mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
-        mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
-
+        // Camera Image Picker
         mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
         mCameraPicker.setOnClickListener(mCameraImagePicker);
-
         //Image Picker
         ImagePickerClick imagePickerClickListener = new ImagePickerClick(this);
         mImagePicker.setOnClickListener(imagePickerClickListener);
-
         //Video Picker
         VideoPickerClick videoPickerClickListener = new VideoPickerClick(this);
         mVideoPicker.setOnClickListener(videoPickerClickListener);
-
         //Question Picker
         QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getActivity(), CreateVideos.this);
         mQuestionPicker.setOnClickListener(questionPickerClickListener);
+
         //set SlideLayout
         mSlideFragment = SlideFragment.newInstance(3);
         getFragmentManager().beginTransaction().add(R.id.create_videos_root, mSlideFragment).commit();
@@ -201,6 +183,14 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             SharedRuntimeContent.previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
             SharedRuntimeContent.calculatePreviewFabVisibility();
         } else {}
+    }
+
+    public void refreshView(FragmentManager fragmentManager) {
+        fragmentManager
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
     }
 
     public void setUpNewProject() {

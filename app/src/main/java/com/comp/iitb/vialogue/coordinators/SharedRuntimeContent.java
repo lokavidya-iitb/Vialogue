@@ -36,34 +36,26 @@ import tcking.github.com.giraffeplayer.PlayerModel;
 
 public class SharedRuntimeContent {
 
-    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
-
-    public static List<String> videoPathList = new ArrayList<>();
-    public static List<String> imagePathList = new ArrayList<>();
-    public static List<Bitmap> imageThumbnails = new ArrayList<>();
-    public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    // Constants
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
-    public static String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
-//    public static final String IMAGE_FOLDER_NAME = "images";
-//    public static final String VIDEO_FOLDER_NAME = "videos";
-//    public static final String AUDIO_FOLDER_NAME = "audio";
-//    public static final String VIALOGUE_FOLDER_NAME = "vialogue";
-//    public static final String TEMP_FOLDER = "temp_folder";
-//    public static final String TEMP_IMAGE_NAME = "image_temp";
-    /**
-     * An array of sample (dummy) items.
-     */
-//    public static File projectFolder;
+    public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
+    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
+
+    // Variables
     public static SlideRecyclerViewAdapter projectAdapter;
     public static MainActivity mainActivity;
     public static FloatingActionButton previewFab;
     // TODO change implementation for isSelected
     public static boolean isSelected = false;
     public static int selectedPosition;
+    public static List<QuestionAnswer> questionsList = new ArrayList<>();
 
+    /*
+     * All the Project related methods
+     */
     public static Project project = new Project();
 
     public static void addSlide(Slide slide) {
@@ -98,30 +90,6 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemRemoved(position);
         updateAdapterView(position);
         calculatePreviewFabVisibility();
-    }
-
-    public static void calculatePreviewFabVisibility() {
-
-        if (previewFab == null) {
-            return;
-        }
-
-        if (getNumberOfSlides() == 0) {
-        } else {
-            for (Slide s : project.getSlides().getAll()) {
-                if (s.getSlideType() == Slide.SlideType.VIDEO) {
-                    previewFab.show();
-                    return;
-                } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
-                    if (((Image) s.getResource()).hasAudio()) {
-                        previewFab.show();
-                        return;
-                    }
-                }
-            }
-        }
-
-        previewFab.hide();
     }
 
     public static void setProjectName(String name) {
@@ -230,6 +198,49 @@ public class SharedRuntimeContent {
         return project.getSlide(position);
     }
 
+    public static int getSlidePosition(Slide item) {
+        return project.getSlides().getObjectPosition(item);
+    }
+
+    public static void createEmptyProject(Context context) {
+        pinProjectInBackground(context);
+        project = new Project();
+        updateAdapterView();
+    }
+
+    /*
+     * Preview FAB related methods
+     */
+    public static void calculatePreviewFabVisibility() {
+
+        if (previewFab == null) {
+            return;
+        }
+
+        if (getNumberOfSlides() == 0) {
+        } else {
+            for (Slide s : project.getSlides().getAll()) {
+                if (s.getSlideType() == Slide.SlideType.VIDEO) {
+                    previewFab.show();
+                    return;
+                } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
+                    if (((Image) s.getResource()).hasAudio()) {
+                        previewFab.show();
+                        return;
+                    }
+                }
+            }
+        }
+        previewFab.hide();
+    }
+
+    public static void hidePreviewFab() {
+        previewFab.hide();
+    }
+
+    /*
+     * ProjectAdapter related methods
+     */
     public static void updateAdapterView(int position) {
         if(projectAdapter != null) {
             projectAdapter.notifyItemChanged(position);
@@ -246,61 +257,9 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemChanged(getSlidePosition(slide));
     }
 
-    // TODO change
-//    public List<PlayerModel> getPreviewList() {
-//        ArrayList<PlayerModel> list = new ArrayList<>();
-//        for (DummyContent.Slide item : ITEMS) {
-//            PlayerModel model = convertSlideToPlayerModel(item);
-//            if (model != null) {
-//                list.add(model);
-//            }
-//        }
-//        return list;
-//    }
-
-    public static List<PlayerModel> getPreviewList() {
-        ArrayList<PlayerModel> list = new ArrayList<>();
-        if (project.getSlides().getAll() != null) {
-            for (Slide slide : project.getSlides().getAll()) {
-                PlayerModel playerModel = slide.toPlayerModel();
-                if (playerModel != null) {
-                    list.add(playerModel);
-                }
-            }
-        }
-        return list;
-    }
-
-    // TODO change
-//    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide) {
-//        PlayerModel model = new PlayerModel(slide.path, slide.getAudioPath());
-//        if (slide.slideType == DummyContent.SlideType.IMAGE)
-//            return null;
-//        switch (slide.slideType.toString()) {
-//            case "IA"://Case Image and Audio
-//                model.setType(PlayerModel.MediaType.IMAGE_AUDIO);
-//                break;
-//            case "V"://Case is Video
-//                model.setType(PlayerModel.MediaType.VIDEO);
-//                break;
-//        }
-//        return model;
-//    }
-
-    // TODO change
-    public static int getSlidePosition(Slide item) {
-        return project.getSlides().getObjectPosition(item);
-    }
-
-    public static void hidePreviewFab() {
-        previewFab.hide();
-    }
-
-    public static void createEmptyProject(Context context) {
-        pinProjectInBackground(context);
-        project = new Project();
-        updateAdapterView();
-    }
+    /*
+     * Validation related methods
+     */
     public static InputFilter filter = new InputFilter() {
 
         @Override
@@ -318,6 +277,22 @@ public class SharedRuntimeContent {
         return true;
     }
 
+    /*
+     * UploadVideoActivity related methods
+     */
+    public static List<PlayerModel> getPreviewList() {
+        ArrayList<PlayerModel> list = new ArrayList<>();
+        if (project.getSlides().getAll() != null) {
+            for (Slide slide : project.getSlides().getAll()) {
+                PlayerModel playerModel = slide.toPlayerModel();
+                if (playerModel != null) {
+                    list.add(playerModel);
+                }
+            }
+        }
+        return list;
+    }
+
     public static List<QuestionAnswer> getQuestions() {
         int i=0;
         ArrayList<QuestionAnswer> list = new ArrayList<>();
@@ -331,21 +306,16 @@ public class SharedRuntimeContent {
                     optionsArray = question.getOptions().toArray(optionsArray);
                     questionAnswer.setOptions(optionsArray);
                     positionThatSaves = getSlidePosition(slide);
-                    Log.d("--position",""+positionThatSaves);
                     questionAnswer.setTime(getDurationThatSavesQuestion(positionThatSaves));
                     questionAnswer.setQuestion(question.getQuestionString());
                     list.add(questionAnswer);
                 }
             }
         }
-        Log.d("---size while returning",""+list.size());
         return list;
     }
 
-
-    public static int getDurationThatSavesQuestion(int position)
-    {
-        Log.d("---whats the position",""+ position);
+    public static int getDurationThatSavesQuestion(int position) {
         int totalTime=0;
         List<Slide> slides = getAllSlides();
         for(int stub=0;stub<position;stub++)
@@ -363,7 +333,6 @@ public class SharedRuntimeContent {
             } else  {
             }
         }
-        Log.d("---time for a question",""+ totalTime);
         return totalTime;
     }
 

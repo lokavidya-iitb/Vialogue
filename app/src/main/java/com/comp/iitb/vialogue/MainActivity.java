@@ -1,6 +1,8 @@
 package com.comp.iitb.vialogue;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -72,12 +75,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Storage mStorage;
     private static Menu mMenu;
     private FloatingActionButton mPreviewFab;
+    private static FragmentManager mSupportFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        mSupportFragmentManager = getSupportFragmentManager();
+
         Storage.setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -86,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 MainActivity.this));
 
         mViewPager.setOffscreenPageLimit(1);
-
 
         //mViewPager.setOffscreenPageLimit(0);
 
@@ -101,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             public void onClick(View view) {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        Log.d("---CreateWorking?","Yeah");
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
                         startActivity(intent);
@@ -113,15 +117,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                         break;
 
                 }
-                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
-                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
-                bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
-
-                intent.putExtras(bundle);
-                startActivity(intent);*/
             }
         });
 
@@ -223,24 +218,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 Intent intent = new Intent(getApplicationContext(), SignIn.class);
                 startActivity(intent);
             }
-
-           /* Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-                            try {
-                                help.saveToSharedPref(Master.personName,"");
-                                help.saveToSharedPref(Master.email,"");
-                                help.saveToSharedPref(Master.personPhotoUrl,"");
-                                help.saveToSharedPref(Master.signedOrNot,true);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Toast.makeText(MainActivity.this,
-                                    "Signed Out", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
 
             return true;
         }
@@ -362,5 +339,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    public static FragmentManager getMainActivitySupportFragmentManager() {
+        return mSupportFragmentManager;
     }
 }

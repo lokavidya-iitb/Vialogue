@@ -175,6 +175,16 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <com.wang.avi.AVLoadingIndicatorView
+                    android:id="@+id/loading_animation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    style="@style/AVLoadingIndicatorView"
+                    android:visibility="visible"
+                    app:indicatorName="BallTrianglePathIndicator"
+                    app:indicatorColor="@color/colorAccent" />
+
             </LinearLayout>
         </LinearLayout>
 
