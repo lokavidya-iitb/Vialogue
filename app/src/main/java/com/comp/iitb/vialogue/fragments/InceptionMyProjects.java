@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -27,6 +28,7 @@ import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -328,4 +330,12 @@ public class InceptionMyProjects extends Fragment {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
+
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
+//    }
+
 }

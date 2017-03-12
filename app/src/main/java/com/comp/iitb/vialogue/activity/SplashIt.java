@@ -61,9 +61,6 @@ public class SplashIt extends AppCompatActivity {
 
         startActivity(intent);
         finish();
-
-//        SingleChoiceQuestionDialog questionDialog = new SingleChoiceQuestionDialog(SplashIt.this, new QuestionDoneListener(SplashIt.this, SplashIt.this));
-//        questionDialog.show();
     }
 
 }

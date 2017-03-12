@@ -26,19 +26,13 @@ public class Image extends CanSaveAudioResource {
     public Image() {}
 
     private static final String IMAGE_RESOURCE_NAME = "image";
-    private Context mContext;
 
     public Image(Context context) {
         this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, context)));
-        mContext = context;
     }
 
     public Image(Uri uri) {
         super(uri);
-    }
-
-    public void addAudio() {
-        addAudio(new Audio(mContext));
     }
 
 }

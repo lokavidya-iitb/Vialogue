@@ -46,7 +46,6 @@ public class SharedRuntimeContent {
 
     // Variables
     public static SlideRecyclerViewAdapter projectAdapter;
-    public static MainActivity mainActivity;
     public static FloatingActionButton previewFab;
     // TODO change implementation for isSelected
     public static boolean isSelected = false;

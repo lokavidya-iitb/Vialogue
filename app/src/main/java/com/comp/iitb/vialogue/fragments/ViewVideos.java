@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.CategoriesExpandableAdapter;
 import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
@@ -26,6 +27,7 @@ import com.comp.iitb.vialogue.models.CategoryType;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.leakcanary.RefWatcher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -331,7 +333,13 @@ public class ViewVideos extends Fragment {
     }*/
 
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("ViewVideos", "onDestroyView : called");
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
 
 
 }

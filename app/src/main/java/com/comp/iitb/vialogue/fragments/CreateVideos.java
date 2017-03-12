@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -53,6 +54,7 @@ import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -342,5 +344,13 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     @Override
     public void conditionFailed(EditText sender) {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("CreateVideos", "onDestroyView : called");
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 }

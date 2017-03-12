@@ -71,40 +71,35 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
-    public ViewPager mViewPager;
     private Storage mStorage;
-    private static Menu mMenu;
+    private Menu mMenu;
     private FloatingActionButton mPreviewFab;
-    private static FragmentManager mSupportFragmentManager;
+//    private FragmentManager mSupportFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSupportFragmentManager = getSupportFragmentManager();
-
-        Storage.setupLokavidyaLegacy();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
-                MainActivity.this));
+        final ViewPager viewPager = ((ViewPager) findViewById(R.id.viewpager));
+        viewPager.
+            setAdapter(new FragmentPageAdapter(
+                    getSupportFragmentManager(),
+            MainActivity.this));
 
-        mViewPager.setOffscreenPageLimit(1);
-
-        //mViewPager.setOffscreenPageLimit(0);
-
+        viewPager.setOffscreenPageLimit(3);
+//
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
-        mTabLayout.setupWithViewPager(mViewPager);
-        SharedRuntimeContent.mainActivity = this;
+        mTabLayout.setupWithViewPager(viewPager);
         mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (mViewPager.getCurrentItem()) {
+                switch (viewPager.getCurrentItem()) {
                     case 1:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
@@ -113,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     case 3:
                         SharedRuntimeContent.createEmptyProject(MainActivity.this);
                         SharedRuntimeContent.questionsList.clear();
-                        mViewPager.setCurrentItem(1, true);
+                        viewPager.setCurrentItem(1, true);
                         break;
 
                 }
@@ -180,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         return true;
     }
 
-    public static void refreshSignInOutOptions() {
+    public void refreshSignInOutOptions() {
         try {
             if(ParseUser.getCurrentUser() == null) {
                 // signed out
@@ -197,11 +192,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        final MenuItem item_ = item;
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             if(ParseUser.getCurrentUser() != null) {
                 // already Signed in, Sign out
                 SignIn.signOut(
@@ -341,7 +334,4 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-    public static FragmentManager getMainActivitySupportFragmentManager() {
-        return mSupportFragmentManager;
-    }
 }
