@@ -103,7 +103,6 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 {
                     case "AudioRecording":
                         mSlidePosition=bundle.getInt("SlidePosition");
-                        AudioRecordActivity.traitor.finish();
                         break;
                     case "CreateVideos":
                         mSlidePosition=-1;
@@ -172,7 +171,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         mPleaseWait.setVisibility(View.VISIBLE);
         // TODO this leads to the main thread hanging
 //        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
-        new ProcessAsyncAfteCrop(bitmap).execute();
+        new ProcessAsyncAfterCrop(bitmap).execute();
     }
 
 
@@ -225,9 +224,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         }
     }
 
-    private class ProcessAsyncAfteCrop extends AsyncTask<Void, Void, Void> {
+    private class ProcessAsyncAfterCrop extends AsyncTask<Void, Void, Void> {
         Bitmap bitmap;
-        ProcessAsyncAfteCrop(Bitmap bitmap)
+        ProcessAsyncAfterCrop(Bitmap bitmap)
         {
             this.bitmap= bitmap;
         }
