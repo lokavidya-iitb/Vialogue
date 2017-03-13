@@ -35,6 +35,10 @@ public class Slide extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Slide() {}
 
+    public Slide getNewInstance() {
+        return new Slide();
+    }
+
     private static class Fields implements BaseFieldsClass {
         public static final String
 
@@ -225,6 +229,18 @@ public class Slide extends BaseParseClass {
             // TODO add implementation
         }
         return playerModel;
+    }
+
+    public void setSlideType(SlideType slideType) {
+        mSlideType = slideType;
+    }
+
+    @Override
+    public Slide deepCopy() throws Exception {
+        Slide copiedSlide = (Slide) super.deepCopy();
+        copiedSlide.setThumbnail(getThumbnail());
+        copiedSlide.setSlideType(getSlideType());
+        return copiedSlide;
     }
 
 

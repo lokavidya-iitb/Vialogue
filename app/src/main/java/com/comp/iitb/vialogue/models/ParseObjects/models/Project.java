@@ -28,6 +28,10 @@ public class Project extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Project() {}
 
+    public Project getNewInstance() {
+        return new Project();
+    }
+
     public static final class Fields implements BaseFieldsClass {
         public static String
 

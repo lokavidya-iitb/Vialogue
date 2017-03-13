@@ -57,11 +57,12 @@ public class SharedRuntimeContent {
      */
     public static Project project = new Project();
 
-    public static void addSlide(Slide slide) {
+    public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
+//        project.addSlide(slide.deepCopy());
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
-        previewFab.show();
         calculatePreviewFabVisibility();
+        return true;
     }
 
     public static void changeSlideAtPosition(int position, Slide slide) {
@@ -70,7 +71,12 @@ public class SharedRuntimeContent {
     }
 
     public static void addSlideAtPosition(int position, Slide slide) {
-        addSlide(slide);
+        try {
+            addSlide(slide);
+        } catch (Exception e) {
+            Log.e("addSlideAtPosition", "failed");
+            e.printStackTrace();
+        }
         changeSlidePosition(getNumberOfSlides() - 1, position);
     }
 

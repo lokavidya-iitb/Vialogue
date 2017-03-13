@@ -25,6 +25,10 @@ public class Image extends CanSaveAudioResource {
     // INSTANTIATING THE OBJECT
     public Image() {}
 
+    public Image getNewInstance() {
+        return new Image();
+    }
+
     private static final String IMAGE_RESOURCE_NAME = "image";
 
     public Image(Context context) {

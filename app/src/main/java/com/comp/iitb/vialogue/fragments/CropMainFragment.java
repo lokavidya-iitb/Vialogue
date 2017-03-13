@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -38,6 +39,7 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.cropper.CropImage;
 import com.comp.iitb.vialogue.library.cropper.CropImageView;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Stack;
 
@@ -192,5 +194,13 @@ public final class CropMainFragment extends Fragment
         if (mCroppedImage != null)
             bitmap = mCroppedImage;
         return bitmap;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("Home", "onDestroyView : called");
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 }

@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 import android.app.Application;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -25,6 +26,10 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
     public ParseObjectsCollection() {}
+
+    public ParseObjectsCollection getNewInstance() {
+        return new ParseObjectsCollection<T>();
+    }
 
     public static final class Fields implements BaseFieldsClass {
         public static final String
@@ -181,5 +186,16 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
             object.saveParseObjectEventually();
         }
         saveEventually();
+    }
+
+    @Override
+    public ParseObjectsCollection deepCopy() throws Exception {
+        ParseObjectsCollection<T> copiedCollection = getNewInstance();
+
+        for(T obj: getList_()) {
+            copiedCollection.add(Fields.ELEMENTS_FIELD, obj);
+        }
+
+        return copiedCollection;
     }
 }

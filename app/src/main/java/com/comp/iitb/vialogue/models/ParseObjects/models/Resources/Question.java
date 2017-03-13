@@ -21,6 +21,10 @@ public class Question extends BaseResourceClass {
     // INSTANTIATING THE OBJECT
     public Question(){}
 
+    public Question getNewInstance() {
+        return new Question();
+    }
+
     public static final class Fields implements BaseFieldsClass {
         public static final String
 
@@ -162,6 +166,10 @@ public class Question extends BaseResourceClass {
 
         public QuestionType(String name) {
             setName(name);
+        }
+
+        public QuestionType getNewInstance() {
+            return new QuestionType();
         }
 
         public String getName() {

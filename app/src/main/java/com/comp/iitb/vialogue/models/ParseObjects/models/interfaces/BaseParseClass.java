@@ -137,6 +137,28 @@ public abstract class BaseParseClass extends ParseObject {
         pinInBackground();
     }
 
+    public BaseParseClass deepCopy() throws Exception {
+        BaseParseClass copiedParseObject = getNewInstance();
+        for(String key : this.keySet()) {
+            if(get(key) instanceof BaseParseClass) {
+                if(get(key) instanceof  ParseObjectsCollection) {
+                    // Collection
+                    copiedParseObject.put(key, ((ParseObjectsCollection) get(key)).deepCopy());
+                } else if(get(key) instanceof BaseResourceClass) {
+                    // Resource
+                    copiedParseObject.put(key, ((BaseResourceClass) get(key)).deepCopy());
+                } else {
+                    // ParseObject
+                    copiedParseObject.put(key, ((BaseParseClass) get(key)).deepCopy());
+                }
+            } else {
+                // not a ParseObject
+                copiedParseObject.put(key, get(key));
+            }
+        }
+        return copiedParseObject;
+    }
+
     public void saveParseObject() throws ParseException {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
@@ -186,5 +208,7 @@ public abstract class BaseParseClass extends ParseObject {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    public abstract BaseParseClass getNewInstance();
 
 }
