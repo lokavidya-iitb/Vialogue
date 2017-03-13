@@ -47,12 +47,11 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
                 return CreateVideos.newInstance();
             case VIEW_VIDEOS:
                 return /*ViewVideos.newInstance("")*/DummyFragment.newInstance();
-//            case USER_ACCOUNT:
-//                return UserAccount.newInstance();
-//            default :
-//                return null;
+            case USER_ACCOUNT:
+                return UserAccount.newInstance();
+            default :
+                return null;
         }
-        return Home.newInstance();
     }
 
     @Override

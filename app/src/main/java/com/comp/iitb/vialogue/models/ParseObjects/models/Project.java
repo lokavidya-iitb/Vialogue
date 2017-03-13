@@ -146,11 +146,9 @@ public class Project extends BaseParseClass {
             slides =  (ParseObjectsCollection) getParseObject(Fields.SLIDES);
         } catch (Exception e) {}
         if(slides == null) {
-            System.out.println("creating new slides");
             slides = new ParseObjectsCollection<Slide>();
             setSlides(slides);
         } else {
-            System.out.println("using existing slides");
         }
         return slides;
     }

@@ -160,13 +160,9 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
 
     public void fetchChildrenObjects() {
         super.fetchChildrenObjects();
-        System.out.println("fetching : " + getClassName());
-        System.out.println((ArrayList) getList(Fields.ELEMENTS_FIELD));
-        System.out.println(getList_().size());
         for(T object: getList_()) {
             try {
                 object.fetchFromLocalDatastore();
-                System.out.println(object);
                 object.fetchChildrenObjects();
             } catch (ParseException e) {
                 e.printStackTrace();
