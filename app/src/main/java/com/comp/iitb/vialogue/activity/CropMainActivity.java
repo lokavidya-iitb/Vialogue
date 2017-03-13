@@ -240,4 +240,10 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("CropMainActivity", "onDestroy : called");
+    }
 }
