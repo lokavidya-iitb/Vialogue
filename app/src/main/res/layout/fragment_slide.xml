@@ -16,16 +16,28 @@
         android:scaleType="fitXY"
         android:textAppearance="?attr/textAppearanceListItem" />
 
-        <ImageView
-            android:id="@+id/enable_edit"
-            android:layout_width="26dp"
-            android:layout_height="20dp"
-            android:background="@color/colorPrimary"
-            android:padding="3dp"
-            android:layout_alignRight="@id/thumbnail"
-            android:layout_alignEnd="@id/thumbnail"
-            android:layout_alignBottom="@id/thumbnail"
-            app:srcCompat="@drawable/ic_mode_edit_24dp" />
+    <ImageView
+        android:id="@+id/enable_edit"
+        android:layout_width="26dp"
+        android:layout_height="20dp"
+        android:background="@color/colorPrimary"
+        android:padding="3dp"
+        android:layout_alignRight="@id/thumbnail"
+        android:layout_alignEnd="@id/thumbnail"
+        android:layout_alignBottom="@id/thumbnail"
+        app:srcCompat="@drawable/ic_mode_edit_24dp" />
+
+    <ImageView
+        android:id="@+id/video_play_icon"
+        android:layout_width="26dp"
+        android:layout_height="20dp"
+        android:background="@color/colorPrimary"
+        android:padding="3dp"
+        android:layout_alignRight="@id/thumbnail"
+        android:layout_alignEnd="@id/thumbnail"
+        android:layout_alignBottom="@id/thumbnail"
+        app:srcCompat="@drawable/ic_play_arrow_white_24dp"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/play_video"
