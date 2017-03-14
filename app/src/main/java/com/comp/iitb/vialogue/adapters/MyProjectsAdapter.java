@@ -189,8 +189,8 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                     public Void doInBackground(Void... params) {
                         SharedRuntimeContent.questionsList.clear();
                         Project project = mProjectViewsList.get(position).getProject();
-                        SharedRuntimeContent.project = project;
-                        SharedRuntimeContent.setProjectName(project.getName());
+                        SharedRuntimeContent.loadNewProject(mContext, project);
+//                        SharedRuntimeContent.setProjectName(project.getName());
 //                        SharedRuntimeContent.loadNewProject(project);
 //                        SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
 //                        SharedRuntimeContent.updateAdapterView();

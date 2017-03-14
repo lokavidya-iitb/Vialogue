@@ -55,6 +55,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.leakcanary.RefWatcher;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,6 +96,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     private LinearLayout mRoot;
     private Fragment mFragment;
     private Project mProject;
+    private AVLoadingIndicatorView mLoadingAnimation;
 
     private CameraImagePicker mCameraImagePicker;
 
@@ -134,6 +136,9 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
+        mLoadingAnimation = (AVLoadingIndicatorView) mView.findViewById(R.id.loading_animation);
+        SharedRuntimeContent.loadingAnimation = mLoadingAnimation;
+
         //Load Pickers
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
         mVideoPicker = (Button) mView.findViewById(R.id.video_picker);

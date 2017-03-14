@@ -181,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     style="@style/AVLoadingIndicatorView"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:indicatorName="BallTrianglePathIndicator"
                     app:indicatorColor="@color/colorAccent" />
 

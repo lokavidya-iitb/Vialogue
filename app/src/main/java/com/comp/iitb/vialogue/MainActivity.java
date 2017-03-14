@@ -32,6 +32,7 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CreateVideos;
@@ -316,12 +317,17 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onStop() {
         super.onStop();
-        SharedRuntimeContent.pinProjectInBackground(MainActivity.this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SharedRuntimeContent.pinProjectInBackground(MainActivity.this, new OnProjectSaved() {
+            @Override
+            public void done(boolean isSaved) {
+                Toast.makeText(getApplicationContext(), "Project saved", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

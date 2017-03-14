@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -54,11 +56,16 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
     public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    public static AVLoadingIndicatorView loadingAnimation;
 
     /*
      * All the Project related methods
      */
-    public static Project project = new Project();
+    private static Project project = new Project();
+
+    public static Project getProject() {
+        return project;
+    }
 
     public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
@@ -127,22 +134,47 @@ public class SharedRuntimeContent {
         }
     }
 
-    public static void pinProjectInBackground(final Context context) {
+    public static void pinProjectInBackground(final Context context, final OnProjectSaved onProjectSaved) {
+        (new AsyncTask<Void, Void, Void>() {
 
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {}
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(context);
+                return null;
+            }
 
-//        if (getNumberOfSlides() != 0) {
-//            try {
-//                project.pinParseObjectInBackground();
-//                System.out.println("project pinned");
-//            } catch (ParseException e) {
-//                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-//                e.printStackTrace();
-//            }
-//        }
+            @Override
+            public void onPostExecute(Void result) {
+                onProjectSaved.done(true);
+            }
+        }).execute();
+    }
+
+    public static void createEmptyProject(Context context) {
+        loadNewProject(context, new Project());
+    }
+
+    public static void loadNewProject(final Context context, final Project newProject) {
+        (new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            public void onPreExecute() {
+//                loadingAnimation.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(context);
+                project = newProject;
+                return null;
+            }
+
+            @Override
+            public void onPostExecute(Void result) {
+                updateAdapterView();
+//                loadingAnimation.setVisibility(View.GONE);
+            }
+        }).execute();
     }
 
     public static ArrayList<Project> getLocalProjects() {
@@ -198,26 +230,6 @@ public class SharedRuntimeContent {
         return project.getSlides().getObjectPosition(item);
     }
 
-    public static void createEmptyProject(Context context) {
-//        new AsyncTask<Void, Void, Void>() {
-//
-//            Project project;
-//
-//            @Override
-//            public void onPreExecute() {
-//                project = SharedRuntimeContent.project;
-//            }
-//
-//            @Override
-//            public Void doInBackground(Void... params) {
-//
-//            }
-//        }
-        pinProjectInBackground(context);
-        project = new Project();
-        updateAdapterView();
-    }
-
     /*
      * Preview FAB related methods
      */
@@ -265,23 +277,6 @@ public class SharedRuntimeContent {
 
     public static void onSlideChanged(Slide slide) {
         projectAdapter.notifyItemChanged(getSlidePosition(slide));
-    }
-
-    public static void loadNewProject(Project project) {
-//        (new AsyncTask<Void, Void, Void>() {
-//
-//            @Override
-//            public void onPreExecute() {}
-//
-//            @Override
-//            public Void doInBackground(Void... params) {
-                updateAdapterView();
-//                return null;
-//            }
-//
-//            @Override
-//            public void onPostExecute(Void result) {}
-//        }).execute();
     }
 
     /*
