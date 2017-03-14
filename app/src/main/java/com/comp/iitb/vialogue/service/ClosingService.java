@@ -23,12 +23,6 @@ public class ClosingService extends Service {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
-    }
-
-    @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
 

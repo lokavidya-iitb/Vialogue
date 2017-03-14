@@ -2,11 +2,13 @@ package com.comp.iitb.vialogue;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
+import com.comp.iitb.vialogue.service.ClosingService;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -43,6 +45,10 @@ public class App extends Application {
         }
         refWatcher = LeakCanary.install(this);
         // Normal app init code...
+
+        // start service that will save the current project
+        // whenever the app is stopped, no matter in what fashion
+        startService(new Intent(getApplicationContext(), ClosingService.class));
 
         // register parse Subclasses
         ParseObject.registerSubclass(Project.class);

@@ -85,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // start service
-        startService(new Intent(MainActivity.this, ClosingService.class));
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = ((ViewPager) findViewById(R.id.viewpager));
