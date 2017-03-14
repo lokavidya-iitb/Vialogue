@@ -46,6 +46,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.comp.iitb.vialogue.service.ClosingService;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // start service
+        startService(new Intent(MainActivity.this, ClosingService.class));
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -322,12 +326,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SharedRuntimeContent.pinProjectInBackground(MainActivity.this, new OnProjectSaved() {
-            @Override
-            public void done(boolean isSaved) {
-                Toast.makeText(getApplicationContext(), "Project saved", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
