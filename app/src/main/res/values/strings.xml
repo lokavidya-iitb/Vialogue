@@ -117,4 +117,5 @@
     <string name="networkConnect">Check your internet connectivity.</string>
     <string name="imagePermissiondenied">Cancelling, required permissions are not granted</string>
     <string name="create_and_share">Create and Share</string>
+    <string name="timer_null_text">"--:--"</string>
 </resources>

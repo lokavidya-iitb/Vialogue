@@ -9,6 +9,7 @@
         android:layout_width="0.1dp"
         android:layout_height="0.1dp"
         android:layout_centerInParent="true"/>
+
     <ImageView
         android:id="@+id/selected_image"
         android:layout_width="match_parent"
@@ -26,22 +27,57 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorAccent"/>
 
-    <app.minimize.com.seek_bar_compat.SeekBarCompat
-        android:id="@+id/audio_seek"
+    <LinearLayout
+        android:id="@+id/seek_bar_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view_center"
-        android:layout_marginTop="12dp"
-        app:thumbColor="@color/colorPrimary"
-        app:progressColor="@color/colorPrimary"
-        android:layout_marginRight="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_toEndOf="@+id/play_button" />
+        android:layout_below="@+id/selected_image"
+        android:orientation="horizontal"
+        android:paddingTop="4dp">
+
+        <ImageButton
+            android:id="@+id/play_button"
+            android:layout_width="0dp"
+            android:layout_weight="0.15"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_play_arrow_black_24dp"
+            android:background="@android:color/transparent"
+            android:paddingLeft="16dp"
+            android:minWidth="0dp"
+            android:tint="@color/colorPrimary"
+            android:layout_below="@+id/selected_image" />
+
+        <app.minimize.com.seek_bar_compat.SeekBarCompat
+            android:id="@+id/audio_seek"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_center"
+            android:layout_marginTop="12dp"
+            app:thumbColor="@color/colorPrimary"
+            app:progressColor="@color/colorPrimary"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="12dp"
+            android:layout_toRightOf="@+id/play_button"
+            android:layout_toEndOf="@+id/play_button" />
+
+        <TextView
+            android:textSize="16sp"
+            android:id="@+id/timer_text_view"
+            android:text="@string/timer_null_text"
+            android:layout_width="0dp"
+            android:layout_weight="0.15"
+            android:layout_height="match_parent"
+            android:paddingRight="4dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:id="@+id/buttons_list"
-        android:layout_below="@id/audio_seek"
+        android:layout_below="@id/seek_bar_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1">
@@ -79,6 +115,7 @@
             android:layout_alignRight="@+id/done_button"
             android:layout_alignEnd="@+id/done_button" />
     </LinearLayout>
+
     <Button
         android:id="@+id/image_picker"
         android:layout_width="match_parent"
@@ -87,6 +124,7 @@
         android:text="@string/image"
         android:theme="@style/AppTheme.white"
         android:layout_marginRight="12dp"
+        android:paddingLeft="24dp"
         android:gravity="left"
         android:textAllCaps="false"
         android:backgroundTint="@color/cardview_light_background"
@@ -94,6 +132,7 @@
         android:layout_alignParentLeft="true"
         android:paddingBottom="@dimen/picker_padding"
         android:textColor="@android:color/white"/>
+
     <Button
         android:id="@+id/camera_image_picker"
         android:layout_width="wrap_content"
@@ -107,16 +146,6 @@
         android:paddingTop="@dimen/picker_padding"
         android:paddingBottom="@dimen/picker_padding"
         android:textColor="@android:color/white"/>
-    <ImageButton
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_play_arrow_black_24dp"
-        android:background="@android:color/transparent"
-        android:paddingLeft="16dp"
-        android:minWidth="0dp"
-        android:tint="@color/colorPrimary"
-        android:layout_below="@+id/selected_image" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/slide_thumbnails_recycler_view"
