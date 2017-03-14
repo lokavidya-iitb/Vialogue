@@ -42,9 +42,9 @@ public class App extends Application {
             return;
         }
         refWatcher = LeakCanary.install(this);
-//      Normal app init code...
+        // Normal app init code...
 
-//      register parse Subclasses
+        // register parse Subclasses
         ParseObject.registerSubclass(Project.class);
         ParseObject.registerSubclass(Slide.class);
         ParseObject.registerSubclass(ParseObjectsCollection.class);

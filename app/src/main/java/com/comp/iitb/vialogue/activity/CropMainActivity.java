@@ -158,16 +158,12 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     public void done() {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
-        // TODO this leads to the main thread hanging
-//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
 
     public void done(Bitmap bitmap) {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
-        // TODO this leads to the main thread hanging
-//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsyncAfterCrop(bitmap).execute();
     }
 
@@ -219,11 +215,13 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
     private class ProcessAsync extends AsyncTask<Void, Void, Slide> {
 
+        private Bitmap mPhoto;
+
         @Override
         protected Slide doInBackground(Void... params) {
 
-            Bitmap photo = mCropImageCoordinator.getCroppedImage();
-            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
+            mPhoto = mCropImageCoordinator.getCroppedImage();
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(mPhoto));
 
             Slide slide = new Slide();
 
@@ -247,21 +245,26 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 }
             }
             mPleaseWait.setVisibility(View.GONE);
+
+            // clearing bitmap to release memory
+            mPhoto.recycle();
+            mPhoto = null;
+
             finish();
         }
     }
 
     private class ProcessAsyncAfterCrop extends AsyncTask<Void, Void, Slide> {
-        Bitmap bitmap;
+        private Bitmap mBitmap;
 
         ProcessAsyncAfterCrop(Bitmap bitmap) {
-            this.bitmap = bitmap;
+            this.mBitmap = bitmap;
         }
 
         @Override
         protected Slide doInBackground(Void... params) {
 
-            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(bitmap));
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(mBitmap));
             Slide slide = new Slide();
             try {
                 Image image = new Image(getBaseContext());
@@ -283,7 +286,20 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 }
             }
             mPleaseWait.setVisibility(View.GONE);
+
+            // clearing bitmap to release memory
+            mBitmap.recycle();
+            mBitmap = null;
+
             finish();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // calling garbage collector
+        Runtime.getRuntime().gc();
     }
 }

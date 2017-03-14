@@ -134,15 +134,15 @@ public class SharedRuntimeContent {
             setProjectName(newProjectName);
         } else {}
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObjectInBackground();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        }
+//        if (getNumberOfSlides() != 0) {
+//            try {
+//                project.pinParseObjectInBackground();
+//                System.out.println("project pinned");
+//            } catch (ParseException e) {
+//                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public static ArrayList<Project> getLocalProjects() {

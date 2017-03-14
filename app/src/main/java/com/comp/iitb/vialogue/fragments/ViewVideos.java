@@ -337,8 +337,8 @@ public class ViewVideos extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("ViewVideos", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
 
