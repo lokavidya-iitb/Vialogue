@@ -16,6 +16,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResource
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,6 +87,15 @@ public class Slide extends BaseParseClass {
 
     public Bitmap getThumbnail() {
         return mThumbnail;
+    }
+
+    public String getThumbnailUrl(Context context) {
+        if(getSlideType() == SlideType.IMAGE || getSlideType() == SlideType.VIDEO) {
+            return getResource().getResourceFile().getAbsolutePath();
+        } else if(getSlideType() == SlideType.QUESTION){
+            return new File(Question.getQuestionThumbnailUri(context).getPath()).getAbsolutePath();
+        }
+        return null;
     }
 
     public void setThumbnail(Context context, Storage storage) {
@@ -238,10 +248,8 @@ public class Slide extends BaseParseClass {
     @Override
     public Slide deepCopy() throws Exception {
         Slide copiedSlide = (Slide) super.deepCopy();
-        copiedSlide.setThumbnail(getThumbnail());
         copiedSlide.setSlideType(getSlideType());
         return copiedSlide;
     }
-
 
 }

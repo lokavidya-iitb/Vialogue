@@ -82,11 +82,12 @@ public class InceptionMyProjects extends Fragment {
         // Initialize UI Components
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
-        /*Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        toolbar.setVisibility(View.GONE);*/
-         //initCollapsingToolbar();
+
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
+//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        toolbar.setVisibility(View.GONE);
+//        initCollapsingToolbar();
 
         projectList = new ArrayList<>();
         adapter = new MyProjectsAdapter(getContext());

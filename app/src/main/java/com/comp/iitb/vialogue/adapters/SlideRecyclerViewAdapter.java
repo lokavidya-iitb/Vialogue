@@ -1,12 +1,14 @@
 package com.comp.iitb.vialogue.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -24,9 +26,11 @@ import java.util.List;
 public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecyclerViewAdapter.ViewHolder> {
 
     private final OnListFragmentInteractionListener mListener;
+    private Context mContext;
 
-    public SlideRecyclerViewAdapter(OnListFragmentInteractionListener listener) {
+    public SlideRecyclerViewAdapter(Context context, OnListFragmentInteractionListener listener) {
         mListener = listener;
+        mContext = context;
     }
 
     @Override
@@ -38,25 +42,38 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = SharedRuntimeContent.getSlideAt(position);
-
-        if(holder.mItem.getSlideType() == Slide.SlideType.IMAGE) {
+//        holder.mItem = SharedRuntimeContent.getSlideAt(position);
+        final Slide slide = SharedRuntimeContent.getSlideAt(position);
+        holder.mSlidePosition = position;
+        if(slide.getSlideType() == Slide.SlideType.IMAGE) {
             // IMAGE
-            holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
+            Glide
+                    .with(mContext)
+                    .load(slide.getResource().getResourceFile())
+                    .centerCrop()
+                    .into(holder.mThumbnail);
             if (SharedRuntimeContent.isSelected) {
                 holder.mAudioLayer.setVisibility(View.GONE);
-            } else if(((Image) holder.mItem.getResource()).hasAudio()) {
+            } else if(((Image) slide.getResource()).hasAudio()) {
                 holder.mAudioLayer.setVisibility(View.GONE);
             } else {
                 holder.mAudioLayer.setVisibility(View.VISIBLE);
             }
-        } else if(holder.mItem.getSlideType() == Slide.SlideType.VIDEO) {
+        } else if(slide.getSlideType() == Slide.SlideType.VIDEO) {
             // VIDEO
-            holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
+            Glide
+                    .with(mContext)
+                    .load(slide.getResource().getResourceFile())
+                    .centerCrop()
+                    .into(holder.mThumbnail);
             holder.mAudioLayer.setVisibility(View.GONE);
-        } else if(holder.mItem.getSlideType() == Slide.SlideType.QUESTION) {
+        } else if(slide.getSlideType() == Slide.SlideType.QUESTION) {
             // QUESTION
-            holder.mThumbnail.setImageBitmap(holder.mItem.getThumbnail());
+            Glide
+                    .with(mContext)
+                    .load(R.drawable.ic_question)
+                    .centerCrop()
+                    .into(holder.mThumbnail);
             holder.mAudioLayer.setVisibility(View.GONE);
         }
 
@@ -72,7 +89,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(slide);
                 }
             }
         });
@@ -89,7 +106,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         public final View mAudioLayer;
         public final View mVideoLayer;
         public final View mUnselectedLayer;
-        public Slide mItem;
+        public int mSlidePosition;
 
         public ViewHolder(View view) {
             super(view);
@@ -108,7 +125,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             // TODO change this
             DeleteActionMode actionMode = new DeleteActionMode(
                     activity,
-                    SharedRuntimeContent.getSlidePosition(mItem),
+                    mSlidePosition,
                     SharedRuntimeContent.projectAdapter);
             activity.startActionMode(actionMode);
             //SharedRuntimeContent.mainActivity.onContextDeleteMenuRequired(3);

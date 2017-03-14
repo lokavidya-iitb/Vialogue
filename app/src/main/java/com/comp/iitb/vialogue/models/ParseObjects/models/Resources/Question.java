@@ -1,5 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.Resources;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
+
+import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
@@ -79,6 +86,10 @@ public class Question extends BaseResourceClass {
         setSolution(solution);
         setHints(hints);
         setIsCompulsory(isCompulsory);
+    }
+
+    public static Uri getQuestionThumbnailUri(Context context) {
+        return Storage.resourceToUri(context, R.drawable.ic_question);
     }
 
     public Question(

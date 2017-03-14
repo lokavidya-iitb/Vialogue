@@ -52,9 +52,8 @@ public class Home extends Fragment {
     private PagerContainer mPagerContainer;
     private OnFragmentInteractionListener mListener;
 
-    public Home() {
-        // Required empty public constructor
-    }
+    // Required empty public constructor
+    public Home() {}
 
     /**
      * Use this factory method to create a new instance of

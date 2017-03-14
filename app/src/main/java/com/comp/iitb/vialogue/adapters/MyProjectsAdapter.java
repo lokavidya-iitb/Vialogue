@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -166,7 +167,11 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         holder.title.setText(projectView.getProjectName());
 
         if(projectView.mThumbnailUrl == null) {
-            // TODO load default image using glide
+            Glide
+                .with(mContext)
+                .load(R.drawable.app_logo)
+                .centerCrop()
+                .into(holder.thumbnail);
         } else {
             Glide
                 .with(mContext)
@@ -179,13 +184,27 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public void onClick(View view) {
                 // TODO this is taking tooooo much time, make it makkhan
-                Project project = mProjectViewsList.get(position).getProject();
-                SharedRuntimeContent.questionsList.clear();
-                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
-                SharedRuntimeContent.updateAdapterView();
-                SharedRuntimeContent.setProjectName(project.getName());
-                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
-                viewpager.setCurrentItem(1,true);
+                (new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        SharedRuntimeContent.questionsList.clear();
+                        Project project = mProjectViewsList.get(position).getProject();
+                        SharedRuntimeContent.project = project;
+                        SharedRuntimeContent.setProjectName(project.getName());
+//                        SharedRuntimeContent.loadNewProject(project);
+//                        SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+//                        SharedRuntimeContent.updateAdapterView();
+//                        SharedRuntimeContent.setProjectName(project.getName());
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        SharedRuntimeContent.updateAdapterView();
+                        viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+                        viewpager.setCurrentItem(1,true);
+                    }
+                }).execute();
             }
         });
 
@@ -194,7 +213,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public boolean onLongClick(View view) {
                 ((Activity) mContext).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
-
                 return false;
             }
         });

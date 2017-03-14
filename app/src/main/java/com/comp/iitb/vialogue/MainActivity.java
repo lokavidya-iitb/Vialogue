@@ -34,6 +34,7 @@ import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Storage mStorage;
     private Menu mMenu;
     private FloatingActionButton mPreviewFab;
+    private ViewPager mViewPager;
 //    private FragmentManager mSupportFragmentManager;
 
     @Override
@@ -83,23 +85,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        final ViewPager viewPager = ((ViewPager) findViewById(R.id.viewpager));
-        viewPager.
-            setAdapter(new FragmentPageAdapter(
-                    getSupportFragmentManager(),
-            MainActivity.this));
+        mViewPager = ((ViewPager) findViewById(R.id.viewpager));
+        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
 
-        viewPager.setOffscreenPageLimit(3);
-//
+        mViewPager.setOffscreenPageLimit(3);
+
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
-        mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
         mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (viewPager.getCurrentItem()) {
+                switch (mViewPager.getCurrentItem()) {
                     case 1:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
@@ -108,9 +107,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     case 3:
                         SharedRuntimeContent.createEmptyProject(MainActivity.this);
                         SharedRuntimeContent.questionsList.clear();
-                        viewPager.setCurrentItem(1, true);
+                        mViewPager.setCurrentItem(1, true);
                         break;
-
                 }
             }
         });

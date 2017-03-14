@@ -72,7 +72,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
-import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.project;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,8 +94,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
     private Fragment mFragment;
-
-
+    private Project mProject;
 
     private CameraImagePicker mCameraImagePicker;
 
@@ -124,6 +122,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        System.out.println("onCreateView : called");
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_create_videos, container, false);
 
@@ -187,13 +186,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         } else {}
     }
 
-    public void refreshView(FragmentManager fragmentManager) {
-        fragmentManager
-                .beginTransaction()
-                .detach(this)
-                .attach(this)
-                .commit();
-    }
+
 
     public void setUpNewProject() {
 

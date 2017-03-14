@@ -25,7 +25,7 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
     private Context context;
     private FragmentManager mFragmentManager;
 
-    public FragmentPageAdapter(FragmentManager fragmentManager, Context contaext) {
+    public FragmentPageAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
         this.context = context;
         mFragmentManager = fragmentManager;
@@ -59,5 +59,4 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         return null;
     }
-
 }

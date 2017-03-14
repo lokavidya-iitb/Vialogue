@@ -99,7 +99,6 @@ public final class CropMainFragment extends Fragment
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropImageView.setOnSetImageUriCompleteListener(this);
         mCropImageView.setOnCropImageCompleteListener(this);
-
         mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));
     }
 

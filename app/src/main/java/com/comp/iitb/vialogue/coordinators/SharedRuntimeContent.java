@@ -1,8 +1,11 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -262,6 +265,23 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemChanged(getSlidePosition(slide));
     }
 
+    public static void loadNewProject(Project project) {
+//        (new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            public void onPreExecute() {}
+//
+//            @Override
+//            public Void doInBackground(Void... params) {
+                updateAdapterView();
+//                return null;
+//            }
+//
+//            @Override
+//            public void onPostExecute(Void result) {}
+//        }).execute();
+    }
+
     /*
      * Validation related methods
      */
@@ -357,6 +377,5 @@ public class SharedRuntimeContent {
 
         return timeMilliSec;
     }
-
 
 }
