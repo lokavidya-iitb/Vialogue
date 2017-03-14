@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             try {
                 Slide slide = new Slide();
                 slide.addResource(question, Slide.ResourceType.QUESTION);
-                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.changeSlideAtPosition(
                         extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
                         slide

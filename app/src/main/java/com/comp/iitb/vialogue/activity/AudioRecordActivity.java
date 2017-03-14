@@ -454,7 +454,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 TODO Look into this Jeffrey
                 slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
             slide.addResource(image, Slide.ResourceType.IMAGE);
-            slide.setThumbnail(mStorage.getBitmap(selectedPath));
             SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
         }
         catch (Exception e) {

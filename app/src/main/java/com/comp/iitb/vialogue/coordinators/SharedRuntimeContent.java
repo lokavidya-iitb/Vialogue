@@ -127,8 +127,8 @@ public class SharedRuntimeContent {
         }
     }
 
-    public static void pinProjectInBackground(Context context) {
-        // save project with a temporary name
+    public static void pinProjectInBackground(final Context context) {
+
         if ((getProjectName() == null) || (getProjectName() == "")) {
             String newProjectName = getNewUndefinedProjectName();
             setProjectName(newProjectName);
@@ -163,16 +163,6 @@ public class SharedRuntimeContent {
         return localProjects;
     }
 
-    public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
-        ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
-        for (Slide s : project.getSlides().getAll()) {
-            s.setThumbnail(context, storage);
-            slides.addObject(s);
-        }
-        project.setSlides(slides);
-        return project;
-    }
-
     public static String getNewUndefinedProjectName() {
 
         ArrayList<Project> localProjects = getLocalProjects();
@@ -197,8 +187,6 @@ public class SharedRuntimeContent {
         if (slides == null) {
             return 0;
         }
-        System.out.println("slides.size : " + slides.size());
-        System.out.println("slides.size : " + slides.size());
         return slides.size();
     }
 
@@ -211,6 +199,20 @@ public class SharedRuntimeContent {
     }
 
     public static void createEmptyProject(Context context) {
+//        new AsyncTask<Void, Void, Void>() {
+//
+//            Project project;
+//
+//            @Override
+//            public void onPreExecute() {
+//                project = SharedRuntimeContent.project;
+//            }
+//
+//            @Override
+//            public Void doInBackground(Void... params) {
+//
+//            }
+//        }
         pinProjectInBackground(context);
         project = new Project();
         updateAdapterView();

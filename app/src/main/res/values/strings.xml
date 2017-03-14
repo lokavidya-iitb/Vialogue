@@ -26,7 +26,7 @@
     <string name="cannot_play">Cannot play while recording</string>
     <string-array name="tab_titles">
         <item>LVCreate</item>
-        <item>Create Videos</item>
+        <item>Create Project</item>
         <item>Videos</item>
         <item>My Account</item>
     </string-array>

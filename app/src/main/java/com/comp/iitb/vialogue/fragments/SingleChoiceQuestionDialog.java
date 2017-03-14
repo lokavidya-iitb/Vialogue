@@ -46,7 +46,7 @@ public class SingleChoiceQuestionDialog extends Dialog implements SingleChoiceQu
 
     private Question mQuestion;
     private int mSlideNumber;
-    public static final ArrayList<Boolean> mConditionSatisfiesStackList = new ArrayList<Boolean>();
+    public static ArrayList<Boolean> mConditionSatisfiesStackList = new ArrayList<Boolean>();
 
     public SingleChoiceQuestionDialog(Context context, QuestionDoneListener questionDoneListener) {
         super(context);
@@ -75,6 +75,7 @@ public class SingleChoiceQuestionDialog extends Dialog implements SingleChoiceQu
         mDoneButton = (Button) findViewById(R.id.done_button);
 
         // Initialize state
+        mConditionSatisfiesStackList = new ArrayList<Boolean>();
         if(mQuestion != null) {
             // load state from the provided question
             String questionString = mQuestion.getQuestionString();

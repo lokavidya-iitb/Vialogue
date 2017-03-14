@@ -278,20 +278,16 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
                             @Override
                             public void done(File file, boolean isSuccessful) {
 
-                                new VideoThumbnailAsync(getContext(), mStorage, new OnThumbnailCreated() {
-                                    @Override
-                                    public void onThumbnailCreated(Bitmap thumbnail) {
-                                        Slide slide = new Slide();
-                                        try {
-                                            slide.addResource(video, Slide.ResourceType.VIDEO);
-                                            slide.setThumbnail(thumbnail);
-                                            SharedRuntimeContent.addSlide(slide);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
-                                        }
+                                Slide slide = new Slide();
+                                try {
+                                    slide.addResource(video, Slide.ResourceType.VIDEO);
+                                    if(!SharedRuntimeContent.addSlide(slide)) {
+                                        throw new Exception();
                                     }
-                                }).execute(v.getAbsolutePath());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
             } else {
@@ -314,7 +310,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             Slide slide = new Slide();
             try {
                 slide.addResource(question, Slide.ResourceType.QUESTION);
-                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();
