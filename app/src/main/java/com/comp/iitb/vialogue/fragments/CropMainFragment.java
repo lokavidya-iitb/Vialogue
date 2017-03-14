@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
@@ -38,6 +39,7 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.cropper.CropImage;
 import com.comp.iitb.vialogue.library.cropper.CropImageView;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Stack;
 
@@ -97,12 +99,12 @@ public final class CropMainFragment extends Fragment
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropImageView.setOnSetImageUriCompleteListener(this);
         mCropImageView.setOnCropImageCompleteListener(this);
-
         mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (item.getItemId() == R.id.main_action_crop) {
             mCropImageView.getCroppedImageAsync();
             return true;
@@ -114,7 +116,11 @@ public final class CropMainFragment extends Fragment
             if(sequence.size()!=0)
             mCropImageView.setImageBitmap(sequence.pop());
             else {
-                Toast.makeText(getContext(), R.string.cannotUndo, Toast.LENGTH_LONG).show();
+                // Using
+                // Toast.makeText(CropMainActivity.this, R.string.cannotUndo, Toast.LENGTH_LONG).show();
+                // Leads to a memory leaks (as large as 120 MB)
+                // TODO add reference to the commit
+                Toast.makeText(getActivity().getApplicationContext(), R.string.cannotUndo, Toast.LENGTH_LONG).show();
             }
             return true;
         }
@@ -187,5 +193,13 @@ public final class CropMainFragment extends Fragment
         if (mCroppedImage != null)
             bitmap = mCroppedImage;
         return bitmap;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("Home", "onDestroyView : called");
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 }

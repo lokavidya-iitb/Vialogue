@@ -95,24 +95,19 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            try
-            {
-                from=bundle.getString("from");
+            try {
+                from = bundle.getString("from");
                 mFilePath = bundle.getString(IMAGE_PATH);
-                switch(from)
-                {
+                switch (from) {
                     case "AudioRecording":
-                        mSlidePosition=bundle.getInt("SlidePosition");
-                        AudioRecordActivity.traitor.finish();
+                        mSlidePosition = bundle.getInt("SlidePosition");
                         break;
                     case "CreateVideos":
-                        mSlidePosition=-1;
+                        mSlidePosition = -1;
                         break;
                 }
 
-            }
-            catch (NullPointerException e)
-            {
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
@@ -167,48 +162,59 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 //        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
+
     public void done(Bitmap bitmap) {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
         // TODO this leads to the main thread hanging
 //        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
-        new ProcessAsyncAfteCrop(bitmap).execute();
+        new ProcessAsyncAfterCrop(bitmap).execute();
     }
 
 
     private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
         @Override
         public void onThumbnailCreated(Bitmap thumbnail) {
-            Slide slide = new Slide();
-            try
-            {
-                Image image = new Image(getBaseContext());
-                mStorage.getBitmap(mCroppedImagePath);
-                mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
-                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
+            System.out.println("onThumbnailCreated : called");
+            (new AsyncTask<Bitmap, Void, Slide>() {
+                public Slide doInBackground(Bitmap... params) {
+                    Bitmap thumbnail = params[0];
+                    Slide slide = new Slide();
+                    try {
+                        Image image = new Image(getBaseContext());
+                        mStorage.getBitmap(mCroppedImagePath);
+                        mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
 
-                TODO Look into this Jeffrey
-                slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
-                slide.addResource(image, Slide.ResourceType.IMAGE);
-                slide.setThumbnail(thumbnail);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            if(from.equals("AudioRecording")) {
+                        /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
+                        TODO Look into this Jeffrey
+                        slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
 
-                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
-            }
+                        slide.addResource(image, Slide.ResourceType.IMAGE);
+                        slide.setThumbnail(thumbnail);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-            else {
-                try {
-                    SharedRuntimeContent.addSlide(slide);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    return slide;
                 }
-            }
-            mPleaseWait.setVisibility(View.GONE);
-            finish();
+
+                @Override
+                public void onPostExecute(Slide slide) {
+                    if (from.equals("AudioRecording")) {
+
+                        SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+                    } else {
+                        try {
+                            SharedRuntimeContent.addSlide(slide);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mPleaseWait.setVisibility(View.GONE);
+                    finish();
+                }
+            }).execute(thumbnail);
+
         }
     };
 
@@ -225,12 +231,13 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         }
     }
 
-    private class ProcessAsyncAfteCrop extends AsyncTask<Void, Void, Void> {
+    private class ProcessAsyncAfterCrop extends AsyncTask<Void, Void, Void> {
         Bitmap bitmap;
-        ProcessAsyncAfteCrop(Bitmap bitmap)
-        {
-            this.bitmap= bitmap;
+
+        ProcessAsyncAfterCrop(Bitmap bitmap) {
+            this.bitmap = bitmap;
         }
+
         @Override
         protected Void doInBackground(Void... params) {
 
@@ -241,4 +248,5 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
 
         }
     }
+
 }

@@ -301,7 +301,8 @@ public class Storage {
         cursor.close();
         if (thumbnail == null) {
             try {
-                thumbnail = decodeSampledBitmapFromResource(filePath, 512, 384);
+//                thumbnail = decodeSampledBitmapFromResource(filePath, 512, 384);
+                thumbnail = decodeSampledBitmapFromResource(filePath, 320, 240);
                 //If above doesn't work use this
                 //thumbnail = ThumbnailUtils.extractThumbnail(MediaStore.Images.Media.getBitmap(contentResolver, getUriFromPath(filePath)), 512, 384);
                 Log.d(LOG_TAG, "getImageThumb " + String.valueOf(thumbnail == null));
@@ -519,6 +520,13 @@ public class Storage {
         Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.MyProjectsPath);
         Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.SavedProjectsPath);
         Storage.createThisDirectory(Master.AppPath + Master.VideosPath + Master.SavedVideosPath);
+    }
+
+    public static Uri resourceToUri(Context context, int resID) {
+        return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+                context.getResources().getResourcePackageName(resID) + '/' +
+                context.getResources().getResourceTypeName(resID) + '/' +
+                context.getResources().getResourceEntryName(resID) );
     }
 
 }

@@ -21,6 +21,10 @@ public class Author extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Author() {}
 
+    public Author getNewInstance() {
+        return new Author();
+    }
+
     private static final class Fields implements BaseFieldsClass {
         public static final String
 

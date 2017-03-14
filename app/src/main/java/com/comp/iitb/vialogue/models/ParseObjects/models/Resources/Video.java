@@ -23,6 +23,10 @@ public class Video extends BaseResourceClass {
     // INSTANTIATING THE OBJECT
     public Video() {}
 
+    public Video getNewInstance() {
+        return new Video();
+    }
+
     private static final String VIDEO_RESOURCE_NAME = "video";
 
     public Video(Context context) {

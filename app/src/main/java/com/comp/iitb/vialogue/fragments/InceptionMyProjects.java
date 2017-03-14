@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -18,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
+import com.comp.iitb.vialogue.coordinators.OnAdapterSet;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.SetMyProjectsAdapterAsync;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
@@ -27,6 +30,8 @@ import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.leakcanary.RefWatcher;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,18 +45,10 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class InceptionMyProjects extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private ActionMode mActionMode;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private RecyclerView recyclerView;
     private MyProjectsAdapter adapter;
     private List<ProjectsShowcase> projectList;
+    private AVLoadingIndicatorView mLoadingAnimationView;
 
 
     private OnFragmentInteractionListener mListener;
@@ -60,7 +57,6 @@ public class InceptionMyProjects extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static InceptionMyProjects newInstance() {
         InceptionMyProjects fragment = new InceptionMyProjects();
         Bundle args = new Bundle();
@@ -71,10 +67,6 @@ public class InceptionMyProjects extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -86,12 +78,16 @@ public class InceptionMyProjects extends Fragment {
             SharedRuntimeContent.previewFab.setImageDrawable(getResources().getDrawable(R.drawable.plus_png));
         }
         SharedRuntimeContent.previewFab.show();
+
+        // Initialize UI Components
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        /*Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        toolbar.setVisibility(View.GONE);*/
-         //initCollapsingToolbar();
+        mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
+
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
+//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        toolbar.setVisibility(View.GONE);
+//        initCollapsingToolbar();
 
         projectList = new ArrayList<>();
         adapter = new MyProjectsAdapter(getContext());
@@ -103,47 +99,16 @@ public class InceptionMyProjects extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        new SetMyProjectsAdapterAsync(getContext(), recyclerView).execute();
-//        recyclerView.setAdapter(adapter);
-
-        prepareProjects();
-/*
-        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
-            // Called when the user long-clicks on someView
-
-            public boolean onLongClick(View view) {
-                if (mActionMode != null) {
-
-                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+        new SetMyProjectsAdapterAsync(
+                getContext(),
+                recyclerView,
+                new OnAdapterSet() {
+                    @Override
+                    public void onDone() {
+                        mLoadingAnimationView.setVisibility(View.GONE);
+                    }
                 }
-
-                // Start the CAB using the ActionMode.Callback defined above
-                view.setSelected(true);
-                return true;
-            }
-        });*/
-
-/*
-        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
-            // Called when the user long-clicks on someView
-            public boolean onLongClick(View view) {
-                if (mActionMode != null) {
-                    return false;
-                }
-
-                // Start the CAB using the ActionMode.Callback defined above
-                mActionMode = getActivity().startActionMode(mActionModeCallback);
-                view.setSelected(true);
-                return true;
-            }
-        });*/
-/*
-        try {
-            Glide.with(this).load("https://cdn0.vox-cdn.com/uploads/blog/sbnu_logo_minimal/213/large_hammerandrails.com.minimal.png").placeholder(R.drawable.ic_computer_black_24dp).into((ImageView) getActivity().findViewById(R.id.backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        // Inflate the layout for this fragment
+        ).execute();
 
     }
 
@@ -328,4 +293,13 @@ public class InceptionMyProjects extends Fragment {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("Home", "onDestroyView : called");
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
+
 }

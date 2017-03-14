@@ -68,14 +68,16 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO
  */
 public class AudioRecordActivity extends AppCompatActivity implements MediaTimeUpdateListener, RecordTimeUpdateListener {
 
+    // Constants
     private static final String LOG_TAG = "AudioRecordActivity";
     public static final String SLIDE_NO = "recordPath";
     public static final String IMAGE_PATH = "imagePath";
     public static final String RECORD_NAME = "recordName";
     public static final String FOLDER_PATH = "folderPath";
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+
     private Toolbar mToolbar;
     private String currentImagePath;
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private SeekBar mSeekBar;
     private Button mRecordButton = null;
     private Button mStopButton = null;
@@ -98,7 +100,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Button mDone;
     private Slide mSlide;
     private int mSlidePosition;
-    public static Activity traitor;
+    public Activity traitor;
     private CameraImagePickerActivity mCameraImagePicker;
 
     @Override
@@ -203,7 +205,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 intent.putExtras(bundle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
-
+                finish();
             }
         });
 

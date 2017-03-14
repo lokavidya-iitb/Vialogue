@@ -24,6 +24,10 @@ public class Audio extends BaseResourceClass {
     // INSTANTIATING THE OBJECT
     public Audio() {}
 
+    public Audio getNewInstance() {
+        return new Audio();
+    }
+
     private static final String AUDIO_RESOURCE_NAME = "audio";
 
     public Audio(Context context) {

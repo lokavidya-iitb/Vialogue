@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -58,7 +59,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     private Context mContext;
     private Storage mStorage;
-//    private List<ProjectsShowcase> mAlbumList;
     private int listItemPositionForPopupMenu;
     private ViewPager viewpager;
     private ArrayList<ProjectView> mProjectViewsList;
@@ -76,48 +76,52 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     public class ProjectView {
 
-        private Project mProject;
-        private Bitmap mThumbnail = null;
+        private int mIndex;
+        private String mName;
+        private String mThumbnailUrl;
 
-        public ProjectView(Project project) {
-            mProject = project;
-            generateThumbnail();
+        public ProjectView(Project project, int index) {
+            mIndex = index;
+            mName = project.getName();
+            generateThumbnail(project);
         }
 
         public String getProjectName() {
-            return mProject.getName();
+            return mName;
         }
 
         public Project getProject() {
-            return mProject;
-        }
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+            query.fromLocalDatastore();
+            query.addAscendingOrder(Project.Fields.NAME);
 
-        public Bitmap getThumbnail() {
-            if(mThumbnail == null) {
-                generateThumbnail();
-            }
-            return mThumbnail;
-        }
-
-        public Bitmap generateThumbnail() {
-            mThumbnail = null;
+            ArrayList<Project> localProjects = new ArrayList<Project>();
+            Project project = new Project();
             try {
-                for(Slide s : mProject.getSlides().getAll()) {
+                List<ParseObject> localObjects = query.find();
+                project = (Project) localObjects.get(mIndex);
+                project.fetchChildrenObjects();
+            } catch (ParseException e) {
+                // TODO decide what to do
+                Toast.makeText(mContext, "Could not load project", Toast.LENGTH_SHORT);
+            }
+            return project;
+        }
+
+        public void generateThumbnail(Project project) {
+            mThumbnailUrl = null;
+            try {
+                for(Slide s : project.getSlides().getAll()) {
                     if(s.getSlideType() == Slide.SlideType.IMAGE) {
                         // get thumbnail from image
-                        mThumbnail = mStorage.getImageThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        mThumbnailUrl = s.getResource().getResourceFile().getAbsolutePath();
                         break;
                     } else if(s.getSlideType() == Slide.SlideType.VIDEO) {
-                        mThumbnail = mStorage.getVideoThumbnail(s.getResource().getResourceFile().getAbsolutePath());
+                        mThumbnailUrl = s.getResource().getResourceFile().getAbsolutePath();
                         break;
                     } else {}
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(mProject.getSlides().getAll());
-            }
-
-            return mThumbnail;
+            } catch (Exception e) {e.printStackTrace();}
         }
     }
 
@@ -129,10 +133,22 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     public void populateProjectsList() {
         // populate mProjectViewsList
+
         mProjectViewsList = new ArrayList<ProjectView>();
-        ArrayList<Project> localProjects = SharedRuntimeContent.getLocalProjects();
-        for(Project project : localProjects) {
-            mProjectViewsList.add(new ProjectView(project));
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+        query.fromLocalDatastore();
+        query.addAscendingOrder(Project.Fields.NAME);
+
+        ArrayList<Project> localProjects = new ArrayList<Project>();
+        try {
+            List<ParseObject> localObjects = query.find();
+            for(int i=0; i<localObjects.size(); i++) {
+                Project project = (Project) localObjects.get(i);
+                project.fetchChildrenObjects();
+                mProjectViewsList.add(new ProjectView(project, i));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -147,48 +163,56 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     @Override
 
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-//        final ProjectsShowcase album = mAlbumList.get(position);
         final ProjectView projectView = mProjectViewsList.get(position);
         holder.title.setText(projectView.getProjectName());
-//        holder.thumbnail.setImageBitmap(projectView.getThumbnail());
 
-        Bitmap thumbnail = mProjectViewsList.get(position).getThumbnail();
-        if(thumbnail == null) {
-            thumbnail = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo);
+        if(projectView.mThumbnailUrl == null) {
+            Glide
+                .with(mContext)
+                .load(R.drawable.app_logo)
+                .centerCrop()
+                .into(holder.thumbnail);
+        } else {
+            Glide
+                .with(mContext)
+                .load(new File(projectView.mThumbnailUrl))
+                .centerCrop()
+                .into(holder.thumbnail);
         }
-        holder.thumbnail.setImageBitmap(thumbnail);
-//        Glide.with(mContext).load(f).placeholder(R.drawable.ic_computer_black_24dp).into(holder.thumbnail);
-
 
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO this is taking tooooo much time, make it makkhan
+                (new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        SharedRuntimeContent.questionsList.clear();
+                        Project project = mProjectViewsList.get(position).getProject();
+                        SharedRuntimeContent.project = project;
+                        SharedRuntimeContent.setProjectName(project.getName());
+//                        SharedRuntimeContent.loadNewProject(project);
+//                        SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
+//                        SharedRuntimeContent.updateAdapterView();
+//                        SharedRuntimeContent.setProjectName(project.getName());
+                        return null;
+                    }
 
-//                // TODO change implementation API
-                Project project = mProjectViewsList.get(position).getProject();
-                SharedRuntimeContent.questionsList.clear();
-                SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
-                SharedRuntimeContent.updateAdapterView();
-                SharedRuntimeContent.setProjectName(project.getName());
-                viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
-                viewpager.setCurrentItem(1,true);
+                    @Override
+                    public void onPostExecute(Void result) {
+                        SharedRuntimeContent.updateAdapterView();
+                        viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
+                        viewpager.setCurrentItem(1,true);
+                    }
+                }).execute();
             }
         });
-
-
-       /* holder.overflow.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupMenu(holder.overflow,holder.getAdapterPosition(),album.getName());
-            }
-        });*/
 
 
         holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 ((Activity) mContext).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
-
                 return false;
             }
         });
@@ -251,9 +275,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
     }
 
-
-
-
     private void showPopupMenu(View view, int listItemPosition, String projectName) {
         // inflate menu
         listItemPositionForPopupMenu = listItemPosition;
@@ -303,41 +324,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         }
     }
 
-//    public void showChangeLangDialog(final String projectName, final int listItemPosition) {
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-//        final View dialogView = inflater.inflate(R.layout.dialog_rename, null);
-//        dialogBuilder.setView(dialogView);
-//
-//        final EditText edt = (EditText) dialogView.findViewById(R.id.rename);
-//
-//        dialogBuilder.setTitle("Rename the project?");
-//        dialogBuilder.setMessage("Enter the new project name:");
-//        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//
-//                File oldName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+projectName);
-//                File newName = new File(Environment.getExternalStorageDirectory(),Master.getMyProjectsPath()+"/"+edt.getText().toString());
-//                boolean success = oldName.renameTo(newName);
-//                ProjectsShowcase renamingStub = mAlbumList.get(listItemPosition);
-//                mAlbumList.remove(listItemPosition);
-//                renamingStub.setName(edt.getText().toString());
-//                mAlbumList.add(renamingStub);
-//                Log.d("Renaming stub working","---------Yea");
-//                notifyDataSetChanged();
-//            }
-//        });
-//        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//                //Just close the dialog
-//            }
-//        });
-//        AlertDialog b = dialogBuilder.create();
-//        b.show();
-//    }
-
-
-    @Override
+   @Override
     public int getItemCount() {
         return mProjectViewsList.size();
     }

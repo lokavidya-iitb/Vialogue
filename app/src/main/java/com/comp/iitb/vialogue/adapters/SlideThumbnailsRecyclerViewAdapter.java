@@ -17,9 +17,11 @@ import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -40,22 +42,11 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
         mActivity = activity;
         mContext = context;
         mCurrentSlidePosition = currentSlidePosition;
-
-        mByteArrayList = new ArrayList<byte[]>();
-        for(Slide slide : SharedRuntimeContent.getAllSlides()) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            slide.getThumbnail().compress(Bitmap.CompressFormat.PNG, 100, stream);
-            mByteArrayList.add(stream.toByteArray());
-        }
         LOAD_SLIDES = true;
-
     }
 
     public SlideThumbnailsRecyclerViewAdapter(Context context) {
         mContext = context;
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        BitmapFactory.decodeResource(mContext.getResources(), R.drawable.app_logo).compress(Bitmap.CompressFormat.PNG, 100, stream);
-        mDefaultImageByteArray = stream.toByteArray();
     }
 
     public class SlideViewHolder extends RecyclerView.ViewHolder {
@@ -80,16 +71,13 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
         if(!LOAD_SLIDES) {
             // use only dummy images everywhere
             Glide.with(mContext)
-                    .fromBytes()
-                    .load(mDefaultImageByteArray)
+                    .load((new File(Storage.resourceToUri(mContext, R.drawable.app_logo).getPath())).getAbsolutePath())
                     .placeholder(R.drawable.app_logo)
                     .into(slideViewHolder.thumbnail);
-//            slideViewHolder.thumbnail.setImageResource(R.drawable.app_logo);
         } else {
             // use actual thumbnails from the slides
             Glide.with(mContext)
-                    .fromBytes()
-                    .load(mByteArrayList.get(position))
+                    .load(slide.getThumbnailUrl(mContext))
                     .placeholder(R.drawable.app_logo)
                     .into(slideViewHolder.thumbnail);
 

@@ -23,10 +23,12 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
     final int USER_ACCOUNT = 3;
 
     private Context context;
+    private FragmentManager mFragmentManager;
 
     public FragmentPageAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
         this.context = context;
+        mFragmentManager = fragmentManager;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         //Generate Fragment based on Positions
+
         switch (position) {
             case HOME:
                 return Home.newInstance();
@@ -46,8 +49,9 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
                 return /*ViewVideos.newInstance("")*/DummyFragment.newInstance();
             case USER_ACCOUNT:
                 return UserAccount.newInstance();
+            default :
+                return null;
         }
-        return null;
     }
 
     @Override
@@ -55,5 +59,4 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         return null;
     }
-
 }
