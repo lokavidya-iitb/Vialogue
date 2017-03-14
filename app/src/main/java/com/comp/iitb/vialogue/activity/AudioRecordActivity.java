@@ -32,6 +32,7 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
+import com.comp.iitb.vialogue.coordinators.OnSlideThumbnailClicked;
 import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.RecordTimeUpdateListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
@@ -87,7 +88,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Audio mAudio;
     private Button mImagePicker;
     private Button mCameraPicker;
-    CanSaveAudioResource mSlideResource;
+    private CanSaveAudioResource mSlideResource;
     private RecyclerView mSlideThumbnailsRecyclerView;
 
     private AudioRecorder mAudioRecorder = null;
@@ -130,59 +131,49 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         }
 
-        // Record to the external cache directory for visibility
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            mSlidePosition = bundle.getInt(SLIDE_NO);
-            mSlide = SharedRuntimeContent.getSlideAt(mSlidePosition);
-
-            // TODO think of some other way to handle this
-            try {
-                CanSaveAudioResource s = (CanSaveAudioResource) mSlide.getResource();
-            } catch (Exception e) {
-                Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
-                Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
-                endActivity();
-            }
-
-            mSlideResource = (CanSaveAudioResource) mSlide.getResource();
-            mImagePath = mSlideResource.getResourceFile().getAbsolutePath();
-            mAudio = mSlideResource.getAudio();
-            if(mAudio == null) {
-                mAudio = new Audio(getBaseContext());
-            }
-        }
+        // Initialize UI Components
         mCameraPicker = (Button)findViewById(R.id.camera_image_picker);
-        mCameraImagePicker = new CameraImagePickerActivity(mStorage,getBaseContext(),this);
-        mCameraPicker.setOnClickListener(mCameraImagePicker);
         mImagePicker = (Button)findViewById(R.id.image_picker);
         mDone = (Button) findViewById(R.id.done_button);
-        mDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                endActivity();
-            }
-        });
-        mStorage = new Storage(getApplicationContext());
-        mImageView = (ImageView) findViewById(R.id.selected_image);
         mImageView = (ImageView) findViewById(R.id.selected_image);
         mStopButton = (Button) findViewById(R.id.stop_button);
         mRetryButton = (Button) findViewById(R.id.retry);
         mSeekBar = (SeekBar) findViewById(R.id.audio_seek);
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mPlayButton = (ImageButton) findViewById(R.id.play_button);
         mRecordButton = (Button) findViewById(R.id.record_button);
-        setUpUI();
-        Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
-        if (imagePathUri != null) {
-            currentImagePath=mImagePath;
-            Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
 
+        // Initialize ActionBar related stuff
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        bundle = getIntent().getExtras();
+
+        // Initialize variables
+        mStorage = new Storage(getBaseContext());
+
+        // Load State
+        if (bundle != null) {
+            int slidePosition = bundle.getInt(SLIDE_NO);
+            loadStateFromSlide(SharedRuntimeContent.getSlideAt(slidePosition), slidePosition);
         }
+
+        // Setup the User Interface
+        setUpUI();
+
+        // Setup Listeners
+        mCameraImagePicker = new CameraImagePickerActivity(mStorage,getBaseContext(),this);
+        mCameraPicker.setOnClickListener(mCameraImagePicker);
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRecording) {
+                    stopRecording();
+                }
+                endActivity();
+            }
+        });
+        mStorage = new Storage(getApplicationContext());
 
         mImagePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,6 +220,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 isTouch = false;
             }
         });
+
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,18 +267,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAudioRecorder.onRecord(false);
-                isRecording = false;
-                setUpUI();
-                mStopButton.setEnabled(false);
-                mRetryButton.setEnabled(true);
-                mSlideResource.addAudio(mAudio);
-                mPlayButton.setEnabled(true);
-                try {
-                    mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
-                } catch (Exception e) {}
-                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
-                SharedRuntimeContent.updateAdapterView();
+                stopRecording();
             }
         });
 
@@ -314,9 +295,96 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             }
         });
 
+        // Initialize SlideThumbnails Recycler View
         mSlideThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.slide_thumbnails_recycler_view);
         mSlideThumbnailsRecyclerView.setAdapter(new SlideThumbnailsRecyclerViewAdapter(AudioRecordActivity.this));
-        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(AudioRecordActivity.this, AudioRecordActivity.this, mSlidePosition, mSlideThumbnailsRecyclerView).execute();
+        new SetSlideThumbnailsRecyclerViewAdapterAsyncTask(
+                AudioRecordActivity.this,
+                AudioRecordActivity.this,
+                mSlidePosition,
+                mSlideThumbnailsRecyclerView,
+                new OnSlideThumbnailClicked() {
+                    @Override
+                    public void onClicked(Slide slide, int slidePosition) {
+                        // if recording going on, stop recording and save current slide
+                        if(isRecording) {
+                            stopRecording();
+                        }
+
+                        // load the new state and UI
+                        loadStateFromSlide(slide, slidePosition);
+                        setUpUI();
+                    }
+                }
+        ).execute();
+    }
+
+    public void loadStateFromSlide(Slide slide, int slidePosition) {
+        // TODO think of some other way to handle this
+        try {
+            CanSaveAudioResource s = (CanSaveAudioResource) slide.getResource();
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+            Log.e("AudioRecordActivity", "Slide Resource class does not implement CanSaveAudioResource");
+            endActivity();
+        }
+
+        mSlide = slide;
+        mSlidePosition = slidePosition;
+        mSlideResource = (CanSaveAudioResource) slide.getResource();
+        mImagePath = mSlideResource.getResourceFile().getAbsolutePath();
+        mAudio = mSlideResource.getAudio();
+        if (mAudio == null) {
+            mAudio = new Audio(getBaseContext());
+        }
+    }
+
+    private void setUpUI() {
+        if (!((Image) mSlide.getResource()).hasAudio()) {
+            mSeekBar.setEnabled(false);
+            mSeekBar.invalidate();
+            mSeekBar.requestLayout();
+            mPlayButton.setEnabled(false);
+            mRetryButton.setEnabled(false);
+            mRecordButton.setEnabled(true);
+            mStopButton.setEnabled(false);
+        } else {
+            mSeekBar.setEnabled(true);
+            mSeekBar.invalidate();
+            mSeekBar.requestLayout();
+            mPlayButton.setEnabled(true);
+            mRetryButton.setEnabled(true);
+            mRecordButton.setEnabled(false);
+            mStopButton.setEnabled(false);
+        }
+
+        if (mAudioRecorder != null && !isPlaying && !isRecording) {
+            mAudioRecorder.release();
+        }
+        if (!isPlaying && !isRecording) {
+            mAudioRecorder = new AudioRecorder(mAudio.getResourceFile().getAbsolutePath(), this, this);
+        }
+
+        Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
+        if (imagePathUri != null) {
+            currentImagePath=mImagePath;
+            Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
+        }
+    }
+
+    public void stopRecording() {
+        mAudioRecorder.onRecord(false);
+        isRecording = false;
+        setUpUI();
+        mStopButton.setEnabled(false);
+        mRetryButton.setEnabled(true);
+        mSlideResource.addAudio(mAudio);
+        mPlayButton.setEnabled(true);
+        try {
+            mSlide.addResource(mSlideResource, Slide.ResourceType.IMAGE);
+        } catch (Exception e) {}
+        SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+        SharedRuntimeContent.updateAdapterView();
     }
 
     @Override
@@ -461,36 +529,15 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         }
     }
 
-
-
-    private void setUpUI() {
-        if (!((Image) mSlide.getResource()).hasAudio()) {
-            mSeekBar.setEnabled(false);
-            mSeekBar.invalidate();
-            mSeekBar.requestLayout();
-            mPlayButton.setEnabled(false);
-            mRetryButton.setEnabled(false);
-            mRecordButton.setEnabled(true);
-            mStopButton.setEnabled(false);
-        } else {
-            mSeekBar.setEnabled(true);
-            mSeekBar.invalidate();
-            mSeekBar.requestLayout();
-            mPlayButton.setEnabled(true);
-            mRetryButton.setEnabled(true);
-            mRecordButton.setEnabled(false);
-            mStopButton.setEnabled(false);
-        }
-
-        if (mAudioRecorder != null && !isPlaying && !isRecording) {
-            mAudioRecorder.release();
-        }
-        if (!isPlaying && !isRecording)
-            mAudioRecorder = new AudioRecorder(mAudio.getResourceFile().getAbsolutePath(), this, this);
-    }
-
     public void endActivity() {
         finish();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("AudioRecordActivity : onDestroy : called");
+        mImageView.setImageBitmap(null);
     }
 
 }

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
+import com.comp.iitb.vialogue.coordinators.OnSlideThumbnailClicked;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
@@ -35,13 +36,15 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
     private int mCurrentSlidePosition;
     private ArrayList<byte []> mByteArrayList;
     private byte[] mDefaultImageByteArray;
+    private OnSlideThumbnailClicked mOnSlideThumbnailClicked;
 
     private boolean LOAD_SLIDES = false;
 
-    public SlideThumbnailsRecyclerViewAdapter(Activity activity, Context context, int currentSlidePosition) {
+    public SlideThumbnailsRecyclerViewAdapter(Activity activity, Context context, int currentSlidePosition, OnSlideThumbnailClicked onSlideThumbnailClicked) {
         mActivity = activity;
         mContext = context;
         mCurrentSlidePosition = currentSlidePosition;
+        mOnSlideThumbnailClicked = onSlideThumbnailClicked;
         LOAD_SLIDES = true;
     }
 
@@ -65,8 +68,8 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
     }
 
     @Override
-    public void onBindViewHolder(SlideViewHolder slideViewHolder, int position) {
-        Slide slide = SharedRuntimeContent.getSlideAt(position);
+    public void onBindViewHolder(SlideViewHolder slideViewHolder, final int position) {
+        final Slide slide = SharedRuntimeContent.getSlideAt(position);
 
         if(!LOAD_SLIDES) {
             // use only dummy images everywhere
@@ -78,6 +81,7 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
             // use actual thumbnails from the slides
             Glide.with(mContext)
                     .load(slide.getThumbnailUrl(mContext))
+                    .centerCrop()
                     .placeholder(R.drawable.app_logo)
                     .into(slideViewHolder.thumbnail);
 
@@ -85,6 +89,8 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
                 slideViewHolder.thumbnail.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimary));
                 int padding = mContext.getResources().getDimensionPixelOffset(R.dimen.padding_slide_thumbnails);
                 slideViewHolder.thumbnail.setPadding(padding, padding, padding, padding);
+            } else {
+                slideViewHolder.thumbnail.setPadding(0, 0, 0, 0);
             }
 
             final int pos = position;
@@ -95,17 +101,14 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
                     slideViewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(mContext, AudioRecordActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putInt(AudioRecordActivity.SLIDE_NO, pos);
-                            intent.putExtras(bundle);
-                            mActivity.finish();
-                            mContext.startActivity(intent);
+                            mOnSlideThumbnailClicked.onClicked(slide, position);
+                            mCurrentSlidePosition = position;
+                            notifyDataSetChanged();
                         }
                     });
                 }
             } else {
-                slideViewHolder.thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // White Tint
+                slideViewHolder.thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // Dark Gray Tint
             }
         }
     }
