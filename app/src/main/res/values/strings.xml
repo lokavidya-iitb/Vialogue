@@ -35,7 +35,7 @@
     <string name="title_activity_audio_record">Add Audio</string>
     <string name="title_activity_crop_image">Edit Image</string>
     <string name="projects">Projects</string>
-    <string name="my_projects">MyProjects</string>
+    <string name="my_projects">My Projects</string>
     <string name="saved_projects">Saved Projects</string>
     <string name="saved_videos">Saved Videos</string>
     <!---->

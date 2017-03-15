@@ -59,6 +59,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             } else {
                 holder.mAudioLayer.setVisibility(View.VISIBLE);
             }
+            holder.mVideoPlayIcon.setVisibility(View.GONE);
         } else if(slide.getSlideType() == Slide.SlideType.VIDEO) {
             // VIDEO
             Glide
@@ -76,6 +77,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
                     .centerCrop()
                     .into(holder.mThumbnail);
             holder.mAudioLayer.setVisibility(View.GONE);
+            holder.mVideoPlayIcon.setVisibility(View.GONE);
         }
 
         if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {

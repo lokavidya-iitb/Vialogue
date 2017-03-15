@@ -58,7 +58,7 @@ public class CameraImagePicker implements View.OnClickListener {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = mContext.getFilesDir();
+        File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = null;
         try {
             image = File.createTempFile(

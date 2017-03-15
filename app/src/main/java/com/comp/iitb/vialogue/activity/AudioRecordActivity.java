@@ -436,7 +436,12 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         Uri imagePathUri = mStorage.getUriFromPath(mImagePath);
         if (imagePathUri != null) {
             currentImagePath=mImagePath;
-            Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
+            Glide
+                    .with(this)
+                    .load(imagePathUri)
+                    .centerCrop()
+                    .placeholder(R.drawable.app_logo)
+                    .into(mImageView);
         }
     }
 
