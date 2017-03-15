@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.library;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -13,20 +14,20 @@ import com.comp.iitb.vialogue.coordinators.OnAdapterSet;
 
 public class SetMyProjectsAdapterAsync extends AsyncTask<String, Void, Boolean> {
 
-    private Context mContext;
+    private Activity mActivity;
     private RecyclerView mRecyclerView;
     private MyProjectsAdapter mMyProjectsAdapter;
     private OnAdapterSet mOnAdapterSet;
 
-    public SetMyProjectsAdapterAsync(Context context, RecyclerView recyclerView, OnAdapterSet onAdapterSet) {
-        mContext = context;
+    public SetMyProjectsAdapterAsync(Activity activity, RecyclerView recyclerView, OnAdapterSet onAdapterSet) {
+        mActivity = activity;
         mRecyclerView = recyclerView;
         mOnAdapterSet = onAdapterSet;
     }
 
     @Override
     public Boolean doInBackground(String... params) {
-        mMyProjectsAdapter = new MyProjectsAdapter(mContext);
+        mMyProjectsAdapter = new MyProjectsAdapter(mActivity);
         return true;
     }
 

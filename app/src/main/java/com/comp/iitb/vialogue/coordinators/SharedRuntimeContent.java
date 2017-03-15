@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -115,23 +116,29 @@ public class SharedRuntimeContent {
         return project.getName();
     }
 
-    public static void pinProject(Context context) {
-        // save project with a temporary name
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {
+    public static void pinProject(Context context, Project project) {
+
+        if (project.getSlides().getAll().size() == 0) {
+            return;
         }
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObject();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
+        // save project with a temporary name
+        if ((project.getName() == null) || (project.getName() == "")) {
+            String newProjectName = getNewUndefinedProjectName();
+            project.setName(newProjectName);
+        } else {}
+
+        try {
+            project.pinParseObject();
+            System.out.println("project pinned");
+        } catch (ParseException e) {
+            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
+    }
+
+    public static void pinProject(Context context) {
+        pinProject(context, project);
     }
 
     public static void pinProjectInBackground(final Context context, final OnProjectSaved onProjectSaved) {
@@ -150,29 +157,35 @@ public class SharedRuntimeContent {
         }).execute();
     }
 
-    public static void createEmptyProject(Context context) {
-        loadNewProject(context, new Project());
+    public static void createEmptyProject(Activity activity) {
+        loadNewProject(activity, new Project());
     }
 
-    public static void loadNewProject(final Context context, final Project newProject) {
+    public static void loadNewProject(final Activity activity, final Project newProject) {
+
+
         (new AsyncTask<Void, Void, Void>() {
+
+            final Project currentProject = project;
 
             @Override
             public void onPreExecute() {
-//                loadingAnimation.setVisibility(View.VISIBLE);
+                loadingAnimation.setVisibility(View.VISIBLE);
+                project = new Project();
+                updateAdapterView();
             }
 
             @Override
             public Void doInBackground(Void... params) {
-                pinProject(context);
-                project = newProject;
+                pinProject(activity.getBaseContext(), currentProject);
                 return null;
             }
 
             @Override
             public void onPostExecute(Void result) {
+                project = newProject;
                 updateAdapterView();
-//                loadingAnimation.setVisibility(View.GONE);
+                loadingAnimation.setVisibility(View.GONE);
             }
         }).execute();
     }

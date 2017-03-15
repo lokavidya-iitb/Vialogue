@@ -57,6 +57,7 @@ import java.util.List;
 
 public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
 
+    private Activity mActivity;
     private Context mContext;
     private Storage mStorage;
     private int listItemPositionForPopupMenu;
@@ -125,8 +126,9 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         }
     }
 
-    public MyProjectsAdapter(Context context) {
-        mContext = context;
+    public MyProjectsAdapter(Activity activity) {
+        mActivity = activity;
+        mContext = activity.getBaseContext();
         mStorage = new Storage(mContext);
         populateProjectsList();
     }
@@ -184,27 +186,12 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public void onClick(View view) {
                 // TODO this is taking tooooo much time, make it makkhan
-                (new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    public Void doInBackground(Void... params) {
-                        SharedRuntimeContent.questionsList.clear();
-                        Project project = mProjectViewsList.get(position).getProject();
-                        SharedRuntimeContent.loadNewProject(mContext, project);
-//                        SharedRuntimeContent.setProjectName(project.getName());
-//                        SharedRuntimeContent.loadNewProject(project);
-//                        SharedRuntimeContent.project = SharedRuntimeContent.addThumbnailsToProject(mProjectViewsList.get(position).getProject(), mContext, mStorage);
-//                        SharedRuntimeContent.updateAdapterView();
-//                        SharedRuntimeContent.setProjectName(project.getName());
-                        return null;
-                    }
-
-                    @Override
-                    public void onPostExecute(Void result) {
-                        SharedRuntimeContent.updateAdapterView();
-                        viewpager=(ViewPager) ((Activity) mContext).findViewById(R.id.viewpager);
-                        viewpager.setCurrentItem(1,true);
-                    }
-                }).execute();
+                SharedRuntimeContent.questionsList.clear();
+                Project project = mProjectViewsList.get(position).getProject();
+                SharedRuntimeContent.loadNewProject(mActivity, project);
+                SharedRuntimeContent.updateAdapterView();
+                viewpager=(ViewPager) (mActivity).findViewById(R.id.viewpager);
+                viewpager.setCurrentItem(1,true);
             }
         });
 
@@ -212,7 +199,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                ((Activity) mContext).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
+                (mActivity).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
                 return false;
             }
         });
