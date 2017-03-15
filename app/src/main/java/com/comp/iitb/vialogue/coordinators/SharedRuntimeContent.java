@@ -47,6 +47,7 @@ public class SharedRuntimeContent {
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
+    public static final int CROP_MAIN_ACTIVITY_RESULT = 545;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
     public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
 
@@ -66,6 +67,10 @@ public class SharedRuntimeContent {
 
     public static Project getProject() {
         return project;
+    }
+
+    public static void setProject(Project newProject) {
+        project = newProject;
     }
 
     public static boolean addSlide(Slide slide) throws Exception {
@@ -163,15 +168,13 @@ public class SharedRuntimeContent {
 
     public static void loadNewProject(final Activity activity, final Project newProject) {
 
-
         (new AsyncTask<Void, Void, Void>() {
 
             final Project currentProject = project;
 
             @Override
             public void onPreExecute() {
-                loadingAnimation.setVisibility(View.VISIBLE);
-                project = new Project();
+                project = newProject;
                 updateAdapterView();
             }
 
@@ -179,13 +182,6 @@ public class SharedRuntimeContent {
             public Void doInBackground(Void... params) {
                 pinProject(activity.getBaseContext(), currentProject);
                 return null;
-            }
-
-            @Override
-            public void onPostExecute(Void result) {
-                project = newProject;
-                updateAdapterView();
-                loadingAnimation.setVisibility(View.GONE);
             }
         }).execute();
     }

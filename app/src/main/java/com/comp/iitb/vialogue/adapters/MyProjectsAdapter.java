@@ -185,13 +185,38 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         holder.thumbnail.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO this is taking tooooo much time, make it makkhan
                 SharedRuntimeContent.questionsList.clear();
-                Project project = mProjectViewsList.get(position).getProject();
-                SharedRuntimeContent.loadNewProject(mActivity, project);
-                SharedRuntimeContent.updateAdapterView();
-                viewpager=(ViewPager) (mActivity).findViewById(R.id.viewpager);
-                viewpager.setCurrentItem(1,true);
+
+                (new AsyncTask<Void, Void, Void>() {
+
+                    private Project mProject;
+                    private Project currentProject;
+
+                    @Override
+                    public void onPreExecute() {
+                        currentProject = SharedRuntimeContent.getProject();
+                        SharedRuntimeContent.loadingAnimation.setVisibility(View.VISIBLE);
+                        SharedRuntimeContent.setProject(new Project());
+                        SharedRuntimeContent.updateAdapterView();
+                        viewpager=(ViewPager) (mActivity).findViewById(R.id.viewpager);
+                        viewpager.setCurrentItem(1,true);
+                    }
+
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        mProject = mProjectViewsList.get(position).getProject();
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        SharedRuntimeContent.setProject(currentProject);
+                        SharedRuntimeContent.loadNewProject(mActivity, mProject);
+                        SharedRuntimeContent.loadingAnimation.setVisibility(View.GONE);
+                    }
+
+                }).execute();
+
             }
         });
 

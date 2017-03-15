@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -60,6 +62,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
+import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
@@ -103,7 +106,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Slide mSlide;
     private int mSlidePosition;
     public Activity traitor;
-    private CameraImagePickerActivity mCameraImagePicker;
+    private File mCameraImageFile;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -152,7 +155,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         bundle = getIntent().getExtras();
 
         // Initialize variables
-        mStorage = new Storage(getBaseContext());
+        mStorage = new Storage(getApplicationContext());
 
         // Load State
         if (bundle != null) {
@@ -164,22 +167,42 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         setUpUI();
 
         // Setup Listeners
-        mCameraImagePicker = new CameraImagePickerActivity(mStorage,getBaseContext(),this);
-        mCameraPicker.setOnClickListener(mCameraImagePicker);
-        mDone.setOnClickListener(new View.OnClickListener() {
+        mCameraPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isPlaying) {
+                    stopRecording();
+                }
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "_";
+                File storageDir = getBaseContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                File image = null;
+                try {
+                    image = File.createTempFile(
+                            imageFileName,  /* prefix */
+                            ".png",         /* suffix */
+                            storageDir      /* directory */
+                    );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // Save a file: path for use with ACTION_VIEW intents
+                mCameraImageFile = new File(image.getAbsolutePath());
+
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraImageFile));
+                startActivityForResult(cameraIntent, SharedRuntimeContent.GET_CAMERA_IMAGE);
+            }
+        });
+
+        mImagePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isRecording) {
                     stopRecording();
                 }
-                endActivity();
-            }
-        });
-        mStorage = new Storage(getApplicationContext());
-
-        mImagePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, GET_IMAGE);
@@ -189,16 +212,31 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String selectedPath = mSlideResource.getResourceFile().getAbsolutePath();
-                Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("SlidePosition",mSlidePosition);
-                bundle.putString("from", "AudioRecording");
-                bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
-                intent.putExtras(bundle);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
-                finish();
+                // save the recording
+                if(isRecording) {
+                    stopRecording();
+                }
+//                String selectedPath = mSlideResource.getResourceFile().getAbsolutePath();
+//                Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("SlidePosition",mSlidePosition);
+//                bundle.putString("from", "AudioRecording");
+//                bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
+//                intent.putExtras(bundle);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//                startActivity(intent);
+//                finish();
+                startCropMainActivity();
+            }
+        });
+
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRecording) {
+                    stopRecording();
+                }
+                endActivity();
             }
         });
 
@@ -323,7 +361,22 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         ).execute();
     }
 
+    public void startCropMainActivity() {
+        Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("SlidePosition",mSlidePosition);
+        bundle.putString("from", "AudioRecording");
+        bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
+    }
+
     public void loadStateFromSlide(Slide slide, int slidePosition) {
+        loadStateFromSlide(slide, slidePosition, true);
+    }
+
+    public void loadStateFromSlide(Slide slide, int slidePosition, boolean replaceCurrentAudio) {
         // TODO think of some other way to handle this
         try {
             CanSaveAudioResource s = (CanSaveAudioResource) slide.getResource();
@@ -337,9 +390,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mSlidePosition = slidePosition;
         mSlideResource = (CanSaveAudioResource) slide.getResource();
         mImagePath = mSlideResource.getResourceFile().getAbsolutePath();
-        mAudio = mSlideResource.getAudio();
-        if (mAudio == null) {
-            mAudio = new Audio(getBaseContext());
+        if(replaceCurrentAudio) {
+            mAudio = mSlideResource.getAudio();
+            if (mAudio == null) {
+                mAudio = new Audio(getBaseContext());
+            }
+        } else {
+            mSlideResource.addAudio(mAudio);
+            SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
         }
     }
 
@@ -507,51 +565,30 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
+            System.out.println("onActivityResutl : boooo");
             Toast.makeText(this, R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void handlePickedData(int requestCode, Intent data) {
-        String selectedPath = new String();
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
 
         if (requestCode == GET_CAMERA_IMAGE && data == null) {
-            // CAPTURE IMAGE FROM CAMERA
-            selectedPath =mCameraImagePicker.getCameraFile().getAbsolutePath();
-            Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
-            currentImagePath=selectedPath;
-            if (imagePathUri != null) {
-               /* mImageView.setImageURI(imagePathUri);*/
-                Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
-            }
-
-
+            currentImagePath=mCameraImageFile.getAbsolutePath();
+            startCropMainActivity();
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY
             if (data != null) {
-                selectedPath = mStorage.getRealPathFromURI(data.getData());
-                Uri imagePathUri = mStorage.getUriFromPath(selectedPath);
-                currentImagePath=selectedPath;
-                if (imagePathUri != null) {
-                   /* mImageView.setImageURI(imagePathUri);*/
-                    Glide.with(this).load(imagePathUri).placeholder(R.drawable.app_logo).into(mImageView);
-                }
-
+                currentImagePath = mStorage.getRealPathFromURI(data.getData());
+                startCropMainActivity();
             }
-        }
-        Slide slide = new Slide();
-        try
-        {
-            Image image = new Image(getBaseContext());
-            mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(selectedPath));
-                /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
-                TODO Look into this Jeffrey
-                slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
-            slide.addResource(image, Slide.ResourceType.IMAGE);
-            SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        } else if(requestCode == SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT) {
+            // Update State (but don't replace the current audio)
+            loadStateFromSlide(SharedRuntimeContent.getSlideAt(mSlidePosition), mSlidePosition, false);
+            // Update UI
+            setUpUI();
+            // Update thumbnails
+            mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
         }
     }
 
