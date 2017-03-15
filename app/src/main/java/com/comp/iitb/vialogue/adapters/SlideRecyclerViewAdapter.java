@@ -67,6 +67,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
                     .centerCrop()
                     .into(holder.mThumbnail);
             holder.mAudioLayer.setVisibility(View.GONE);
+            holder.mVideoPlayIcon.setVisibility(View.VISIBLE);
         } else if(slide.getSlideType() == Slide.SlideType.QUESTION) {
             // QUESTION
             Glide
@@ -107,6 +108,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         public final View mVideoLayer;
         public final View mUnselectedLayer;
         public int mSlidePosition;
+        public final ImageView mVideoPlayIcon;
 
         public ViewHolder(View view) {
             super(view);
@@ -116,6 +118,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
             mAudioLayer = view.findViewById(R.id.audio_layer);
             mVideoLayer = view.findViewById(R.id.play_video);
             mUnselectedLayer = view.findViewById(R.id.unselected_layer);
+            mVideoPlayIcon = (ImageView) view.findViewById(R.id.video_play_icon);
         }
 
         @Override

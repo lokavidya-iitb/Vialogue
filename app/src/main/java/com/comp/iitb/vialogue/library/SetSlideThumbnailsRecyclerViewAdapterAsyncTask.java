@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
+import com.comp.iitb.vialogue.coordinators.OnSlideThumbnailClicked;
 
 /**
  * Created by ironstein on 09/03/17.
@@ -18,17 +19,19 @@ public class SetSlideThumbnailsRecyclerViewAdapterAsyncTask extends AsyncTask<St
     private Context mContext;
     private Activity mActivity;
     private int mCurrentPosition;
+    private OnSlideThumbnailClicked mOnSlideThumbnailClicked;
 
-    public SetSlideThumbnailsRecyclerViewAdapterAsyncTask(Activity activity, Context context, int currentPosition, RecyclerView recyclerView) {
+    public SetSlideThumbnailsRecyclerViewAdapterAsyncTask(Activity activity, Context context, int currentPosition, RecyclerView recyclerView, OnSlideThumbnailClicked onSlideThumbnailClicked) {
         mActivity = activity;
         mRecyclerView = recyclerView;
         mContext = context;
         mCurrentPosition = currentPosition;
+        mOnSlideThumbnailClicked = onSlideThumbnailClicked;
     }
 
     @Override
     public Boolean doInBackground(String... params) {
-        mSlideThumbnailsRecyclerViewAdapter = new SlideThumbnailsRecyclerViewAdapter(mActivity, mContext, mCurrentPosition);
+        mSlideThumbnailsRecyclerViewAdapter = new SlideThumbnailsRecyclerViewAdapter(mActivity, mContext, mCurrentPosition, mOnSlideThumbnailClicked);
         return true;
     }
 

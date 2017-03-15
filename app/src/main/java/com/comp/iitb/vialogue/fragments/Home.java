@@ -90,7 +90,7 @@ public class Home extends Fragment {
         createProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedRuntimeContent.createEmptyProject(getContext());
+                SharedRuntimeContent.createEmptyProject(getActivity());
                 viewpager.setCurrentItem(1,true);
             }
         });
@@ -103,14 +103,14 @@ public class Home extends Fragment {
         createProjectRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedRuntimeContent.createEmptyProject(getContext());
+                SharedRuntimeContent.createEmptyProject(getActivity());
                 viewpager.setCurrentItem(1,true);
             }
         });
         createProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedRuntimeContent.createEmptyProject(getContext());
+                SharedRuntimeContent.createEmptyProject(getActivity());
                 viewpager.setCurrentItem(1,true);
             }
         });

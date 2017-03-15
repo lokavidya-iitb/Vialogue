@@ -109,6 +109,10 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".service.ClosingService"
+            android:enabled="true"
+            android:stopWithTask="false"/>
+
     </application>
 
 </manifest>

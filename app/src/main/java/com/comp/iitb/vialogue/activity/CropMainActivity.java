@@ -158,95 +158,148 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
     public void done() {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
-        // TODO this leads to the main thread hanging
-//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsync().execute();
     }
 
     public void done(Bitmap bitmap) {
         mDone.setEnabled(false);
         mPleaseWait.setVisibility(View.VISIBLE);
-        // TODO this leads to the main thread hanging
-//        mProgressDialog = ProgressDialog.show(CropMainActivity.this, "Generating Thumbnail", "Please wait...", true);
         new ProcessAsyncAfterCrop(bitmap).execute();
     }
 
 
-    private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
+//    private OnThumbnailCreated mThumbnailCreated = new OnThumbnailCreated() {
+//        @Override
+//        public void onThumbnailCreated(Bitmap thumbnail) {
+//            System.out.println("onThumbnailCreated : called");
+//            (new AsyncTask<Bitmap, Void, Slide>() {
+//                public Slide doInBackground(Bitmap... params) {
+//                    Bitmap thumbnail = params[0];
+//                    Slide slide = new Slide();
+//                    try {
+//                        Image image = new Image(getBaseContext());
+//                        mStorage.getBitmap(mCroppedImagePath);
+//                        mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+//
+//                        /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
+//                        TODO Look into this Jeffrey
+//                        slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
+//
+//                        slide.addResource(image, Slide.ResourceType.IMAGE);
+//                        slide.setThumbnail(thumbnail);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    return slide;
+//                }
+//
+//                @Override
+//                public void onPostExecute(Slide slide) {
+//                    if (from.equals("AudioRecording")) {
+//                        SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+//                    } else {
+//                        try {
+//                            SharedRuntimeContent.addSlide(slide);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    mPleaseWait.setVisibility(View.GONE);
+//                    finish();
+//                }
+//            }).execute(thumbnail);
+//
+//        }
+//    };
+
+    private class ProcessAsync extends AsyncTask<Void, Void, Slide> {
+
+        private Bitmap mPhoto;
+
         @Override
-        public void onThumbnailCreated(Bitmap thumbnail) {
-            System.out.println("onThumbnailCreated : called");
-            (new AsyncTask<Bitmap, Void, Slide>() {
-                public Slide doInBackground(Bitmap... params) {
-                    Bitmap thumbnail = params[0];
-                    Slide slide = new Slide();
-                    try {
-                        Image image = new Image(getBaseContext());
-                        mStorage.getBitmap(mCroppedImagePath);
-                        mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+        protected Slide doInBackground(Void... params) {
 
-                        /*SharedRuntimeContent.getSlideAt(mSlidePosition)*//*
-                        TODO Look into this Jeffrey
-                        slide.addASharedRuntimeContent.getSlideAt(mSlidePosition).getAudio()*/
+            mPhoto = mCropImageCoordinator.getCroppedImage();
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(mPhoto));
 
-                        slide.addResource(image, Slide.ResourceType.IMAGE);
-                        slide.setThumbnail(thumbnail);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            Slide slide = new Slide();
 
-                    return slide;
-                }
-
-                @Override
-                public void onPostExecute(Slide slide) {
-                    if (from.equals("AudioRecording")) {
-
-                        SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
-                    } else {
-                        try {
-                            SharedRuntimeContent.addSlide(slide);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    mPleaseWait.setVisibility(View.GONE);
-                    finish();
-                }
-            }).execute(thumbnail);
-
+            try {
+                Image image = new Image(getBaseContext());
+                mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+                slide.addResource(image, Slide.ResourceType.IMAGE);
+            } catch (Exception e) {}
+            return slide;
         }
-    };
-
-    private class ProcessAsync extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        public void onPostExecute(Slide slide) {
+            if (from.equals("AudioRecording")) {
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+            } else {
+                try {
+                    SharedRuntimeContent.addSlide(slide);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            mPleaseWait.setVisibility(View.GONE);
 
-            Bitmap photo = mCropImageCoordinator.getCroppedImage();
-            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
-            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
-            return null;
+            // clearing bitmap to release memory
+            mPhoto.recycle();
+            mPhoto = null;
 
+            finish();
         }
     }
 
-    private class ProcessAsyncAfterCrop extends AsyncTask<Void, Void, Void> {
-        Bitmap bitmap;
+    private class ProcessAsyncAfterCrop extends AsyncTask<Void, Void, Slide> {
+        private Bitmap mBitmap;
 
         ProcessAsyncAfterCrop(Bitmap bitmap) {
-            this.bitmap = bitmap;
+            this.mBitmap = bitmap;
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Slide doInBackground(Void... params) {
 
-            Bitmap photo = bitmap;
-            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(photo));
-            mStorage.getImageThumbnailAsync(new File(mCroppedImagePath).getAbsolutePath(), mThumbnailCreated, mProgressDialog);
-            return null;
+            mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(mBitmap));
+            Slide slide = new Slide();
+            try {
+                Image image = new Image(getBaseContext());
+                mStorage.saveBitmapToFile(image.getResourceFile(), mStorage.getBitmap(mCroppedImagePath));
+                slide.addResource(image, Slide.ResourceType.IMAGE);
+            } catch (Exception e) {}
+            return slide;
+        }
 
+        @Override
+        public void onPostExecute(Slide slide) {
+            if (from.equals("AudioRecording")) {
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+            } else {
+                try {
+                    SharedRuntimeContent.addSlide(slide);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            mPleaseWait.setVisibility(View.GONE);
+
+            // clearing bitmap to release memory
+            mBitmap.recycle();
+            mBitmap = null;
+
+            finish();
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // calling garbage collector
+        Runtime.getRuntime().gc();
+    }
 }

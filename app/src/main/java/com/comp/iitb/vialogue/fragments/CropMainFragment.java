@@ -146,13 +146,6 @@ public final class CropMainFragment extends Fragment
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        sequence.clear();
-    }
-
-
-    @Override
     public void onSetImageUriComplete(CropImageView view, Uri uri, Exception error) {
         if (error != null) {
             Log.e(LOG_TAG, "Failed to load image by URI", error);
@@ -198,8 +191,22 @@ public final class CropMainFragment extends Fragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d("Home", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // recycle bitmap
+        mCropImageView.setImageBitmap(null);
+        mCroppedImage.recycle();
+        mCroppedImage = null;
+
+        // clear LIFO
+        sequence.clear();
+        sequence = null;
+
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 }

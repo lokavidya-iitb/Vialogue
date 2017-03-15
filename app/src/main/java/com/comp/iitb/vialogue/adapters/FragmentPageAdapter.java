@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.fragments.DummyFragment;
 import com.comp.iitb.vialogue.fragments.Home;

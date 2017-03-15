@@ -32,6 +32,7 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.CreateVideos;
@@ -45,6 +46,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.comp.iitb.vialogue.service.ClosingService;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -236,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             try {
                 Slide slide = new Slide();
                 slide.addResource(question, Slide.ResourceType.QUESTION);
-                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.changeSlideAtPosition(
                         extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
                         slide
@@ -317,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onStop() {
         super.onStop();
-        SharedRuntimeContent.pinProjectInBackground(MainActivity.this);
     }
 
     @Override

@@ -90,7 +90,7 @@ public class InceptionMyProjects extends Fragment {
 //        initCollapsingToolbar();
 
         projectList = new ArrayList<>();
-        adapter = new MyProjectsAdapter(getContext());
+        adapter = new MyProjectsAdapter(getActivity());
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -100,7 +100,7 @@ public class InceptionMyProjects extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         new SetMyProjectsAdapterAsync(
-                getContext(),
+                getActivity(),
                 recyclerView,
                 new OnAdapterSet() {
                     @Override

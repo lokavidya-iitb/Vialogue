@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -54,11 +57,16 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
     public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    public static AVLoadingIndicatorView loadingAnimation;
 
     /*
      * All the Project related methods
      */
-    public static Project project = new Project();
+    private static Project project = new Project();
+
+    public static Project getProject() {
+        return project;
+    }
 
     public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
@@ -108,41 +116,78 @@ public class SharedRuntimeContent {
         return project.getName();
     }
 
-    public static void pinProject(Context context) {
-        // save project with a temporary name
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {
+    public static void pinProject(Context context, Project project) {
+
+        if (project.getSlides().getAll().size() == 0) {
+            return;
         }
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObject();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
+        // save project with a temporary name
+        if ((project.getName() == null) || (project.getName() == "")) {
+            String newProjectName = getNewUndefinedProjectName();
+            project.setName(newProjectName);
+        } else {}
+
+        try {
+            project.pinParseObject();
+            System.out.println("project pinned");
+        } catch (ParseException e) {
+            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
-    public static void pinProjectInBackground(Context context) {
-        // save project with a temporary name
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {}
+    public static void pinProject(Context context) {
+        pinProject(context, project);
+    }
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObjectInBackground();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+    public static void pinProjectInBackground(final Context context, final OnProjectSaved onProjectSaved) {
+        (new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(context);
+                return null;
             }
-        }
+
+            @Override
+            public void onPostExecute(Void result) {
+                onProjectSaved.done(true);
+            }
+        }).execute();
+    }
+
+    public static void createEmptyProject(Activity activity) {
+        loadNewProject(activity, new Project());
+    }
+
+    public static void loadNewProject(final Activity activity, final Project newProject) {
+
+
+        (new AsyncTask<Void, Void, Void>() {
+
+            final Project currentProject = project;
+
+            @Override
+            public void onPreExecute() {
+                loadingAnimation.setVisibility(View.VISIBLE);
+                project = new Project();
+                updateAdapterView();
+            }
+
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(activity.getBaseContext(), currentProject);
+                return null;
+            }
+
+            @Override
+            public void onPostExecute(Void result) {
+                project = newProject;
+                updateAdapterView();
+                loadingAnimation.setVisibility(View.GONE);
+            }
+        }).execute();
     }
 
     public static ArrayList<Project> getLocalProjects() {
@@ -161,16 +206,6 @@ public class SharedRuntimeContent {
             e.printStackTrace();
         }
         return localProjects;
-    }
-
-    public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
-        ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
-        for (Slide s : project.getSlides().getAll()) {
-            s.setThumbnail(context, storage);
-            slides.addObject(s);
-        }
-        project.setSlides(slides);
-        return project;
     }
 
     public static String getNewUndefinedProjectName() {
@@ -197,8 +232,6 @@ public class SharedRuntimeContent {
         if (slides == null) {
             return 0;
         }
-        System.out.println("slides.size : " + slides.size());
-        System.out.println("slides.size : " + slides.size());
         return slides.size();
     }
 
@@ -208,12 +241,6 @@ public class SharedRuntimeContent {
 
     public static int getSlidePosition(Slide item) {
         return project.getSlides().getObjectPosition(item);
-    }
-
-    public static void createEmptyProject(Context context) {
-        pinProjectInBackground(context);
-        project = new Project();
-        updateAdapterView();
     }
 
     /*
@@ -263,23 +290,6 @@ public class SharedRuntimeContent {
 
     public static void onSlideChanged(Slide slide) {
         projectAdapter.notifyItemChanged(getSlidePosition(slide));
-    }
-
-    public static void loadNewProject(Project project) {
-//        (new AsyncTask<Void, Void, Void>() {
-//
-//            @Override
-//            public void onPreExecute() {}
-//
-//            @Override
-//            public Void doInBackground(Void... params) {
-                updateAdapterView();
-//                return null;
-//            }
-//
-//            @Override
-//            public void onPostExecute(Void result) {}
-//        }).execute();
     }
 
     /*
