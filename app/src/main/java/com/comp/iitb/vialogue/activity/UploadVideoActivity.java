@@ -138,13 +138,13 @@ public class UploadVideoActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     // User signed in, save project
-                    SharedRuntimeContent.project.put("user", ParseUser.getCurrentUser());
-                    SharedRuntimeContent.project.setName(name.getText().toString());
-                    SharedRuntimeContent.project.setDescription(description.getText().toString());
+                    SharedRuntimeContent.getProject().put("user", ParseUser.getCurrentUser());
+                    SharedRuntimeContent.getProject().setName(name.getText().toString());
+                    SharedRuntimeContent.getProject().setDescription(description.getText().toString());
                     Language lang = new Language(name.getText().toString());
-                    SharedRuntimeContent.project.setLanguage(lang);
+                    SharedRuntimeContent.getProject().setLanguage(lang);
                     tagsToUpload= Arrays.asList(tags.getText().toString().split(" "));
-                    SharedRuntimeContent.project.setTags(tagsToUpload);
+                    SharedRuntimeContent.getProject().setTags(tagsToUpload);
                     new SaveParseObjectAsync(
                             UploadVideoActivity.this,
                             ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
@@ -160,7 +160,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             },
-                            SharedRuntimeContent.project
+                            SharedRuntimeContent.getProject()
                     ).execute();
                 }
             }

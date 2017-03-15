@@ -44,7 +44,4 @@ public abstract class CanSaveAudioResource extends BaseResourceClass {
             return false;
         } return true;
     }
-
-    public abstract void addAudio();
-
 }

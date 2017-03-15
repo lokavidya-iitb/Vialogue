@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -72,7 +73,7 @@ public class SlideFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             //Adapter for Slides
-            SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(mListener);
+            SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(getContext(), mListener);
             recyclerView.setAdapter(adapter);
             SharedRuntimeContent.projectAdapter = adapter;
             //Reordering helper for slides
@@ -101,6 +102,14 @@ public class SlideFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void refreshView() {
+        getFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
     }
 
 }

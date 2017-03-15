@@ -16,6 +16,8 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResource
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.parse.ParseClassName;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,10 +37,15 @@ public class Slide extends BaseParseClass {
     // INSTANTIATING THE OBJECT
     public Slide() {}
 
+    public Slide getNewInstance() {
+        return new Slide();
+    }
+
     private static class Fields implements BaseFieldsClass {
         public static final String
 
-        HYPERLINKS = "hyperlinks";
+        HYPERLINKS = "hyperlinks",
+        TYPE = "type";
 
         public ArrayList<String> getAllFields() {
             return new ArrayList<String>(Arrays.asList(new String[] {
@@ -77,40 +84,14 @@ public class Slide extends BaseParseClass {
         }
     }
 
-    private SlideType mSlideType = null;
-    private Bitmap mThumbnail;
-
-    public Bitmap getThumbnail() {
-        return mThumbnail;
-    }
-
-    public void setThumbnail(Context context, Storage storage) {
-        if(mSlideType == null) {
-            mSlideType = getSlideType();
+    public String getThumbnailUrl(Context context) {
+        if(getSlideType() == SlideType.IMAGE || getSlideType() == SlideType.VIDEO) {
+            return getResource().getResourceFile().getAbsolutePath();
+        } else if(getSlideType() == SlideType.QUESTION){
+            return new File(Question.getQuestionThumbnailUri(context).getPath()).getAbsolutePath();
         }
-        if(mThumbnail == null) {
-            if(getSlideType() == SlideType.IMAGE) {
-                mThumbnail = storage.getImageThumbnail(getResource().getResourceFile().getAbsolutePath());
-            } else if(getSlideType() == SlideType.VIDEO) {
-                mThumbnail = storage.getVideoThumbnail(getResource().getResourceFile().getAbsolutePath());
-            } else if(getSlideType() == SlideType.QUESTION) {
-                mThumbnail = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_question);
-            }
-        }
+        return null;
     }
-
-    public void setThumbnail(Bitmap thumbnail) {
-        mThumbnail = thumbnail;
-    }
-
-//    public Slide(String path, String audioPath, Bitmap thumbnail, SlideType slideType) {
-//        addResource(new);
-//        this.path = path;
-//        this.audioPath = audioPath;
-//        this.thumbnail = thumbnail;
-//        this.slideType = slideType;
-//        isSelected = false;
-//    }
 
     public ArrayList<String> getHyperlinks() {
         ArrayList<String> hyperlinks = null;
@@ -155,21 +136,21 @@ public class Slide extends BaseParseClass {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.addObject(image);
         setChildrenResources(childrenResources);
-        mSlideType = SlideType.IMAGE;
+        setSlideType(SlideType.IMAGE);
     }
 
     public void addVideo(Video video) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.addObject(video);
         setChildrenResources(childrenResources);
-        mSlideType = SlideType.VIDEO;
+        setSlideType(SlideType.VIDEO);
     }
 
     public void addQuestion(Question question) {
         ParseObjectsCollection<BaseResourceClass> childrenResources = new ParseObjectsCollection<>();
         childrenResources.addObject(question);
         setChildrenResources(childrenResources);
-        mSlideType = SlideType.QUESTION;
+        setSlideType(SlideType.QUESTION);
     }
 
     private void addAudio(Audio audio) throws Exception {
@@ -178,19 +159,6 @@ public class Slide extends BaseParseClass {
 
     public BaseResourceClass getResource() {
         return getChildrenResources().get(0);
-    }
-
-    public SlideType getSlideType() {
-        if(mSlideType == null) {
-            if(getResource() instanceof Image) {
-                mSlideType = SlideType.IMAGE;
-            } else if(getResource() instanceof Video) {
-                mSlideType = SlideType.VIDEO;
-            } else if(getResource() instanceof Question) {
-                mSlideType = SlideType.QUESTION;
-            }
-        }
-        return mSlideType;
     }
 
     public Audio getAudio() {
@@ -206,7 +174,7 @@ public class Slide extends BaseParseClass {
 
     public PlayerModel toPlayerModel() {
         PlayerModel playerModel = null;
-        if(mSlideType == SlideType.IMAGE) {
+        if(getSlideType() == SlideType.IMAGE) {
             if(!(((Image) getResource()).hasAudio())) {
                 return null;
             }
@@ -215,17 +183,37 @@ public class Slide extends BaseParseClass {
                     ((Image) getResource()).getAudio().getResourceFile().getAbsolutePath()
             );
             playerModel.setType(PlayerModel.MediaType.IMAGE_AUDIO);
-        } else if(mSlideType == SlideType.VIDEO) {
+        } else if(getSlideType() == SlideType.VIDEO) {
             playerModel = new PlayerModel(
                     getResource().getResourceFile().getAbsolutePath(),
                     null
             );
             playerModel.setType(PlayerModel.MediaType.VIDEO);
-        } else if(mSlideType == SlideType.QUESTION) {
+        } else if(getSlideType() == SlideType.QUESTION) {
             // TODO add implementation
         }
         return playerModel;
     }
 
+    public void setSlideType(SlideType slideType) {
+        put(Fields.TYPE, slideType.toString());
+    }
 
+    public SlideType getSlideType() {
+        SlideType type = null;
+        try {
+             type = SlideType.valueOf(getString(Fields.TYPE));
+        } catch (Exception e) {}
+        if(type == null) {
+            if (getResource() instanceof Image) {
+                type = SlideType.IMAGE;
+            } else if (getResource() instanceof Video) {
+                type = SlideType.VIDEO;
+            } else if (getResource() instanceof Question) {
+                type = SlideType.QUESTION;
+            }
+            setSlideType(type);
+        }
+        return type;
+    }
 }

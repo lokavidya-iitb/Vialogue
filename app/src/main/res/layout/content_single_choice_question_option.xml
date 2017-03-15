@@ -16,8 +16,8 @@
             android:minWidth="0dp"
             android:padding="@dimen/delete_button_padding"
             android:text="@string/delete_button"
-            android:textColor="@color/colorAccentLight"
-            android:visibility="invisible" />
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone"/>
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/radio_button"

@@ -1,6 +1,8 @@
 package com.comp.iitb.vialogue;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,9 +32,11 @@ import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
-import com.comp.iitb.vialogue.fragments.QuestionAnswerDialog;
+import com.comp.iitb.vialogue.fragments.CreateVideos;
+import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
@@ -41,6 +46,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
+import com.comp.iitb.vialogue.service.ClosingService;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -68,40 +74,34 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
-    public ViewPager mViewPager;
     private Storage mStorage;
-    private static Menu mMenu;
+    private Menu mMenu;
     private FloatingActionButton mPreviewFab;
+    private ViewPager mViewPager;
+//    private FragmentManager mSupportFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-        Storage.setupLokavidyaLegacy();
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(),
-                MainActivity.this));
+        mViewPager = ((ViewPager) findViewById(R.id.viewpager));
+        mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
 
-        mViewPager.setOffscreenPageLimit(1);
-
-
-        //mViewPager.setOffscreenPageLimit(0);
+        mViewPager.setOffscreenPageLimit(3);
 
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
-        SharedRuntimeContent.mainActivity = this;
         mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        Log.d("---CreateWorking?","Yeah");
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
                         startActivity(intent);
@@ -111,17 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                         SharedRuntimeContent.questionsList.clear();
                         mViewPager.setCurrentItem(1, true);
                         break;
-
                 }
-                /*Intent intent = new Intent(getApplicationContext(), AudioRecordActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(FOLDER_PATH, mStorage.getStorageDir("New Project", true).getAbsolutePath());
-                bundle.putString(SLIDE_NO, SharedRuntimeContent.AUDIO_FOLDER_NAME);
-                bundle.putString(RECORD_NAME, "hello.wav");
-                bundle.putString(IMAGE_PATH, SharedRuntimeContent.projectFolder.getAbsolutePath() + "/" + SharedRuntimeContent.IMAGE_FOLDER_NAME + "/" + SharedRuntimeContent.imagePathList.get(0));
-
-                intent.putExtras(bundle);
-                startActivity(intent);*/
             }
         });
 
@@ -185,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         return true;
     }
 
-    public static void refreshSignInOutOptions() {
+    public void refreshSignInOutOptions() {
         try {
             if(ParseUser.getCurrentUser() == null) {
                 // signed out
@@ -202,11 +192,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        final MenuItem item_ = item;
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             if(ParseUser.getCurrentUser() != null) {
                 // already Signed in, Sign out
                 SignIn.signOut(
@@ -223,24 +211,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 Intent intent = new Intent(getApplicationContext(), SignIn.class);
                 startActivity(intent);
             }
-
-           /* Auth.GoogleSignInApi.signOut(SignIn.mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            SharedPreferenceHelper help = new SharedPreferenceHelper(getApplicationContext());
-                            try {
-                                help.saveToSharedPref(Master.personName,"");
-                                help.saveToSharedPref(Master.email,"");
-                                help.saveToSharedPref(Master.personPhotoUrl,"");
-                                help.saveToSharedPref(Master.signedOrNot,true);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Toast.makeText(MainActivity.this,
-                                    "Signed Out", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
 
             return true;
         }
@@ -268,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             try {
                 Slide slide = new Slide();
                 slide.addResource(question, Slide.ResourceType.QUESTION);
-                slide.setThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.ic_question));
                 SharedRuntimeContent.changeSlideAtPosition(
                         extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD),
                         slide
@@ -308,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         } else if(item.getSlideType() == Slide.SlideType.QUESTION) {
             // TODO display question
             System.out.println("MainActivity : slideNumber : " + SharedRuntimeContent.getSlidePosition(item));
-            QuestionAnswerDialog qaDialog = new QuestionAnswerDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
+            SingleChoiceQuestionDialog qaDialog = new SingleChoiceQuestionDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
             qaDialog.show();
         }
 
@@ -349,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onStop() {
         super.onStop();
-        SharedRuntimeContent.pinProjectInBackground(MainActivity.this);
     }
 
     @Override
@@ -363,4 +331,5 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
 }

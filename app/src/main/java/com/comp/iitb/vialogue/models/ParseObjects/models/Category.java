@@ -20,8 +20,13 @@ public class Category extends BaseParseClass {
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT
     public Category() {}
+
     public Category(String name) {
         setName(name);
+    }
+
+    public Category getNewInstance() {
+        return new Category();
     }
 
     private static final class Fields implements BaseFieldsClass {

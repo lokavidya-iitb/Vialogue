@@ -1,12 +1,17 @@
 package com.comp.iitb.vialogue.coordinators;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -23,6 +28,7 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -36,41 +42,38 @@ import tcking.github.com.giraffeplayer.PlayerModel;
 
 public class SharedRuntimeContent {
 
-    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
-
-    public static List<String> videoPathList = new ArrayList<>();
-    public static List<String> imagePathList = new ArrayList<>();
-    public static List<Bitmap> imageThumbnails = new ArrayList<>();
-    public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    // Constants
     public static final int GET_IMAGE = 541;
     public static final int GET_VIDEO = 542;
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
-    public static String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
-//    public static final String IMAGE_FOLDER_NAME = "images";
-//    public static final String VIDEO_FOLDER_NAME = "videos";
-//    public static final String AUDIO_FOLDER_NAME = "audio";
-//    public static final String VIALOGUE_FOLDER_NAME = "vialogue";
-//    public static final String TEMP_FOLDER = "temp_folder";
-//    public static final String TEMP_IMAGE_NAME = "image_temp";
-    /**
-     * An array of sample (dummy) items.
-     */
-//    public static File projectFolder;
+    public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
+    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
+
+    // Variables
     public static SlideRecyclerViewAdapter projectAdapter;
-    public static MainActivity mainActivity;
     public static FloatingActionButton previewFab;
     // TODO change implementation for isSelected
     public static boolean isSelected = false;
     public static int selectedPosition;
+    public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    public static AVLoadingIndicatorView loadingAnimation;
 
-    public static Project project = new Project();
+    /*
+     * All the Project related methods
+     */
+    private static Project project = new Project();
 
-    public static void addSlide(Slide slide) {
+    public static Project getProject() {
+        return project;
+    }
+
+    public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
+//        project.addSlide(slide.deepCopy());
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
-        previewFab.show();
         calculatePreviewFabVisibility();
+        return true;
     }
 
     public static void changeSlideAtPosition(int position, Slide slide) {
@@ -79,7 +82,12 @@ public class SharedRuntimeContent {
     }
 
     public static void addSlideAtPosition(int position, Slide slide) {
-        addSlide(slide);
+        try {
+            addSlide(slide);
+        } catch (Exception e) {
+            Log.e("addSlideAtPosition", "failed");
+            e.printStackTrace();
+        }
         changeSlidePosition(getNumberOfSlides() - 1, position);
     }
 
@@ -100,30 +108,6 @@ public class SharedRuntimeContent {
         calculatePreviewFabVisibility();
     }
 
-    public static void calculatePreviewFabVisibility() {
-
-        if (previewFab == null) {
-            return;
-        }
-
-        if (getNumberOfSlides() == 0) {
-        } else {
-            for (Slide s : project.getSlides().getAll()) {
-                if (s.getSlideType() == Slide.SlideType.VIDEO) {
-                    previewFab.show();
-                    return;
-                } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
-                    if (((Image) s.getResource()).hasAudio()) {
-                        previewFab.show();
-                        return;
-                    }
-                }
-            }
-        }
-
-        previewFab.hide();
-    }
-
     public static void setProjectName(String name) {
         project.setName(name);
     }
@@ -132,41 +116,78 @@ public class SharedRuntimeContent {
         return project.getName();
     }
 
-    public static void pinProject(Context context) {
-        // save project with a temporary name
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {
+    public static void pinProject(Context context, Project project) {
+
+        if (project.getSlides().getAll().size() == 0) {
+            return;
         }
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObject();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
+        // save project with a temporary name
+        if ((project.getName() == null) || (project.getName() == "")) {
+            String newProjectName = getNewUndefinedProjectName();
+            project.setName(newProjectName);
+        } else {}
+
+        try {
+            project.pinParseObject();
+            System.out.println("project pinned");
+        } catch (ParseException e) {
+            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
-    public static void pinProjectInBackground(Context context) {
-        // save project with a temporary name
-        if ((getProjectName() == null) || (getProjectName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            setProjectName(newProjectName);
-        } else {}
+    public static void pinProject(Context context) {
+        pinProject(context, project);
+    }
 
-        if (getNumberOfSlides() != 0) {
-            try {
-                project.pinParseObjectInBackground();
-                System.out.println("project pinned");
-            } catch (ParseException e) {
-                Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+    public static void pinProjectInBackground(final Context context, final OnProjectSaved onProjectSaved) {
+        (new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(context);
+                return null;
             }
-        }
+
+            @Override
+            public void onPostExecute(Void result) {
+                onProjectSaved.done(true);
+            }
+        }).execute();
+    }
+
+    public static void createEmptyProject(Activity activity) {
+        loadNewProject(activity, new Project());
+    }
+
+    public static void loadNewProject(final Activity activity, final Project newProject) {
+
+
+        (new AsyncTask<Void, Void, Void>() {
+
+            final Project currentProject = project;
+
+            @Override
+            public void onPreExecute() {
+                loadingAnimation.setVisibility(View.VISIBLE);
+                project = new Project();
+                updateAdapterView();
+            }
+
+            @Override
+            public Void doInBackground(Void... params) {
+                pinProject(activity.getBaseContext(), currentProject);
+                return null;
+            }
+
+            @Override
+            public void onPostExecute(Void result) {
+                project = newProject;
+                updateAdapterView();
+                loadingAnimation.setVisibility(View.GONE);
+            }
+        }).execute();
     }
 
     public static ArrayList<Project> getLocalProjects() {
@@ -185,16 +206,6 @@ public class SharedRuntimeContent {
             e.printStackTrace();
         }
         return localProjects;
-    }
-
-    public static Project addThumbnailsToProject(Project project, Context context, Storage storage) {
-        ParseObjectsCollection<Slide> slides = new ParseObjectsCollection<>();
-        for (Slide s : project.getSlides().getAll()) {
-            s.setThumbnail(context, storage);
-            slides.addObject(s);
-        }
-        project.setSlides(slides);
-        return project;
     }
 
     public static String getNewUndefinedProjectName() {
@@ -221,8 +232,6 @@ public class SharedRuntimeContent {
         if (slides == null) {
             return 0;
         }
-        System.out.println("slides.size : " + slides.size());
-        System.out.println("slides.size : " + slides.size());
         return slides.size();
     }
 
@@ -230,6 +239,43 @@ public class SharedRuntimeContent {
         return project.getSlide(position);
     }
 
+    public static int getSlidePosition(Slide item) {
+        return project.getSlides().getObjectPosition(item);
+    }
+
+    /*
+     * Preview FAB related methods
+     */
+    public static void calculatePreviewFabVisibility() {
+
+        if (previewFab == null) {
+            return;
+        }
+
+        if (getNumberOfSlides() == 0) {
+        } else {
+            for (Slide s : project.getSlides().getAll()) {
+                if (s.getSlideType() == Slide.SlideType.VIDEO) {
+                    previewFab.show();
+                    return;
+                } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
+                    if (((Image) s.getResource()).hasAudio()) {
+                        previewFab.show();
+                        return;
+                    }
+                }
+            }
+        }
+        previewFab.hide();
+    }
+
+    public static void hidePreviewFab() {
+        previewFab.hide();
+    }
+
+    /*
+     * ProjectAdapter related methods
+     */
     public static void updateAdapterView(int position) {
         if(projectAdapter != null) {
             projectAdapter.notifyItemChanged(position);
@@ -246,61 +292,9 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemChanged(getSlidePosition(slide));
     }
 
-    // TODO change
-//    public List<PlayerModel> getPreviewList() {
-//        ArrayList<PlayerModel> list = new ArrayList<>();
-//        for (DummyContent.Slide item : ITEMS) {
-//            PlayerModel model = convertSlideToPlayerModel(item);
-//            if (model != null) {
-//                list.add(model);
-//            }
-//        }
-//        return list;
-//    }
-
-    public static List<PlayerModel> getPreviewList() {
-        ArrayList<PlayerModel> list = new ArrayList<>();
-        if (project.getSlides().getAll() != null) {
-            for (Slide slide : project.getSlides().getAll()) {
-                PlayerModel playerModel = slide.toPlayerModel();
-                if (playerModel != null) {
-                    list.add(playerModel);
-                }
-            }
-        }
-        return list;
-    }
-
-    // TODO change
-//    public PlayerModel convertSlideToPlayerModel(DummyContent.Slide slide) {
-//        PlayerModel model = new PlayerModel(slide.path, slide.getAudioPath());
-//        if (slide.slideType == DummyContent.SlideType.IMAGE)
-//            return null;
-//        switch (slide.slideType.toString()) {
-//            case "IA"://Case Image and Audio
-//                model.setType(PlayerModel.MediaType.IMAGE_AUDIO);
-//                break;
-//            case "V"://Case is Video
-//                model.setType(PlayerModel.MediaType.VIDEO);
-//                break;
-//        }
-//        return model;
-//    }
-
-    // TODO change
-    public static int getSlidePosition(Slide item) {
-        return project.getSlides().getObjectPosition(item);
-    }
-
-    public static void hidePreviewFab() {
-        previewFab.hide();
-    }
-
-    public static void createEmptyProject(Context context) {
-        pinProjectInBackground(context);
-        project = new Project();
-        updateAdapterView();
-    }
+    /*
+     * Validation related methods
+     */
     public static InputFilter filter = new InputFilter() {
 
         @Override
@@ -318,6 +312,22 @@ public class SharedRuntimeContent {
         return true;
     }
 
+    /*
+     * UploadVideoActivity related methods
+     */
+    public static List<PlayerModel> getPreviewList() {
+        ArrayList<PlayerModel> list = new ArrayList<>();
+        if (project.getSlides().getAll() != null) {
+            for (Slide slide : project.getSlides().getAll()) {
+                PlayerModel playerModel = slide.toPlayerModel();
+                if (playerModel != null) {
+                    list.add(playerModel);
+                }
+            }
+        }
+        return list;
+    }
+
     public static List<QuestionAnswer> getQuestions() {
         int i=0;
         ArrayList<QuestionAnswer> list = new ArrayList<>();
@@ -331,21 +341,16 @@ public class SharedRuntimeContent {
                     optionsArray = question.getOptions().toArray(optionsArray);
                     questionAnswer.setOptions(optionsArray);
                     positionThatSaves = getSlidePosition(slide);
-                    Log.d("--position",""+positionThatSaves);
                     questionAnswer.setTime(getDurationThatSavesQuestion(positionThatSaves));
                     questionAnswer.setQuestion(question.getQuestionString());
                     list.add(questionAnswer);
                 }
             }
         }
-        Log.d("---size while returning",""+list.size());
         return list;
     }
 
-
-    public static int getDurationThatSavesQuestion(int position)
-    {
-        Log.d("---whats the position",""+ position);
+    public static int getDurationThatSavesQuestion(int position) {
         int totalTime=0;
         List<Slide> slides = getAllSlides();
         for(int stub=0;stub<position;stub++)
@@ -363,7 +368,6 @@ public class SharedRuntimeContent {
             } else  {
             }
         }
-        Log.d("---time for a question",""+ totalTime);
         return totalTime;
     }
 
@@ -383,6 +387,5 @@ public class SharedRuntimeContent {
 
         return timeMilliSec;
     }
-
 
 }
