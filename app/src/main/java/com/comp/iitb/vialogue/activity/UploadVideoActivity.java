@@ -310,7 +310,6 @@ public class UploadVideoActivity extends AppCompatActivity {
             mPlayer.onResume();
         }
         try {
-            // Locate the class table named "TestLimit" in Parse.com
             ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
                     "CategoryType");
             query.orderByAscending("createdAt");
@@ -329,18 +328,15 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         String[] plants = new String[categories.size()];
         plants = categories.toArray(plants);
-        /*
-        String[] plants = (String[]) categories.toArray();*/
+
 
         final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
 
-        // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 this, R.layout.category_option_view, plantsList) {
             @Override
             public boolean isEnabled(int position) {
-                // Disable the first item from Spinner
-                // First item will be use for hint
+
                 return position != 0;
             }
 
