@@ -52,12 +52,6 @@ public abstract class BaseResourceClass extends BaseParseClass {
         return fields;
     }
 
-//    @Override
-//    public ArrayList<String> getAllFields() {
-//        ArrayList<String> allFields = new ArrayList<String>(Arrays.asList(new String[] {Fields.FILE, Fields.TEMP_URL}));
-//        return allFields.addAll(super.getAllFields());
-//    }
-
     public static File makeTempResourceFile(Slide.ResourceType resourceType, Context context) {
         String extension = null;
         File storageDirectory = null;

@@ -69,6 +69,12 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+    // fishbun (for selecting multiple images) (only for API < 18)
+    // TODO change implementation for API > 18
+    compile('com.sangcomz:FishBun:0.6.4@aar') {
+        transitive = true
+    }
 }
 
 //apply plugin: 'com.google.gms.google-services'
