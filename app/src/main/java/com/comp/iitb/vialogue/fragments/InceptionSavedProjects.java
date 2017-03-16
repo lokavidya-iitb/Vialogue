@@ -91,7 +91,10 @@ public class InceptionSavedProjects extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-        prepareProjects();
+
+        // --------------
+//        prepareProjects();
+        // ---------------
         /*
         try {
             Glide.with(this).load("https://cdn0.vox-cdn.com/uploads/blog/sbnu_logo_minimal/213/large_hammerandrails.com.minimal.png").placeholder(R.drawable.ic_computer_black_24dp).into((ImageView) getActivity().findViewById(R.id.backdrop));
@@ -108,6 +111,14 @@ public class InceptionSavedProjects extends Fragment {
         View view =inflater.inflate(R.layout.fragment_inception_saved_projects, container, false);
         SharedRuntimeContent.previewFab.hide();
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            SharedRuntimeContent.previewFab.setVisibility(View.GONE);
+        } else {}
     }
 
     // TODO: Rename method, update argument and hook method into UI event

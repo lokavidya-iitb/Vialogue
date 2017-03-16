@@ -92,7 +92,8 @@
         android:layout_alignRight="@id/thumbnail"
         android:layout_alignStart="@id/thumbnail"
         android:layout_alignTop="@id/thumbnail"
-        android:background="@color/transparent_grey"
+        android:background="@color/sysBlack"
+        android:alpha="0.4"
         android:visibility="gone" />
 
     <!--<RelativeLayout

@@ -1,6 +1,5 @@
 package com.comp.iitb.vialogue.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -15,22 +14,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.adapters.CategoriesExpandableAdapter;
 import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.models.Category;
-import com.comp.iitb.vialogue.models.CategoryType;
+import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.squareup.leakcanary.RefWatcher;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -46,13 +42,7 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class ViewVideos extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private View mView;
@@ -70,9 +60,12 @@ public class ViewVideos extends Fragment {
     private int limit = 5;
     List<ParseObject> receiveEM;
     private List<CategoryType> categoryTypeList = new ArrayList<>();
-    public ViewVideos() {
-        // Required empty public constructor
-    }
+
+    private AVLoadingIndicatorView mLoadingAnimation;
+    private TextView mNoInternetConnectionTextView;
+
+    // default constructor required
+    public ViewVideos() {}
 
     /**
      * Use this factory method to create a new instance of
@@ -80,13 +73,10 @@ public class ViewVideos extends Fragment {
      *
      * @return A new instance of fragment ViewVideos.
      */
-    // TODO: Rename and change types and number of parameters
     public static ViewVideos newInstance(String catOrVid) {
-        catOrVids=catOrVid;
+        catOrVids = catOrVid;
         ViewVideos fragment = new ViewVideos();
-        Bundle args = new Bundle();/*
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);*/
+        Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,57 +84,46 @@ public class ViewVideos extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
     }
+
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        mView = inflater.inflate(R.layout.fragment_view_videos, container, false);
 
-        mView= inflater.inflate(R.layout.fragment_view_videos, container, false);
+        // Instantiate UI Components
         expListView = (ExpandableListView) mView.findViewById(R.id.video_list);
         recyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
-        if(catOrVids.equals(""))
+        mLoadingAnimation = (AVLoadingIndicatorView) mView.findViewById(R.id.loading_animation);
+        mNoInternetConnectionTextView = (TextView) mView.findViewById(R.id.check_internet_connection_text_view);
 
-        {
+        new GetCategoryType().execute("Ok");
 
-            recyclerView.setVisibility(View.VISIBLE);
+//        if(catOrVids.equals("")) {
+//            recyclerView.setVisibility(View.VISIBLE);
+//            if(isNetworkConnected()) {
+//                new GetCategoryType().execute("Ok");
+//            } else {
+//                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
+//            }
+//        } else {
+//            expListView.setVisibility(View.VISIBLE);
+//            if(!isNetworkConnected()) {
+//                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
+//            }
+//        }
 
-            if(isNetworkConnected())
-            new GetCategoryType().execute("Ok");
-            else
-                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
-
-
-        }
-            else {
-
-            expListView.setVisibility(View.VISIBLE);
-
-            if(isNetworkConnected())
-            {  /*new GetCategories().execute("OK");*/}
-            else
-                Toast.makeText(getContext(),R.string.networkConnect,Toast.LENGTH_LONG);
-
-        }
 
         //setGroupIndicatorToRight();
 
         return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(1);
@@ -189,34 +168,41 @@ public class ViewVideos extends Fragment {
             childList.add(model);
     }
 
-
-
-
-
     private class GetCategoryType extends AsyncTask<String, Void, String> {
-        ProgressDialog pd;
+        private boolean mFetchedDataSuccessfully;
+
+        @Override
+        protected void onPreExecute() {
+            mFetchedDataSuccessfully = true;
+            mLoadingAnimation.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected String doInBackground(String... params) {
-            try {
-                // Locate the class table named "TestLimit" in Parse.com
-                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
-                        "CategoryType");
-                query.orderByAscending("createdAt");
-                // Add 20 results to the default limit
-                query.setLimit(limit += 5);
-                receiveEM = query.find();
-                for (ParseObject num : receiveEM) {
-                    String id=((String) num.get("ids"));
-                    String name=((String) num.get("name"));
-                    String desc=((String) num.get("desc"));
-                    String imageURL=((String) num.get("imageURL"));
+            if(isNetworkConnected()) {
+                try {
+                    // Locate the class table named "TestLimit" in Parse.com
+                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("CategoryType");
+                    query.orderByAscending("createdAt");
+                    // Add 20 results to the default limit
+                    query.setLimit(limit += 5);
+                    receiveEM = query.find();
+                    for (ParseObject num : receiveEM) {
+                        String id=((String) num.get("ids"));
+                        String name=((String) num.get("name"));
+                        String desc=((String) num.get("desc"));
+                        String imageURL=((String) num.get("imageURL"));
 
-                    CategoryType map = new CategoryType(id, name, desc, imageURL);
-                    categoryTypeList.add(map);
+                        CategoryType map = new CategoryType(id, name, desc, imageURL);
+                        categoryTypeList.add(map);
+                    }
+                } catch (ParseException e) {
+                    Log.e("Error", e.getMessage());
+                    e.printStackTrace();
+                    mFetchedDataSuccessfully = false;
                 }
-            } catch (ParseException e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+            } else {
+                mFetchedDataSuccessfully = false;
             }
 
 /*
@@ -242,31 +228,23 @@ public class ViewVideos extends Fragment {
                             }
 */
 
-
             return "Executed";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            pd.dismiss();
-
-            mAdapter = new ViewCategoryAdapter(categoryTypeList,getActivity());
-            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mView.getContext(), 2);
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(mAdapter);
-
-            mAdapter.notifyDataSetChanged();
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            pd=new ProgressDialog(getContext());
-            pd.setMessage("Loading..");
-            pd.show();
-
+            if(!mFetchedDataSuccessfully) {
+                mNoInternetConnectionTextView.setVisibility(View.VISIBLE);
+            } else {
+                mNoInternetConnectionTextView.setVisibility(View.GONE);
+                mAdapter = new ViewCategoryAdapter(categoryTypeList,getActivity());
+                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mView.getContext(), 2);
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            }
+            mLoadingAnimation.setVisibility(View.GONE);
         }
 
         @Override

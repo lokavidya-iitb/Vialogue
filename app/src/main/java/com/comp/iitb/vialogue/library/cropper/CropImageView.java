@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.library.Storage;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -1032,8 +1033,8 @@ public class CropImageView extends FrameLayout {
     private void clearImageInt() {
 
         // if we allocated the bitmap, release it as fast as possible
-        if (mBitmap != null && (mImageResource > 0 || mLoadedImageUri != null)) {
-            mBitmap.recycle();
+        if (mBitmap != null && (mImageResource > 0 || mLoadedImageUri != null) && !mBitmap.isRecycled()) {
+            Storage.recycleBitmap(mBitmap);
         }
         mBitmap = null;
 

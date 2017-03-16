@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 
+import com.comp.iitb.vialogue.library.Storage;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -118,7 +120,7 @@ final class BitmapLoadingWorkerTask extends AsyncTask<Void, Void, BitmapLoadingW
             }
             if (!completeCalled && result.bitmap != null) {
                 // fast release of unused bitmap
-                result.bitmap.recycle();
+                Storage.recycleBitmap(result.bitmap);
             }
         }
     }

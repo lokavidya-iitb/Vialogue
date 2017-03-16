@@ -27,6 +27,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 
+import com.comp.iitb.vialogue.library.Storage;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -346,7 +348,7 @@ final class BitmapUtils {
                 }
                 if (resized != null) {
                     if (resized != bitmap) {
-                        bitmap.recycle();
+                        Storage.recycleBitmap(bitmap);
                     }
                     return resized;
                 }
@@ -398,9 +400,7 @@ final class BitmapUtils {
                     result = cropForRotatedImage(result, points, rect, degreesRotated, fixAspectRatio, aspectRatioX, aspectRatioY);
                 }
             } catch (OutOfMemoryError e) {
-                if (result != null) {
-                    result.recycle();
-                }
+                 Storage.recycleBitmap(result);
                 throw e;
             }
             return new BitmapSampled(result, sampleSize);
@@ -435,14 +435,12 @@ final class BitmapUtils {
                     result = cropBitmapObjectWithScale(fullBitmap, points2, degreesRotated, fixAspectRatio, aspectRatioX, aspectRatioY, 1);
                 } finally {
                     if (result != fullBitmap) {
-                        fullBitmap.recycle();
+                        Storage.recycleBitmap(fullBitmap);
                     }
                 }
             }
         } catch (OutOfMemoryError e) {
-            if (result != null) {
-                result.recycle();
-            }
+            Storage.recycleBitmap(result);
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to load sampled bitmap: " + loadedImageUri + "\r\n" + e.getMessage(), e);
@@ -549,7 +547,7 @@ final class BitmapUtils {
             Bitmap bitmapTmp = bitmap;
             bitmap = Bitmap.createBitmap(bitmap, rect.left, rect.top, rect.width(), rect.height());
             if (bitmapTmp != bitmap) {
-                bitmapTmp.recycle();
+                Storage.recycleBitmap(bitmapTmp);
             }
         }
         return bitmap;
@@ -629,7 +627,7 @@ final class BitmapUtils {
             matrix.setRotate(degrees);
             Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
             if (newBitmap != bitmap) {
-                bitmap.recycle();
+                Storage.recycleBitmap(bitmap);
             }
             return newBitmap;
         } else {

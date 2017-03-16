@@ -38,6 +38,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.library.Storage;
 
 import java.io.File;
 import java.io.InputStream;
@@ -125,7 +126,7 @@ public final class CropImage {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
-        bitmap.recycle();
+        Storage.recycleBitmap(bitmap)              ;
 
         return output;
     }

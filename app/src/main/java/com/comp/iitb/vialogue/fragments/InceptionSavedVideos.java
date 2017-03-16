@@ -109,7 +109,9 @@ public class InceptionSavedVideos extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-        prepareProjects();
+        // ---------------
+//        prepareProjects();
+        // ----------------
         /*
         try {
             Glide.with(this).load("https://cdn0.vox-cdn.com/uploads/blog/sbnu_logo_minimal/213/large_hammerandrails.com.minimal.png").placeholder(R.drawable.ic_computer_black_24dp).into((ImageView) getActivity().findViewById(R.id.backdrop));
@@ -120,11 +122,18 @@ public class InceptionSavedVideos extends Fragment {
 
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            SharedRuntimeContent.previewFab.setVisibility(View.GONE);
+        } else {}
+    }
+
     private void prepareProjects() {
         List<String> myStringArray = new ArrayList<String>();
         myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedVideosPath());
-        for(int i=0;i<myStringArray.size();i++)
-        {
+        for(int i=0;i<myStringArray.size();i++) {
             ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
         }

@@ -2,16 +2,10 @@ package com.comp.iitb.vialogue.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,50 +18,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.App;
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.CameraActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
-import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
-import com.comp.iitb.vialogue.library.VideoThumbnailAsync;
 import com.comp.iitb.vialogue.listeners.CameraImagePicker;
+import com.comp.iitb.vialogue.listeners.MultipleImagePicker;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
 import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
-import com.comp.iitb.vialogue.listeners.ImagePickerClick;
-import com.comp.iitb.vialogue.listeners.MinimumConditionOnTextChangeListener;
 import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
 import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
-import com.comp.iitb.vialogue.models.ProjectsShowcase;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.sangcomz.fishbun.define.Define;
 import com.squareup.leakcanary.RefWatcher;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
@@ -99,6 +78,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     private AVLoadingIndicatorView mLoadingAnimation;
 
     private CameraImagePicker mCameraImagePicker;
+    private MultipleImagePicker mMultipleImagePicker;
 
     // Required empty public constructor
     public CreateVideos() {}
@@ -157,12 +137,21 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         mProjectName.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
+
         // Camera Image Picker
-        mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
-        mCameraPicker.setOnClickListener(mCameraImagePicker);
+//        mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
+//        mCameraPicker.setOnClickListener(mCameraImagePicker);
+        mCameraPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CameraActivity.class);
+                startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
+            }
+        });
         //Image Picker
-        ImagePickerClick imagePickerClickListener = new ImagePickerClick(this);
-        mImagePicker.setOnClickListener(imagePickerClickListener);
+        //        ImagePickerClick imagePickerClickListener = new ImagePickerClick(this);
+        mMultipleImagePicker = new MultipleImagePicker(getContext(), CreateVideos.this);
+        mImagePicker.setOnClickListener(mMultipleImagePicker);
         //Video Picker
         VideoPickerClick videoPickerClickListener = new VideoPickerClick(this);
         mVideoPicker.setOnClickListener(videoPickerClickListener);
@@ -190,8 +179,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             SharedRuntimeContent.calculatePreviewFabVisibility();
         } else {}
     }
-
-
 
     public void setUpNewProject() {
 
@@ -255,6 +242,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
             mFragment.startActivity(intent);
+
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY
             if (data != null) {
@@ -320,6 +308,56 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
                 e.printStackTrace();
                 Toast.makeText(getContext(),  R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
+        } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_IMAGES) {
+            ArrayList<Uri> paths = new ArrayList<>();
+            for(int i=0; i<data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
+                paths.add(Uri.parse(data.getParcelableArrayListExtra(Define.INTENT_PATH).get(i).toString()));
+            }
+
+            for(Uri uri : paths) {
+                Slide slide = new Slide();
+                final Image image = new Image(getContext());
+
+                mStorage.addFileToDirectory(
+                        new File(mStorage.getRealPathFromURI(uri)),
+                        image.getResourceFile(),
+                        new FileCopyUpdateListener(getContext()),
+                        new OnFileCopyCompleted() {
+                            @Override
+                            public void done(File file, boolean isSuccessful) {
+
+                                Slide slide = new Slide();
+                                try {
+                                    slide.addResource(image, Slide.ResourceType.IMAGE);
+                                    if(!SharedRuntimeContent.addSlide(slide)) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+            }
+        } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
+            ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
+
+            for(String path : paths) {
+
+                try {
+                    Slide slide = new Slide();
+                    Image image = new Image(Uri.fromFile(new File(path)));
+                    slide.addResource(image, Slide.ResourceType.IMAGE);
+                    if(!SharedRuntimeContent.addSlide(slide)) {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                }
+
+            }
         }
     }
 
@@ -343,7 +381,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("CreateVideos", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 }

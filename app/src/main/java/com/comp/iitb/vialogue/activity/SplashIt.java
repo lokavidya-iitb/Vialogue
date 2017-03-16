@@ -61,6 +61,9 @@ public class SplashIt extends AppCompatActivity {
 
         startActivity(intent);
         finish();
+
+//        Intent intent = new Intent(SplashIt.this, CameraActivity.class);
+//        startActivity(intent);
     }
 
 }

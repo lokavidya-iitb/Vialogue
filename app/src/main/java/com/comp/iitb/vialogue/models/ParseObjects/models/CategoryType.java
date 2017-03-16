@@ -1,18 +1,24 @@
-package com.comp.iitb.vialogue.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models;
 
 /**
  * Created by jeffrey on 13/2/17.
  */
+
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
+
 /**
  * Created by jeffrey on 12/2/17.
  */
 public class CategoryType {
+
     public CategoryType(String id, String name, String desc,String imageURL){
         this.id=id;
         this.name= name;
         this.desc= desc;
         this.imageURL=imageURL;
     }
+
+
     public String getName() {
         return name;
     }

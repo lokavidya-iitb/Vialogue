@@ -236,19 +236,32 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         @Override
         public void onPostExecute(Slide slide) {
             if (from.equals("AudioRecording")) {
+                // update current slide
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+
+                // clearing bitmap to release memory
+                Storage.recycleBitmap(mPhoto);
+
+                // sending result (which is nothing)
+                setResult(RESULT_OK);
+                finish();
             } else {
+                // add new slide
                 try {
                     SharedRuntimeContent.addSlide(slide);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                // clearing bitmap to release memory
+                Storage.recycleBitmap(mPhoto);
+
+                // finishing activity
+                finish();
             }
             mPleaseWait.setVisibility(View.GONE);
 
-            // clearing bitmap to release memory
-            mPhoto.recycle();
-            mPhoto = null;
+
 
             finish();
         }
@@ -288,9 +301,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             mPleaseWait.setVisibility(View.GONE);
 
             // clearing bitmap to release memory
-            mBitmap.recycle();
-            mBitmap = null;
-
+                Storage.recycleBitmap(mBitmap);
             finish();
         }
     }

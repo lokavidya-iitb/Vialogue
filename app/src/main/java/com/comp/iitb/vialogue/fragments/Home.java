@@ -145,6 +145,14 @@ public class Home extends Fragment {
         return mView;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            SharedRuntimeContent.previewFab.setVisibility(View.GONE);
+        } else {}
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -173,8 +181,8 @@ public class Home extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("Home", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
 }

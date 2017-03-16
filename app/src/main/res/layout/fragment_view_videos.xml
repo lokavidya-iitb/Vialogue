@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.comp.iitb.vialogue.fragments.ViewVideos"
     android:id="@+id/bodyFragment"
     android:background="@android:color/white">
@@ -13,11 +14,31 @@
         android:layout_height="fill_parent"
         android:visibility="gone">
     </ExpandableListView>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/loading_animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        style="@style/AVLoadingIndicatorView"
+        android:visibility="gone"
+        app:indicatorName="BallTrianglePathIndicator"
+        app:indicatorColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/check_internet_connection_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Could not fetch Videos. Please make sure you have internet connectivity.\n\nPull Down to refresh"
+            android:textSize="30sp"
+            android:visibility="gone"/>
 
 </FrameLayout>

@@ -5,5 +5,5 @@ package com.comp.iitb.vialogue.coordinators;
  */
 
 public interface OnDone {
-    public void done();
+    public void done(boolean isDone);
 }
