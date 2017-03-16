@@ -32,7 +32,9 @@ public class Category extends BaseParseClass {
     private static final class Fields implements BaseFieldsClass {
         public static final String
 
-        NAME = "name";
+        NAME = "name",
+        IMAGE_URL = "image_url",
+        DESCRIPTION = "description";
 
         public ArrayList<String> getAllFields() {
             return new ArrayList<String>(Arrays.asList(new String[] {
@@ -54,6 +56,22 @@ public class Category extends BaseParseClass {
 
     public void setName(String name) {
         put(Fields.NAME, name);
+    }
+
+    public String getImageUrl() {
+        return getString(Fields.IMAGE_URL);
+    }
+
+    public void setImageUrl(String imageUrl) {
+        put(Fields.IMAGE_URL, imageUrl);
+    }
+
+    public String getDescription() {
+        return getString(Fields.DESCRIPTION);
+    }
+
+    public void setDescription(String description) {
+        put(Fields.DESCRIPTION, description);
     }
 
 }

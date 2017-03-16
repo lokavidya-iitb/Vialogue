@@ -20,13 +20,12 @@ import com.comp.iitb.vialogue.adapters.CategoriesExpandableAdapter;
 import com.comp.iitb.vialogue.adapters.ViewCategoryAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.models.Category;
-import com.comp.iitb.vialogue.models.CategoryType;
+import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

@@ -180,8 +180,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         } else {}
     }
 
-
-
     public void setUpNewProject() {
 
     }
@@ -383,7 +381,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("CreateVideos", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 }

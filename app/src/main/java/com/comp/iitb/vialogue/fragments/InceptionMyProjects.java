@@ -112,7 +112,14 @@ public class InceptionMyProjects extends Fragment {
 
     }
 
-
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            SharedRuntimeContent.previewFab.setImageResource(R.drawable.plus_png);
+            SharedRuntimeContent.previewFab.setVisibility(View.VISIBLE);
+        } else {}
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -298,8 +305,8 @@ public class InceptionMyProjects extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("Home", "onDestroyView : called");
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
 }

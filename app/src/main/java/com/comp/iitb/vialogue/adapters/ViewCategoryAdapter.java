@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.fragments.ViewVideosCategory;
-import com.comp.iitb.vialogue.models.CategoryType;
+import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 
 import java.util.List;
 

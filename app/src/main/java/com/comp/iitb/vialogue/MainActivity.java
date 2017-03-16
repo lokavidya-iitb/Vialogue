@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     case 1:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
+//                        intent.putStringArrayListExtra()
                         startActivity(intent);
                         break;
                     case 3:
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
+        SharedRuntimeContent.previewFab.setVisibility(View.GONE);
         SharedRuntimeContent.calculatePreviewFabVisibility();
         refreshSignInOutOptions();
     }
@@ -298,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         //mMenu.findItem(R.id.delete_option).setVisible(false);
     }
 
-    @Override
     public void onTabSelected(int tabNumber) {
         switch (tabNumber) {
             case 0:
