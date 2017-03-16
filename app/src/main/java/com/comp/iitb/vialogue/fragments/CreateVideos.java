@@ -261,6 +261,16 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             // GET VIDEO FROM GALLERY
             if (data != null) {
 
+                System.out.println(mStorage.getRealPathFromURI(data.getData()));
+                System.out.println(data.getData());
+
+                try {
+                    new File(mStorage.getRealPathFromURI(data.getData()));
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 final Video video = new Video(getContext());
                 final File v = video.getResourceFile();
                 mStorage.addFileToDirectory(

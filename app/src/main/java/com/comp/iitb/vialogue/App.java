@@ -47,9 +47,9 @@ public class App extends Application {
 //        refWatcher = LeakCanary.install(this);
 //        // Normal app init code...
 //
-//        // start service that will save the current project
-//        // whenever the app is stopped, no matter in what fashion
-//        startService(new Intent(getApplicationContext(), ClosingService.class));
+        // start service that will save the current project
+        // whenever the app is stopped, no matter in what fashion
+        startService(new Intent(getApplicationContext(), ClosingService.class));
 
         // register parse Subclasses
         ParseObject.registerSubclass(Project.class);

@@ -302,7 +302,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mRecordButton.setEnabled(false);
                 mStopButton.setEnabled(true);
                 mRetryButton.setEnabled(false);
-        }
+            }
         });
 
         mStopButton.setOnClickListener(new View.OnClickListener() {
@@ -334,6 +334,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
                 SharedRuntimeContent.updateAdapterView();
                 mTimerTextView.setText(R.string.timer_null_text);
+
+                mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
             }
         });
 
@@ -462,6 +464,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
         SharedRuntimeContent.updateAdapterView();
         setUpUI();
+        mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
     }
 
     @Override

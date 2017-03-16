@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
@@ -19,6 +20,7 @@ import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.coordinators.OnSlideThumbnailClicked;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.io.ByteArrayOutputStream;
@@ -54,10 +56,12 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
 
     public class SlideViewHolder extends RecyclerView.ViewHolder {
         public ImageView thumbnail;
+        public RelativeLayout audioLayer;
 
         public SlideViewHolder(View view) {
             super(view);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            audioLayer = (RelativeLayout) view.findViewById(R.id.audio_layer);
         }
     }
 
@@ -107,8 +111,16 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
                         }
                     });
                 }
+                slideViewHolder.thumbnail.setColorFilter(Color.argb(0, 0, 0, 0)); // No Tint
+                // audio layer
+                if(!((Image) slide.getResource()).hasAudio()) {
+                    slideViewHolder.audioLayer.setVisibility(View.VISIBLE);
+                } else {
+                    slideViewHolder.audioLayer.setVisibility(View.GONE);
+                }
             } else {
                 slideViewHolder.thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // Dark Gray Tint
+                slideViewHolder.audioLayer.setVisibility(View.GONE);
             }
         }
     }

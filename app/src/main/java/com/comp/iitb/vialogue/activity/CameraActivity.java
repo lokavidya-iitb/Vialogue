@@ -64,6 +64,7 @@ public class CameraActivity extends AppCompatActivity {
     public static final int REQUEST_READ_EXTERNAL_STORAGE = 878;
     public static final int CAMERA_ID = 0;
     public static final String RESULT_KEY = "photos_array_list";
+    public static final String IMAGE_PATHS_ARRAY = "image_paths_array";
 
     // state variables
     private int mPermissionsRequiredCount;
@@ -76,10 +77,11 @@ public class CameraActivity extends AppCompatActivity {
     private Camera.PictureCallback mPictureCallback;
     private Camera.ShutterCallback mShutterCallback;
     private int mCameraDisplayRotation;
+    private ArrayList<String> mImagePaths;
 
     // UI Variables
     private FrameLayout mCameraPreviewFrameLayout;
-    private Button mCaptureButton;
+    private ImageButton mCaptureButton;
     private RecyclerView mCapturesRecyclerView;
     private FrameLayout mFrameOverlay;
     private ImageButton mDoneButton;
@@ -108,7 +110,7 @@ public class CameraActivity extends AppCompatActivity {
 
         // initializing UI Components
         mCameraPreviewFrameLayout = (FrameLayout) findViewById(R.id.camera_preview);
-        mCaptureButton = (Button) findViewById(R.id.button_capture);
+        mCaptureButton = (ImageButton) findViewById(R.id.button_capture);
         mCapturesRecyclerView = (RecyclerView) findViewById(R.id.captures_recycler_view);
         mFrameOverlay = (FrameLayout) findViewById(R.id.frame_overlay);
         mDoneButton = (ImageButton) findViewById(R.id.done_button);
@@ -116,6 +118,7 @@ public class CameraActivity extends AppCompatActivity {
         // initializing variables
         mCapturesRecyclerViewAdapter = new CapturesRecyclerViewAdapter(CameraActivity.this);
         mCapturesRecyclerView.setAdapter(mCapturesRecyclerViewAdapter);
+        mImagePaths = new ArrayList<String>();
         mPictureCallback = new Camera.PictureCallback() {
 
             @Override
@@ -198,14 +201,11 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent data = new Intent();
-                data.putStringArrayListExtra(RESULT_KEY, mCapturesRecyclerViewAdapter.getImagePaths());
+                data.putStringArrayListExtra(RESULT_KEY, mImagePaths);
                 setResult(RESULT_OK, data);
                 finish();
             }
         });
-
-        // try to start camera
-        checkCameraPermissions();
     }
 
     public void onPermissionsSatisfied() {
@@ -314,6 +314,37 @@ public class CameraActivity extends AppCompatActivity {
         mCamera.setParameters(params);
     }
 
+    private void releaseCamera(){
+        if (mCamera != null){
+            mCamera.release();        // release the camera for other applications
+            mCamera = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // try to start camera
+        checkCameraPermissions();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putStringArrayList(IMAGE_PATHS_ARRAY, mImagePaths);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        mImagePaths = savedInstanceState.getStringArrayList(IMAGE_PATHS_ARRAY);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -352,18 +383,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        startCamera();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mCamera.release();
-    }
-
     public class RotateTransformation extends BitmapTransformation {
 
         private float rotateRotationAngle = 0f;
@@ -398,39 +417,39 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         private Context mContext;
-        private ArrayList<String> mImagePaths;
         private GestureDetector mDetector;
         private OnSwipeListener mOnSwipeListener;
 
-        public CapturesRecyclerViewAdapter(Context context, ArrayList<String> imagePaths) {
-            mContext = context;
-            mImagePaths = imagePaths;
-            mOnSwipeListener = new OnSwipeListener() {
-                @Override
-                public boolean onSwipe(Direction direction) {
-                    System.out.println("onSwipe : called");
-                    // Possible implementation
-                    if(direction == Direction.left || direction == Direction.right) {
-                        // Do something COOL like animation or whatever you want
-                        // Refer to your view if needed using a global reference
-                        System.out.println("left or right");
-                        return true;
-                    }
-                    else if(direction == Direction.up || direction == Direction.down) {
-                        // Do something COOL like animation or whatever you want
-                        // Refer to your view if needed using a global reference
-                        System.out.println("up or down");
-                        return true;
-                    }
-                    return super.onSwipe(direction);
-                }
-            };
-
-            mDetector = new GestureDetector(CameraActivity.this, mOnSwipeListener);
-        }
+//        public CapturesRecyclerViewAdapter(Context context, ArrayList<String> imagePaths) {
+//            mContext = context;
+//            mImagePaths = imagePaths;
+//            mOnSwipeListener = new OnSwipeListener() {
+//                @Override
+//                public boolean onSwipe(Direction direction) {
+//                    System.out.println("onSwipe : called");
+//                    // Possible implementation
+//                    if(direction == Direction.left || direction == Direction.right) {
+//                        // Do something COOL like animation or whatever you want
+//                        // Refer to your view if needed using a global reference
+//                        System.out.println("left or right");
+//                        return true;
+//                    }
+//                    else if(direction == Direction.up || direction == Direction.down) {
+//                        // Do something COOL like animation or whatever you want
+//                        // Refer to your view if needed using a global reference
+//                        System.out.println("up or down");
+//                        return true;
+//                    }
+//                    return super.onSwipe(direction);
+//                }
+//            };
+//
+//            mDetector = new GestureDetector(CameraActivity.this, mOnSwipeListener);
+//        }
 
         public CapturesRecyclerViewAdapter(Context context) {
-            this(context, new ArrayList<String>());
+            mContext = context;
+//            this(context, new ArrayList<String>());
         }
 
         @Override
@@ -439,11 +458,6 @@ public class CameraActivity extends AppCompatActivity {
             return new CapturesRecyclerViewAdapter.CaptureViewHolder(slideView);
         }
 
-        public ArrayList<String> getImagePaths() {
-            return mImagePaths;
-        }
-
-        @Override
         public void onBindViewHolder(CapturesRecyclerViewAdapter.CaptureViewHolder viewHolder, final int position) {
 
             // TODO get this to work
@@ -467,6 +481,7 @@ public class CameraActivity extends AppCompatActivity {
         public void add(String imagePath) {
             mImagePaths.add(imagePath);
             notifyItemInserted(mImagePaths.size()-1);
+            mDoneButton.setVisibility(View.VISIBLE);
         }
 
         @Override
