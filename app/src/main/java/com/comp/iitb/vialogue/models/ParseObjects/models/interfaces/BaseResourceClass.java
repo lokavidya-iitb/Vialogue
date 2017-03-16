@@ -61,10 +61,10 @@ public abstract class BaseResourceClass extends BaseParseClass {
             storageDirectory = new File(context.getFilesDir(), extension);
         } else if(resourceType == Slide.ResourceType.IMAGE) {
             extension = "png";
-            storageDirectory = new File(context.getFilesDir(), extension);
+            storageDirectory = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), extension);
         } else if(resourceType == Slide.ResourceType.VIDEO) {
             extension = "mp4";
-            storageDirectory = new File(context.getExternalFilesDir(Environment.DIRECTORY_DCIM), extension);
+            storageDirectory = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), extension);
         }
 
         if(!storageDirectory.exists()) {

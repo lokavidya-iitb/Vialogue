@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.comp.iitb.vialogue.activity.CameraActivity;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
@@ -75,5 +76,6 @@ public class App extends Application {
             .enableLocalDataStore()
             .build()
         );
+
     }
 }

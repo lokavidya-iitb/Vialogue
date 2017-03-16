@@ -10,8 +10,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- camera related permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any"/>
+    <uses-feature android:name="android.hardware.camera.any"/>
 
     <application
         android:name=".App"
@@ -24,8 +29,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.SplashIt"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,13 +39,13 @@
         </activity>
         <activity
             android:name=".activity.SignIn"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
         <activity
@@ -78,8 +83,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".library.cropper.CropImageActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/add_audio" />
+            android:label="@string/add_audio"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.UploadVideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -102,18 +107,29 @@
 
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.QuestionDialogResultActivity" />
-        <activity android:name=".activity.PhoneNumberSigninActivity"></activity>
+        <activity android:name=".activity.PhoneNumberSigninActivity" />
 
         <receiver android:name=".listeners.SmsOtpListener">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.ClosingService"
+        <service
+            android:name=".service.ClosingService"
             android:enabled="true"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
 
+        <activity
+            android:name=".activity.CameraActivity"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

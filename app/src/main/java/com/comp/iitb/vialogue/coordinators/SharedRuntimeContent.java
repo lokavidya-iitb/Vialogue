@@ -48,6 +48,8 @@ public class SharedRuntimeContent {
     public static final int GET_CAMERA_IMAGE = 543;
     public static final int GET_QUESTION = 544;
     public static final int CROP_MAIN_ACTIVITY_RESULT = 545;
+    public static final int GET_MULTIPLE_IMAGES = 546;
+    public static final int GET_MULTIPLE_CAMERA_IMAGES = 547;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
     public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
 

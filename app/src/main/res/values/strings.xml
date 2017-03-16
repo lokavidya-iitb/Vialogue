@@ -94,6 +94,9 @@
     <string name="undo">Undo</string>
     <string name="wrongBuddy">The operation is not completed.</string>
     <string name="gimmeAudio">Audio record feature can only be used if Microphone permission is granted</string>
+    <string name="gimmeCamera">Camera access is required for taking pictures</string>
+    <string name="noCameraFound">No camera found on this device</string>
+    <string name="cameraNotAvailable">Could not access camera, is any other application using it?</string>
     <string name="gimmeStorage">Lokavidya requires storage permission to function correctly</string>
     <string name="otpVerification">Verifying OTP</string>
     <string name="invalidOTP">Invalid OTP</string>
