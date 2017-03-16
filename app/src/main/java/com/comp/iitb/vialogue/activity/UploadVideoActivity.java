@@ -146,8 +146,8 @@ public class UploadVideoActivity extends AppCompatActivity {
                     tagsToUpload= Arrays.asList(tags.getText().toString().split(" "));
                     SharedRuntimeContent.getProject().setTags(tagsToUpload);
                     new SaveParseObjectAsync(
-                            UploadVideoActivity.this,
-                            ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
+                            UploadVideoActivity.this, new
+                            ProgressDialog(getBaseContext()),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {
@@ -156,8 +156,8 @@ public class UploadVideoActivity extends AppCompatActivity {
                                     } else {
                                         Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                                     }
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
+                                   /* Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);*/
                                 }
                             },
                             SharedRuntimeContent.getProject()
