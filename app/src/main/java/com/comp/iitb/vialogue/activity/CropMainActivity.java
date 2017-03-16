@@ -240,8 +240,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
 
                 // clearing bitmap to release memory
-                mPhoto.recycle();
-                mPhoto = null;
+                Storage.recycleBitmap(mPhoto);
 
                 // sending result (which is nothing)
                 setResult(RESULT_OK);
@@ -255,8 +254,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 }
 
                 // clearing bitmap to release memory
-                mPhoto.recycle();
-                mPhoto = null;
+                Storage.recycleBitmap(mPhoto);
 
                 // finishing activity
                 finish();
@@ -303,9 +301,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             mPleaseWait.setVisibility(View.GONE);
 
             // clearing bitmap to release memory
-            mBitmap.recycle();
-            mBitmap = null;
-
+                Storage.recycleBitmap(mBitmap);
             finish();
         }
     }

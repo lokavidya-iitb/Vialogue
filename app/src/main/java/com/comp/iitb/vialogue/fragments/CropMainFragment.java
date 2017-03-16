@@ -82,6 +82,7 @@ public final class CropMainFragment extends Fragment
         ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO
                 mCropImageView.getCroppedImageAsync();
                 ((CropMainActivity)getActivity()).done();
             }
@@ -199,8 +200,7 @@ public final class CropMainFragment extends Fragment
 
         // recycle bitmap
         mCropImageView.setImageBitmap(null);
-        mCroppedImage.recycle();
-        mCroppedImage = null;
+        Storage.recycleBitmap(mCroppedImage);
 
         // clear LIFO
         sequence.clear();

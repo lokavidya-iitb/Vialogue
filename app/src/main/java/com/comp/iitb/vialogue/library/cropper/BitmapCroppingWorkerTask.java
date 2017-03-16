@@ -17,6 +17,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.comp.iitb.vialogue.library.Storage;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -195,9 +197,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                     return new Result(bitmap, bitmapSampled.sampleSize);
                 } else {
                     BitmapUtils.writeBitmapToUri(mContext, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality);
-                    if (bitmap != null) {
-                        bitmap.recycle();
-                    }
+                    Storage.recycleBitmap(bitmap);
                     return new Result(mSaveUri, bitmapSampled.sampleSize);
                 }
             }
@@ -225,7 +225,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
             }
             if (!completeCalled && result.bitmap != null) {
                 // fast release of unused bitmap
-                result.bitmap.recycle();
+                Storage.recycleBitmap(result.bitmap);
             }
         }
     }

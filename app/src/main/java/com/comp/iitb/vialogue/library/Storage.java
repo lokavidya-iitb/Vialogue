@@ -543,4 +543,13 @@ public class Storage {
         }
     }
 
+    public static void recycleBitmap(Bitmap b) {
+        if(b != null && !b.isRecycled()) {
+            try {
+                b.recycle();
+            } catch (Exception e) {}
+            b = null;
+        }
+    }
+
 }
