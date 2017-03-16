@@ -87,19 +87,14 @@ public class VideoPlayer extends AppCompatActivity {
                         questionLists.add(questionAnswer);
                     }
                     mPlayer.play(new PlayerModel(URL, null));
-
                     mPlayer.setTitle(URL);
-
-
                     mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
                         private SimulationHandler mSimulationHandler;
-
                         @Override
                         public void bind(SimulationHandler simulationHandler) {
                             mSimulationHandler = simulationHandler;
                             isFirstTime = true;
                         }
-
                         @Override
                         public void timeChanged(int currentPosition, boolean isUser) {
                             Log.d("---is time changing","good question"+ currentPosition);
@@ -120,12 +115,10 @@ public class VideoPlayer extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-
                         @Override
                         public boolean seekToDifferentPosition(int currentPosition, int mediaIndex) {
                             return false;
                         }
-
                         @Override
                         public int moveTo(List<PlayerModel> playerModelList, int currentPosition, int mediaIndex) {
                             Log.d(getClass().getName(), "timeChanged " + currentPosition + " is mediaIndex " + mediaIndex);
@@ -156,9 +149,6 @@ public class VideoPlayer extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), R.string.videoError, Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
-
                 }else {
                     // Something went wrong...
                 }
