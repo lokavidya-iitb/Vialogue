@@ -531,12 +531,16 @@ public class Storage {
     }
 
     public int getAudioFileDuration(String path) {
-        Uri uri = Uri.parse(path);
-        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        mmr.setDataSource(mContext, uri);
-        String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        int millSecond = Integer.parseInt(durationStr);
-        return (int) (millSecond);
+        try {
+            Uri uri = Uri.parse(path);
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(mContext, uri);
+            String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            int millSecond = Integer.parseInt(durationStr);
+            return (int) (millSecond);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
 }

@@ -396,8 +396,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mAudio = new Audio(getBaseContext());
             }
         } else {
-            mSlideResource.addAudio(mAudio);
-            SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+            if(mStorage.getAudioFileDuration(mAudio.getResourceFile().getAbsolutePath()) != 0) {
+                mSlideResource.addAudio(mAudio);
+                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
+            }
         }
     }
 
@@ -421,9 +423,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mRecordButton.setText(R.string.record_audio);
             mStopButton.setEnabled(false);
             int duration = mStorage.getAudioFileDuration(mAudio.getResourceFile().getAbsolutePath());
-            System.out.println("duration : " + duration);
-            setSeekBarTime(0, duration);
-            setTimeDisplay(duration, true);
+            if(duration != 0) {
+                setSeekBarTime(0, duration);
+                setTimeDisplay(duration, true);
+            }
+
         }
 
         if (mAudioRecorder != null && !isPlaying && !isRecording) {

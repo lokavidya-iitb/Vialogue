@@ -26,7 +26,9 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         android:scrollbars="horizontal"
         android:layout_above="@+id/button_capture"
-        android:layout_marginBottom="30dp">
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
 
     </android.support.v7.widget.RecyclerView>
 
