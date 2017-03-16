@@ -146,8 +146,8 @@ public class UploadVideoActivity extends AppCompatActivity {
                     tagsToUpload= Arrays.asList(tags.getText().toString().split(" "));
                     SharedRuntimeContent.getProject().setTags(tagsToUpload);
                     new SaveParseObjectAsync(
-                            UploadVideoActivity.this,
-                            ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please wait...", true),
+                            UploadVideoActivity.this, new
+                            ProgressDialog(getBaseContext()),
                             new OnProjectSaved() {
                                 @Override
                                 public void done(boolean isSaved) {
@@ -156,8 +156,8 @@ public class UploadVideoActivity extends AppCompatActivity {
                                     } else {
                                         Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                                     }
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
+                                   /* Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);*/
                                 }
                             },
                             SharedRuntimeContent.getProject()
@@ -310,7 +310,6 @@ public class UploadVideoActivity extends AppCompatActivity {
             mPlayer.onResume();
         }
         try {
-            // Locate the class table named "TestLimit" in Parse.com
             ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
                     "CategoryType");
             query.orderByAscending("createdAt");
@@ -329,18 +328,15 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         String[] plants = new String[categories.size()];
         plants = categories.toArray(plants);
-        /*
-        String[] plants = (String[]) categories.toArray();*/
+
 
         final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
 
-        // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 this, R.layout.category_option_view, plantsList) {
             @Override
             public boolean isEnabled(int position) {
-                // Disable the first item from Spinner
-                // First item will be use for hint
+
                 return position != 0;
             }
 
