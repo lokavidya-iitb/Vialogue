@@ -4,7 +4,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -202,11 +201,6 @@ public abstract class BaseParseClass extends ParseObject {
                 }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 
     public abstract BaseParseClass getNewInstance();
