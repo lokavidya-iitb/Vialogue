@@ -17,11 +17,11 @@ import com.comp.iitb.vialogue.fragments.ViewVideos;
  */
 //Tab Manager Adapter
 public class FragmentPageAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 4;
-    final int HOME = 0;
-    final int CREATE_PROJECT = 1;
-    final int VIEW_VIDEOS = 2;
-    final int USER_ACCOUNT = 3;
+    public static final int PAGE_COUNT = 4;
+    public static final int HOME = 0;
+    public static final int CREATE_PROJECT = 2;
+    public static final int VIEW_VIDEOS = 1;
+    public static final int USER_ACCOUNT = 3;
 
     private Context context;
     private FragmentManager mFragmentManager;
@@ -44,10 +44,10 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
         switch (position) {
             case HOME:
                 return Home.newInstance();
-            case CREATE_PROJECT:
-                return CreateVideos.newInstance();
             case VIEW_VIDEOS:
                 return ViewVideos.newInstance("")/*DummyFragment.newInstance()*/;
+            case CREATE_PROJECT:
+                return CreateVideos.newInstance();
             case USER_ACCOUNT:
                 return UserAccount.newInstance();
             default :

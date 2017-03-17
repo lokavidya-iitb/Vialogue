@@ -39,14 +39,18 @@ import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.fragments.SlideFragment;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
+import com.daimajia.slider.library.SliderAdapter;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,11 +62,13 @@ import java.util.List;
 public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.MyViewHolder> {
 
     private Activity mActivity;
+    private AVLoadingIndicatorView mLoadingAnimation;
     private Context mContext;
     private Storage mStorage;
     private int listItemPositionForPopupMenu;
     private ViewPager viewpager;
     private ArrayList<ProjectView> mProjectViewsList;
+    private ArrayList<String> mProjectNamesList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
@@ -127,16 +133,30 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     }
 
     public MyProjectsAdapter(Activity activity) {
+        this(activity, null);
+    }
+
+    public MyProjectsAdapter(Activity activity, AVLoadingIndicatorView loadingAnimation) {
         mActivity = activity;
+        mLoadingAnimation = loadingAnimation;
         mContext = activity.getBaseContext();
         mStorage = new Storage(mContext);
         populateProjectsList();
+    }
+
+    public void showAnimation() {
+        mLoadingAnimation.setVisibility(View.VISIBLE);
+    }
+
+    public void hideAnimation() {
+        mLoadingAnimation.setVisibility(View.GONE);
     }
 
     public void populateProjectsList() {
         // populate mProjectViewsList
 
         mProjectViewsList = new ArrayList<ProjectView>();
+        mProjectNamesList = new ArrayList<String>();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
         query.fromLocalDatastore();
         query.addAscendingOrder(Project.Fields.NAME);
@@ -148,10 +168,62 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 Project project = (Project) localObjects.get(i);
                 project.fetchChildrenObjects();
                 mProjectViewsList.add(new ProjectView(project, i));
+                mProjectNamesList.add(project.getName());
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+     * Returns the name of the saved project.
+     * The name might be changed in case the name of the existing project was already taken.
+     */
+    public String addProject(final Project project) {
+        if(!project.doesItExistInLocalDatastore()) {
+            (new AsyncTask<Void, Void, Integer>() {
+                @Override
+                public Integer doInBackground(Void... params) {
+                    ProjectNameUtils projectNameUtils = new ProjectNameUtils(mProjectNamesList);
+                    project.setName(projectNameUtils.getNewProjectName(project));
+                    int newProjectIndex = projectNameUtils.getNewProjectIndex(project);
+                    System.out.println(newProjectIndex);
+                    mProjectViewsList.add(newProjectIndex, new ProjectView(project, newProjectIndex));
+                    mProjectNamesList.add(newProjectIndex, project.getName());
+                    return newProjectIndex;
+                }
+
+                @Override
+                public void onPostExecute(Integer newProjectIndex) {
+                    notifyItemInserted(newProjectIndex);
+                }
+            }).execute();
+        } else {
+            // have to call this because the project might have been renamed as anything
+            // and it is not possible to locate which of the existing projects correspond
+            // to this particular project
+            (new AsyncTask<Void, Void, Void>() {
+                @Override
+                public void onPreExecute() {
+                    showAnimation();
+                    mProjectViewsList = new ArrayList<ProjectView>();
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public Void doInBackground(Void... params) {
+                    populateProjectsList();
+                    return null;
+                }
+
+                @Override
+                public void onPostExecute(Void result) {
+                    notifyDataSetChanged();
+                    hideAnimation();
+                }
+            }).execute();
+        }
+        return project.getName();
     }
 
     @Override
@@ -199,12 +271,12 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                         SharedRuntimeContent.setProject(new Project());
                         SharedRuntimeContent.updateAdapterView();
                         viewpager=(ViewPager) (mActivity).findViewById(R.id.viewpager);
-                        viewpager.setCurrentItem(1,true);
+                        viewpager.setCurrentItem(FragmentPageAdapter.CREATE_PROJECT, true);
                     }
 
                     @Override
                     public Void doInBackground(Void... params) {
-                        mProject = mProjectViewsList.get(position).getProject();
+                        mProject = mProjectViewsList.get(position).getProject().existsInLocalDatastore();
                         return null;
                     }
 

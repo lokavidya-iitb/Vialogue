@@ -41,6 +41,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 import com.sangcomz.fishbun.define.Define;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -116,7 +117,11 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
         mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
         mLoadingAnimation = (AVLoadingIndicatorView) mView.findViewById(R.id.loading_animation);
+
+        // Initialize dependent variables in ShredRuntimeContent
         SharedRuntimeContent.loadingAnimation = mLoadingAnimation;
+        SharedRuntimeContent.projectName = mProjectName;
+        SharedRuntimeContent.projectNameDisplay = mProjectNameDisplay;
 
         //Load Pickers
         mImagePicker = (Button) mView.findViewById(R.id.image_picker);
@@ -125,7 +130,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
 
         // Initialize State
-        if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(SharedRuntimeContent.untitledProjectNameRegex))) {
+        if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
             mProjectNameDisplay.setText(SharedRuntimeContent.getProjectName());
             mProjectName.setText(SharedRuntimeContent.getProjectName());
             mProjectNameDisplay.setHint(SharedRuntimeContent.getProjectName());

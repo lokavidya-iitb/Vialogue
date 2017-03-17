@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     case 3:
                         SharedRuntimeContent.createEmptyProject(MainActivity.this);
                         SharedRuntimeContent.questionsList.clear();
-                        mViewPager.setCurrentItem(1, true);
+                        mViewPager.setCurrentItem(FragmentPageAdapter.CREATE_PROJECT, true);
                         break;
                 }
             }

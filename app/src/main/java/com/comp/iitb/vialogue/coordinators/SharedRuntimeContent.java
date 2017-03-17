@@ -3,20 +3,24 @@ package com.comp.iitb.vialogue.coordinators;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
 import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
@@ -25,6 +29,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -51,10 +56,13 @@ public class SharedRuntimeContent {
     public static final int GET_MULTIPLE_IMAGES = 546;
     public static final int GET_MULTIPLE_CAMERA_IMAGES = 547;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
-    public static String untitledProjectNameRegex = "(^)Untitled Project ([0-9].*$)";
 
     // Variables
     public static SlideRecyclerViewAdapter projectAdapter;
+    public static MyProjectsAdapter myProjectsAdapter = null;
+    public static EditText projectName;
+    public static TextView projectNameDisplay;
+
     public static FloatingActionButton previewFab;
     // TODO change implementation for isSelected
     public static boolean isSelected = false;
@@ -125,15 +133,15 @@ public class SharedRuntimeContent {
 
     public static void pinProject(Context context, Project project) {
 
+        // save project with a temporary name
+        if ((project.getName() == null) || (project.getName() == "")) {
+            String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
+            project.setName(newProjectName);
+        } else {}
+
         if (project.getSlides().getAll().size() == 0) {
             return;
         }
-
-        // save project with a temporary name
-        if ((project.getName() == null) || (project.getName() == "")) {
-            String newProjectName = getNewUndefinedProjectName();
-            project.setName(newProjectName);
-        } else {}
 
         try {
             project.pin();
@@ -141,13 +149,6 @@ public class SharedRuntimeContent {
             e.printStackTrace();
         }
 
-//        try {
-//            project.pinParseObject();
-//            System.out.println("project pinned");
-//        } catch (ParseException e) {
-//            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
-//            e.printStackTrace();
-//        }
     }
 
     public static void pinProject(Context context) {
@@ -175,21 +176,71 @@ public class SharedRuntimeContent {
     }
 
     public static void loadNewProject(final Activity activity, final Project newProject) {
+        // cache current project
+        final Project currentProject = project;
+
+        // load new project
+        project = newProject;
+        updateAdapterView();
+
+        // display project name
+        String projectNameString = null;
+        if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
+            projectNameString = project.getName();
+        } else {
+            projectNameString = "Add project title";
+        }
+        projectNameDisplay.setText(projectNameString);
+        projectName.setText(projectNameString);
+        projectNameDisplay.setHint(projectNameString);
+        projectName.setHint(projectNameString);
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity.getApplicationContext());
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
 
         (new AsyncTask<Void, Void, Void>() {
 
-            final Project currentProject = project;
-
             @Override
-            public void onPreExecute() {
-                project = newProject;
-                updateAdapterView();
+            public Void doInBackground(Void... params) {
+                if(currentProject.getSlides().getAll().size() == 0) {
+                    return null;
+                }
+
+                if ((currentProject.getName() == null) || (currentProject.getName() == "")) {
+                    // save project with a temporary name
+                    String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
+                    currentProject.setName(newProjectName);
+                } else {}
+
+                // save existing project
+                pinProject(activity.getBaseContext(), currentProject);
+                return null;
             }
 
             @Override
-            public Void doInBackground(Void... params) {
-                pinProject(activity.getBaseContext(), currentProject);
-                return null;
+            public void onPostExecute(Void result) {
+                if(currentProject.getSlides().getAll().size() != 0) {
+                    // refresh InceptionMyProjects view to accommodate the changes
+                    // in the current project (if the name is changed, or the project
+                    // was not previously displayed (because it was new))
+                    myProjectsAdapter.addProject(currentProject);
+                }
             }
         }).execute();
     }
@@ -210,25 +261,6 @@ public class SharedRuntimeContent {
             e.printStackTrace();
         }
         return localProjects;
-    }
-
-    public static String getNewUndefinedProjectName() {
-
-        ArrayList<Project> localProjects = getLocalProjects();
-        int maxNum = 0;
-        for (Project project : localProjects) {
-            if (project.getName().matches(untitledProjectNameRegex)) {
-                try {
-                    int number = Integer.parseInt(project.getName().substring(17));
-                    if (number >= maxNum) {
-                        maxNum = number + 1;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return "Untitled Project " + maxNum;
     }
 
     public static int getNumberOfSlides() {
