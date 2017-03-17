@@ -56,6 +56,7 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
 
 
                     viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
+                viewVid.putExtra("id", ""+categoryList.get(groupPosition).getId());
 
 
 
@@ -67,7 +68,7 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
         TextView item = (TextView) convertView.findViewById(R.id.description);
 
 
-        item.setText("This will be a description placeholder! This will be a description placeholder! This will be a description placeholder! This will be a description placeholder!"/*OneCategory*/);
+        item.setText("This will be a description placeholder! This will be a description placeholder! This will be a description placeholder! Are you watching closely?! This will be a description placeholder!"/*OneCategory*/);
         return convertView;
     }
 
