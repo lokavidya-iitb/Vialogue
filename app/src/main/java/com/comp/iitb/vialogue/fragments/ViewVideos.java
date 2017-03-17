@@ -205,29 +205,6 @@ public class ViewVideos extends Fragment {
                 mFetchedDataSuccessfully = false;
             }
 
-/*
-            catArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/categorys","");
-            Log.d("-------recieved",catArray.toString());
-            for(int iterateBuddy=0;iterateBuddy<catArray.length();iterateBuddy++)
-            {
-                String name;
-                int id;
-                String desc;
-                String imageURL;
-                try {
-                    name = catArray.getJSONObject(iterateBuddy).get("name").toString();
-                    id = catArray.getJSONObject(iterateBuddy).getInt("id");
-                    desc = catArray.getJSONObject(iterateBuddy).get("description").toString();
-                    imageURL = catArray.getJSONObject(iterateBuddy).get("image").toString();
-
-                    CategoryType tempStub = new CategoryType(id,name,desc,imageURL);
-                    categoryTypeList.add(tempStub);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                            }
-*/
-
             return "Executed";
         }
 

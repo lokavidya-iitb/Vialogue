@@ -39,7 +39,6 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.cropper.CropImage;
 import com.comp.iitb.vialogue.library.cropper.CropImageView;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Stack;
 
