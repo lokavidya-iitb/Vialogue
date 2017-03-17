@@ -110,7 +110,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 project.fetchChildrenObjects();
             } catch (ParseException e) {
                 // TODO decide what to do
-                Toast.makeText(mContext, "Could not load project", Toast.LENGTH_SHORT);
+                Toast.makeText(mContext, "Could not load project", Toast.LENGTH_SHORT).show();
             }
             return project;
         }
@@ -166,6 +166,30 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             List<ParseObject> localObjects = query.find();
             for(int i=0; i<localObjects.size(); i++) {
                 Project project = (Project) localObjects.get(i);
+
+                // BEFORE UNCOMMENTING THIS CODE, JUST A DISCLAIMER
+                // THIS CODE RUNS INTO AN INFINITE (NO IDEA WHATSOEVER, REALLY
+                // TRIED VERY HARD TO FIGURE IT OUT).
+                // ALSO, AS A BONUS, IT CORRUPTS ALL THE PROJECTS ON YOUR SYSTEM
+                // SO, MAKE SURE YOU HAVE BACKUPS OR SOMETHING (AS OF WHEN I AM
+                // WRITING THIS, THERE IS NO WAY OF DOING SO). ;)
+                // -- IRONSTEIN
+//                // rename project to avoid duplicate names
+//                while (true) {
+//                    int j = 0;
+//                    while(j < i) {
+//                        j++;
+//                        Project previousProject = (Project) localObjects.get(i);
+//                        if(previousProject.getName().equals(project.getName())) {
+//                            project.setName(project.getName() + "_new");
+//                            break;
+//                        }
+//                        System.out.println(j);
+//                    } if(j == i) {
+//                        break;
+//                    }
+//                }
+
                 project.fetchChildrenObjects();
                 mProjectViewsList.add(new ProjectView(project, i));
                 mProjectNamesList.add(project.getName());

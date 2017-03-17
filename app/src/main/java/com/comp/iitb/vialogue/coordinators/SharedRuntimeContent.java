@@ -195,54 +195,81 @@ public class SharedRuntimeContent {
         projectNameDisplay.setHint(projectNameString);
         projectName.setHint(projectNameString);
 
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        //Yes button clicked
-                        break;
+        if(currentProject.getSlides().getAll().size() != 0) {
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
+            if(!currentProject.doesItExistInLocalDatastore()) {
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+                                (new AsyncTask<Void, Void, Void>() {
+
+                                    @Override
+                                    public Void doInBackground(Void... params) {
+                                        if ((currentProject.getName() == null) || (currentProject.getName() == "")) {
+                                            // save project with a temporary name
+                                            String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
+                                            currentProject.setName(newProjectName);
+                                        } else {
+                                        }
+
+                                        // save existing project
+                                        pinProject(activity.getBaseContext(), currentProject);
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public void onPostExecute(Void result) {
+                                        // refresh InceptionMyProjects view to accommodate the changes
+                                        // in the current project (if the name is changed, or the project
+                                        // was not previously displayed (because it was new))
+                                        myProjectsAdapter.addProject(currentProject);
+                                        Toast.makeText(activity.getBaseContext(), "Project saved successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).execute();
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Save existing Project?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            } else {
+                (new AsyncTask<Void, Void, Void>() {
+
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        if ((currentProject.getName() == null) || (currentProject.getName() == "")) {
+                            // save project with a temporary name
+                            String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
+                            currentProject.setName(newProjectName);
+                        } else {
+                        }
+
+                        // save existing project
+                        pinProject(activity.getBaseContext(), currentProject);
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        // refresh InceptionMyProjects view to accommodate the changes
+                        // in the current project (if the name is changed, or the project
+                        // was not previously displayed (because it was new))
+                        myProjectsAdapter.addProject(currentProject);
+                        Toast.makeText(activity.getBaseContext(), "Project saved successfully", Toast.LENGTH_SHORT).show();
+                    }
+                }).execute();
             }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity.getApplicationContext());
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-
-        (new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            public Void doInBackground(Void... params) {
-                if(currentProject.getSlides().getAll().size() == 0) {
-                    return null;
-                }
-
-                if ((currentProject.getName() == null) || (currentProject.getName() == "")) {
-                    // save project with a temporary name
-                    String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
-                    currentProject.setName(newProjectName);
-                } else {}
-
-                // save existing project
-                pinProject(activity.getBaseContext(), currentProject);
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(Void result) {
-                if(currentProject.getSlides().getAll().size() != 0) {
-                    // refresh InceptionMyProjects view to accommodate the changes
-                    // in the current project (if the name is changed, or the project
-                    // was not previously displayed (because it was new))
-                    myProjectsAdapter.addProject(currentProject);
-                }
-            }
-        }).execute();
+        }
     }
 
     public static ArrayList<Project> getLocalProjects() {
