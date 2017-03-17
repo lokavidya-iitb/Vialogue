@@ -72,6 +72,7 @@ public class SlideFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
             //Adapter for Slides
             SlideRecyclerViewAdapter adapter = new SlideRecyclerViewAdapter(getContext(), mListener);
             recyclerView.setAdapter(adapter);

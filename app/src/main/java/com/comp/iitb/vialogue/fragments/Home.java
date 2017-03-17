@@ -23,7 +23,6 @@ import com.comp.iitb.vialogue.adapters.HeroAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.viewGroups.PagerContainer;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.io.File;
 

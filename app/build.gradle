@@ -49,9 +49,9 @@ dependencies {
     compile project(':vplayercore')
 
     // GSON
-    compile 'com.google.code.gson:gson:2.8.0'
+//    compile 'com.google.code.gson:gson:2.8.0'
     // apache lang3
-    compile 'org.apache.commons:commons-lang3:3.5'
+//    compile 'org.apache.commons:commons-lang3:3.5'
     // Parse
     compile 'com.parse:parse-android:1.13.1'
 
@@ -66,9 +66,9 @@ dependencies {
 
     // LeakCanary
     // TODO remove in production build
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+//    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
     // fishbun (for selecting multiple images) (only for API < 18)
     // TODO change implementation for API > 18

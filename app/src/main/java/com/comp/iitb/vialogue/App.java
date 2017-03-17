@@ -19,8 +19,6 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 
 
 /**
@@ -47,9 +45,9 @@ public class App extends Application {
 //        refWatcher = LeakCanary.install(this);
 //        // Normal app init code...
 //
-//        // start service that will save the current project
-//        // whenever the app is stopped, no matter in what fashion
-//        startService(new Intent(getApplicationContext(), ClosingService.class));
+        // start service that will save the current project
+        // whenever the app is stopped, no matter in what fashion
+        startService(new Intent(getApplicationContext(), ClosingService.class));
 
         // register parse Subclasses
         ParseObject.registerSubclass(Project.class);
