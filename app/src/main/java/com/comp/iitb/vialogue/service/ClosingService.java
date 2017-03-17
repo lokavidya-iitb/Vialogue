@@ -27,7 +27,8 @@ public class ClosingService extends Service {
         super.onTaskRemoved(rootIntent);
 
         // Handle application closing
-        SharedRuntimeContent.pinProject(getBaseContext());
+        SharedRuntimeContent.getProject().pinInBackground();
+//        SharedRuntimeContent.pinProject(getBaseContext());
         Toast.makeText(getBaseContext(), "Project pinned", Toast.LENGTH_SHORT).show();
 
         // Destroy the service

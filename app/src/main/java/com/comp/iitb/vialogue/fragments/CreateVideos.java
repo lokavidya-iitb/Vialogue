@@ -42,7 +42,6 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.sangcomz.fishbun.define.Define;
-import com.squareup.leakcanary.RefWatcher;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
@@ -260,6 +259,16 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         } else if (requestCode == GET_VIDEO) {
             // GET VIDEO FROM GALLERY
             if (data != null) {
+
+                System.out.println(mStorage.getRealPathFromURI(data.getData()));
+                System.out.println(data.getData());
+
+                try {
+                    new File(mStorage.getRealPathFromURI(data.getData()));
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 final Video video = new Video(getContext());
                 final File v = video.getResourceFile();

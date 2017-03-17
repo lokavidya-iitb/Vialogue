@@ -51,6 +51,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.CanSaveAudioResource;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
@@ -105,8 +106,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private Button mDone;
     private Slide mSlide;
     private int mSlidePosition;
-    public Activity traitor;
-    private File mCameraImageFile;
+    private static File mCameraImageFile = null;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -124,11 +124,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
     @Override
     public void onCreate(Bundle bundle) {
-
         super.onCreate(bundle);
-        traitor=this;
-        setContentView(R.layout.activity_audio_record);
 
+        System.out.println("audioRecordActivity : onCreate : called");
+        setContentView(R.layout.activity_audio_record);
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if(!(ContextCompat.checkSelfPermission(AudioRecordActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
@@ -156,15 +155,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
         // Initialize variables
         mStorage = new Storage(getApplicationContext());
+        if(mCameraImageFile == null) {
+            mCameraImageFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, AudioRecordActivity.this);
+        }
 
         // Load State
         if (bundle != null) {
-            int slidePosition = bundle.getInt(SLIDE_NO);
-            loadStateFromSlide(SharedRuntimeContent.getSlideAt(slidePosition), slidePosition);
+            mSlidePosition = bundle.getInt(SLIDE_NO);
         }
-
-        // Setup the User Interface
-        setUpUI();
 
         // Setup Listeners
         mCameraPicker.setOnClickListener(new View.OnClickListener() {
@@ -173,23 +171,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 if (isPlaying) {
                     stopRecording();
                 }
-
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "_";
-                File storageDir = getBaseContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                File image = null;
-                try {
-                    image = File.createTempFile(
-                            imageFileName,  /* prefix */
-                            ".png",         /* suffix */
-                            storageDir      /* directory */
-                    );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                // Save a file: path for use with ACTION_VIEW intents
-                mCameraImageFile = new File(image.getAbsolutePath());
 
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraImageFile));
@@ -302,7 +283,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 mRecordButton.setEnabled(false);
                 mStopButton.setEnabled(true);
                 mRetryButton.setEnabled(false);
-        }
+            }
         });
 
         mStopButton.setOnClickListener(new View.OnClickListener() {
@@ -334,6 +315,8 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
                 SharedRuntimeContent.updateAdapterView();
                 mTimerTextView.setText(R.string.timer_null_text);
+
+                mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
             }
         });
 
@@ -390,16 +373,10 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mSlidePosition = slidePosition;
         mSlideResource = (CanSaveAudioResource) slide.getResource();
         mImagePath = mSlideResource.getResourceFile().getAbsolutePath();
-        if(replaceCurrentAudio) {
-            mAudio = mSlideResource.getAudio();
-            if (mAudio == null) {
-                mAudio = new Audio(getBaseContext());
-            }
-        } else {
-            if(mStorage.getAudioFileDuration(mAudio.getResourceFile().getAbsolutePath()) != 0) {
-                mSlideResource.addAudio(mAudio);
-                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
-            }
+        mAudio = mSlideResource.getAudio();
+        if(mAudio == null) {
+            // slide does not contain Audio
+            mAudio = new Audio(AudioRecordActivity.this);
         }
     }
 
@@ -462,6 +439,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
         SharedRuntimeContent.updateAdapterView();
         setUpUI();
+        mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
     }
 
     @Override
@@ -563,7 +541,18 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     protected void onResume() {
         super.onResume();
+        loadStateFromSlide(SharedRuntimeContent.getSlideAt(mSlidePosition), mSlidePosition);
+
+        // Setup the User Interface
+        setUpUI();
         mAudioRecorder.setRelativeUpdate(mSeekBar.getWidth());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(SLIDE_NO, mSlidePosition);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -583,7 +572,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
 
         if (requestCode == GET_CAMERA_IMAGE && data == null) {
-            currentImagePath=mCameraImageFile.getAbsolutePath();
+            currentImagePath = mCameraImageFile.getAbsolutePath();
             startCropMainActivity();
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY

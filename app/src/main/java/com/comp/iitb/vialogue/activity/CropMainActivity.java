@@ -45,7 +45,6 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 import com.comp.iitb.vialogue.models.crop.CropImageViewOptions;
 
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.File;
 
@@ -237,6 +236,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         public void onPostExecute(Slide slide) {
             if (from.equals("AudioRecording")) {
                 // update current slide
+                if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
+                    ((Image) slide.getResource()).addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
+                }
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
 
                 // clearing bitmap to release memory
@@ -290,6 +292,9 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         @Override
         public void onPostExecute(Slide slide) {
             if (from.equals("AudioRecording")) {
+                if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
+                    ((Image) slide.getResource()).addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
+                }
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
             } else {
                 try {

@@ -77,7 +77,7 @@ public class SharedRuntimeContent {
 
     public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
-//        project.addSlide(slide.deepCopy());
+        slide.pinInBackground();
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         calculatePreviewFabVisibility();
         return true;
@@ -136,12 +136,18 @@ public class SharedRuntimeContent {
         } else {}
 
         try {
-            project.pinParseObject();
-            System.out.println("project pinned");
+            project.pin();
         } catch (ParseException e) {
-            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+
+//        try {
+//            project.pinParseObject();
+//            System.out.println("project pinned");
+//        } catch (ParseException e) {
+//            Toast.makeText(context, R.string.wrongWhileSaving, Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        }
     }
 
     public static void pinProject(Context context) {
