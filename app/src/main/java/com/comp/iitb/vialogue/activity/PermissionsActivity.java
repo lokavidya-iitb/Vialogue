@@ -47,7 +47,7 @@ public class PermissionsActivity extends AppCompatActivity {
                     // Launch MainActivity
                     onAllPermissionsGranted();
                 } else {
-                    Toast.makeText(PermissionsActivity.this, R.string.gimmeStorage, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(PermissionsActivity.this, R.string.gimmeStorage, Toast.LENGTH_LONG).show();
                     finish();
                 }
         }

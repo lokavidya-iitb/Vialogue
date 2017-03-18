@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.listeners;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,16 +21,16 @@ import java.util.ArrayList;
 public class MultipleImagePicker implements View.OnClickListener {
 
     private Context mContext;
-    private Fragment mFragment;
+    private Activity mActivity;
     private ArrayList<Uri> mPaths;
 
     public ArrayList<Uri> getPaths() {
         return mPaths;
     }
 
-    public MultipleImagePicker(Context context, Fragment fragment) {
+    public MultipleImagePicker(Context context, Activity activity) {
         mContext = context;
-        mFragment = fragment;
+        mActivity = activity;
     }
 
     @Override
@@ -37,10 +38,11 @@ public class MultipleImagePicker implements View.OnClickListener {
         mPaths = new ArrayList<>();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        mFragment.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
 
-        FishBun.with(mFragment)
+        System.out.println("beforeeeeeeeeeeee");
+        FishBun.with(mActivity)
                 .setAlbumSpanCountOnlPortrait(1)
                 .setPickerSpanCount(2)
                 .setActionBarColor(

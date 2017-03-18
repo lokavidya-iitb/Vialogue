@@ -167,13 +167,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             for(int i=0; i<localObjects.size(); i++) {
                 Project project = (Project) localObjects.get(i);
 
+                // -------------------------------------------------------------
                 // BEFORE UNCOMMENTING THIS CODE, JUST A DISCLAIMER
                 // THIS CODE RUNS INTO AN INFINITE (NO IDEA WHATSOEVER, REALLY
                 // TRIED VERY HARD TO FIGURE IT OUT).
                 // ALSO, AS A BONUS, IT CORRUPTS ALL THE PROJECTS ON YOUR SYSTEM
+                //                   -------------------------------------------
                 // SO, MAKE SURE YOU HAVE BACKUPS OR SOMETHING (AS OF WHEN I AM
-                // WRITING THIS, THERE IS NO WAY OF DOING SO). ;)
+                // WRITING THIS, THERE IS NO WAY OF DOING SO).
                 // -- IRONSTEIN
+                // -------------------------------------------------------------
 //                // rename project to avoid duplicate names
 //                while (true) {
 //                    int j = 0;

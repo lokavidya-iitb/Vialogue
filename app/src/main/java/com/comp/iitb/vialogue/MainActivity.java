@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         setSupportActionBar(mToolbar);
         mViewPager = ((ViewPager) findViewById(R.id.viewpager));
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
-
         mViewPager.setOffscreenPageLimit(3);
 
         mStorage = new Storage(getBaseContext());

@@ -9,7 +9,9 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
@@ -58,7 +60,7 @@ public class SharedRuntimeContent {
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
 
     // Variables
-    public static SlideRecyclerViewAdapter projectAdapter;
+    public static RecyclerView.Adapter projectAdapter;
     public static MyProjectsAdapter myProjectsAdapter = null;
     public static EditText projectName;
     public static TextView projectNameDisplay;
@@ -190,10 +192,8 @@ public class SharedRuntimeContent {
         } else {
             projectNameString = "Add project title";
         }
-        projectNameDisplay.setText(projectNameString);
-        projectName.setText(projectNameString);
+        projectNameDisplay.setText("");
         projectNameDisplay.setHint(projectNameString);
-        projectName.setHint(projectNameString);
 
         if(currentProject.getSlides().getAll().size() != 0) {
 
@@ -213,8 +213,7 @@ public class SharedRuntimeContent {
                                             // save project with a temporary name
                                             String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
                                             currentProject.setName(newProjectName);
-                                        } else {
-                                        }
+                                        } else {}
 
                                         // save existing project
                                         pinProject(activity.getBaseContext(), currentProject);
@@ -251,8 +250,7 @@ public class SharedRuntimeContent {
                             // save project with a temporary name
                             String newProjectName = ProjectNameUtils.getNewUndefinedProjectName();
                             currentProject.setName(newProjectName);
-                        } else {
-                        }
+                        } else {}
 
                         // save existing project
                         pinProject(activity.getBaseContext(), currentProject);
@@ -265,7 +263,6 @@ public class SharedRuntimeContent {
                         // in the current project (if the name is changed, or the project
                         // was not previously displayed (because it was new))
                         myProjectsAdapter.addProject(currentProject);
-                        Toast.makeText(activity.getBaseContext(), "Project saved successfully", Toast.LENGTH_SHORT).show();
                     }
                 }).execute();
             }

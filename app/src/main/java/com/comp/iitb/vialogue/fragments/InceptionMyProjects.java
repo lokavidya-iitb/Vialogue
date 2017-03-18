@@ -45,8 +45,6 @@ public class InceptionMyProjects extends Fragment {
     private MyProjectsAdapter mMyProjectsAdapter;
     private List<ProjectsShowcase> mProjectList;
     private AVLoadingIndicatorView mLoadingAnimationView;
-
-
     private OnFragmentInteractionListener mListener;
 
     public InceptionMyProjects() {
