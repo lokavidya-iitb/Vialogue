@@ -62,7 +62,7 @@ public class VideoPlayer extends AppCompatActivity {
 
     public static String URL;
     public static String id;
-
+    public static String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +71,7 @@ public class VideoPlayer extends AppCompatActivity {
         setSupportActionBar(toolbar);
         URL=getIntent().getStringExtra("URL");
         id = getIntent().getStringExtra("id");
+        name = getIntent().getStringExtra("name");
         Log.d("-------URL",""+URL);
 
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
@@ -206,7 +207,7 @@ public class VideoPlayer extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Download(URL, "/LVCreate/Videos/", "Name.mp4", getBaseContext());
+            Download(URL, "/LVCreate/Videos/SavedVideos", name+".mp4", getBaseContext());
 
             return resp;
         }

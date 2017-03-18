@@ -109,17 +109,7 @@ public class InceptionSavedVideos extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-        // ---------------
-//        prepareProjects();
-        // ----------------
-        /*
-        try {
-            Glide.with(this).load("https://cdn0.vox-cdn.com/uploads/blog/sbnu_logo_minimal/213/large_hammerandrails.com.minimal.png").placeholder(R.drawable.ic_computer_black_24dp).into((ImageView) getActivity().findViewById(R.id.backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        // Inflate the layout for this fragment
-
+        prepareProjects();
     }
 
     @Override
@@ -137,8 +127,6 @@ public class InceptionSavedVideos extends Fragment {
             ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
         }
-
-
         adapter.notifyDataSetChanged();
     }
 
@@ -176,9 +164,6 @@ public class InceptionSavedVideos extends Fragment {
             }
         }
     }
-
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

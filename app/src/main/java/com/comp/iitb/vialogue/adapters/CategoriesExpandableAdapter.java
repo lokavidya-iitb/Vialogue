@@ -53,11 +53,9 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
             public void onClick(View arg0) {
 
                 Intent viewVid = new Intent(context, VideoPlayer.class);
-
-
-                    viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
+                viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
                 viewVid.putExtra("id", ""+categoryList.get(groupPosition).getId());
-
+                viewVid.putExtra("name",""+categoryList.get(groupPosition).getName());
 
 
                 context.startActivity(viewVid);

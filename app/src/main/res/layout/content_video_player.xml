@@ -21,20 +21,22 @@
             android:layout_height="210dp"
             android:windowSoftInputMode="adjustResize" />
 
-        
+        <Button
+            android:id="@+id/button"
+            android:layout_below="@+id/app_video_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/download"
+            android:textAllCaps="false"
+            android:paddingTop="@dimen/picker_padding"
+            android:paddingBottom="@dimen/picker_padding"
+            android:textColor="@android:color/black"/>
+
+
+
+
 
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:text="@string/download"
-        android:textAllCaps="false"
-        android:paddingTop="@dimen/picker_padding"
-        android:paddingBottom="@dimen/picker_padding"
-        android:textColor="@android:color/white"/>
-
 
 </RelativeLayout>
