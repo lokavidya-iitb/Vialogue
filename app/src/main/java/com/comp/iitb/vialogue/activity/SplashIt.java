@@ -1,43 +1,12 @@
 package com.comp.iitb.vialogue.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.MainActivity;
-import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
-import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
-import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SplashIt extends AppCompatActivity {
 
@@ -62,8 +31,6 @@ public class SplashIt extends AppCompatActivity {
         startActivity(intent);
         finish();
 
-//        Intent intent = new Intent(SplashIt.this, CameraActivity.class);
-//        startActivity(intent);
     }
 
 }

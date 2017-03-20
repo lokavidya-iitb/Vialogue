@@ -5,38 +5,40 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.Gallery;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.CameraActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
-import com.comp.iitb.vialogue.coordinators.ConditionListener;
+import com.comp.iitb.vialogue.activity.GalleryActivity;
+import com.comp.iitb.vialogue.adapters.SlidesRecyclerViewAdapterMark2;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
-import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
-import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
+import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
-import com.comp.iitb.vialogue.listeners.CameraImagePicker;
-import com.comp.iitb.vialogue.listeners.MultipleImagePicker;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
-import com.comp.iitb.vialogue.listeners.ClearFocusTouchListener;
 import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
+import com.comp.iitb.vialogue.listeners.GridLayoutItemTouchHelperCallback;
+import com.comp.iitb.vialogue.listeners.MultipleImagePicker;
 import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
-import com.comp.iitb.vialogue.listeners.SwitchVisibilityClick;
 import com.comp.iitb.vialogue.listeners.VideoPickerClick;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
@@ -56,41 +58,37 @@ import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnFragmentInteractionListener} interface
+ * {@link CreateVideosMark2.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CreateVideos#newInstance} factory method to
+ * Use the {@link CreateVideosMark2#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreateVideos extends Fragment implements OnProgressUpdateListener, ConditionListener {
-    private Storage mStorage;
+public class CreateVideosMark2 extends Fragment {
+
+    // UI Components
     private Button mImagePicker;
     private Button mVideoPicker;
     private Button mCameraPicker;
     private Button mQuestionPicker;
     private EditText mProjectName;
     private TextView mProjectNameDisplay;
-    private SlideFragment mSlideFragment;
-    private View mView;
-    private OnFragmentInteractionListener mListener;
-    private LinearLayout mRoot;
-    private Fragment mFragment;
-    private Project mProject;
-    private AVLoadingIndicatorView mLoadingAnimation;
+    private AVLoadingIndicatorView mLoadingAnimationView;
+    private RecyclerView mSlidesRecyclerView;
+    private LinearLayout mCreateVideosRootView;
 
-    private CameraImagePicker mCameraImagePicker;
+    // variables
+    private OnListFragmentInteractionListener mListener;
+    private SlidesRecyclerViewAdapterMark2 mSlideRecyclerViewAdapter;
+    private ItemTouchHelper.Callback mItemTouchHelperCallback;
+    private ItemTouchHelper mItemTouchHelper;
     private MultipleImagePicker mMultipleImagePicker;
+    private Storage mStorage;
 
     // Required empty public constructor
-    public CreateVideos() {}
+    public CreateVideosMark2() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment CreateVideos.
-     */
-    public static CreateVideos newInstance() {
-        CreateVideos fragment = new CreateVideos();
+    public static CreateVideosMark2 newInstance() {
+        CreateVideosMark2 fragment = new CreateVideosMark2();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -99,35 +97,37 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFragment = this;
+        if (getArguments() != null) {}
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        System.out.println("onCreateView : called");
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_create_videos, container, false);
-
-        //Initialize Storage
-        mStorage = new Storage(getContext());
+        View view = inflater.inflate(R.layout.fragment_create_videos_mark2, container, false);
 
         // Initialize UI Components
-        mProjectName = (EditText) mView.findViewById(R.id.project_name);
-        mProjectNameDisplay = (TextView) mView.findViewById(R.id.project_name_display);
-        mProjectNameDisplay.setOnClickListener(new SwitchVisibilityClick(getContext(), mProjectNameDisplay, mProjectName));
-        mRoot = (LinearLayout) mView.findViewById(R.id.create_videos_root);
-        mLoadingAnimation = (AVLoadingIndicatorView) mView.findViewById(R.id.loading_animation);
+        mImagePicker = (Button) view.findViewById(R.id.image_picker);
+        mCameraPicker = (Button) view.findViewById(R.id.camera_image_picker);
+        mVideoPicker = (Button) view.findViewById(R.id.video_picker);
+        mQuestionPicker = (Button) view.findViewById(R.id.question_picker);
+        mProjectName = (EditText) view.findViewById(R.id.project_name);
+        mProjectNameDisplay = (TextView) view.findViewById(R.id.project_name_display);
+        mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
+        mSlidesRecyclerView = (RecyclerView) view.findViewById(R.id.slides_recycler_view);
+        mCreateVideosRootView = (LinearLayout) view.findViewById(R.id.create_videos_root);
+
+        // instantiate Variables
+        mSlidesRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
+        mSlideRecyclerViewAdapter = new SlidesRecyclerViewAdapterMark2(view.getContext(), mListener, mSlidesRecyclerView);
+        mItemTouchHelperCallback = new GridLayoutItemTouchHelperCallback(mSlideRecyclerViewAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
+        mStorage = new Storage(getContext());
 
         // Initialize dependent variables in ShredRuntimeContent
-        SharedRuntimeContent.loadingAnimation = mLoadingAnimation;
+        SharedRuntimeContent.loadingAnimation = mLoadingAnimationView;
         SharedRuntimeContent.projectName = mProjectName;
         SharedRuntimeContent.projectNameDisplay = mProjectNameDisplay;
-
-        //Load Pickers
-        mImagePicker = (Button) mView.findViewById(R.id.image_picker);
-        mVideoPicker = (Button) mView.findViewById(R.id.video_picker);
-        mQuestionPicker = (Button) mView.findViewById(R.id.question_picker);
-        mCameraPicker = (Button) mView.findViewById(R.id.camera_image_picker);
+        SharedRuntimeContent.projectAdapter = mSlideRecyclerViewAdapter;
 
         // Initialize State
         if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
@@ -141,73 +141,43 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         mProjectName.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
-
         // Camera Image Picker
-//        mCameraImagePicker = new CameraImagePicker(mStorage, this, getContext());
-//        mCameraPicker.setOnClickListener(mCameraImagePicker);
         mCameraPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), CameraActivity.class);
+                Intent intent = new Intent(view.getContext(), CameraActivity.class);
                 startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
             }
         });
         //Image Picker
-        //        ImagePickerClick imagePickerClickListener = new ImagePickerClick(this);
-        mMultipleImagePicker = new MultipleImagePicker(getContext(), getActivity());
+        mMultipleImagePicker = new MultipleImagePicker(view.getContext(), getActivity());
         mImagePicker.setOnClickListener(mMultipleImagePicker);
+//        mImagePicker.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getContext(), GalleryActivity.class);
+//                startActivityForResult(intent, 1456);
+//            }
+//        });
         //Video Picker
         VideoPickerClick videoPickerClickListener = new VideoPickerClick(this);
         mVideoPicker.setOnClickListener(videoPickerClickListener);
         //Question Picker
-        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getActivity(), CreateVideos.this);
+        QuestionPickerClick questionPickerClickListener = new QuestionPickerClick(getActivity(), CreateVideosMark2.this);
         mQuestionPicker.setOnClickListener(questionPickerClickListener);
+        // slideRecyclerView
+        mSlidesRecyclerView.setAdapter(mSlideRecyclerViewAdapter);
+        mItemTouchHelper.attachToRecyclerView(mSlidesRecyclerView);
 
-        //set SlideLayout
-        mSlideFragment = SlideFragment.newInstance(3);
-        getFragmentManager().beginTransaction().add(R.id.create_videos_root, mSlideFragment).commit();
-
-        //If User clicks at a place other than project Name EditText should convert to textView loosing focus
-        FrameLayout touchInterceptor = (FrameLayout) mView.findViewById(R.id.touch_interceptor);
-        touchInterceptor.setOnTouchListener(new ClearFocusTouchListener(mProjectName));
-
-        SharedRuntimeContent.calculatePreviewFabVisibility();
-        return mView;
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            SharedRuntimeContent.previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-            SharedRuntimeContent.calculatePreviewFabVisibility();
-        } else {}
-    }
-
-    public void setUpNewProject() {
-
-    }
-
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        if (visible) {
-            // ...
-        }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(1);
-        }
+        // return the inflated view
+        return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -218,6 +188,21 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 
     @Override
@@ -238,30 +223,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
         System.out.println("handlePickedData : called");
         Log.d(getClass().getName(), "data " + String.valueOf(data == null));
 
-        if (requestCode == GET_CAMERA_IMAGE && data == null) {
-            // CAPTURE IMAGE FROM CAMERA
-            Intent intent = new Intent(getContext(), CropMainActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("from", "CreateVideos");
-            bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
-            intent.putExtras(bundle);
-            mFragment.startActivity(intent);
-
-        } else if (requestCode == GET_IMAGE) {
-            // GET IMAGE FROM GALLERY
-            if (data != null) {
-                String selectedPath = mStorage.getRealPathFromURI(data.getData());
-                Intent intent = new Intent(getContext(), CropMainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("from", "CreateVideos");
-                bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
-                intent.putExtras(bundle);
-                mFragment.startActivity(intent);
-            } else {
-                // TODO maybe show a toast
-            }
-
-        } else if (requestCode == GET_VIDEO) {
+        if (requestCode == GET_VIDEO) {
             // GET VIDEO FROM GALLERY
             if (data != null) {
 
@@ -324,7 +286,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
             }
         } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_IMAGES) {
             ArrayList<Uri> paths = new ArrayList<>();
-            for(int i=0; i<data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
+            for(int i = 0; i<data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
                 paths.add(Uri.parse(data.getParcelableArrayListExtra(Define.INTENT_PATH).get(i).toString()));
             }
 
@@ -373,29 +335,5 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
 
             }
         }
-    }
-
-    @Override
-    public void onProgressUpdate(int progress) {
-
-    }
-
-
-    @Override
-    public void conditionSatisfied(EditText sender) {
-
-    }
-
-    @Override
-    public void conditionFailed(EditText sender) {
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d("CreateVideos", "onDestroyView : called");
-//        RefWatcher refWatcher = App.getRefWatcher(getActivity());
-//        refWatcher.watch(this);
     }
 }

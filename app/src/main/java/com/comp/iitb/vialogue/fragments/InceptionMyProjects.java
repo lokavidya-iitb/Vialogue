@@ -1,6 +1,5 @@
 package com.comp.iitb.vialogue.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -14,12 +13,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.OnAdapterSet;
@@ -44,12 +41,10 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class InceptionMyProjects extends Fragment {
-    private RecyclerView recyclerView;
-    private MyProjectsAdapter adapter;
-    private List<ProjectsShowcase> projectList;
+    private RecyclerView mRecyclerView;
+    private MyProjectsAdapter mMyProjectsAdapter;
+    private List<ProjectsShowcase> mProjectList;
     private AVLoadingIndicatorView mLoadingAnimationView;
-
-
     private OnFragmentInteractionListener mListener;
 
     public InceptionMyProjects() {
@@ -79,7 +74,7 @@ public class InceptionMyProjects extends Fragment {
         SharedRuntimeContent.previewFab.show();
 
         // Initialize UI Components
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
 
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
@@ -88,23 +83,26 @@ public class InceptionMyProjects extends Fragment {
 //        toolbar.setVisibility(View.GONE);
 //        initCollapsingToolbar();
 
-        projectList = new ArrayList<>();
-        adapter = new MyProjectsAdapter(getActivity());
+        mProjectList = new ArrayList<>();
+        mMyProjectsAdapter = new MyProjectsAdapter(getActivity());
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         new SetMyProjectsAdapterAsync(
                 getActivity(),
-                recyclerView,
+                mLoadingAnimationView,
+                mRecyclerView,
                 new OnAdapterSet() {
                     @Override
-                    public void onDone() {
+                    public void onDone(RecyclerView.Adapter adapter) {
                         mLoadingAnimationView.setVisibility(View.GONE);
+                        mMyProjectsAdapter = (MyProjectsAdapter) adapter;
+                        SharedRuntimeContent.myProjectsAdapter = mMyProjectsAdapter;
                     }
                 }
         ).execute();
@@ -146,7 +144,7 @@ public class InceptionMyProjects extends Fragment {
                 Project project = (Project) object;
                 Log.d("--projects offline",""+project.getName());
                 ProjectsShowcase a = new ProjectsShowcase(project.getName());
-                projectList.add(a);
+                mProjectList.add(a);
                           }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -159,7 +157,7 @@ public class InceptionMyProjects extends Fragment {
             ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
             projectList.add(a);
         }*/
-        adapter.notifyDataSetChanged();
+        mMyProjectsAdapter.notifyDataSetChanged();
     }
 
 

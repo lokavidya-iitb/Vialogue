@@ -22,6 +22,22 @@ import java.util.List;
 @ParseClassName("Project")
 public class Project extends BaseParseClass {
 
+    private boolean mDoesExistInLocalDatastore;
+
+    public Project existsInLocalDatastore() {
+        mDoesExistInLocalDatastore = true;
+        return this;
+    }
+
+    public Project doesNotExistInLocalDatastore() {
+        mDoesExistInLocalDatastore = false;
+        return this;
+    }
+
+    public boolean doesItExistInLocalDatastore() {
+        return mDoesExistInLocalDatastore;
+    }
+
     // default constructor required by Parse
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
