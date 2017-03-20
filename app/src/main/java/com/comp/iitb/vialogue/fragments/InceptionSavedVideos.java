@@ -83,7 +83,6 @@ public class InceptionSavedVideos extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        SharedRuntimeContent.previewFab.hide();
         return inflater.inflate(R.layout.fragment_inception_saved_videos, container, false);
     }
 

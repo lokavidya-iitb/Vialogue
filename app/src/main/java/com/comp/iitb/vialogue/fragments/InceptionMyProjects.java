@@ -65,14 +65,6 @@ public class InceptionMyProjects extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            SharedRuntimeContent.previewFab.setImageDrawable(getResources().getDrawable(R.drawable.plus_png, getContext().getTheme()));
-        } else {
-            SharedRuntimeContent.previewFab.setImageDrawable(getResources().getDrawable(R.drawable.plus_png));
-        }
-        SharedRuntimeContent.previewFab.show();
-
         // Initialize UI Components
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
@@ -107,15 +99,6 @@ public class InceptionMyProjects extends Fragment {
                 }
         ).execute();
 
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            SharedRuntimeContent.previewFab.setImageResource(R.drawable.plus_png);
-            SharedRuntimeContent.previewFab.setVisibility(View.VISIBLE);
-        } else {}
     }
 
     @Override

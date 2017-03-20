@@ -190,6 +190,14 @@ public class CreateVideosMark2 extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            SharedRuntimeContent.calculatePreviewFabVisibility();
+        } else {}
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

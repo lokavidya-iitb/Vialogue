@@ -132,14 +132,6 @@ public class Home extends Fragment {
         return mView;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            SharedRuntimeContent.previewFab.setVisibility(View.GONE);
-        } else {}
-    }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
