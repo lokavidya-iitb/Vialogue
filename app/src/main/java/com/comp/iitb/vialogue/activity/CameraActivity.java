@@ -233,6 +233,7 @@ public class CameraActivity extends AppCompatActivity {
         System.out.println("checkCameraPermissions : called");
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mPermissionsRequiredCount = 3;
+            mPermissionsGrantedCount = 0;
             if(!(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
                 ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             } else {
@@ -256,6 +257,7 @@ public class CameraActivity extends AppCompatActivity {
                 onPermissionsSatisfied();
             } else {
                 System.out.println("all permissions not granted");
+                System.out.println(mPermissionsGrantedCount);
             }
         }
         System.out.println("checkCameraPermissions : exiting");
