@@ -77,7 +77,6 @@ public class UploadVideoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Log.d("---size of questions", "" + SharedRuntimeContent.questionsList.size());
-
         // Initialize variables
         mPlayer = new VPlayer(this);
         questionLists = SharedRuntimeContent.questionsList;
@@ -467,7 +466,6 @@ public class UploadVideoActivity extends AppCompatActivity {
                 public void onDismiss(DialogInterface dialog) {
                     mPlayer.start();
                     Log.d("popped time", "" + questionLists.remove(0));
-
                 }
             });
             adapter.show();

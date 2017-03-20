@@ -300,6 +300,12 @@ public class CropImageView extends FrameLayout {
         }
     }
 
+    public Bitmap getActualImage()
+    {
+        return mImageView.getDrawingCache();
+    }
+
+
     /**
      * The shape of the cropping area - rectangle/circular.
      */
