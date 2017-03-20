@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.customUiComponents.ViewPagerWithDisableOption;
 import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
 import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
@@ -78,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Storage mStorage;
     private Menu mMenu;
     private FloatingActionButton mPreviewFab;
-    private ViewPager mViewPager;
-//    private FragmentManager mSupportFragmentManager;
+    private ViewPagerWithDisableOption mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +89,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mViewPager = ((ViewPager) findViewById(R.id.viewpager));
+        mViewPager = ((ViewPagerWithDisableOption) findViewById(R.id.viewpager));
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
         mViewPager.setOffscreenPageLimit(3);
+//        mViewPager.disableSwipe();
 
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -141,16 +143,16 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
             switch (i) {
-                case 0:
+                case FragmentPageAdapter.HOME:
                     tab.setIcon(R.drawable.home);
                     break;
-                case 1:
+                case FragmentPageAdapter.CREATE_PROJECT:
                     tab.setIcon(R.drawable.create_videos);
                     break;
-                case 2:
+                case FragmentPageAdapter.VIEW_VIDEOS:
                     tab.setIcon(R.drawable.view_videos);
                     break;
-                case 3:
+                case FragmentPageAdapter.USER_ACCOUNT:
                     tab.setIcon(R.drawable.profile);
                     break;
             }

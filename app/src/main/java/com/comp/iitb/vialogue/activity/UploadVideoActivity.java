@@ -40,6 +40,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -106,7 +107,6 @@ public class UploadVideoActivity extends AppCompatActivity {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (name.getText().toString().trim().length() == 0) {
                     name.setError("Required");
                 } else if (description.getText().toString().trim().length() == 0) {
@@ -228,6 +228,14 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         /*if(mPlayer.isPlaying())
         new DialogOpener().execute();*/
+
+        // Try to load categories
+        loadCategoriesInBackground(new OnDone() {
+            @Override
+            public void done(boolean isDone) {
+                // do nothing
+            }
+        });
     }
 
     public void uploadProject() {
@@ -245,7 +253,14 @@ public class UploadVideoActivity extends AppCompatActivity {
             SharedRuntimeContent.getProject().setLanguage(lang);
             SharedRuntimeContent.getProject().setCategory(categoryObjects.get(mCategories.getSelectedItemPosition()-1));
             tagsToUpload = Arrays.asList(tags.getText().toString().split(" "));
-            SharedRuntimeContent.getProject().setTags(tagsToUpload);
+
+//            final ProgressDialog progressDialog = ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please Wait...");
+//            SharedRuntimeContent.getProject().saveInBackground(new SaveCallback() {
+//                @Override
+//                public void done(ParseException e) {
+//                    progressDialog.dismiss();
+//                }
+//            });
             new SaveParseObjectAsync(
                     UploadVideoActivity.this,
                     ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),

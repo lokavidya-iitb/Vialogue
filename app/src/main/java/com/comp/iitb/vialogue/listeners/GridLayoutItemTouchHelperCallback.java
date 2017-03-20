@@ -44,15 +44,15 @@ public class GridLayoutItemTouchHelperCallback extends ItemTouchHelper.Callback 
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         wasMoved = true;
-        return true;
+        return false;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {}
 
-    /* @param actionState One of {@link ItemTouchHelper#ACTION_STATE_IDLE},
-     *                           {@link ItemTouchHelper#ACTION_STATE_SWIPE},
-     *                           {@link ItemTouchHelper#ACTION_STATE_DRAG}.
+    /* @param actionState One of {@link ItemTouchHelper#ACTION_STATE_IDLE}  = 0,
+     *                           {@link ItemTouchHelper#ACTION_STATE_SWIPE} = 1,
+     *                           {@link ItemTouchHelper#ACTION_STATE_DRAG}  = 2.
      */
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
@@ -62,11 +62,6 @@ public class GridLayoutItemTouchHelperCallback extends ItemTouchHelper.Callback 
                 ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
                 itemViewHolder.onItemSelected();
                 itemViewHolder.onDragEnabled();
-            }
-        } else {
-            if(viewHolder instanceof ItemTouchHelperViewHolder) {
-                ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
-                itemViewHolder.onDragDisabled();
             }
         }
 
