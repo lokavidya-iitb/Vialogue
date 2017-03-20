@@ -176,19 +176,6 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            SharedRuntimeContent.previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-            SharedRuntimeContent.calculatePreviewFabVisibility();
-        } else {}
-    }
-
-    public void setUpNewProject() {
-
-    }
-
-    @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible) {

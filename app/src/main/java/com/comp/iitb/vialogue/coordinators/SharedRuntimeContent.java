@@ -129,6 +129,13 @@ public class SharedRuntimeContent {
         calculatePreviewFabVisibility();
     }
 
+    public static void justDeleteSlide(int position) {
+        System.out.println("size before deleting : " + project.getSlides().getAll().size());
+        project.deleteSlide(position);
+        System.out.println("size after deleting : " + project.getSlides().getAll().size());
+        calculatePreviewFabVisibility();
+    }
+
     public static void setProjectName(String name) {
         project.setName(name);
     }
@@ -188,6 +195,7 @@ public class SharedRuntimeContent {
         // load new project
         project = newProject;
         updateAdapterView();
+        calculatePreviewFabVisibility();
 
         // display project name
         String projectNameString = null;
@@ -267,6 +275,7 @@ public class SharedRuntimeContent {
                         // in the current project (if the name is changed, or the project
                         // was not previously displayed (because it was new))
                         myProjectsAdapter.addProject(currentProject);
+                        // calculate preview fab visibility based on the new project
                     }
                 }).execute();
             }
@@ -316,15 +325,16 @@ public class SharedRuntimeContent {
             return;
         }
 
-        if (getNumberOfSlides() == 0) {
-        } else {
+        if (getNumberOfSlides() != 0) {
             for (Slide s : project.getSlides().getAll()) {
                 if (s.getSlideType() == Slide.SlideType.VIDEO) {
                     previewFab.show();
+                    previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
                     return;
                 } else if (s.getSlideType() == Slide.SlideType.IMAGE) {
                     if (((Image) s.getResource()).hasAudio()) {
                         previewFab.show();
+                        previewFab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
                         return;
                     }
                 }

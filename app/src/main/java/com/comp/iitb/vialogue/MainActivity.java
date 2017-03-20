@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
-        SharedRuntimeContent.calculatePreviewFabVisibility();
         refreshSignInOutOptions();
     }
 
@@ -304,17 +303,17 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     public void onTabSelected(int tabNumber) {
         switch (tabNumber) {
-            case 0:
+            case FragmentPageAdapter.HOME:
                 mPreviewFab.hide();
                 break;
-            case 1:
+            case FragmentPageAdapter.VIEW_VIDEOS:
                 mPreviewFab.hide();
                 break;
-            case 2:
-                mPreviewFab.show();
+            case FragmentPageAdapter.CREATE_PROJECT:
                 SharedRuntimeContent.calculatePreviewFabVisibility();
                 break;
-            case 3:
+            case FragmentPageAdapter.USER_ACCOUNT:
+                mPreviewFab.setImageResource(R.drawable.plus_png);
                 mPreviewFab.show();
         }
     }
