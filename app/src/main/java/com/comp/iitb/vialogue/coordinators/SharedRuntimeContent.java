@@ -404,10 +404,6 @@ public class SharedRuntimeContent {
                     String[] optionsArray = new String[question.getOptions().size()];
                     optionsArray = question.getOptions().toArray(optionsArray);
                     questionAnswer.setOptions(optionsArray);
-                    String[] answerArray = new String[question.getCorrectOptions().size()];
-                    answerArray = question.getCorrectOptions().toArray(answerArray);
-
-                    questionAnswer.setAnswers(answerArray);
                     positionThatSaves = getSlidePosition(slide);
                     questionAnswer.setTime(getDurationThatSavesQuestion(positionThatSaves));
                     questionAnswer.setQuestion(question.getQuestionString());
