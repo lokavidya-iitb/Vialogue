@@ -194,6 +194,10 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 //                }
 
                 project.fetchChildrenObjects();
+                if(project.isEmpty()) {
+                    project.delete();
+                    continue;
+                }
                 mProjectViewsList.add(new ProjectView(project, i));
                 mProjectNamesList.add(project.getName());
             }

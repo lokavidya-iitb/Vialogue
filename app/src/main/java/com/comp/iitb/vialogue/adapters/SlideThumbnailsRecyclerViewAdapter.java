@@ -84,7 +84,8 @@ public class SlideThumbnailsRecyclerViewAdapter extends RecyclerView.Adapter<Sli
         } else {
             // use actual thumbnails from the slides
             Glide.with(mContext)
-                    .load(slide.getThumbnailUrl(mContext))
+                    .load(slide.getThumbnailUri(mContext))
+//                    .load(slide.getThumbnailUrl(mContext))
                     .centerCrop()
                     .placeholder(R.drawable.app_logo)
                     .into(slideViewHolder.thumbnail);
