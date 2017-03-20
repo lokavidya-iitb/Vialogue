@@ -82,7 +82,7 @@ public final class CropMainFragment extends Fragment
             @Override
             public void onClick(View v) {
                 // TODO
-                mCropImageView.getCroppedImageAsync();
+                /*mCropImageView.getCroppedImageAsync();*/
                 ((CropMainActivity)getActivity()).done();
             }
         });
@@ -113,8 +113,10 @@ public final class CropMainFragment extends Fragment
             return true;
         }
         else if (item.getItemId() == R.id.undo) {
-            if(sequence.size()!=0)
-            mCropImageView.setImageBitmap(sequence.pop());
+            if(sequence.size()!=0) {
+                System.out.println("------------sequence"+ sequence.toString());
+                mCropImageView.setImageBitmap(sequence.pop());
+            }
             else {
                 // Using
                 // Toast.makeText(CropMainActivity.this, R.string.cannotUndo, Toast.LENGTH_LONG).show();
@@ -172,7 +174,7 @@ public final class CropMainFragment extends Fragment
 
             mCroppedImage = result.getBitmap();
             sequence.push(mCroppedImage);
-            System.out.println(""+ sequence.size());
+            System.out.println("------------sequence"+ sequence.toString());
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {
             Log.e(LOG_TAG, "Failed to crop image", result.getError());
