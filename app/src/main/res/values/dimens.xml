@@ -26,6 +26,7 @@
     <dimen name="time_padding_audio">5dp</dimen>
     <dimen name="answer_option_text">20sp</dimen>
     <dimen name="answer_option_padding">10dp</dimen>
+    <dimen name="answer_option_padding_half">5dp</dimen>
     <dimen name="question_text">18sp</dimen>
     <dimen name="linear_layout_padding">15dp</dimen>
     <dimen name="delete_button_padding">13dp</dimen>

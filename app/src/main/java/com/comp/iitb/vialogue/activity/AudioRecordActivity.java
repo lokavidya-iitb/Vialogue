@@ -171,7 +171,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 if (isPlaying) {
                     stopRecording();
                 }
-
+                stopRecording();
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraImageFile));
                 startActivityForResult(cameraIntent, SharedRuntimeContent.GET_CAMERA_IMAGE);
@@ -345,6 +345,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     }
 
     public void startCropMainActivity() {
+        stopRecording();
         Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("SlidePosition",mSlidePosition);

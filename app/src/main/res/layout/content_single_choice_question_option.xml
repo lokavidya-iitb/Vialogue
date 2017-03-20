@@ -27,6 +27,8 @@
             android:layout_alignBottom="@+id/delete_button"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:paddingBottom="@dimen/answer_option_padding"
+            android:paddingTop="@dimen/answer_option_padding"
             android:buttonTint="@color/colorPrimary"/>
 
         <EditText
@@ -41,7 +43,7 @@
             android:layout_toStartOf="@id/delete_button"
             android:background="@android:color/transparent"
             android:hint="@string/answer_option"
-            android:paddingBottom="@dimen/answer_option_padding"
-            android:paddingTop="@dimen/answer_option_padding" />
+            android:paddingBottom="@dimen/answer_option_padding_half"
+            android:paddingTop="@dimen/answer_option_padding_half" />
 
 </RelativeLayout>

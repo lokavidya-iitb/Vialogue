@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             @Override
             public void onClick(View view) {
                 switch (mViewPager.getCurrentItem()) {
-                    case 1:
+                    case 2:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
 //                        intent.putStringArrayListExtra()
@@ -306,11 +306,11 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 break;
             case 1:
-                mPreviewFab.show();
-                SharedRuntimeContent.calculatePreviewFabVisibility();
+                mPreviewFab.hide();
                 break;
             case 2:
-                mPreviewFab.hide();
+                mPreviewFab.show();
+                SharedRuntimeContent.calculatePreviewFabVisibility();
                 break;
             case 3:
                 mPreviewFab.show();

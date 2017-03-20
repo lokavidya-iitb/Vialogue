@@ -24,8 +24,9 @@ public class LIFOSet<E> extends Stack<E> {
 
     public E pop() {
         E value = super.pop();
-        backSequence.push(value);
         backSequence.push("pop");
+        backSequence.push(value);
+
         forwardSequence.clear();
         return value;
     }
