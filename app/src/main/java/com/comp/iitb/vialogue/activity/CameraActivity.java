@@ -19,6 +19,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -50,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.R.attr.bitmap;
 import static android.os.Build.VERSION.SDK_INT;
@@ -230,9 +232,9 @@ public class CameraActivity extends AppCompatActivity {
 
     // check if camera permissions given
     private void checkCameraPermissions() {
-        System.out.println("checkCameraPermissions : called");
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mPermissionsRequiredCount = 3;
+            mPermissionsGrantedCount = 0;
             if(!(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
                 ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             } else {
@@ -252,13 +254,9 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             if(mPermissionsGrantedCount == mPermissionsRequiredCount) {
-                System.out.println("all permissions granted");
                 onPermissionsSatisfied();
-            } else {
-                System.out.println("all permissions not granted");
             }
         }
-        System.out.println("checkCameraPermissions : exiting");
     }
 
     private void setUpCamera() {
@@ -285,10 +283,8 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void startCamera() {
-        System.out.println("startCamera : called");
-        mCameraPreview = new CameraPreview(CameraActivity.this, mCamera);
+        mCameraPreview = new CameraPreview(CameraActivity.this, CameraActivity.this, mCamera);
         mCameraPreviewFrameLayout.addView(mCameraPreview);
-        System.out.println("startCamera : exiting");
     }
 
     public void setCameraDisplayOrientation() {
@@ -337,7 +333,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("onResume : called");
         // try to start camera
         checkCameraPermissions();
     }
@@ -428,36 +423,8 @@ public class CameraActivity extends AppCompatActivity {
         private GestureDetector mDetector;
         private OnSwipeListener mOnSwipeListener;
 
-//        public CapturesRecyclerViewAdapter(Context context, ArrayList<String> imagePaths) {
-//            mContext = context;
-//            mImagePaths = imagePaths;
-//            mOnSwipeListener = new OnSwipeListener() {
-//                @Override
-//                public boolean onSwipe(Direction direction) {
-//                    System.out.println("onSwipe : called");
-//                    // Possible implementation
-//                    if(direction == Direction.left || direction == Direction.right) {
-//                        // Do something COOL like animation or whatever you want
-//                        // Refer to your view if needed using a global reference
-//                        System.out.println("left or right");
-//                        return true;
-//                    }
-//                    else if(direction == Direction.up || direction == Direction.down) {
-//                        // Do something COOL like animation or whatever you want
-//                        // Refer to your view if needed using a global reference
-//                        System.out.println("up or down");
-//                        return true;
-//                    }
-//                    return super.onSwipe(direction);
-//                }
-//            };
-//
-//            mDetector = new GestureDetector(CameraActivity.this, mOnSwipeListener);
-//        }
-
         public CapturesRecyclerViewAdapter(Context context) {
             mContext = context;
-//            this(context, new ArrayList<String>());
         }
 
         @Override
@@ -467,23 +434,13 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         public void onBindViewHolder(CapturesRecyclerViewAdapter.CaptureViewHolder viewHolder, final int position) {
-
-            // TODO get this to work
-//            viewHolder.thumbnail.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View view, MotionEvent motionEvent) {
-//                    System.out.println("onTouch : called");
-//                    System.out.println(mDetector.onTouchEvent(motionEvent));
-//                    return false;
-//                }
-//            });
-
             Glide
                     .with(mContext)
                     .load(new File(mImagePaths.get(position)))
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(viewHolder.thumbnail);
+                    .into(viewHolder.thumbnail)
+            ;
         }
 
         public void add(String imagePath) {

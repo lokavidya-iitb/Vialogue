@@ -3,6 +3,7 @@ package com.comp.iitb.vialogue.models.ParseObjects.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.library.Storage;
@@ -88,7 +89,17 @@ public class Slide extends BaseParseClass {
         if(getSlideType() == SlideType.IMAGE || getSlideType() == SlideType.VIDEO) {
             return getResource().getResourceFile().getAbsolutePath();
         } else if(getSlideType() == SlideType.QUESTION){
+            System.out.println("question Icon path : " + new File(Question.getQuestionThumbnailUri(context).getPath()).getAbsolutePath());
             return new File(Question.getQuestionThumbnailUri(context).getPath()).getAbsolutePath();
+        }
+        return null;
+    }
+
+    public Uri getThumbnailUri(Context context) {
+        if(getSlideType() == SlideType.IMAGE || getSlideType() == SlideType.VIDEO) {
+            return Uri.fromFile(getResource().getResourceFile());
+        } else if(getSlideType() == SlideType.QUESTION) {
+            return Question.getQuestionThumbnailUri(context);
         }
         return null;
     }

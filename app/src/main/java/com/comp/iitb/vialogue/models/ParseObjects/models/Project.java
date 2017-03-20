@@ -201,4 +201,9 @@ public class Project extends BaseParseClass {
         setSlides(slides);
     }
 
+    // other project utils
+    public boolean isEmpty() {
+        return getSlides().getAll().size() == 0;
+    }
+
 }

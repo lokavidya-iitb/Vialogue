@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.utils;
 
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.parse.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
