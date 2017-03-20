@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +30,10 @@ import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -44,6 +48,8 @@ import tcking.github.com.giraffeplayer.SimulationHandler;
 import tcking.github.com.giraffeplayer.VPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
+import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.Download;
+
 
 public class VideoPlayer extends AppCompatActivity {
 
@@ -51,9 +57,12 @@ public class VideoPlayer extends AppCompatActivity {
     private boolean isFirstTime;
     private List<QuestionAnswer> questionLists= new ArrayList();
     private List<ParseObject> recieveEm = new ArrayList<>();
+    private Button button;
+    private ProgressDialog progressDialog;
 
     public static String URL;
-
+    public static String id;
+    public static String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +70,12 @@ public class VideoPlayer extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         URL=getIntent().getStringExtra("URL");
+        id = getIntent().getStringExtra("id");
+        name = getIntent().getStringExtra("name");
         Log.d("-------URL",""+URL);
 
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
-        /*query.whereEqualTo("videos", "0wDiB0fmBf" );*/
+        query.whereEqualTo("videos", id );
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> comments, ParseException e) {
                 if (e == null) {
@@ -155,8 +166,18 @@ public class VideoPlayer extends AppCompatActivity {
             }
         });
 
+        button = (Button) findViewById(R.id.button);
+
+        // Capture button clicks
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+
+                new downloader().execute();
+            }
 
 
+
+    });
     }
 
     @Override
@@ -178,7 +199,7 @@ public class VideoPlayer extends AppCompatActivity {
     }
 
 
-   /* private class playHandler extends AsyncTask<String, String, String> {
+    private class downloader extends AsyncTask<String, String, String> {
 
         private String resp ="";
         ProgressDialog progressDialog;
@@ -186,21 +207,7 @@ public class VideoPlayer extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-
-            try{
-
-                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
-                        "Question");
-                query.where
-                 query.find();
-                for (ParseObject num : receiveEM) {
-                    String name=((String) num.get("name"));
-                    categories.add(name);
-                }
-            } catch (ParseException e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
+            Download(URL, "/LVCreate/Videos/SavedVideos", name+".mp4", getBaseContext());
 
             return resp;
         }
@@ -216,7 +223,7 @@ public class VideoPlayer extends AppCompatActivity {
         protected void onPreExecute() {
 
             progressDialog = ProgressDialog.show(VideoPlayer.this,
-                    "ProgressDialog","Loading the preview");
+                    "ProgressDialog","Downloading..");
             progressDialog.setCancelable(false);
         }
 
@@ -225,7 +232,7 @@ public class VideoPlayer extends AppCompatActivity {
         protected void onProgressUpdate(String... text) {
 
         }
-    }*/
+    }
 
 
     @Override

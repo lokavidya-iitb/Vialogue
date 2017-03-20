@@ -29,6 +29,7 @@ import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
+import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -305,6 +306,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 break;
             case 1:
+                mPreviewFab.show();
                 SharedRuntimeContent.calculatePreviewFabVisibility();
                 break;
             case 2:

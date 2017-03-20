@@ -53,10 +53,9 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
             public void onClick(View arg0) {
 
                 Intent viewVid = new Intent(context, VideoPlayer.class);
-
-
-                    viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
-
+                viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
+                viewVid.putExtra("id", ""+categoryList.get(groupPosition).getId());
+                viewVid.putExtra("name",""+categoryList.get(groupPosition).getName());
 
 
                 context.startActivity(viewVid);
@@ -67,7 +66,7 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
         TextView item = (TextView) convertView.findViewById(R.id.description);
 
 
-        item.setText("This will be a description placeholder! This will be a description placeholder! This will be a description placeholder! This will be a description placeholder!"/*OneCategory*/);
+        item.setText("This will be a description placeholder! This will be a description placeholder! This will be a description placeholder! Are you watching closely?! This will be a description placeholder!"/*OneCategory*/);
         return convertView;
     }
 

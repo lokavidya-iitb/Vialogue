@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.coordinators;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,8 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -37,6 +40,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -447,5 +451,32 @@ public class SharedRuntimeContent {
 
         return timeMilliSec;
     }
+
+
+
+    public static void Download(String link, String whereToStore, String videoName, Context context){
+        boolean isDownloadComplete = false;
+        String DownloadUrl = link;
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadUrl));
+        request.setDescription("Downloading your video");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+
+        File destfile= new File(Environment.getExternalStorageDirectory()+ whereToStore);
+        if(!destfile.exists()){
+            destfile.mkdir();
+        }
+        request.setDestinationInExternalPublicDir(whereToStore, videoName);
+        // get download service and enqueue file
+        DownloadManager manager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+
+
+    }
+
 
 }
