@@ -1,3 +1,4 @@
+
 apply plugin: 'com.android.application'
 
 android {
@@ -25,10 +26,27 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:recyclerview-v7:25.1.1'
+    compile 'com.android.support:cardview-v7:25.1.1'
 
     /*compile 'com.github.hotchemi:permissionsdispatcher:2.3.1'
     annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
     */
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.daimajia.slider:library:1.1.5@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.parse:parse-android:1.13.1'
+    compile 'com.karumi:dexter:3.0.2'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
+    testCompile 'junit:junit:4.12'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.minimize.library:seekbar-compat:0.2.5'
+    compile 'com.squareup.okhttp:okhttp:2.7.4'
     compile project(':vplayercore')
 
     // GSON
@@ -39,13 +57,14 @@ dependencies {
     compile 'com.parse:parse-android:1.13.1'
 
     // Dependency for Google Sign-In
-//    compile 'com.google.android.gms:play-services-auth:9.2.1'
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
 
     // ACRA Crash Reporting
-    
+    compile 'ch.acra:acra:4.9.0'
 
     // Loading Animations
-    
+    compile 'com.wang.avi:library:2.1.3'
+
     // LeakCanary
     // TODO remove in production build
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
@@ -57,26 +76,5 @@ dependencies {
     compile('com.sangcomz:FishBun:0.6.4@aar') {
         transitive = true
     }
-
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
-    compile 'com.android.support:support-v4:25.1.1'
-    compile 'com.android.support:recyclerview-v7:25.1.1'
-    compile 'com.android.support:cardview-v7:25.1.1'
-    compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.daimajia.slider:library:1.1.5@aar'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.parse:parse-android:1.13.1'
-    compile 'com.karumi:dexter:3.0.2'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
-    compile 'com.google.android.gms:play-services-auth:9.2.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.minimize.library:seekbar-compat:0.2.5'
-    compile 'com.squareup.okhttp:okhttp:2.7.4'
-    compile 'ch.acra:acra:4.9.0'
-    compile 'com.wang.avi:library:2.1.3'
-    testCompile 'junit:junit:4.12'
 }
 
-//apply plugin: 'com.google.gms.google-services'
