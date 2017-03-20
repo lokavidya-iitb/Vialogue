@@ -15,8 +15,10 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -35,11 +37,14 @@ import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.CropImageCoordinator;
 import com.comp.iitb.vialogue.dataStructures.LIFOSet;
+import com.comp.iitb.vialogue.library.ExifUtils;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.library.cropper.CropImage;
 import com.comp.iitb.vialogue.library.cropper.CropImageView;
 import com.comp.iitb.vialogue.models.crop.CropDemoPreset;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
 
 
@@ -58,6 +63,7 @@ public final class CropMainFragment extends Fragment
     private CropImageView mCropImageView;
     private String mCropImagePath;
     private Bitmap mCroppedImage;
+    private Bitmap currentBitmap;
     //endregion
 
     /**
@@ -81,13 +87,12 @@ public final class CropMainFragment extends Fragment
         ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
-                /*mCropImageView.getCroppedImageAsync();*/
                 ((CropMainActivity)getActivity()).done();
             }
         });
         mStorage = new Storage(getContext());
         mCroppedImage = mStorage.getBitmap(mCropImagePath);
+        currentBitmap = mStorage.getBitmap(mCropImagePath);
         sequence.push( mStorage.getBitmap(mCropImagePath));
         return rootView;
     }
@@ -96,10 +101,48 @@ public final class CropMainFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Bitmap tempOne = null;
+        try {
+            tempOne = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(new File(mCropImagePath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ExifUtils.rotateBitmap(mCropImagePath, tempOne);
+        decodeFile(mCropImagePath);
+
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropImageView.setOnSetImageUriCompleteListener(this);
         mCropImageView.setOnCropImageCompleteListener(this);
         mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));
+    }
+    public void decodeFile(String filePath) {
+
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 1024;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        Bitmap b1 = BitmapFactory.decodeFile(filePath, o2);
+        Bitmap b= ExifUtils.rotateBitmap(filePath, b1);
+
+        // image.setImageBitmap(bitmap);
     }
 
     @Override
@@ -113,9 +156,12 @@ public final class CropMainFragment extends Fragment
             return true;
         }
         else if (item.getItemId() == R.id.undo) {
-            if(sequence.size()!=0) {
+            if(!sequence.isEmpty()) {
                 System.out.println("------------sequence"+ sequence.toString());
-                mCropImageView.setImageBitmap(sequence.pop());
+                Bitmap tempOne = sequence.pop();
+                if(tempOne.equals(currentBitmap))
+                    tempOne = sequence.pop();
+                mCropImageView.setImageBitmap(tempOne);
             }
             else {
                 // Using
@@ -173,6 +219,7 @@ public final class CropMainFragment extends Fragment
         if (result.getError() == null) {
 
             mCroppedImage = result.getBitmap();
+            currentBitmap = mCroppedImage;
             sequence.push(mCroppedImage);
             System.out.println("------------sequence"+ sequence.toString());
             mCropImageView.setImageBitmap(mCroppedImage);
