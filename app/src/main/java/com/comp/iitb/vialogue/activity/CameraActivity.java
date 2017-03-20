@@ -230,6 +230,7 @@ public class CameraActivity extends AppCompatActivity {
 
     // check if camera permissions given
     private void checkCameraPermissions() {
+        System.out.println("checkCameraPermissions : called");
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mPermissionsRequiredCount = 3;
             if(!(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
@@ -251,9 +252,13 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             if(mPermissionsGrantedCount == mPermissionsRequiredCount) {
+                System.out.println("all permissions granted");
                 onPermissionsSatisfied();
+            } else {
+                System.out.println("all permissions not granted");
             }
         }
+        System.out.println("checkCameraPermissions : exiting");
     }
 
     private void setUpCamera() {
@@ -280,8 +285,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void startCamera() {
+        System.out.println("startCamera : called");
         mCameraPreview = new CameraPreview(CameraActivity.this, mCamera);
         mCameraPreviewFrameLayout.addView(mCameraPreview);
+        System.out.println("startCamera : exiting");
     }
 
     public void setCameraDisplayOrientation() {
@@ -330,6 +337,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("onResume : called");
         // try to start camera
         checkCameraPermissions();
     }

@@ -9,6 +9,7 @@
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="actionModeStyle">@style/LStyled.ActionMode</item>
     </style>
+
     <style name="AppTheme.white" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorButtonNormal">#000000</item>
     </style>

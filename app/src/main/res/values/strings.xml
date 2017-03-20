@@ -122,4 +122,6 @@
     <string name="create_and_share">Create and Share</string>
     <string name="timer_null_text">"--:--"</string>
     <string name="download">Download</string>
+    <string name="title_activity_test">TestActivity</string>
+
 </resources>
