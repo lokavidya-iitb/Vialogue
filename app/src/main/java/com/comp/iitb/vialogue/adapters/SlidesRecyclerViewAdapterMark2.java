@@ -23,12 +23,16 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.util.ArrayList;
+import android.util.Pair;
 
 /**
  * Created by ironstein on 18/03/17.
  */
 
 public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesRecyclerViewAdapterMark2.SlideViewHolder> implements ItemTouchHelperAdapter {
+
+    public final ArrayList<Pair<Integer, Integer>> mMovementArray = new ArrayList<>();
+
 
     public class SlideViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         public final View view;
@@ -57,11 +61,11 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
         @Override
         public void onItemClear() {
             thumbnail.setColorFilter(Color.argb(0, 0, 0, 0)); // no tint
+            onDragDisabled();
         }
 
         @Override
         public void onLongClick() {
-            System.out.println("onLongClick : called");
             Activity activity = (Activity) view.getContext();
 
             // TODO change this
@@ -74,43 +78,42 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
         @Override
         public void onDragEnabled() {
-            mRootView.getParent().requestDisallowInterceptTouchEvent(true);
-//            view.getParent().requestDisallowInterceptTouchEvent(true);
+            mRecyclerView.getParent().requestDisallowInterceptTouchEvent(true);
+            view.setOnClickListener(null);
         }
 
         @Override
         public void onDragDisabled() {
-            (new AsyncTask<Void, Void, Void>() {
-                @Override
-                public Void doInBackground(Void... params) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
+            if(mMovementArray.size() != 0) {
+                int initialPosition = mMovementArray.get(0).first;
+                int finalPosition = mMovementArray.get(mMovementArray.size()-1).second;
+                // This has to be done because of the way in which the
+                // ParseObjectsCollection.move function is implemented
+                if(finalPosition > initialPosition) {
+                    finalPosition += 1;
                 }
-
-                @Override
-                public void onPostExecute(Void result) {
-                    mRootView.getParent().requestDisallowInterceptTouchEvent(false);
-                }
-
-            }).execute();
+                SharedRuntimeContent.changeSlidePosition(initialPosition, finalPosition);
+            }
+            mMovementArray.clear();
         }
-
-
     }
 
     private Context mContext;
     private ArrayList<Boolean> mItems;
     private OnListFragmentInteractionListener mOnListFragmentInteractionListener;
-    private View mRootView;
+    private RecyclerView mRecyclerView;
 
-    public SlidesRecyclerViewAdapterMark2(Context context, OnListFragmentInteractionListener onListFragmentInteractionListener, View rootView) {
+    public SlidesRecyclerViewAdapterMark2(Context context, OnListFragmentInteractionListener onListFragmentInteractionListener, RecyclerView recyclerView) {
         mContext = context;
         mOnListFragmentInteractionListener = onListFragmentInteractionListener;
-        mRootView = rootView;
+        mRecyclerView = recyclerView;
+
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
     }
 
     public void setItems(ArrayList<Boolean> items) {
@@ -163,12 +166,6 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
             slideViewHolder.videoPlayIcon.setVisibility(View.GONE);
         }
 
-        if (SharedRuntimeContent.selectedPosition != position && SharedRuntimeContent.isSelected) {
-            slideViewHolder.unselectedLayer.setVisibility(View.VISIBLE);
-        } else if (!SharedRuntimeContent.isSelected) {
-            slideViewHolder.unselectedLayer.setVisibility(View.GONE);
-        }
-
         slideViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +185,7 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        SharedRuntimeContent.changeSlidePosition(fromPosition, toPosition);
+        mMovementArray.add(Pair.create(fromPosition, toPosition));
         notifyItemMoved(fromPosition, toPosition);
     }
 
