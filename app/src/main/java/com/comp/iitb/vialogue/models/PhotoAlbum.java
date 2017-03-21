@@ -21,7 +21,7 @@ public class PhotoAlbum {
     public String date;
     public String data;
     public int photoCount;
-
+    Cursor mPhotoCursor;
     public PhotoAlbum(Context context) {
         mContext = context;
     }
@@ -32,15 +32,14 @@ public class PhotoAlbum {
             String searchParams = null;
             String bucket = bucketName;
             searchParams = "bucket_display_name = \"" + bucket + "\"";
-            // final String[] columns = { MediaStore.Images.Media.DATA,
-            // MediaStore.Images.Media._ID };
-            Cursor mPhotoCursor = mContext.getContentResolver().query(
+             /*final String[] columns = { MediaStore.Images.Media.DATA,
+             MediaStore.Images.Media._ID };*/
+             mPhotoCursor = mContext.getContentResolver().query(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
                      searchParams, null, orderBy + " DESC");
             if (mPhotoCursor.getCount() > 0) {
                return mPhotoCursor.getCount();
             }
-            mPhotoCursor.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,7 +93,7 @@ public class PhotoAlbum {
 
                 }
             } while (cur.moveToNext());
-            cur.close();
+
         }
         return albumsArrayList;
     }

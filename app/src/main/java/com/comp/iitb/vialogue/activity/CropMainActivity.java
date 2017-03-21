@@ -14,6 +14,7 @@ package com.comp.iitb.vialogue.activity;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -96,7 +97,8 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         if (bundle != null) {
             try {
                 from = bundle.getString("from");
-                mFilePath = bundle.getString(IMAGE_PATH);
+                mFilePath = bundle.getString("imagePath");
+                System.out.print("--------"+mFilePath);
                 switch (from) {
                     case "AudioRecording":
                         mSlidePosition = bundle.getInt("SlidePosition");
@@ -220,6 +222,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         protected Slide doInBackground(Void... params) {
 
             mPhoto = mCropImageCoordinator.getCroppedImage();
+            mPhoto = BitmapFactory.decodeFile(mCroppedImagePath);
             mCroppedImagePath = mStorage.getRealPathFromURI(mStorage.getImageUri(mPhoto));
 
             Slide slide = new Slide();

@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,6 +37,7 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.CropImageCoordinator;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dataStructures.LIFOSet;
 import com.comp.iitb.vialogue.library.ExifUtils;
 import com.comp.iitb.vialogue.library.Storage;
@@ -84,15 +86,16 @@ public final class CropMainFragment extends Fragment
         rootView = inflater.inflate(R.layout.fragment_main_rect, container, false);
         setHasOptionsMenu(true);
 
-        ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((CropMainActivity)getActivity()).done();
-            }
-        });
         mStorage = new Storage(getContext());
         mCroppedImage = mStorage.getBitmap(mCropImagePath);
         currentBitmap = mStorage.getBitmap(mCropImagePath);
+
+        ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CropMainActivity)getActivity()).done(currentBitmap);
+            }
+        });
         sequence.push( mStorage.getBitmap(mCropImagePath));
         return rootView;
     }
@@ -108,14 +111,15 @@ public final class CropMainFragment extends Fragment
             e.printStackTrace();
         }
         ExifUtils.rotateBitmap(mCropImagePath, tempOne);
-        decodeFile(mCropImagePath);
+        mCroppedImage = decodeFile(mCropImagePath);
 
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropImageView.setOnSetImageUriCompleteListener(this);
         mCropImageView.setOnCropImageCompleteListener(this);
-        mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));
+        /*mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));*/
+        mCropImageView.setImageUriAsync(mStorage.getImageUri(mCroppedImage));
     }
-    public void decodeFile(String filePath) {
+    public Bitmap decodeFile(String filePath) {
 
         // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -141,7 +145,7 @@ public final class CropMainFragment extends Fragment
         o2.inSampleSize = scale;
         Bitmap b1 = BitmapFactory.decodeFile(filePath, o2);
         Bitmap b= ExifUtils.rotateBitmap(filePath, b1);
-
+        return b;
         // image.setImageBitmap(bitmap);
     }
 
@@ -219,6 +223,18 @@ public final class CropMainFragment extends Fragment
         if (result.getError() == null) {
 
             mCroppedImage = result.getBitmap();
+
+            ExifInterface exif = null;
+            try {
+                exif = new ExifInterface(mCropImagePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+            mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
+
+
             currentBitmap = mCroppedImage;
             sequence.push(mCroppedImage);
             System.out.println("------------sequence"+ sequence.toString());
