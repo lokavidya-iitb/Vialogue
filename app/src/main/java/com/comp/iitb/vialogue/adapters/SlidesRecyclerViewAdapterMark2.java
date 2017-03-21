@@ -160,10 +160,7 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
         }
 
         @Override
-        public void onDragEnabled() {
-            mRecyclerView.getParent().requestDisallowInterceptTouchEvent(true);
-            view.setOnClickListener(null);
-        }
+        public void onDragEnabled() {}
 
         @Override
         public void onDragDisabled() {
@@ -191,13 +188,6 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
         mContext = context;
         mOnListFragmentInteractionListener = onListFragmentInteractionListener;
         mRecyclerView = recyclerView;
-
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
-            }
-        });
     }
 
     public void setItems(ArrayList<Boolean> items) {

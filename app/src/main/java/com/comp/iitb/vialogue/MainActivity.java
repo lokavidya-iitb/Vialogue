@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Storage mStorage;
     private Menu mMenu;
     private FloatingActionButton mPreviewFab;
-    private ViewPagerWithDisableOption mViewPager;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +89,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mViewPager = ((ViewPagerWithDisableOption) findViewById(R.id.viewpager));
+        mViewPager = ((ViewPager) findViewById(R.id.viewpager));
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
         mViewPager.setOffscreenPageLimit(3);
-//        mViewPager.disableSwipe();
 
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
