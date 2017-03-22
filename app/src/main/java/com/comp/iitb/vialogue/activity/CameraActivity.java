@@ -100,6 +100,8 @@ public class CameraActivity extends AppCompatActivity {
         if(bundle != null && bundle.getBoolean(CAPTURE_SINGLE_IMAGE_INTENT_KEY)) {
             // single image camera
             mCaptureMultipleImages = false;
+        } else {
+            mCaptureMultipleImages = true;
         }
 
         //Remove title bar
@@ -183,6 +185,7 @@ public class CameraActivity extends AppCompatActivity {
                     mDoneButton.setVisibility(View.GONE);
                     mRetryButton.setVisibility(View.GONE);
                     mCamera.startPreview();
+                    mImagePaths.clear();
                 }
             });
 
@@ -192,11 +195,6 @@ public class CameraActivity extends AppCompatActivity {
                 public void onPictureTaken(final byte[] data, Camera camera) {
 
                     (new AsyncTask<Void, Void, String>() {
-
-                        @Override
-                        public void onPreExecute() {
-                            mImagePaths.clear();
-                        }
 
                         @Override
                         public String doInBackground(Void... params) {
@@ -276,6 +274,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent data = new Intent();
+                System.out.println("mImagePaths : " + mImagePaths);
                 data.putStringArrayListExtra(RESULT_KEY, mImagePaths);
                 setResult(RESULT_OK, data);
                 finish();

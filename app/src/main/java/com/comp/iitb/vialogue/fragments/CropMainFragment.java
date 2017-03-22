@@ -95,8 +95,8 @@ public final class CropMainFragment extends Fragment
             public void onClick(View v) {
                 ((CropMainActivity)getActivity()).done(currentBitmap);
             }
-        });/*
-        sequence.push( mStorage.getBitmap(mCropImagePath));*/
+        });
+//        sequence.push( mStorage.getBitmap(mCropImagePath));
         return rootView;
     }
 
@@ -119,6 +119,7 @@ public final class CropMainFragment extends Fragment
         /*mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));*/
         mCropImageView.setImageUriAsync(mStorage.getImageUri(mCroppedImage));
     }
+
     public Bitmap decodeFile(String filePath) {
 
         // Decode image size

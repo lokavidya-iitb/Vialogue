@@ -97,7 +97,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         if (bundle != null) {
             try {
                 from = bundle.getString("from");
-                mFilePath = bundle.getString("imagePath");
+                mFilePath = bundle.getString(IMAGE_PATH);
                 System.out.print("--------"+mFilePath);
                 switch (from) {
                     case "AudioRecording":
@@ -276,7 +276,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
         private Bitmap mBitmap;
 
         ProcessAsyncAfterCrop(Bitmap bitmap) {
-            this.mBitmap = bitmap;
+            mBitmap = bitmap;
         }
 
         @Override
@@ -309,7 +309,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             mPleaseWait.setVisibility(View.GONE);
 
             // clearing bitmap to release memory
-                Storage.recycleBitmap(mBitmap);
+            Storage.recycleBitmap(mBitmap);
             finish();
         }
     }
