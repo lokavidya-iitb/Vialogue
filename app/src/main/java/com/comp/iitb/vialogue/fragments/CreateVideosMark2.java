@@ -328,7 +328,7 @@ public class CreateVideosMark2 extends Fragment {
             }
         } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
             ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
-
+System.out.print("-------------reached"+ paths.toString());
             for(String path : paths) {
 
                 try {
