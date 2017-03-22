@@ -61,6 +61,7 @@ public class SharedRuntimeContent {
     public static final int CROP_MAIN_ACTIVITY_RESULT = 545;
     public static final int GET_MULTIPLE_IMAGES = 546;
     public static final int GET_MULTIPLE_CAMERA_IMAGES = 547;
+    public static final int GET_SINGLE_CAMERA_IMAGE = 548;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
 
     // Variables
