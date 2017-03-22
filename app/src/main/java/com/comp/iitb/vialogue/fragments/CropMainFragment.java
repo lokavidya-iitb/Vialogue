@@ -95,8 +95,8 @@ public final class CropMainFragment extends Fragment
             public void onClick(View v) {
                 ((CropMainActivity)getActivity()).done(currentBitmap);
             }
-        });
-        sequence.push( mStorage.getBitmap(mCropImagePath));
+        });/*
+        sequence.push( mStorage.getBitmap(mCropImagePath));*/
         return rootView;
     }
 
@@ -153,9 +153,11 @@ public final class CropMainFragment extends Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.main_action_crop) {
+            sequence.push(mStorage.getBitmap(mCropImagePath));
             mCropImageView.getCroppedImageAsync();
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
+            sequence.push(mStorage.getBitmap(mCropImagePath));
             mCropImageView.rotateImage(-90);
             return true;
         }
@@ -166,6 +168,7 @@ public final class CropMainFragment extends Fragment
                 if(tempOne.equals(currentBitmap))
                     tempOne = sequence.pop();
                 mCropImageView.setImageBitmap(tempOne);
+                System.out.println("------------sequenceaterPopping"+ sequence.toString());
             }
             else {
                 // Using
@@ -236,7 +239,7 @@ public final class CropMainFragment extends Fragment
 
 
             currentBitmap = mCroppedImage;
-            sequence.push(mCroppedImage);
+
             System.out.println("------------sequence"+ sequence.toString());
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {
