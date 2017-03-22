@@ -46,63 +46,9 @@ public class GalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
-//        String[] projection = new String[] {"DISTINCT " + MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME};
-//        Cursor cur = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-//        while (cur.moveToNext()) {
-//            System.out.println(cur.getString((cur.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME))));
-//        }
-
         PhotoAlbum.getAlbumsList(GalleryActivity.this);
 
 
-//        grdImages= (GridView) findViewById(R.id.images_grid);
-//        btnSelect= (Button) findViewById(R.id.select_button);
-//
-//        final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
-//        final String orderBy = MediaStore.Images.Media._ID;
-//        @SuppressWarnings("deprecation")
-//        Cursor imagecursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
-//        int image_column_index = imagecursor.getColumnIndex(MediaStore.Images.Media._ID);
-//        this.count = imagecursor.getCount();
-//        this.arrPath = new String[this.count];
-//        ids = new int[count];
-//        this.thumbnailsselection = new boolean[this.count];
-//        for (int i = 0; i < this.count; i++) {
-//            imagecursor.moveToPosition(i);
-//            ids[i] = imagecursor.getInt(image_column_index);
-//            int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
-//            arrPath[i] = imagecursor.getString(dataColumnIndex);
-//        }
-//
-//        imageAdapter = new ImageAdapter();
-//        grdImages.setAdapter(imageAdapter);
-//        imagecursor.close();
-//
-//
-//        btnSelect.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                final int len = thumbnailsselection.length;
-//                int cnt = 0;
-//                String selectImages = "";
-//                for (int i = 0; i < len; i++) {
-//                    if (thumbnailsselection[i]) {
-//                        cnt++;
-//                        selectImages = selectImages + arrPath[i] + "|";
-//                    }
-//                }
-//                if (cnt == 0) {
-//                    Toast.makeText(getApplicationContext(), "Please select at least one image", Toast.LENGTH_LONG).show();
-//                } else {
-//
-//                    Log.d("SelectedImages", selectImages);
-//                    Intent i = new Intent();
-//                    i.putExtra("data", selectImages);
-//                    setResult(Activity.RESULT_OK, i);
-//                    finish();
-//                }
-//            }
-//        });
     }
     @Override
     public void onBackPressed() {

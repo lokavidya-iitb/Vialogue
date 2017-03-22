@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
@@ -95,7 +94,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private CanSaveAudioResource mSlideResource;
     private RecyclerView mSlideThumbnailsRecyclerView;
     private TextView mTimerTextView;
-
     private AudioRecorder mAudioRecorder = null;
     private String mRecordPath;
     private String mImagePath;
@@ -344,17 +342,29 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         ).execute();
     }
 
+    public void startCropMainActivity(String path) {
+        stopRecording();
+        Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("SlidePosition",mSlidePosition);
+        bundle.putString("from", "AudioRecording");
+        bundle.putString("imagePath", path);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
+    }
     public void startCropMainActivity() {
         stopRecording();
         Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("SlidePosition",mSlidePosition);
         bundle.putString("from", "AudioRecording");
-        bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
+        bundle.putString("imagePath", currentImagePath);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
     }
+
 
     public void loadStateFromSlide(Slide slide, int slidePosition) {
         loadStateFromSlide(slide, slidePosition, true);
@@ -421,7 +431,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             Glide
                     .with(this)
                     .load(imagePathUri)
-                    .centerCrop()
                     .placeholder(R.drawable.app_logo)
                     .into(mImageView);
         }
@@ -574,12 +583,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
         if (requestCode == GET_CAMERA_IMAGE && data == null) {
             currentImagePath = mCameraImageFile.getAbsolutePath();
-            startCropMainActivity();
+            System.out.println("----" + currentImagePath);
+            startCropMainActivity(currentImagePath);
+
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY
             if (data != null) {
                 currentImagePath = mStorage.getRealPathFromURI(data.getData());
-                startCropMainActivity();
+                startCropMainActivity(currentImagePath);
             }
         } else if(requestCode == SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT) {
             // Update State (but don't replace the current audio)
