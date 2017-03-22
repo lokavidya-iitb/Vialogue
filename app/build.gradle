@@ -49,10 +49,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.4'
     compile project(':vplayercore')
 
-    // GSON
-//    compile 'com.google.code.gson:gson:2.8.0'
-    // apache lang3
-//    compile 'org.apache.commons:commons-lang3:3.5'
     // Parse
     compile 'com.parse:parse-android:1.13.1'
 

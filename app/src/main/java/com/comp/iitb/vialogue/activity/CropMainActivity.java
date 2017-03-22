@@ -265,8 +265,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 finish();
             }
             mPleaseWait.setVisibility(View.GONE);
-
-
+            System.out.println("hullallal");
 
             finish();
         }
@@ -307,6 +306,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 }
             }
             mPleaseWait.setVisibility(View.GONE);
+            System.out.println("hullallal");
 
             // clearing bitmap to release memory
             Storage.recycleBitmap(mBitmap);

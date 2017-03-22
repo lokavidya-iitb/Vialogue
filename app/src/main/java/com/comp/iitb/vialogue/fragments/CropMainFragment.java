@@ -104,13 +104,6 @@ public final class CropMainFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Bitmap tempOne = null;
-        try {
-            tempOne = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(new File(mCropImagePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ExifUtils.rotateBitmap(mCropImagePath, tempOne);
         mCroppedImage = decodeFile(mCropImagePath);
 
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
@@ -237,11 +230,7 @@ public final class CropMainFragment extends Fragment
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_UNDEFINED);
             mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
-
-
             currentBitmap = mCroppedImage;
-
-            System.out.println("------------sequence"+ sequence.toString());
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {
             Log.e(LOG_TAG, "Failed to crop image", result.getError());
