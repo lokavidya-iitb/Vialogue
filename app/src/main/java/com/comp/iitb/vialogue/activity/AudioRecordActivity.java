@@ -354,7 +354,6 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
     }
     public void startCropMainActivity() {
-        stopRecording();
         Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("SlidePosition",mSlidePosition);
