@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +52,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.service.ClosingService;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -123,6 +126,37 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         refreshSignInOutOptions();
     }
 
+    // Back Button logic
+    private boolean shouldExitOnBack = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            if(shouldExitOnBack) {
+                finish();
+                return true;
+            } else {
+                Toast.makeText(MainActivity.this, "Press back again to exit the application.", Toast.LENGTH_LONG).show();
+                shouldExitOnBack = true;
+                (new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        shouldExitOnBack = false;
+                        return null;
+                    }
+                }).execute();
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     @Override
     protected void onResume() {
@@ -170,10 +204,39 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        System.out.println("onCreateOptionsMenu : called");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
         refreshSignInOutOptions();
+
+        SharedRuntimeContent.saveMenuItem = mMenu.findItem(R.id.save_project);
+        try {
+            mMenu.findItem(R.id.save_project).setVisible(false);
+        } catch (Exception e) {}
+        SharedRuntimeContent.saveMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Toast.makeText(MainActivity.this, "The project will be saved in background. You may continue your work.", Toast.LENGTH_LONG).show();
+                // save existing project
+                SharedRuntimeContent.pinProjectInBackground(MainActivity.this, new OnProjectSaved() {
+                    @Override
+                    public void done(boolean isSaved) {
+                        if(!SharedRuntimeContent.getProject().doesItExistInLocalDatastore()) {
+                            SharedRuntimeContent.myProjectsAdapter.addProject(SharedRuntimeContent.getProject());
+                            SharedRuntimeContent.getProject().existsInLocalDatastore();
+                            Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            SharedRuntimeContent.myProjectsAdapter.notifyDataSetChanged();
+                            Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+                return true;
+            }
+        });
         return true;
     }
 
@@ -304,15 +367,27 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         switch (tabNumber) {
             case FragmentPageAdapter.HOME:
                 mPreviewFab.hide();
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.VIEW_VIDEOS:
                 mPreviewFab.hide();
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.CREATE_PROJECT:
                 SharedRuntimeContent.calculatePreviewFabVisibility();
+                try {
+                    SharedRuntimeContent.calculateSaveMenuItemVisibility();
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.USER_ACCOUNT:
                 mPreviewFab.setImageResource(R.drawable.plus_png);
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 mPreviewFab.show();
         }
     }

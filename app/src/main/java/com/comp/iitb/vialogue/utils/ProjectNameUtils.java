@@ -81,6 +81,10 @@ public class ProjectNameUtils {
     }
 
     public String getNewProjectName(Project newProject) {
+        if(newProject.getName().matches(untitledProjectNameRegex)) {
+            return getNewUndefinedProjectName();
+        }
+
         String newProjectName = newProject.getName();
         int i = 0;
         while(true) {
@@ -102,7 +106,7 @@ public class ProjectNameUtils {
         ArrayList<Project> localProjects = SharedRuntimeContent.getLocalProjects();
         int maxNum = 0;
         for (Project project : localProjects) {
-            if (project.getName().matches(untitledProjectNameRegex)) {
+            if ((project.getName() != null) && project.getName().matches(untitledProjectNameRegex)) {
                 try {
                     int number = Integer.parseInt(project.getName().substring(17));
                     if (number >= maxNum) {
