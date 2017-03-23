@@ -93,7 +93,7 @@ public final class CropMainFragment extends Fragment
         ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCropImageView.getCroppedImageAsync();
+                /*mCropImageView.getCroppedImageAsync();*/
                 ((CropMainActivity)getActivity()).done(currentBitmap);
             }
         });
@@ -105,7 +105,7 @@ public final class CropMainFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mCroppedImage = decodeFile(mCropImagePath);
+       /* mCroppedImage = decodeFile(mCropImagePath);*/
 
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropImageView.setOnSetImageUriCompleteListener(this);
@@ -155,7 +155,9 @@ public final class CropMainFragment extends Fragment
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
             sequence.push(mCropImagePath);
-            mCropImageView.rotateImage(-90);
+            Bitmap rotator = SharedRuntimeContent.rotateBitmap(mCroppedImage,ExifInterface.ORIENTATION_ROTATE_90);
+            currentBitmap = rotator;
+            mCropImageView.setImageBitmap(rotator);
             return true;
         }
         else if (item.getItemId() == R.id.undo) {
@@ -223,14 +225,14 @@ public final class CropMainFragment extends Fragment
 
             mCroppedImage = result.getBitmap();
 
-            ExifInterface exif = null;
+            /*ExifInterface exif = null;
             try {
                 exif = new ExifInterface(mCropImagePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED);
+                    ExifInterface.ORIENTATION_UNDEFINED);*/
             // WHY?
 //            mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
             currentBitmap = mCroppedImage;
@@ -257,11 +259,13 @@ public final class CropMainFragment extends Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
+/*
 
         // recycle bitmap
         mCropImageView.setImageBitmap(null);
         Storage.recycleBitmap(mCroppedImage);
-
+*/
+       /* Storage.recycleBitmap(mCroppedImage);*/
         // clear LIFO
         sequence.clear();
         sequence = null;
