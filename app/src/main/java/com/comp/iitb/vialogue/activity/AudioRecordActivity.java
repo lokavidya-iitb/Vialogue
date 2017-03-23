@@ -396,7 +396,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     }
 
     private void setUpUI() {
-        if (!((Image) mSlide.getResource()).hasAudio()) {
+        if (
+                (!(((Image) mSlide.getResource()).hasAudio())) ||
+                (mStorage.getAudioFileDuration(((Image) mSlide.getResource()).getAudio().getResourceFile().getAbsolutePath()) == 0)
+            ) {
+
             mSeekBar.setEnabled(false);
             mSeekBar.invalidate();
             mSeekBar.requestLayout();
