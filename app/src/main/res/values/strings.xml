@@ -24,6 +24,7 @@
     <string name="retry">Retry</string>
     <string name="cannot_record">Cannot record while playing</string>
     <string name="cannot_play">Cannot play while recording</string>
+    <string name="save_project">Save Project</string>
     <string-array name="tab_titles">
         <item>LVCreate</item>
         <item>Videos</item>

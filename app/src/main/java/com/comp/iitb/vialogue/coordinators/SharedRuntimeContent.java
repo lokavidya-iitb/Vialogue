@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -80,6 +81,7 @@ public class SharedRuntimeContent {
     public static int selectedPosition;
     public static List<QuestionAnswer> questionsList = new ArrayList<>();
     public static AVLoadingIndicatorView loadingAnimation;
+    public static MenuItem saveMenuItem;
 
     /*
      * All the Project related methods
@@ -100,6 +102,7 @@ public class SharedRuntimeContent {
         project.pinInBackground();
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         calculatePreviewFabVisibility();
+        calculateSaveMenuItemVisibility();
         return true;
     }
 
@@ -134,6 +137,7 @@ public class SharedRuntimeContent {
         projectAdapter.notifyItemRemoved(position);
         updateAdapterView(position);
         calculatePreviewFabVisibility();
+        calculateSaveMenuItemVisibility();
     }
 
     public static void justDeleteSlide(int position) {
@@ -205,16 +209,21 @@ public class SharedRuntimeContent {
         project = newProject;
         updateAdapterView();
         calculatePreviewFabVisibility();
+        calculateSaveMenuItemVisibility();
 
         // display project name
         String projectNameString = null;
-        if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
+        if((project.getName() != null) && (project.getName() != "") && (!project.getName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
             projectNameString = project.getName();
         } else {
             projectNameString = "Add project title";
         }
+
         projectNameDisplay.setText("");
         projectNameDisplay.setHint(projectNameString);
+        if(projectNameString != "Add project title") {
+            projectName.setText(projectNameString);
+        }
 
         if(currentProject.getSlides().getAll().size() != 0) {
 
@@ -254,13 +263,20 @@ public class SharedRuntimeContent {
 
                             case DialogInterface.BUTTON_NEGATIVE:
                                 //No button clicked
+                                try {
+                                    currentProject.delete();
+                                    Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                                 break;
                         }
                     }
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("Save existing Project?").setPositiveButton("Yes", dialogClickListener)
+                builder.setMessage("Save existing Project?")
+                        .setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
             } else {
                 (new AsyncTask<Void, Void, Void>() {
@@ -323,6 +339,19 @@ public class SharedRuntimeContent {
 
     public static int getSlidePosition(Slide item) {
         return project.getSlides().getObjectPosition(item);
+    }
+
+    /*
+     * Save Menu Item related methods
+     */
+    public static void calculateSaveMenuItemVisibility() {
+        if(project.getSlides().getAll().size() != 0) {
+            if(saveMenuItem != null) {
+                saveMenuItem.setVisible(true);
+            } else {
+                saveMenuItem.setVisible(false);
+            }
+        }
     }
 
     /*
