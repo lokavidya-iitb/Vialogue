@@ -310,7 +310,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             System.out.println("hullallal");
 
             // clearing bitmap to release memory
-            Storage.recycleBitmap(mBitmap);
+            /*Storage.recycleBitmap(mBitmap);*/
             finish();
         }
     }
