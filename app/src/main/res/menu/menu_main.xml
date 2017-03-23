@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.comp.iitb.vialogue.MainActivity">
+
+    <item
+        android:id="@+id/save_project"
+        android:title="@string/save_project"
+        android:icon="@drawable/ic_save_white_48dp"
+        app:showAsAction="always"/>
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

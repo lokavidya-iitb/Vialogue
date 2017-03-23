@@ -203,10 +203,23 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        System.out.println("onCreateOptionsMenu : called");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mMenu = menu;
         refreshSignInOutOptions();
+
+        SharedRuntimeContent.saveMenuItem = mMenu.findItem(R.id.save_project);
+        try {
+            mMenu.findItem(R.id.save_project).setVisible(false);
+        } catch (Exception e) {}
+        SharedRuntimeContent.saveMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
         return true;
     }
 
@@ -337,15 +350,27 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         switch (tabNumber) {
             case FragmentPageAdapter.HOME:
                 mPreviewFab.hide();
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.VIEW_VIDEOS:
                 mPreviewFab.hide();
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.CREATE_PROJECT:
                 SharedRuntimeContent.calculatePreviewFabVisibility();
+                try {
+                    SharedRuntimeContent.calculateSaveMenuItemVisibility();
+                } catch (Exception e) {}
                 break;
             case FragmentPageAdapter.USER_ACCOUNT:
                 mPreviewFab.setImageResource(R.drawable.plus_png);
+                try {
+                    mMenu.findItem(R.id.save_project).setVisible(false);
+                } catch (Exception e) {}
                 mPreviewFab.show();
         }
     }
