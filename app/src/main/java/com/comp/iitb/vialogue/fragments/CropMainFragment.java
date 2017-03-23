@@ -231,7 +231,8 @@ public final class CropMainFragment extends Fragment
             }
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_UNDEFINED);
-            mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
+            // WHY?
+//            mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
             currentBitmap = mCroppedImage;
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {

@@ -86,7 +86,6 @@
             android:name=".library.cropper.CropImageActivity"
             android:label="@string/add_audio"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.UploadVideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -119,12 +118,11 @@
         <activity
             android:name=".activity.GalleryActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.CropMainActivityMark2"></activity>
     </application>
 
 </manifest>
