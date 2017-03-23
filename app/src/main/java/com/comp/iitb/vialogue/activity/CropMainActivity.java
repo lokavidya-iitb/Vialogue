@@ -245,7 +245,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
 
                 // clearing bitmap to release memory
-                Storage.recycleBitmap(mPhoto);
+                /*Storage.recycleBitmap(mPhoto);*/
 
                 // sending result (which is nothing)
                 setResult(RESULT_OK);
@@ -259,7 +259,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
                 }
 
                 // clearing bitmap to release memory
-                Storage.recycleBitmap(mPhoto);
+                /*Storage.recycleBitmap(mPhoto);*/
 
                 // finishing activity
                 finish();
@@ -296,6 +296,7 @@ public class CropMainActivity extends AppCompatActivity implements FragmentBinde
             if (from.equals("AudioRecording")) {
                 if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
                     ((Image) slide.getResource()).addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
+               System.out.println("----------audio is there");
                 }
                 SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
             } else {
