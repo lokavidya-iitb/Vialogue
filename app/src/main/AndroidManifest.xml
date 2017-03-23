@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+    <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,6 +15,7 @@
 
     <!-- camera related permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.any" />
 
@@ -85,6 +86,7 @@
             android:name=".library.cropper.CropImageActivity"
             android:label="@string/add_audio"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.UploadVideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -96,7 +98,6 @@
             android:name=".activity.VideoPlayer"
             android:label="@string/title_activity_video_player"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.QuestionDialogResultActivity" />
         <activity android:name=".activity.PhoneNumberSigninActivity" />
@@ -114,11 +115,16 @@
 
         <activity
             android:name=".activity.CameraActivity"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.GalleryActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
     </application>
 
 </manifest>

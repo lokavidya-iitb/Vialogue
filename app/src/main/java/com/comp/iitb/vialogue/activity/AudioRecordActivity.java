@@ -58,6 +58,7 @@ import com.google.android.gms.appindexing.Thing;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
@@ -170,9 +171,12 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     stopRecording();
                 }
                 stopRecording();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraImageFile));
-                startActivityForResult(cameraIntent, SharedRuntimeContent.GET_CAMERA_IMAGE);
+                Intent intent = new Intent(AudioRecordActivity.this, CameraActivity.class);
+                intent.putExtra(CameraActivity.CAPTURE_SINGLE_IMAGE_INTENT_KEY, true);
+                startActivityForResult(intent, SharedRuntimeContent.GET_SINGLE_CAMERA_IMAGE);
+//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCameraImageFile));
+//                startActivityForResult(cameraIntent, SharedRuntimeContent.GET_CAMERA_IMAGE);
             }
         });
 
@@ -195,16 +199,15 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 if(isRecording) {
                     stopRecording();
                 }
-//                String selectedPath = mSlideResource.getResourceFile().getAbsolutePath();
-//                Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("SlidePosition",mSlidePosition);
-//                bundle.putString("from", "AudioRecording");
-//                bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
-//                intent.putExtras(bundle);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-//                startActivity(intent);
-//                finish();
+                Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("SlidePosition",mSlidePosition);
+                bundle.putString("from", "AudioRecording");
+                bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
+                intent.putExtras(bundle);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+                finish();
                 startCropMainActivity();
             }
         });
@@ -353,13 +356,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
     }
+
     public void startCropMainActivity() {
         stopRecording();
         Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("SlidePosition",mSlidePosition);
         bundle.putString("from", "AudioRecording");
-        bundle.putString("imagePath", currentImagePath);
+        bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
@@ -599,6 +603,14 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             setUpUI();
             // Update thumbnails
             mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
+        } else if(requestCode == SharedRuntimeContent.GET_SINGLE_CAMERA_IMAGE) {
+            System.out.println("getSingleImage : called");
+            ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
+            currentImagePath = paths.get(0);
+            System.out.println(paths.get(0));
+            System.out.println(currentImagePath);
+            startCropMainActivity(currentImagePath);
+
         }
     }
 

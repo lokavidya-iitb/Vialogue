@@ -65,6 +65,7 @@ public class SharedRuntimeContent {
     public static final int CROP_MAIN_ACTIVITY_RESULT = 545;
     public static final int GET_MULTIPLE_IMAGES = 546;
     public static final int GET_MULTIPLE_CAMERA_IMAGES = 547;
+    public static final int GET_SINGLE_CAMERA_IMAGE = 548;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
 
     // Variables
@@ -96,6 +97,7 @@ public class SharedRuntimeContent {
     public static boolean addSlide(Slide slide) throws Exception {
         project.addSlide(slide);
         slide.pinInBackground();
+        project.pinInBackground();
         projectAdapter.notifyItemInserted(project.getSlides().size() - 1);
         calculatePreviewFabVisibility();
         return true;
@@ -128,6 +130,7 @@ public class SharedRuntimeContent {
 
     public static void deleteSlide(int position) {
         project.deleteSlide(position);
+        project.pinInBackground();
         projectAdapter.notifyItemRemoved(position);
         updateAdapterView(position);
         calculatePreviewFabVisibility();
@@ -136,12 +139,14 @@ public class SharedRuntimeContent {
     public static void justDeleteSlide(int position) {
         System.out.println("size before deleting : " + project.getSlides().getAll().size());
         project.deleteSlide(position);
+        project.pinInBackground();
         System.out.println("size after deleting : " + project.getSlides().getAll().size());
         calculatePreviewFabVisibility();
     }
 
     public static void setProjectName(String name) {
         project.setName(name);
+        project.pinInBackground();
     }
 
     public static String getProjectName() {

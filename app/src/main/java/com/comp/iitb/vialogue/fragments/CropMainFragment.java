@@ -58,7 +58,7 @@ public final class CropMainFragment extends Fragment
     private static final String CROP_IMAGE_PATH = "crop_image_path";
     private static String LOG_TAG = "CropMainFragment";
     //region: Fields and Consts
-    LIFOSet<Bitmap> sequence = new LIFOSet<>();
+    LIFOSet<String> sequence = new LIFOSet<>();
     private Storage mStorage;
     private Button done;
     private CropDemoPreset mDemoPreset;
@@ -93,10 +93,11 @@ public final class CropMainFragment extends Fragment
         ((CropMainActivity)getActivity()).mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCropImageView.getCroppedImageAsync();
                 ((CropMainActivity)getActivity()).done(currentBitmap);
             }
-        });/*
-        sequence.push( mStorage.getBitmap(mCropImagePath));*/
+        });
+//        sequence.push( mStorage.getBitmap(mCropImagePath));
         return rootView;
     }
 
@@ -104,13 +105,6 @@ public final class CropMainFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Bitmap tempOne = null;
-        try {
-            tempOne = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.fromFile(new File(mCropImagePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ExifUtils.rotateBitmap(mCropImagePath, tempOne);
         mCroppedImage = decodeFile(mCropImagePath);
 
         mCropImageView = (CropImageView) view.findViewById(R.id.cropImageView);
@@ -119,6 +113,7 @@ public final class CropMainFragment extends Fragment
         /*mCropImageView.setImageUriAsync(mStorage.getUriFromPath(mCropImagePath));*/
         mCropImageView.setImageUriAsync(mStorage.getImageUri(mCroppedImage));
     }
+
     public Bitmap decodeFile(String filePath) {
 
         // Decode image size
@@ -149,24 +144,57 @@ public final class CropMainFragment extends Fragment
         // image.setImageBitmap(bitmap);
     }
 
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        if (item.getItemId() == R.id.main_action_crop) {
+//            sequence.push(mStorage.getBitmap(mCropImagePath));
+//            mCropImageView.getCroppedImageAsync();
+//            return true;
+//        } else if (item.getItemId() == R.id.main_action_rotate) {
+//            sequence.push(mStorage.getBitmap(mCropImagePath));
+//            mCropImageView.rotateImage(-90);
+//            return true;
+//        }
+//        else if (item.getItemId() == R.id.undo) {
+//            if(!sequence.isEmpty()) {
+//                System.out.println("------------sequence"+ sequence.toString());
+//                Bitmap tempOne = sequence.pop();
+//                if(tempOne.equals(currentBitmap))
+//                    tempOne = sequence.pop();
+//                mCropImageView.setImageBitmap(tempOne);
+//                System.out.println("------------sequenceaterPopping"+ sequence.toString());
+//            }
+//            else {
+//                // Using
+//                // Toast.makeText(CropMainActivity.this, R.string.cannotUndo, Toast.LENGTH_LONG).show();
+//                // Leads to a memory leaks (as large as 120 MB)
+//                // TODO add reference to the commit
+//                Toast.makeText(getActivity().getApplicationContext(), R.string.cannotUndo, Toast.LENGTH_LONG).show();
+//            }
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.main_action_crop) {
-            sequence.push(mStorage.getBitmap(mCropImagePath));
+            sequence.push(mCropImagePath);
             mCropImageView.getCroppedImageAsync();
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
-            sequence.push(mStorage.getBitmap(mCropImagePath));
+            sequence.push(mCropImagePath);
             mCropImageView.rotateImage(-90);
             return true;
         }
         else if (item.getItemId() == R.id.undo) {
             if(!sequence.isEmpty()) {
                 System.out.println("------------sequence"+ sequence.toString());
-                Bitmap tempOne = sequence.pop();
+                Bitmap tempOne = mStorage.getBitmap(sequence.pop());
                 if(tempOne.equals(currentBitmap))
-                    tempOne = sequence.pop();
+                    tempOne = mStorage.getBitmap(sequence.pop());
                 mCropImageView.setImageBitmap(tempOne);
                 System.out.println("------------sequenceaterPopping"+ sequence.toString());
             }
@@ -236,11 +264,7 @@ public final class CropMainFragment extends Fragment
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_UNDEFINED);
             mCroppedImage = SharedRuntimeContent.rotateBitmap(mCroppedImage, orientation);
-
-
             currentBitmap = mCroppedImage;
-
-            System.out.println("------------sequence"+ sequence.toString());
             mCropImageView.setImageBitmap(mCroppedImage);
         } else {
             Log.e(LOG_TAG, "Failed to crop image", result.getError());

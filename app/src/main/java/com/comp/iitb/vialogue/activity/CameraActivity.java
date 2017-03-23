@@ -67,6 +67,8 @@ public class CameraActivity extends AppCompatActivity {
     public static final int CAMERA_ID = 0;
     public static final String RESULT_KEY = "photos_array_list";
     public static final String IMAGE_PATHS_ARRAY = "image_paths_array";
+    public static final String CAPTURE_MULTIPLE_IMAGES_INTENT_KEY = "capture_multiple_images";
+    public static final String CAPTURE_SINGLE_IMAGE_INTENT_KEY = "capture_single_image";
 
     // state variables
     private int mPermissionsRequiredCount;
@@ -80,6 +82,7 @@ public class CameraActivity extends AppCompatActivity {
     private Camera.ShutterCallback mShutterCallback;
     private int mCameraDisplayRotation;
     private ArrayList<String> mImagePaths;
+    private boolean mCaptureMultipleImages;
 
     // UI Variables
     private FrameLayout mCameraPreviewFrameLayout;
@@ -87,10 +90,19 @@ public class CameraActivity extends AppCompatActivity {
     private RecyclerView mCapturesRecyclerView;
     private FrameLayout mFrameOverlay;
     private ImageButton mDoneButton;
+    private ImageButton mRetryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null && bundle.getBoolean(CAPTURE_SINGLE_IMAGE_INTENT_KEY)) {
+            // single image camera
+            mCaptureMultipleImages = false;
+        } else {
+            mCaptureMultipleImages = true;
+        }
 
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -113,55 +125,114 @@ public class CameraActivity extends AppCompatActivity {
         // initializing UI Components
         mCameraPreviewFrameLayout = (FrameLayout) findViewById(R.id.camera_preview);
         mCaptureButton = (ImageButton) findViewById(R.id.button_capture);
-        mCapturesRecyclerView = (RecyclerView) findViewById(R.id.captures_recycler_view);
         mFrameOverlay = (FrameLayout) findViewById(R.id.frame_overlay);
         mDoneButton = (ImageButton) findViewById(R.id.done_button);
+        mRetryButton = (ImageButton) findViewById(R.id.retry_button);
+        if(mCaptureMultipleImages) {
+            mCapturesRecyclerView = (RecyclerView) findViewById(R.id.captures_recycler_view);
+        }
 
         // initializing variables
-        mCapturesRecyclerViewAdapter = new CapturesRecyclerViewAdapter(CameraActivity.this);
-        mCapturesRecyclerView.setAdapter(mCapturesRecyclerViewAdapter);
         mImagePaths = new ArrayList<String>();
-        mPictureCallback = new Camera.PictureCallback() {
+        if(mCaptureMultipleImages) {
+            mCapturesRecyclerViewAdapter = new CapturesRecyclerViewAdapter(CameraActivity.this);
+            mCapturesRecyclerView.setAdapter(mCapturesRecyclerViewAdapter);
+            mPictureCallback = new Camera.PictureCallback() {
 
-            @Override
-            public void onPictureTaken(final byte[] data, Camera camera) {
+                @Override
+                public void onPictureTaken(final byte[] data, Camera camera) {
 
-                (new AsyncTask<Void, Void, String>() {
-                    @Override
-                    public String doInBackground(Void... params) {
+                    (new AsyncTask<Void, Void, String>() {
+                        @Override
+                        public String doInBackground(Void... params) {
 
-                        File pictureFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, CameraActivity.this);
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream(pictureFile);
-                            fos.write(data);
-                            fos.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if(fos != null) {
-                                try {
-                                    fos.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                            File pictureFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, CameraActivity.this);
+                            FileOutputStream fos = null;
+                            try {
+                                fos = new FileOutputStream(pictureFile);
+                                fos.write(data);
+                                fos.close();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                if(fos != null) {
+                                    try {
+                                        fos.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
+
+                            return pictureFile.getAbsolutePath();
                         }
 
-                        return pictureFile.getAbsolutePath();
-                    }
+                        @Override
+                        public void onPostExecute(String imagePath) {
+                            mCapturesRecyclerViewAdapter.add(imagePath);
+                        }
+                    }).execute();
 
-                    @Override
-                    public void onPostExecute(String imagePath) {
-                        mCapturesRecyclerViewAdapter.add(imagePath);
-                    }
-                }).execute();
+                    mCamera.startPreview();
+                }
+            };
+        } else {
+            mRetryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDoneButton.setVisibility(View.GONE);
+                    mRetryButton.setVisibility(View.GONE);
+                    mCamera.startPreview();
+                    mImagePaths.clear();
+                }
+            });
 
-                mCamera.startPreview();
-            }
-        };
+            mPictureCallback = new Camera.PictureCallback() {
+
+                @Override
+                public void onPictureTaken(final byte[] data, Camera camera) {
+
+                    (new AsyncTask<Void, Void, String>() {
+
+                        @Override
+                        public String doInBackground(Void... params) {
+
+                            File pictureFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, CameraActivity.this);
+                            FileOutputStream fos = null;
+                            try {
+                                fos = new FileOutputStream(pictureFile);
+                                fos.write(data);
+                                fos.close();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                if(fos != null) {
+                                    try {
+                                        fos.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            return pictureFile.getAbsolutePath();
+                        }
+
+                        @Override
+                        public void onPostExecute(String imagePath) {
+                            mImagePaths.add(imagePath);
+                            mRetryButton.setVisibility(View.VISIBLE);
+                            mDoneButton.setVisibility(View.VISIBLE);
+                        }
+                    }).execute();
+                }
+            };
+
+        }
 
         mShutterCallback = new Camera.ShutterCallback() {
             @Override
@@ -203,6 +274,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent data = new Intent();
+                System.out.println("mImagePaths : " + mImagePaths);
                 data.putStringArrayListExtra(RESULT_KEY, mImagePaths);
                 setResult(RESULT_OK, data);
                 finish();
