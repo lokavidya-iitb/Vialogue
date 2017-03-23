@@ -81,6 +81,10 @@ public class ProjectNameUtils {
     }
 
     public String getNewProjectName(Project newProject) {
+        if(newProject.getName().matches(untitledProjectNameRegex)) {
+            return getNewUndefinedProjectName();
+        }
+
         String newProjectName = newProject.getName();
         int i = 0;
         while(true) {

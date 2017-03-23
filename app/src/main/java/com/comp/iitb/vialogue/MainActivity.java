@@ -52,6 +52,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.service.ClosingService;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -216,7 +217,23 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.saveMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "The project will be saved in background. You may continue your work.", Toast.LENGTH_LONG).show();
+                // save existing project
+                SharedRuntimeContent.pinProjectInBackground(MainActivity.this, new OnProjectSaved() {
+                    @Override
+                    public void done(boolean isSaved) {
+                        if(!SharedRuntimeContent.getProject().doesItExistInLocalDatastore()) {
+                            SharedRuntimeContent.myProjectsAdapter.addProject(SharedRuntimeContent.getProject());
+                            SharedRuntimeContent.getProject().existsInLocalDatastore();
+                            Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            SharedRuntimeContent.myProjectsAdapter.notifyDataSetChanged();
+                            Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
                 return true;
             }
         });
