@@ -196,7 +196,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             @Override
             public void onClick(View v) {
                 // save the recording
-                if(isRecording) {
+                /*if(isRecording) {
                     stopRecording();
                 }
                 Intent intent = new Intent(getBaseContext(), CropMainActivity.class);
@@ -207,7 +207,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                 intent.putExtras(bundle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
-                finish();
+                finish();*/
                 startCropMainActivity();
             }
         });
@@ -365,7 +365,9 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         bundle.putString(CropMainActivity.IMAGE_PATH, currentImagePath);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        System.out.print("-----------came here");
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
+
     }
 
 

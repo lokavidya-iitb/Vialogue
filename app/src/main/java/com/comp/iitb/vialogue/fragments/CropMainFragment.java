@@ -150,11 +150,11 @@ public final class CropMainFragment extends Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.main_action_crop) {
-            sequence.push(mCropImagePath);
+            sequence.push(mStorage.getRealPathFromURI(mStorage.getImageUri(currentBitmap)));
             mCropImageView.getCroppedImageAsync();
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
-            sequence.push(mCropImagePath);
+            sequence.push(mStorage.getRealPathFromURI(mStorage.getImageUri(currentBitmap)));
             Bitmap rotator = SharedRuntimeContent.rotateBitmap(mCroppedImage,ExifInterface.ORIENTATION_ROTATE_90);
             currentBitmap = rotator;
             mCropImageView.setImageBitmap(rotator);
@@ -265,7 +265,7 @@ public final class CropMainFragment extends Fragment
         mCropImageView.setImageBitmap(null);
         Storage.recycleBitmap(mCroppedImage);
 */
-       /* Storage.recycleBitmap(mCroppedImage);*/
+        Storage.recycleBitmap(mCroppedImage);
         // clear LIFO
         sequence.clear();
         sequence = null;
