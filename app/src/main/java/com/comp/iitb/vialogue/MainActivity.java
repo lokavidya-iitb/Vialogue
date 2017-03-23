@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -121,6 +123,37 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.previewFab = mPreviewFab;
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
         refreshSignInOutOptions();
+    }
+
+    // Back Button logic
+    private boolean shouldExitOnBack = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            if(shouldExitOnBack) {
+                finish();
+                return true;
+            } else {
+                Toast.makeText(MainActivity.this, "Press back again to exit the application.", Toast.LENGTH_LONG).show();
+                shouldExitOnBack = true;
+                (new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        shouldExitOnBack = false;
+                        return null;
+                    }
+                }).execute();
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
 

@@ -208,13 +208,17 @@ public class SharedRuntimeContent {
 
         // display project name
         String projectNameString = null;
-        if((SharedRuntimeContent.getProjectName() != null) && (!SharedRuntimeContent.getProjectName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
+        if((project.getName() != null) && (project.getName() != "") && (!project.getName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
             projectNameString = project.getName();
         } else {
             projectNameString = "Add project title";
         }
+
         projectNameDisplay.setText("");
         projectNameDisplay.setHint(projectNameString);
+        if(projectNameString != "Add project title") {
+            projectName.setText(projectNameString);
+        }
 
         if(currentProject.getSlides().getAll().size() != 0) {
 
