@@ -35,6 +35,7 @@ import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
 import com.comp.iitb.vialogue.listeners.GridLayoutItemTouchHelperCallback;
+import com.comp.iitb.vialogue.listeners.ImagePickerClick;
 import com.comp.iitb.vialogue.listeners.MultipleImagePicker;
 import com.comp.iitb.vialogue.listeners.ProjectTextWatcher;
 import com.comp.iitb.vialogue.listeners.QuestionPickerClick;
@@ -84,6 +85,8 @@ public class CreateVideosMark2 extends Fragment {
     private ItemTouchHelper mItemTouchHelper;
     private MultipleImagePicker mMultipleImagePicker;
     private Storage mStorage;
+    // temp
+    private ImagePickerClick mImagePickerClick;
 
     // Required empty public constructor
     public CreateVideosMark2() {}
@@ -152,8 +155,10 @@ public class CreateVideosMark2 extends Fragment {
             }
         });
         //Image Picker
-        mMultipleImagePicker = new MultipleImagePicker(view.getContext(), getActivity());
-        mImagePicker.setOnClickListener(mMultipleImagePicker);
+        mImagePickerClick = new ImagePickerClick(CreateVideosMark2.this);
+        mImagePicker.setOnClickListener(mImagePickerClick);
+//        mMultipleImagePicker = new MultipleImagePicker(view.getContext(), getActivity());
+//        mImagePicker.setOnClickListener(mMultipleImagePicker);
 //        mImagePicker.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -260,7 +265,7 @@ public class CreateVideosMark2 extends Fragment {
                                 Slide slide = new Slide();
                                 try {
                                     slide.addResource(video, Slide.ResourceType.VIDEO);
-                                    if(!SharedRuntimeContent.addSlide(slide)) {
+                                    if (!SharedRuntimeContent.addSlide(slide)) {
                                         throw new Exception();
                                     }
                                 } catch (Exception e) {
@@ -273,7 +278,7 @@ public class CreateVideosMark2 extends Fragment {
                 // TODO maybe show a toast
             }
 
-        } else if(requestCode == SharedRuntimeContent.GET_QUESTION) {
+        } else if (requestCode == SharedRuntimeContent.GET_QUESTION) {
             // GET QUESTION
             Bundle extras = data.getExtras();
             Question question = new Question(
@@ -292,15 +297,15 @@ public class CreateVideosMark2 extends Fragment {
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(),  R.string.wrongBuddy, Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
-        } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_IMAGES) {
+        } else if (requestCode == SharedRuntimeContent.GET_MULTIPLE_IMAGES) {
             ArrayList<Uri> paths = new ArrayList<>();
-            for(int i = 0; i<data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
+            for (int i = 0; i < data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
                 paths.add(Uri.parse(data.getParcelableArrayListExtra(Define.INTENT_PATH).get(i).toString()));
             }
 
-            for(Uri uri : paths) {
+            for (Uri uri : paths) {
                 Slide slide = new Slide();
                 final Image image = new Image(getContext());
 
@@ -315,7 +320,7 @@ public class CreateVideosMark2 extends Fragment {
                                 Slide slide = new Slide();
                                 try {
                                     slide.addResource(image, Slide.ResourceType.IMAGE);
-                                    if(!SharedRuntimeContent.addSlide(slide)) {
+                                    if (!SharedRuntimeContent.addSlide(slide)) {
                                         throw new Exception();
                                     }
                                 } catch (Exception e) {
@@ -326,16 +331,16 @@ public class CreateVideosMark2 extends Fragment {
                         });
 
             }
-        } else if(requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
+        } else if (requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
             ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
-System.out.print("-------------reached"+ paths.toString());
-            for(String path : paths) {
+            System.out.print("-------------reached" + paths.toString());
+            for (String path : paths) {
 
                 try {
                     Slide slide = new Slide();
                     Image image = new Image(Uri.fromFile(new File(path)));
                     slide.addResource(image, Slide.ResourceType.IMAGE);
-                    if(!SharedRuntimeContent.addSlide(slide)) {
+                    if (!SharedRuntimeContent.addSlide(slide)) {
                         throw new Exception();
                     }
                 } catch (Exception e) {
@@ -344,6 +349,47 @@ System.out.print("-------------reached"+ paths.toString());
                 }
 
             }
+        } else if (requestCode == GET_IMAGE) {
+            // GET IMAGE FROM GALLERY
+
+            if (data != null) {
+
+                System.out.println(mStorage.getRealPathFromURI(data.getData()));
+                System.out.println(data.getData());
+
+                try {
+                    new File(mStorage.getRealPathFromURI(data.getData()));
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                final Image image = new Image(getContext());
+                final File i = image.getResourceFile();
+                mStorage.addFileToDirectory(
+                        new File(mStorage.getRealPathFromURI(data.getData())),
+                        i,
+                        new FileCopyUpdateListener(getContext()),
+                        new OnFileCopyCompleted() {
+                            @Override
+                            public void done(File file, boolean isSuccessful) {
+
+                                Slide slide = new Slide();
+                                try {
+                                    slide.addResource(image, Slide.ResourceType.IMAGE);
+                                    if (!SharedRuntimeContent.addSlide(slide)) {
+                                        throw new Exception();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            } else {
+                // TODO maybe show a toast
+            }
+
         }
     }
 }
