@@ -94,7 +94,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     private CanSaveAudioResource mSlideResource;
     private RecyclerView mSlideThumbnailsRecyclerView;
     private TextView mTimerTextView;
-    private AudioRecorder mAudioRecorder = null;
+    private AudioRecorder mAudioRecorder;
     private String mRecordPath;
     private String mImagePath;
     private boolean isRecording = false;
@@ -441,6 +441,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         isRecording = false;
         mStopButton.setEnabled(false);
         mRetryButton.setEnabled(true);
+        if(mAudio.isDataAvailable())
         mSlideResource.addAudio(mAudio);
         mPlayButton.setEnabled(true);
         try {
