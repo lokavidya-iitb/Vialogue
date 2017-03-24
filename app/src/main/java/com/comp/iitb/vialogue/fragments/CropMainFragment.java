@@ -66,6 +66,7 @@ public final class CropMainFragment extends Fragment
     private String mCropImagePath;
     private Bitmap mCroppedImage;
     private Bitmap currentBitmap;
+    private Bitmap rotator;
     //endregion
 
     /**
@@ -155,7 +156,7 @@ public final class CropMainFragment extends Fragment
             return true;
         } else if (item.getItemId() == R.id.main_action_rotate) {
             sequence.push(mStorage.getRealPathFromURI(mStorage.getImageUri(currentBitmap)));
-            Bitmap rotator = SharedRuntimeContent.rotateBitmap(mCroppedImage,ExifInterface.ORIENTATION_ROTATE_90);
+            rotator = SharedRuntimeContent.rotateBitmap(mCroppedImage,ExifInterface.ORIENTATION_ROTATE_90);
             currentBitmap = rotator;
             mCropImageView.setImageBitmap(rotator);
             return true;
@@ -265,6 +266,7 @@ public final class CropMainFragment extends Fragment
         mCropImageView.setImageBitmap(null);
         Storage.recycleBitmap(mCroppedImage);
 */
+        Storage.recycleBitmap(rotator);
         Storage.recycleBitmap(mCroppedImage);
         // clear LIFO
         sequence.clear();
