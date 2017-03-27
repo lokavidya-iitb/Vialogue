@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.adobe.creativesdk.foundation.AdobeCSDKFoundation;
+import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.comp.iitb.vialogue.activity.CameraActivity;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Audio;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
@@ -25,7 +27,12 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
  * Created by ironstein on 13/02/17.
  */
 
-public class App extends Application {
+public class App extends Application implements IAdobeAuthClientCredentials {
+
+    private static final String CREATIVE_SDK_CLIENT_ID      = "f71339a291b841acbc45c18cf50ab10c";
+    private static final String CREATIVE_SDK_CLIENT_SECRET  = "5ef66814-7fd7-4063-ab3e-8fadefd46ab3";
+    private static final String CREATIVE_SDK_REDIRECT_URI   = "ams+2c0aaf828a578c32b47110b21fdd7300961250cd://adobeid/f71339a291b841acbc45c18cf50ab10c";
+    private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
 
 //    private RefWatcher refWatcher;
 
@@ -36,7 +43,7 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
-
+            /*super.onCreate();*/
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
@@ -47,6 +54,7 @@ public class App extends Application {
 //
         // start service that will save the current project
         // whenever the app is stopped, no matter in what fashion
+        AdobeCSDKFoundation.initializeCSDKFoundation(getApplicationContext());
         startService(new Intent(getApplicationContext(), ClosingService.class));
 
         // register parse Subclasses
@@ -75,5 +83,29 @@ public class App extends Application {
             .build()
         );
 
+        /*
+*/
+    }
+
+
+
+    @Override
+    public String getClientID() {
+        return CREATIVE_SDK_CLIENT_ID;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return CREATIVE_SDK_CLIENT_SECRET;
+    }
+
+    @Override
+    public String[] getAdditionalScopesList() {
+        return CREATIVE_SDK_SCOPES;
+    }
+
+    @Override
+    public String getRedirectURI() {
+        return CREATIVE_SDK_REDIRECT_URI;
     }
 }

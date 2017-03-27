@@ -15,7 +15,7 @@ public class ParseApplication extends Application {
         super.onCreate();
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
                 .applicationId("wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV")
-                .clientKey("")
+                .clientKey("knkn;")
                 .server("https://lokavidya-heroku-server.herokuapp.com/parse")
                 .build()
         );
