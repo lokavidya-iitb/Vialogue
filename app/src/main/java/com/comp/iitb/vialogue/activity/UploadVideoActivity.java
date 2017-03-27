@@ -296,16 +296,13 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            progressDialog.dismiss();
+            
         }
 
 
         @Override
         protected void onPreExecute() {
 
-            progressDialog = ProgressDialog.show(UploadVideoActivity.this,
-                    "ProgressDialog", "Loading the preview");
-            progressDialog.setCancelable(false);
         }
 
 

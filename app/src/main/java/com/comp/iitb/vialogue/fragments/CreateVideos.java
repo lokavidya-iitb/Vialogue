@@ -17,8 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adobe.creativesdk.aviary.AdobeImageIntent;
 import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CameraActivity;
 import com.comp.iitb.vialogue.activity.CropMainActivity;
 import com.comp.iitb.vialogue.coordinators.ConditionListener;
@@ -70,6 +72,7 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
     private EditText mProjectName;
     private TextView mProjectNameDisplay;
     private SlideFragment mSlideFragment;
+    static final int REQ_CODE_CSDK_IMAGE_EDITOR = 3001;
     private View mView;
     private OnFragmentInteractionListener mListener;
     private LinearLayout mRoot;
@@ -227,23 +230,36 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
 
         if (requestCode == GET_CAMERA_IMAGE && data == null) {
             // CAPTURE IMAGE FROM CAMERA
-            Intent intent = new Intent(getContext(), CropMainActivity.class);
+           /* Intent intent = new Intent(getContext(), CropMainActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("from", "CreateVideos");
             bundle.putString(CropMainActivity.IMAGE_PATH, mCameraImagePicker.getCameraFile().getAbsolutePath());
             intent.putExtras(bundle);
-            mFragment.startActivity(intent);
+            mFragment.startActivity(intent);*/
+            Intent imageEditorIntent = new AdobeImageIntent.Builder(getActivity())
+                    .setData(mStorage.getUriFromPath(mCameraImagePicker.getCameraFile().getAbsolutePath())) // Set in onActivityResult()
+                    .build();
+
+                    /* 2) Start the Image Editor with request code 1 */
+            startActivityForResult(imageEditorIntent, REQ_CODE_CSDK_IMAGE_EDITOR);
+
 
         } else if (requestCode == GET_IMAGE) {
             // GET IMAGE FROM GALLERY
             if (data != null) {
                 String selectedPath = mStorage.getRealPathFromURI(data.getData());
-                Intent intent = new Intent(getContext(), CropMainActivity.class);
+                /*Intent intent = new Intent(getContext(), CropMainActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("from", "CreateVideos");
                 bundle.putString(CropMainActivity.IMAGE_PATH, selectedPath);
                 intent.putExtras(bundle);
-                mFragment.startActivity(intent);
+                mFragment.startActivity(intent);*/
+                Intent imageEditorIntent = new AdobeImageIntent.Builder(getActivity())
+                        .setData(mStorage.getUriFromPath(selectedPath)) // Set in onActivityResult()
+                        .build();
+
+                    /* 2) Start the Image Editor with request code 1 */
+                startActivityForResult(imageEditorIntent, REQ_CODE_CSDK_IMAGE_EDITOR);
             } else {
                 // TODO maybe show a toast
             }
@@ -359,6 +375,23 @@ public class CreateVideos extends Fragment implements OnProgressUpdateListener, 
                 }
 
             }
+        }
+        else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR)
+        {
+            Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
+            try {
+                Slide slide = new Slide();
+                Image image = new Image(Uri.fromFile(new File(mStorage.getRealPathFromURI(editedImageUri))));
+                slide.addResource(image, Slide.ResourceType.IMAGE);
+                if(!SharedRuntimeContent.addSlide(slide)) {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+            }
+
+
         }
     }
 

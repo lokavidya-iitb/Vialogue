@@ -1,5 +1,6 @@
 
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -12,12 +13,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        manifestPlaceholders = [appPackageName: "${applicationId}"]
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    /*  Exclude duplicate licenses */
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+        pickFirst 'AndroidManifest.xml'
+    }
+    dexOptions {
+        jumboMode true
     }
 }
 
@@ -38,19 +58,20 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.slider:library:1.1.5@aar'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.parse:parse-android:1.13.1'
+    compile ('com.parse:parse-android:1.14.1'){
+        exclude group: 'com.squareup.okhttp', module: 'okhttp'
+    }
     compile 'com.karumi:dexter:3.0.2'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.google.android.gms:play-services-appindexing:9.2.1'
-    compile 'com.google.android.gms:play-services-auth:9.2.1'
     testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.minimize.library:seekbar-compat:0.2.5'
-    compile 'com.squareup.okhttp:okhttp:2.7.4'
+    compile 'com.squareup.okhttp:okhttp:1.7'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
     compile project(':vplayercore')
 
-    // Parse
-    compile 'com.parse:parse-android:1.13.1'
 
     // Dependency for Google Sign-In
     compile 'com.google.android.gms:play-services-auth:9.2.1'
@@ -60,6 +81,13 @@ dependencies {
 
     // Loading Animations
     compile 'com.wang.avi:library:2.1.3'
+    //Creative SDK
+
+    compile ('com.adobe.creativesdk.foundation:auth:0.9.1251'){
+        exclude group: 'com.google.android.gms'
+    }
+    compile "com.adobe.creativesdk:image:4.8.4"
+    compile "com.localytics.android:library:3.8.0"
 
     // LeakCanary
     // TODO remove in production build
