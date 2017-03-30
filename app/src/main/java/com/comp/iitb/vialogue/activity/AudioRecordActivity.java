@@ -346,7 +346,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);*/
         Intent imageEditorIntent = new AdobeImageIntent.Builder(AudioRecordActivity.this)
-                .setData(mStorage.getUriFromPath(currentImagePath)) // Set in onActivityResult()
+                .setData(mStorage.getUriFromPath(path)) // Set in onActivityResult()
                 .build();
 
                     /* 2) Start the Image Editor with request code 1 */

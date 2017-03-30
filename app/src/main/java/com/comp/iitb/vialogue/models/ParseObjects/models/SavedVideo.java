@@ -27,7 +27,7 @@ public class SavedVideo extends BaseResourceClass {
         return new SavedVideo();
     }
 
-    private static final String VIDEO_RESOURCE_NAME = "saved_video";
+    private static final String VIDEO_RESOURCE_NAME = "video";
 
     public SavedVideo(Context context) {
         this(Uri.fromFile(BaseResourceClass.makeTempResourceFile(Slide.ResourceType.VIDEO, context)));
