@@ -36,6 +36,8 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
 import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -45,7 +47,9 @@ import com.parse.SaveCallback;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -254,13 +258,6 @@ public class UploadVideoActivity extends AppCompatActivity {
             SharedRuntimeContent.getProject().setCategory(categoryObjects.get(mCategories.getSelectedItemPosition()-1));
             tagsToUpload = Arrays.asList(tags.getText().toString().split(" "));
 
-//            final ProgressDialog progressDialog = ProgressDialog.show(UploadVideoActivity.this, "Uploading Project", "Please Wait...");
-//            SharedRuntimeContent.getProject().saveInBackground(new SaveCallback() {
-//                @Override
-//                public void done(ParseException e) {
-//                    progressDialog.dismiss();
-//                }
-//            });
             new SaveParseObjectAsync(
                     UploadVideoActivity.this,
                     ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),
@@ -268,12 +265,18 @@ public class UploadVideoActivity extends AppCompatActivity {
                         @Override
                         public void done(boolean isSaved) {
                             if (isSaved) {
-                                Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
+                                Map<String, String> params = new HashMap<>();
+                                params.put("project_id", SharedRuntimeContent.getProject().getObjectId());
+                                try {
+                                    ParseCloud.callFunction("stitch", params);
+                                    Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
+                                }
                             } else {
                                 Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                             }
-                   /* Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);*/
                         }
                     },
                     SharedRuntimeContent.getProject()
