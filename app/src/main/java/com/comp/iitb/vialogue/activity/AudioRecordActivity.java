@@ -364,6 +364,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         System.out.print("-----------came here");
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);
 */
+        Glide
+                .with(this)
+                .load("")
+                .placeholder(R.drawable.app_logo)
+                .into(mImageView);
 
         Intent imageEditorIntent = new AdobeImageIntent.Builder(AudioRecordActivity.this)
                 .setData(mStorage.getUriFromPath(currentImagePath)) // Set in onActivityResult()
@@ -624,17 +629,20 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         }
         else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR)
         {
-            System.out.println("----- the amazing crop");
+            mImageView.setImageURI(null);
+            System.out.println("----- the amazing crop--");
             Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
             new ProcessAsyncAfterCrop(mStorage.getRealPathFromURI(editedImageUri)).execute();
-            mImagePath = mStorage.getRealPathFromURI(editedImageUri);
+
             loadStateFromSlide(SharedRuntimeContent.getSlideAt(mSlidePosition), mSlidePosition, false);
             // Update UI
+            mImagePath = mStorage.getRealPathFromURI(editedImageUri);
             setUpUI();
             // Update thumbnails
             mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
-
-
+            mImageView.setImageURI(null);
+            mImageView.postInvalidate();
+            mImageView.setImageBitmap(mStorage.getBitmap(mStorage.getRealPathFromURI(editedImageUri)));
         }
     }
 
