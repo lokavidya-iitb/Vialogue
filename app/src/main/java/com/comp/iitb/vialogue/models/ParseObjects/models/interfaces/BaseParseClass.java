@@ -1,5 +1,7 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
+import android.content.Context;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -158,15 +160,15 @@ public abstract class BaseParseClass extends ParseObject {
         return copiedParseObject;
     }
 
-    public void saveParseObject() throws ParseException {
+    public void saveParseObject(Context context) throws ParseException {
         // call the mySave method for all the children BaseParseClass instances
         for(String key : this.keySet()) {
             if(get(key) instanceof ParseObjectsCollection) {
                 // is an instance of BaseParseClass
-                ((ParseObjectsCollection) getParseObject(key)).saveParseObject();
+                ((ParseObjectsCollection) getParseObject(key)).saveParseObject(context);
             } else if(get(key) instanceof BaseResourceClass) {
                 // is an instance of BaseResourceClass
-                ((BaseResourceClass) get(key)).saveParseObject();
+                ((BaseResourceClass) get(key)).saveParseObject(context);
             }
         }
 

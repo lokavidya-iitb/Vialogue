@@ -207,4 +207,8 @@ public class Question extends BaseResourceClass {
 //
 //        return returnString;
 //    }
+
+    public boolean doesStoreFile() {
+        return false;
+    }
 }

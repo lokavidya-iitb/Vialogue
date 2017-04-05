@@ -9,6 +9,8 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseCla
 import com.parse.ParseException;
 import com.parse.ParseFile;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import static com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass.Fields.CHILDREN_RESOURCES;
 
@@ -106,6 +110,15 @@ public abstract class BaseResourceClass extends BaseParseClass {
         return uri;
     }
 
+    public boolean isParseFileSaved() {
+        try {
+            Uri.fromFile(getParseFile((Fields.FILE)).getFile());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void setUri(Uri uri) {
         put(Fields.TEMP_URL, new File(uri.getPath()).getAbsolutePath());
     }
@@ -115,10 +128,19 @@ public abstract class BaseResourceClass extends BaseParseClass {
     }
 
     @Override
-    public void saveParseObject() throws ParseException {
-        ParseFile file = new ParseFile(new File(getUri().getPath()));
-        file.save();
-        put(Fields.FILE, file);
+    public void saveParseObject(Context context) throws ParseException {
+        if(doesStoreFile()) {
+            File f = new File(getUri().getPath());
+            ParseFile file;
+            if(!isParseFileSaved()) {
+                file = new ParseFile(f);
+            } else {
+                file = getParseFile((Fields.FILE));
+            }
+            file.save();
+            put(Fields.FILE, file);
+        }
+        super.saveParseObject(context);
     }
 
     @Override
@@ -128,4 +150,5 @@ public abstract class BaseResourceClass extends BaseParseClass {
         saveEventually();
     }
 
+    public abstract boolean doesStoreFile();
 }

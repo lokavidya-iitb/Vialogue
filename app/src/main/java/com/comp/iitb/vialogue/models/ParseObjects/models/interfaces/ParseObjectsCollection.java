@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.parse.Parse;
@@ -170,9 +171,9 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
         }
     }
 
-    public void saveParseObject() throws ParseException {
+    public void saveParseObject(Context context) throws ParseException {
         for(T object: getList_()) {
-            object.saveParseObject();
+            object.saveParseObject(context);
         }
         save();
     }

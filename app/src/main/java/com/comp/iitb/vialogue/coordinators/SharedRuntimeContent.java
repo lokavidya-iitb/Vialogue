@@ -40,6 +40,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.comp.iitb.vialogue.utils.ProjectNameUtils;
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -263,12 +264,12 @@ public class SharedRuntimeContent {
 
                             case DialogInterface.BUTTON_NEGATIVE:
                                 //No button clicked
-                                try {
-                                    currentProject.delete();
-                                    Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
+                                currentProject.unpinInBackground(new DeleteCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 break;
                         }
                     }

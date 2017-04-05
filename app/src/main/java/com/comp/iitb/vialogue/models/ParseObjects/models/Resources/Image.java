@@ -39,4 +39,8 @@ public class Image extends CanSaveAudioResource {
         super(uri);
     }
 
+    public boolean doesStoreFile() {
+        return true;
+    }
+
 }

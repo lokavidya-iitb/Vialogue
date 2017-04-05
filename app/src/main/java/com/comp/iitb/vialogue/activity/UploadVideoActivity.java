@@ -73,6 +73,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     List<String> categories = new ArrayList<>();
     ArrayList<Category> categoryObjects = new ArrayList<>();
     List<ParseObject> receiveEM;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,7 +261,7 @@ public class UploadVideoActivity extends AppCompatActivity {
 
             new SaveParseObjectAsync(
                     UploadVideoActivity.this,
-                    ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),
+                    mProgressDialog = ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),
                     new OnProjectSaved() {
                         @Override
                         public void done(boolean isSaved) {
@@ -431,6 +432,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         super.onDestroy();
         if (mPlayer != null) {
             mPlayer.onDestroy();
+        }
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
         }
     }
 

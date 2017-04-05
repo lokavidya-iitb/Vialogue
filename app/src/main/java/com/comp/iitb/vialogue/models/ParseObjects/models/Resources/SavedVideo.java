@@ -1,4 +1,4 @@
-package com.comp.iitb.vialogue.models.ParseObjects.models;
+package com.comp.iitb.vialogue.models.ParseObjects.models.Resources;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,9 +6,6 @@ import android.net.Uri;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 import com.parse.ParseClassName;
-import com.parse.ParseFile;
-
-import java.io.File;
 
 /**
  * Created by ironstein on 20/02/17.
@@ -35,5 +32,9 @@ public class SavedVideo extends BaseResourceClass {
 
     public SavedVideo(Uri uri) {
         super(uri);
+    }
+
+    public boolean doesStoreFile() {
+        return true;
     }
 }
