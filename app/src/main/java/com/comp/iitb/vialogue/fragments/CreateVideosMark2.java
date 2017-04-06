@@ -46,6 +46,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.utils.ProjectNameUtils;
+import com.darsh.multipleimageselect.helpers.Constants;
 import com.sangcomz.fishbun.define.Define;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -299,18 +300,22 @@ public class CreateVideosMark2 extends Fragment {
                 e.printStackTrace();
                 Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
-        } else if (requestCode == SharedRuntimeContent.GET_MULTIPLE_IMAGES) {
-            ArrayList<Uri> paths = new ArrayList<>();
-            for (int i = 0; i < data.getParcelableArrayListExtra(Define.INTENT_PATH).size(); i++) {
-                paths.add(Uri.parse(data.getParcelableArrayListExtra(Define.INTENT_PATH).get(i).toString()));
-            }
+        } else if (requestCode == Constants.REQUEST_CODE) {
+            ArrayList<com.darsh.multipleimageselect.models.Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
 
-            for (Uri uri : paths) {
+            Log.d("-----sizeimage",""+images.get(0));
+            ArrayList<String> paths = new ArrayList<>();
+            for (int i = 0; i < images.size(); i++) {
+                paths.add(images.get(i).path.toString());
+            }
+            Log.d("-----sizeimage",""+paths.get(0));
+
+            for (String path : paths) {
                 Slide slide = new Slide();
                 final Image image = new Image(getContext());
-
+                Log.d("-----sizeimage",""+paths.get(0));
                 mStorage.addFileToDirectory(
-                        new File(mStorage.getRealPathFromURI(uri)),
+                        new File(path),
                         image.getResourceFile(),
                         new FileCopyUpdateListener(getContext()),
                         new OnFileCopyCompleted() {
