@@ -518,8 +518,8 @@ public class Storage {
     public static void setupLokavidyaLegacy() {
         Storage.createThisDirectory(Master.AppPath);
         Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath);
-        Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.MyProjectsPath);
-        Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.SavedProjectsPath);
+        /*Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.MyProjectsPath);*/ // not used anymore, bubye
+        /*Storage.createThisDirectory(Master.AppPath + Master.ProjectsPath + Master.SavedProjectsPath); */ // not used anymore, bubye
         Storage.createThisDirectory(Master.AppPath + Master.VideosPath + Master.SavedVideosPath);
     }
 

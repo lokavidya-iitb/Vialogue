@@ -1,57 +1,35 @@
 package com.comp.iitb.vialogue.activity;
 
 /**
- * Created by jeffrey on 27/2/17.
+ * Created by jeffrey on 3/4/17.
  */
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
-import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
-import com.comp.iitb.vialogue.library.Storage;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
+import com.comp.iitb.vialogue.utils.ReadJSONFile;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -61,8 +39,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.Download;
 
-
-public class VideoPlayer extends AppCompatActivity {
+public class OfflineVideoPlayer extends AppCompatActivity {
 
     public VPlayer mPlayer;
     private boolean isFirstTime;
@@ -80,44 +57,14 @@ public class VideoPlayer extends AppCompatActivity {
         setContentView(R.layout.activity_video_player);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        URL=getIntent().getStringExtra("URL");
-        id = getIntent().getStringExtra("id");
-        name = getIntent().getStringExtra("name");
-        Log.d("-------URL",""+URL);
-        Log.d("-------id",""+id);
-
-        ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Videos");
-        innerQuery.whereEqualTo("objectId",id);
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
-
-        query.whereMatchesQuery("video",innerQuery);
-
-        /*ParseObject queryingObj = ParseObject.createWithoutData("Videos",id);
-        query.whereEqualTo("video", queryingObj);*/
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> comments, ParseException e) {
-                if (e == null) {
-                    mPlayer = new VPlayer(VideoPlayer.this);
-                    try {
-                        recieveEm = query.find();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                    for (ParseObject iterator : recieveEm) {
-                        QuestionAnswer questionAnswer = new QuestionAnswer();
-                        String question_string = ((String) iterator.get("question_string"));
-                        List<String> optionList = (List<String>) iterator.get("options");
-                        String options[] = new String[optionList.size()];
-                        options = optionList.toArray(options);
-                        int time = ((int) iterator.get("time"));
-                        questionAnswer.setOptions(options);
-                        questionAnswer.setTime(time);
-                        questionAnswer.setQuestion(question_string);
-                        questionLists.add(questionAnswer);
-                    }
-                    Log.d("-------questionList",""+questionLists);
+        URL=getIntent().getStringExtra("url");
+        name=getIntent().getStringExtra("name");
+                    mPlayer = new VPlayer(OfflineVideoPlayer.this);
                     mPlayer.play(new PlayerModel(URL, null));
                     mPlayer.setTitle(URL);
+                    String videoDirectory = URL.substring(0,URL.lastIndexOf("/"));
+                    questionLists = ReadJSONFile.getQuestionsFromJSON(Master.getSavedVideosPath()+"/"+name+"/questions.json");
+                    Log.d("-----json",""+ questionLists.toString());
                     mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
                         private SimulationHandler mSimulationHandler;
                         @Override
@@ -179,24 +126,12 @@ public class VideoPlayer extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), R.string.videoError, Toast.LENGTH_SHORT).show();
                         }
                     });
-                }else {
-                    // Something went wrong...
-                }
-            }
-        });
+
 
         button = (Button) findViewById(R.id.button);
 
         // Capture button clicks
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-
-                new downloader().execute();
-            }
-
-
-
-    });
+        button.setVisibility(View.GONE);
     }
 
     @Override
@@ -216,90 +151,6 @@ public class VideoPlayer extends AppCompatActivity {
 
 
     }
-
-
-    private class downloader extends AsyncTask<String, String, String> {
-
-        private String resp ="";
-        ProgressDialog progressDialog;
-
-        @Override
-        protected String doInBackground(String... params) {
-            Storage.createThisDirectory(Master.getSavedVideosPath()+"/"+name);
-            Download(URL, Master.getSavedVideosPath(), name, name+".mp4", getBaseContext());
-
-            ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Video");
-            innerQuery.whereEqualTo("objectId",id);
-            final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
-
-            query.whereMatchesQuery("video",innerQuery);
-            JSONArray completeFile = new JSONArray();
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> comments, ParseException e) {
-                    if (e == null) {
-                        mPlayer = new VPlayer(VideoPlayer.this);
-                        try {
-                            recieveEm = query.find();
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                        for (ParseObject iterator : recieveEm) {
-                            String question_string = ((String) iterator.get("question_string"));
-                            List<String> optionList = (List<String>) iterator.get("options");
-                            String options[] = new String[optionList.size()];
-                            String solution = (String) iterator.get("solution");
-                            options = optionList.toArray(options);
-                            int time = ((int) iterator.get("time"));
-                            JSONObject singleQuestion = new JSONObject();
-                            try {
-                                singleQuestion.put("question_string",question_string);
-                                singleQuestion.put("answer",solution);
-                                singleQuestion.put("time",time);
-                                singleQuestion.put("options",options);
-
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                            completeFile.put(singleQuestion);
-                        }
-                        try {
-                            Writer output = null;
-                            File file = new File(Environment.getExternalStorageDirectory() +Master.getSavedVideosPath() +"/" + name + "/"+ "questions.json");
-                            output = new BufferedWriter(new FileWriter(file));
-                            Log.d("---complete",""+completeFile.toString());
-                            output.write(completeFile.toString());
-                            output.close();
-                            Toast.makeText(getApplicationContext(), "Composition saved", Toast.LENGTH_LONG).show();
-
-                        } catch (Exception justInCase) {
-                            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }}});
-            return resp;
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            progressDialog.dismiss();
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-
-            progressDialog = ProgressDialog.show(VideoPlayer.this,
-                    "ProgressDialog","Downloading..");
-            progressDialog.setCancelable(false);
-        }
-
-
-        @Override
-        protected void onProgressUpdate(String... text) {
-
-        }
-    }
-
 
     @Override
     protected void onDestroy() {
