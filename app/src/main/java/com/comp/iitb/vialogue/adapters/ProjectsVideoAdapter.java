@@ -5,6 +5,8 @@ package com.comp.iitb.vialogue.adapters;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +19,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.OfflineVideoPlayer;
+import com.comp.iitb.vialogue.activity.VideoPlayer;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdapter.MyViewHolder> {
@@ -58,8 +64,24 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
-        File Video = new File(Environment.getExternalStorageDirectory(),"Test.mp4");
-        holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Video.getAbsolutePath()));
+        File Video = new File(Master.getSavedVideosPath()+"/"+album.getName()+"/"+album.getName()+".mp4");
+        holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Environment.getExternalStorageDirectory()+Video.getAbsolutePath()));
+
+        holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Just open an existing video player
+                /* Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Video.getAbsolutePath()));
+                intent.setDataAndType(Uri.parse(Video.getAbsolutePath()), "video/mp4");
+                mContext.startActivity(intent);*/
+
+                Intent viewVid = new Intent(mContext, OfflineVideoPlayer.class);
+                viewVid.putExtra("url",Environment.getExternalStorageDirectory()+Video.getPath());
+                viewVid.putExtra("name",""+album.getName());
+                mContext.startActivity(viewVid);
+
+            }
+        });
         }
 
 

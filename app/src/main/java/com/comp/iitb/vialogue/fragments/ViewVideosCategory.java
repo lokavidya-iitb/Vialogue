@@ -255,7 +255,8 @@ public class ViewVideosCategory extends Fragment {
 
             for (ParseObject num : receiveEM) {
                 Category map = new Category();
-                map.setId((String) num.get("objectId"));
+                map.setId((String) num.getObjectId());
+                Log.e("----id",""+(String) num.get("objectId"));
                 map.setName((String) num.get("Name"));
                 map.setDesc((String) num.get("desc"));
                 map.setImageURL(((String) num.get("videoURL")));

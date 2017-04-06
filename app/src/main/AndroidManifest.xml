@@ -85,6 +85,10 @@
             android:name=".activity.VideoPlayer"
             android:label="@string/title_activity_video_player"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.OfflineVideoPlayer"
+            android:label="@string/title_activity_video_player"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.QuestionDialogResultActivity" />
         <activity android:name=".activity.PhoneNumberSigninActivity" />
