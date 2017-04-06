@@ -59,7 +59,8 @@ public class Project extends BaseParseClass {
         LANGUAGE =                      "language",
         TAGS =                          "tags",
         RESOLUTION =                    "resolution",
-        SLIDES =                        "slides";
+        SLIDES =                        "slides",
+        PROJECT_QUESTIONS =             "project_questions";
 
         public ArrayList<String> getAllFields() {
             return new ArrayList<String>(Arrays.asList(new String[] {

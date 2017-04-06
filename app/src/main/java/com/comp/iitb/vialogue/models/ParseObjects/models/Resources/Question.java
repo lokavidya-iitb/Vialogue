@@ -41,7 +41,8 @@ public class Question extends BaseResourceClass {
         CORRECT_OPTIONS_FIELD = "correct_options",
         SOLUTION_FIELD = "solution",
         HINTS_FIELD = "hints",
-        IS_COMPULSORY_FIELD = "is_compulsory";
+        IS_COMPULSORY_FIELD = "is_compulsory",
+        TIME_FIELD = "time";
 
         public ArrayList<String> getAllFields() {
             return new ArrayList<String>(Arrays.asList(new String[] {
@@ -51,7 +52,8 @@ public class Question extends BaseResourceClass {
                     CORRECT_OPTIONS_FIELD,
                     SOLUTION_FIELD,
                     HINTS_FIELD,
-                    IS_COMPULSORY_FIELD
+                    IS_COMPULSORY_FIELD,
+                    TIME_FIELD
             }));
         }
     }
@@ -158,6 +160,14 @@ public class Question extends BaseResourceClass {
 
     public void setIsCompulsory(boolean isCompulsory) {
         put(Fields.IS_COMPULSORY_FIELD, isCompulsory);
+    }
+
+    public void setTime(long time) {
+        put(Fields.TIME_FIELD, time);
+    }
+
+    public long getTime() {
+        return getLong(Fields.TIME_FIELD);
     }
 
     /**
