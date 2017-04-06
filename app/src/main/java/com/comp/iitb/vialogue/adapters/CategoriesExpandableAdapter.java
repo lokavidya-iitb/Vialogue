@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +56,8 @@ public class CategoriesExpandableAdapter extends BaseExpandableListAdapter {
                 Intent viewVid = new Intent(context, VideoPlayer.class);
                 viewVid.putExtra("URL", ""+categoryList.get(groupPosition).getImageURL());
                 viewVid.putExtra("id", ""+categoryList.get(groupPosition).getId());
+                Log.d("-------id",""+categoryList.get(groupPosition).getId());
                 viewVid.putExtra("name",""+categoryList.get(groupPosition).getName());
-
 
                 context.startActivity(viewVid);
 

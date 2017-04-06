@@ -48,6 +48,8 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -503,10 +505,10 @@ public class SharedRuntimeContent {
 
 
 
-    public static void Download(String link, String whereToStore, String videoName, Context context){
+    public static void Download(String link, String whereToStore, String folderName, String videoName, Context context){
         boolean isDownloadComplete = false;
         String DownloadUrl = link;
-
+        whereToStore = whereToStore + "/" + folderName;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadUrl));
         request.setDescription("Downloading your video");
 
@@ -520,7 +522,6 @@ public class SharedRuntimeContent {
             destfile.mkdir();
         }
         request.setDestinationInExternalPublicDir(whereToStore, videoName);
-        // get download service and enqueue file
         DownloadManager manager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
 

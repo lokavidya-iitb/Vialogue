@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && mViewPager.getCurrentItem()!=1) {
             if(shouldExitOnBack) {
                 finish();
                 return true;
