@@ -299,6 +299,8 @@ public class SignIn extends AppCompatActivity implements
 
     public void onOtpVerified() {
         Toast.makeText(SignIn.this, R.string.otpVerified, Toast.LENGTH_SHORT).show();
+        SmsOtpListener.unbindListener();
+        mOtp = new ArrayList<Integer>();
         signInParseUser();
     }
 

@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
@@ -203,7 +204,15 @@ public class CreateVideosMark2 extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             SharedRuntimeContent.calculatePreviewFabVisibility();
-        } else {}
+        } else {
+            try {
+                View view = getActivity().getCurrentFocus();
+                if(view != null) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                }
+            } catch (Exception e) {}
+        }
     }
 
     /**

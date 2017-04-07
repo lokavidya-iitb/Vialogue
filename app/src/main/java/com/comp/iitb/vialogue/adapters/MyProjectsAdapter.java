@@ -204,6 +204,9 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        System.out.print("----------------------------------123456789012345678901234567890");
+        System.out.println(mProjectNamesList);
     }
 
     /*
