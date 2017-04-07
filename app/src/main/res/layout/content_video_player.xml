@@ -23,16 +23,18 @@
 
         <Button
             android:id="@+id/button"
-            android:layout_below="@+id/app_video_box"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_file_download_black_24px"
+            android:gravity="center_horizontal"
+            android:drawableRight="@drawable/ic_file_download_black_24px"
             android:scaleType="fitStart"
             android:text="@string/download"
             android:textAllCaps="false"
             android:paddingTop="@dimen/picker_padding"
             android:paddingBottom="@dimen/picker_padding"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/app_video_box"
+            android:layout_centerHorizontal="true" />
 
 
 
