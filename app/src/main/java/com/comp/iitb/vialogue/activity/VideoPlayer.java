@@ -207,7 +207,8 @@ public class VideoPlayer extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
-                new downloader().execute();
+                if(!(URL==null))
+                    new downloader().execute();
             }
 
 
@@ -288,7 +289,7 @@ public class VideoPlayer extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Composition saved", Toast.LENGTH_LONG).show();
 
                         } catch (Exception justInCase) {
-                            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Download again!", Toast.LENGTH_LONG).show();
                         }
                     }}});
             return resp;
