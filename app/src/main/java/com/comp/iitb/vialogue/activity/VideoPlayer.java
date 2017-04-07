@@ -83,30 +83,6 @@ public class VideoPlayer extends AppCompatActivity {
         setSupportActionBar(toolbar);
         id = getIntent().getStringExtra("id");
         Log.d("-------id",""+id);
-
-        ParseQuery<ParseObject> mainQuery = ParseQuery.getQuery("Project");
-        mainQuery.whereEqualTo("objectId",id);
-
-        mainQuery.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> comments, ParseException e) {
-                if (e == null) {
-                    try {
-                        project = mainQuery.getFirst();
-                        ParseFile video = (ParseFile)project.get("project_video");
-                        name = (String)project.get("name");
-                        URL= video.getUrl();
-                        Log.d("URL from video",""+URL);
-                        /*mPlayer.play(URL);*/
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-
-                }
-            }
-        });
-
-
-
         ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Videos");
         innerQuery.whereEqualTo("objectId",id);
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
@@ -137,8 +113,27 @@ public class VideoPlayer extends AppCompatActivity {
                         questionLists.add(questionAnswer);
                     }
                     Log.d("-------questionList",""+questionLists);
+                    ParseQuery<ParseObject> mainQuery = ParseQuery.getQuery("Project");
+                    mainQuery.whereEqualTo("objectId",id);
 
-                    mPlayer.setTitle(URL);
+                    mainQuery.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(List<ParseObject> comments, ParseException e) {
+                            if (e == null) {
+                                try {
+                                    project = mainQuery.getFirst();
+                                    name = (String)project.get("name");
+                                    URL= (String)project.get("video_path");
+                                    Log.d("URL from video",""+URL);
+                                    mPlayer.setTitle(name);
+                                    mPlayer.play(URL);
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+
+                            }
+                        }
+                    });
+
                     mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
                         private SimulationHandler mSimulationHandler;
                         @Override
