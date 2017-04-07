@@ -81,6 +81,10 @@ public class InceptionSavedProjects extends Fragment {
         //initCollapsingToolbar();
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
 
+        /*
+         * PUTTING IN DEVELOPMENT
+         */
+        /*
         projectList = new ArrayList<>();
         adapter = new SavedProjectsAdapter(getContext(), projectList);
 
@@ -91,6 +95,7 @@ public class InceptionSavedProjects extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        */
 
         // --------------
 //        prepareProjects();
