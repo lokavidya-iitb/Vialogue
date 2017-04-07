@@ -1,18 +1,18 @@
 <resources>
-    <string name="app_name">LVCreate</string>
+    <string name="app_name">लोकविद्या</string>
     <string name="action_settings">सेटीन्ग्स </string>
     <string name="sign_out">साइन आऊट</string>
-    <string name="create_project">प्रकल्प तयार करा</string>
+    <string name="create_project"> योजना तयार करा</string>
     <string name="fragment_view_videos">व्हिडिओ पहा</string>
     <string name="view_videos">व्हिडिओ</string>
-    <string name="user_account">प्रोफाइल</string>
+    <string name="user_account"> प्रोफाइल</string>
     <string name="camera">फोटो घ्या</string>
-    <string name="image">रतिमा चूस करा </string>
-    <string name="choose_video">विडिओ चूस करा </string>
+    <string name="image"> पपरतिम निवडा </string>
+    <string name="choose_video">विडिओ निवडा </string>
     <string name="play_video">विडिओ प्ले करा</string>
     <string name="add_audio">ऑडिओ ऍड करा</string>
     <string name="captured_image_name">लोकविद्या</string>
-    <string name="question">प्रसन्न लिहा </string>
+    <string name="question"> वाक्य लिहा </string>
     <string name="storage_error">स्टोरेज ऍक्सेस करणे शक्य नाही</string>
     <string name="permission_storage_rationale">आपल्या फोनवरील प्रकल्प आणि व्हिडिओ जतन करण्यासाठी आपल्या परवानग्यांची आवश्यकता आहे</string>
     <string name="button_allow">परवानगी दिली</string>
@@ -25,17 +25,17 @@
     <string name="cannot_play">रेकॉर्डिंग करत असताना प्ले करू शकत नाही  </string>
     <string-array name="tab_titles">
         <item>LVCreate</item>
+        <item>व्हिडिओ बघा</item>
         <item>व्हिडिओ तयार करा</item>
-        <item>व्हिडिओ</item>
         <item>माझे खाते</item>
     </string-array>
     <string name="hello_blank_fragment">हॅलो - रिक्त तुकडा</string>
 
     <string name="title_activity_audio_record">ऑडिओ ऍड करा </string>
     <string name="title_activity_crop_image">इमेज एडिट करा </string>
-    <string name="projects">प्रकल्प</string>
-    <string name="my_projects">माझे प्रकल्प</string>
-    <string name="saved_projects">जतन प्रकल्प</string>
+    <string name="projects">  योजना</string>
+    <string name="my_projects">माझे  योजना</string>
+    <string name="saved_projects">जतन  योजना</string>
     <string name="saved_videos">जतन व्हिडिओ</string>
     <!---->
 
@@ -90,14 +90,14 @@
     <string name="language">भाषा </string>
     <string name="tags">केवळ ५० टॅग प्रविष्ट करा </string>
     <string name="video_name">व्हिडिओचे नाव</string>
-    <string name="project_string">प्रकल्पाचे नाव</string>
+    <string name="project_string"> योजना नाव</string>
     <string name="loading">कृपया थांबा</string>
     <string name="title_activity_main2">मुख्य क्रियाकलाप</string>
     
-    <string name="title_activity_splash_it">SplashIt</string>
+    <string name="title_activity_splash_it"> परिचय </string>
     
     <string name="title_activity_video_player">विडिओ पहा </string>
-    <string name="project_title">प्रकल्पाला शीर्षक द्या</string>
+    <string name="project_title"> योजनेला शीर्षक द्या</string>
     <string name="undo">पूर्ववत</string>
     <string name="wrongBuddy">ऑपरेशन पूर्ण नाही</string>
     <string name="gimmeAudio">मायक्रोफोन परवानगी दिली  तरच फक्त ऑडिओ रेकॉर्ड वैशिष्ट्य वापरले जाऊ शकते</string>
@@ -113,7 +113,7 @@
     <string name="network_signIn">साइन इन करताना त्रुटी आली. कृपया आपले नेटवर्क कनेक्शन तपासा</string>
     <string name="mobileSignedSuccess">यशस्वीरित्या मोबाइल नंबर साइन इन :</string>
     <string name="emailSignedSuccess">यशस्वीरित्या ईमेल आयडी साइन इन :</string>
-    <string name="projectSaved">प्रकल्प यशस्वीरित्या अपलोड</string>
+    <string name="projectSaved"> योजना यशस्वीरित्या अपलोड</string>
     <string name="couldntUpload">प्रकल्प अपलोड करणे शक्य नाही. आपले नेटवर्क कनेक्शन तपासा</string>
     <string name="videoCompleted">व्हिडिओ प्ले पूर्ण</string>
     <string name="videoError">व्हिडिओ प्ले त्रुटी</string>

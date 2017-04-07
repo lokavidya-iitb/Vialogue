@@ -1,10 +1,12 @@
 package com.comp.iitb.vialogue.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +24,7 @@ import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +102,7 @@ public class InceptionSavedVideos extends Fragment {
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
 
         projectList = new ArrayList<>();
-        adapter = new ProjectsVideoAdapter(getContext(), projectList);
+        adapter = new ProjectsVideoAdapter(getActivity(), getContext(), projectList);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -191,4 +194,6 @@ public class InceptionSavedVideos extends Fragment {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
+
+
 }

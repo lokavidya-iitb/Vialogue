@@ -4,13 +4,16 @@ package com.comp.iitb.vialogue.adapters;
  * Created by jeffrey on 17/1/17.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,14 +28,16 @@ import com.comp.iitb.vialogue.activity.OfflineVideoPlayer;
 import com.comp.iitb.vialogue.activity.VideoPlayer;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ProjectsShowcase;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdapter.MyViewHolder> {
-
+    private Activity mActivity;
     private Context mContext;
+    private Storage mStorage;
     private List<ProjectsShowcase> albumList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -47,9 +52,10 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
     }
 
 
-    public ProjectsVideoAdapter(Context mContext, List<ProjectsShowcase> albumList) {
+    public ProjectsVideoAdapter(Activity activity, Context mContext, List<ProjectsShowcase> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
+        mActivity = activity;
     }
 
     @Override
@@ -82,7 +88,70 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
 
             }
         });
+
+
+        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                (mActivity).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
+                return false;
+            }
+        });
+
         }
+
+    class ActionBarCallBack implements ActionMode.Callback {
+        private String projectName;
+        private int position;
+
+
+        public ActionBarCallBack(String projectName, int position){
+            this.projectName = projectName;
+            this.position = position;
+
+        }
+        private void shareImage(String imagePath) {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("video/*");
+            File videoFileToShare = new File(Environment.getExternalStorageDirectory()+imagePath);
+            Uri uri = Uri.fromFile(videoFileToShare);
+            share.putExtra(Intent.EXTRA_STREAM, uri);
+            mContext.startActivity(Intent.createChooser(share, "Share Video!"));
+        }
+
+
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // delete project
+            shareImage(Master.getSavedVideosPath()+"/"+projectName+"/"+projectName+".mp4");
+            mode.finish();
+             return false;
+
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            mode.getMenuInflater().inflate(R.menu.share_video, menu);
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+            mode.setTitle("Confirm delete?");
+            return false;
+        }
+
+    }
 
 
 

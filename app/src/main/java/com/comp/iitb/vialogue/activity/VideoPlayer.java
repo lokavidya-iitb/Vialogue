@@ -68,6 +68,7 @@ public class VideoPlayer extends AppCompatActivity {
     private boolean isFirstTime;
     private List<QuestionAnswer> questionLists= new ArrayList();
     private List<ParseObject> recieveEm = new ArrayList<>();
+    private ParseObject project;
     private Button button;
     private ProgressDialog progressDialog;
 
@@ -80,11 +81,31 @@ public class VideoPlayer extends AppCompatActivity {
         setContentView(R.layout.activity_video_player);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        URL=getIntent().getStringExtra("URL");
         id = getIntent().getStringExtra("id");
-        name = getIntent().getStringExtra("name");
-        Log.d("-------URL",""+URL);
         Log.d("-------id",""+id);
+
+        ParseQuery<ParseObject> mainQuery = ParseQuery.getQuery("Project");
+        mainQuery.whereEqualTo("objectId",id);
+
+        mainQuery.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> comments, ParseException e) {
+                if (e == null) {
+                    try {
+                        project = mainQuery.getFirst();
+                        ParseFile video = (ParseFile)project.get("project_video");
+                        name = (String)project.get("name");
+                        URL= video.getUrl();
+                        Log.d("URL from video",""+URL);
+                        /*mPlayer.play(URL);*/
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+
 
         ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Videos");
         innerQuery.whereEqualTo("objectId",id);
@@ -116,7 +137,7 @@ public class VideoPlayer extends AppCompatActivity {
                         questionLists.add(questionAnswer);
                     }
                     Log.d("-------questionList",""+questionLists);
-                    mPlayer.play(new PlayerModel(URL, null));
+
                     mPlayer.setTitle(URL);
                     mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
                         private SimulationHandler mSimulationHandler;
