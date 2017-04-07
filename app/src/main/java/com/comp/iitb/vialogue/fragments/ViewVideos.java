@@ -181,14 +181,12 @@ public class ViewVideos extends Fragment {
         protected String doInBackground(String... params) {
             if(isNetworkConnected()) {
                 try {
-                    // Locate the class table named "TestLimit" in Parse.com
-                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("CategoryType");
+                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Category");
                     query.orderByAscending("createdAt");
-                    // Add 20 results to the default limit
                     query.setLimit(limit += 5);
                     receiveEM = query.find();
                     for (ParseObject num : receiveEM) {
-                        String id=((String) num.get("ids"));
+                        String id= num.getObjectId();
                         String name=((String) num.get("name"));
                         String desc=((String) num.get("desc"));
                         String imageURL=((String) num.get("imageURL"));
@@ -228,64 +226,6 @@ public class ViewVideos extends Fragment {
         protected void onProgressUpdate(Void... values) {}
     }
 
-
-
-
-
-    /*private class GetCategories extends AsyncTask<String, Void, String> {
-        ProgressDialog pd;
-        @Override
-        protected String doInBackground(String... params) {
-
-            vidArray = postmanCommunication.okhttpgetVideoJsonArray("http://ruralict.cse.iitb.ac.in/lokavidya/api/tutorials/search/findByCategory?category=1","");
-            Log.d("-------recieved",vidArray.toString());
-           for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
-           {
-               Category tempStub = new Category();
-
-               try {
-
-                   tempStub.setName(vidArray.getJSONObject(iterateBuddy).get("name").toString());
-                   tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
-                   tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
-                   *//*
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*//*
-                   categoryList.add(tempStub);
-               } catch (JSONException e) {
-                   e.printStackTrace();
-               }
-           }
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-        pd.dismiss();
-           *//* createGroupList();
-
-            createCollection();*//*
-
-
-            final CategoriesExpandableAdapter expListAdapter = new CategoriesExpandableAdapter(getActivity(), categoryList);
-
-
-            expListView.setAdapter(expListAdapter);
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            pd=new ProgressDialog(getContext());
-            pd.setMessage("Loading bru!");
-            pd.show();
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-    }*/
 
 
     @Override

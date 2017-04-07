@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ViewCategoryAdapter extends RecyclerView.Adapter<ViewCategoryAdapter.MyViewHolder> {
 
-    private List<CategoryType> moviesList;
+    private List<CategoryType> categoryList;
     private Activity context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -39,8 +39,8 @@ public class ViewCategoryAdapter extends RecyclerView.Adapter<ViewCategoryAdapte
     }
 
 
-    public ViewCategoryAdapter(List<CategoryType> moviesList, Activity context) {
-        this.moviesList = moviesList;
+    public ViewCategoryAdapter(List<CategoryType> categoryList, Activity context) {
+        this.categoryList = categoryList;
         this.context=context;
     }
 
@@ -55,7 +55,7 @@ public class ViewCategoryAdapter extends RecyclerView.Adapter<ViewCategoryAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final CategoryType category = moviesList.get(position);
+        final CategoryType category = categoryList.get(position);
         holder.name.setText(category.getName());
         holder.desc.setText(category.getDesc());
         Glide.with(context).load(category.getImageURL()).placeholder(R.drawable.ic_computer_black_24dp).into(holder.image);
@@ -84,6 +84,6 @@ public class ViewCategoryAdapter extends RecyclerView.Adapter<ViewCategoryAdapte
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return categoryList.size();
     }
 }
