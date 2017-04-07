@@ -22,6 +22,7 @@ import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.models.Category;
 import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -53,7 +54,7 @@ public class ViewVideosCategory extends Fragment {
     private View mView;
     private JSONArray vidArray;
     private JSONArray catArray;
-    private static String catOrVids;
+    private static String objectId;
     private OnFragmentInteractionListener mListener;
     List<Category> categoryList = new ArrayList<Category>();
     List<String> groupList = new ArrayList<String>();
@@ -77,8 +78,8 @@ public class ViewVideosCategory extends Fragment {
      * @return A new instance of fragment ViewVideos.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewVideosCategory newInstance(String catOrVid) {
-        catOrVids=catOrVid;
+    public static ViewVideosCategory newInstance(String objectId) {
+        ViewVideosCategory.objectId =objectId;
         ViewVideosCategory fragment = new ViewVideosCategory();
         Bundle args = new Bundle();/*
         args.putString(ARG_PARAM1, param1);
@@ -106,18 +107,10 @@ public class ViewVideosCategory extends Fragment {
         mView= inflater.inflate(R.layout.fragment_view_videos, container, false);
         expListView = (ExpandableListView) mView.findViewById(R.id.video_list);
         recyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
-        if(catOrVids.equals(""))
 
-        {
-
-            recyclerView.setVisibility(View.VISIBLE);
-            new GetCategoryType().execute("Ok");
-
-        }
-        else {
             expListView.setVisibility(View.VISIBLE);
             new GetCategories().execute("OK");
-        }
+
 
         //setGroupIndicatorToRight();
 
@@ -186,11 +179,9 @@ public class ViewVideosCategory extends Fragment {
         protected String doInBackground(String... params) {
 
             try {
-                // Locate the class table named "TestLimit" in Parse.com
                 ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
                         "Category");
                 query.orderByAscending("createdAt");
-                // Add 20 results to the default limit
                 query.setLimit(limit += 5);
                 receiveEM = query.find();
                 for (ParseObject num : receiveEM) {
@@ -245,54 +236,31 @@ public class ViewVideosCategory extends Fragment {
         ProgressDialog videoPD;
         @Override
         protected String doInBackground(String... params) {
-
-
             try{
-            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(
-                    "Videos");
-            query.orderByAscending("createdAt");
-            receiveEM = query.find();
+                ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Category");
+                innerQuery.whereEqualTo("objectId",objectId);
+                final ParseQuery<ParseObject> query = ParseQuery.getQuery("Project");
+                query.whereMatchesQuery("category",innerQuery);
 
-            for (ParseObject num : receiveEM) {
-                Category map = new Category();
-                map.setId((String) num.getObjectId());
-                Log.e("----id",""+(String) num.get("objectId"));
-                map.setName((String) num.get("Name"));
-                map.setDesc((String) num.get("desc"));
-                map.setImageURL(((String) num.get("videoURL")));
+                query.orderByAscending("createdAt");
+                receiveEM = query.find();
 
-
-                categoryList.add(map);
-            }
+                for (ParseObject num : receiveEM) {
+                    Category map = new Category();
+                    map.setId((String) num.getObjectId());
+                    Log.e("----id",""+(String) num.getObjectId());
+                    map.setName((String) num.get("name"));
+                    map.setDesc((String) num.get("description"));
+                    /*ParseFile video = num.getParseFile("project_video");
+                    map.setImageURL(video.getUrl());*/
+                    categoryList.add(map);
+                }
         } catch (ParseException e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
 
 
-
-
-
-
-
-
-            /*for(int iterateBuddy=0;iterateBuddy<vidArray.length();iterateBuddy++)
-            {
-                Category tempStub = new Category();
-
-                try {
-
-                    tempStub.setName(vidArray.getJSONObject(iterateBuddy).get("name").toString());
-                    tempStub.setId(vidArray.getJSONObject(iterateBuddy).getInt("id"));
-                    tempStub.setDesc(vidArray.getJSONObject(iterateBuddy).get("description").toString());
-                    tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).getJSONObject( "externalVideo").getString("httpurl"));
-                   *//*
-                   tempStub.setImageURL(vidArray.getJSONObject(iterateBuddy).get("image").toString());*//*
-                    categoryList.add(tempStub);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }*/
             videoPD.dismiss();
             return "Executed";
         }

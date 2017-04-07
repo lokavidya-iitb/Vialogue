@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.adobe.creativesdk.aviary.AdobeImageIntent;
 import com.bumptech.glide.Glide;
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.coordinators.MediaTimeUpdateListener;
@@ -636,6 +637,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
             loadStateFromSlide(SharedRuntimeContent.getSlideAt(mSlidePosition), mSlidePosition, false);
             // Update UI
+
             mImagePath = mStorage.getRealPathFromURI(editedImageUri);
             setUpUI();
             // Update thumbnails
@@ -643,6 +645,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             mImageView.setImageURI(null);
             mImageView.postInvalidate();
             mImageView.setImageBitmap(mStorage.getBitmap(mStorage.getRealPathFromURI(editedImageUri)));
+            Intent intent = new Intent(AudioRecordActivity.this, MainActivity.class);
         }
     }
 

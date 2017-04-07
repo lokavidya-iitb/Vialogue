@@ -395,8 +395,8 @@ public class VPlayer implements SimulationHandler {
         seekBar.setMax(1000);
         seekBar.setOnSeekBarChangeListener(mSeekListener);
         $.id(R.id.app_video_play).clicked(onClickListener);
-        $.id(R.id.app_video_fullscreen).clicked(onClickListener);/*
-        $.id(R.id.app_video_finish).clicked(onClickListener);*/
+        $.id(R.id.app_video_fullscreen).clicked(onClickListener);
+        /*$.id(R.id.app_video_finish).clicked(onClickListener);*/
         $.id(R.id.app_video_replay_icon).clicked(onClickListener);
 
 
