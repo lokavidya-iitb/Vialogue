@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -27,6 +28,8 @@ import com.comp.iitb.vialogue.models.ProjectsShowcase;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.util.async.Async;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -101,17 +104,26 @@ public class InceptionSavedVideos extends Fragment {
         //initCollapsingToolbar();
         //Anytime, if you wanna incorporate a cool dev feature, uncomment it and make the toolbar and collapsing toolbar visible
 
-        projectList = new ArrayList<>();
-        adapter = new ProjectsVideoAdapter(getActivity(), getContext(), projectList);
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            public Void doInBackground(Void... params) {
+                projectList = new ArrayList<>();
+                adapter = new ProjectsVideoAdapter(getActivity(), getContext(), projectList);
+                return null;
+            }
 
-        final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
-        layoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
-        prepareProjects();
+            @Override
+            public void onPostExecute(Void result) {
+                final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
+                layoutManager.setOrientation(GridLayoutManager.VERTICAL);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(adapter);
+                prepareProjects();
+            }
+        }).execute();
     }
 
     @Override
@@ -123,13 +135,24 @@ public class InceptionSavedVideos extends Fragment {
     }
 
     private void prepareProjects() {
-        List<String> myStringArray = new ArrayList<String>();
-        myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedVideosPath());
-        for(int i=0;i<myStringArray.size();i++) {
-            ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
-            projectList.add(a);
-        }
-        adapter.notifyDataSetChanged();
+        (new AsyncTask<Void, Void, Void>() {
+           @Override
+            public Void doInBackground(Void... params) {
+               List<String> myStringArray = new ArrayList<String>();
+               myStringArray= Storage.getMeAllTheFilesHere(Master.getSavedVideosPath());
+               for(int i=0;i<myStringArray.size();i++) {
+                   ProjectsShowcase a = new ProjectsShowcase(myStringArray.get(i));
+                   projectList.add(a);
+               }
+               return null;
+           }
+
+            @Override
+            public void onPostExecute(Void result) {
+                adapter.notifyDataSetChanged();
+            }
+        }).execute();
+
     }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {

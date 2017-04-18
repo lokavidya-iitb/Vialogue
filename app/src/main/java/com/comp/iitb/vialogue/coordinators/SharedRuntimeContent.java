@@ -496,7 +496,7 @@ public class SharedRuntimeContent {
             timeMilliSec = Long.parseLong(mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
             inputStream.close();
             mRetriever.release();
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

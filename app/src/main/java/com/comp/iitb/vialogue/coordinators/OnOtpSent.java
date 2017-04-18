@@ -9,5 +9,6 @@ import com.parse.ParseException;
 public interface OnOtpSent {
 
     public void onDone(Object object, ParseException e);
+    public void onCouldNotSend();
 
 }

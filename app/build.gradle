@@ -104,4 +104,5 @@ dependencies {
     compile('com.sangcomz:FishBun:0.6.4@aar') {
         transitive = true
     }
+    compile 'com.android.support:support-vector-drawable:25.1.1'
 }

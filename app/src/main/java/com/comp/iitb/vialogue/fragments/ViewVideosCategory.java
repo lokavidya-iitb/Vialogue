@@ -169,10 +169,6 @@ public class ViewVideosCategory extends Fragment {
             childList.add(model);
     }
 
-
-
-
-
     private class GetCategoryType extends AsyncTask<String, Void, String> {
         ProgressDialog pd;
         @Override

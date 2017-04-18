@@ -84,11 +84,27 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private Menu mMenu;
     private FloatingActionButton mPreviewFab;
     private ViewPager mViewPager;
+    private Integer mStartFragmentPosition;
+
+    public static final String startFragmentPositionKey = "start_fragment_position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bundle data = getIntent().getExtras();
+        if(data != null) {
+            Integer startFragmentPosition = data.getInt(startFragmentPositionKey);
+            if(startFragmentPosition != null && startFragmentPosition < 4) {
+                mStartFragmentPosition = startFragmentPosition;
+            }
+        } if(mStartFragmentPosition == null) {
+            mStartFragmentPosition = 0;
+        }
+
+        System.out.println("mStartFragmentPosition : " + mStartFragmentPosition);
+
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -124,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.previewFab = mPreviewFab;
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
         refreshSignInOutOptions();
+        mViewPager.setCurrentItem(mStartFragmentPosition);
     }
 
     // Back Button logic

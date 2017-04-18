@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.camera.CameraPreview;
 import com.comp.iitb.vialogue.listeners.OnSwipeListener;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 
@@ -166,6 +168,32 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
+                            System.out.println("--------------------------");
+
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+                            Bitmap imageBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(), options);
+                            int imageWidth = options.outWidth;
+                            int imageHeight = options.outHeight;
+                            System.out.println("imageWidth : " + imageWidth + ", imageHeight : " + imageHeight);
+
+                            // get image file size (in KBs)
+                            int fileSizeInKBs = Integer.parseInt(String.valueOf(pictureFile.length()/1024));
+                            System.out.println("fileSize : " + fileSizeInKBs);
+
+                            pictureFile = new File(Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile)).getPath());
+
+                            options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+                            imageBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(), options);
+                            imageWidth = options.outWidth;
+                            imageHeight = options.outHeight;
+                            System.out.println("imageWidth : " + imageWidth + ", imageHeight : " + imageHeight);
+
+                            // get image file size (in KBs)
+                            fileSizeInKBs = Integer.parseInt(String.valueOf(pictureFile.length()/1024));
+                            System.out.println("fileSize : " + fileSizeInKBs);
+
                             return pictureFile.getAbsolutePath();
                         }
 
@@ -218,6 +246,8 @@ public class CameraActivity extends AppCompatActivity {
                                     }
                                 }
                             }
+
+                            Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile));
 
                             return pictureFile.getAbsolutePath();
                         }
