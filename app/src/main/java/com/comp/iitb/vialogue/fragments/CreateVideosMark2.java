@@ -1,8 +1,10 @@
 package com.comp.iitb.vialogue.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -311,40 +313,58 @@ public class CreateVideosMark2 extends Fragment {
             }
         } else if (requestCode == Constants.REQUEST_CODE) {
             ArrayList<com.darsh.multipleimageselect.models.Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
-
-            Log.d("-----sizeimage",""+images.get(0));
             ArrayList<String> paths = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
                 paths.add(images.get(i).path.toString());
             }
-            Log.d("-----sizeimage",""+paths.get(0));
 
-            for (String path : paths) {
-                Slide slide = new Slide();
-                final Image image = new Image(getContext());
-                Log.d("-----sizeimage",""+paths.get(0));
-                mStorage.addFileToDirectory(
-                        new File(path),
-                        image.getResourceFile(),
-                        new FileCopyUpdateListener(getContext()),
-                        new OnFileCopyCompleted() {
-                            @Override
-                            public void done(File file, boolean isSuccessful) {
+            (new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog mProgressDialog;
+                private ArrayList<Slide> mSlides;
 
-                                Slide slide = new Slide();
-                                try {
-                                    slide.addResource(image, Slide.ResourceType.IMAGE);
-                                    if (!SharedRuntimeContent.addSlide(slide)) {
-                                        throw new Exception();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
-                                }
+                @Override
+                public void onPreExecute() {
+                    mProgressDialog = ProgressDialog.show(getContext(), "Importing Images", "Please Wait...");
+                    mSlides = new ArrayList<Slide>();
+                }
+
+                @Override
+                public Void doInBackground(Void... params) {
+                    for (String path : paths) {
+                        Uri resizedImage = Image.getResizedImage(getContext(), Uri.parse(path));
+                        if(resizedImage == null) {
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            continue;
+                        }
+                        Slide slide = new Slide();
+                        Image image = new Image(resizedImage);
+                        try {
+                            slide.addResource(image, Slide.ResourceType.IMAGE);
+                            mSlides.add(slide);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onPostExecute(Void result) {
+                    for(Slide slide: mSlides) {
+                        try {
+                            if (!SharedRuntimeContent.addSlide(slide)) {
+                                throw new Exception();
                             }
-                        });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    mProgressDialog.dismiss();
+                }
+            }).execute();
 
-            }
         } else if (requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
             ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
             System.out.print("-------------reached" + paths.toString());

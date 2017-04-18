@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.contextClickable;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage;
@@ -168,31 +169,10 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
-                            System.out.println("--------------------------");
-
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inJustDecodeBounds = true;
-                            Bitmap imageBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(), options);
-                            int imageWidth = options.outWidth;
-                            int imageHeight = options.outHeight;
-                            System.out.println("imageWidth : " + imageWidth + ", imageHeight : " + imageHeight);
-
-                            // get image file size (in KBs)
-                            int fileSizeInKBs = Integer.parseInt(String.valueOf(pictureFile.length()/1024));
-                            System.out.println("fileSize : " + fileSizeInKBs);
-
-                            pictureFile = new File(Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile)).getPath());
-
-                            options = new BitmapFactory.Options();
-                            options.inJustDecodeBounds = true;
-                            imageBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(), options);
-                            imageWidth = options.outWidth;
-                            imageHeight = options.outHeight;
-                            System.out.println("imageWidth : " + imageWidth + ", imageHeight : " + imageHeight);
-
-                            // get image file size (in KBs)
-                            fileSizeInKBs = Integer.parseInt(String.valueOf(pictureFile.length()/1024));
-                            System.out.println("fileSize : " + fileSizeInKBs);
+                            // resize image
+                            if(!Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile))) {
+                                Toast.makeText(CameraActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
 
                             return pictureFile.getAbsolutePath();
                         }
@@ -247,8 +227,10 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
-                            Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile));
-
+                            // resize image
+                            if(!Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile))) {
+                                Toast.makeText(CameraActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
                             return pictureFile.getAbsolutePath();
                         }
 

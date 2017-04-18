@@ -612,7 +612,27 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             // GET IMAGE FROM GALLERY
             if (data != null) {
                 currentImagePath = mStorage.getRealPathFromURI(data.getData());
-                startCropMainActivity(currentImagePath);
+                (new AsyncTask<Void, Void, Void>() {
+                    private ProgressDialog mProgressDialog;
+
+                    @Override
+                    public void onPreExecute() {
+                        mProgressDialog = ProgressDialog.show(AudioRecordActivity.this, "Loading Image", "Please Wait...");
+                    }
+
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        Uri newImage = Image.getResizedImage(getBaseContext(), Uri.fromFile(new File(currentImagePath)));
+                        currentImagePath = newImage.getPath();
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        startCropMainActivity(currentImagePath);
+                        mProgressDialog.dismiss();
+                    }
+                }).execute();
             }
         } else if(requestCode == SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT) {
             // Update State (but don't replace the current audio)
@@ -629,9 +649,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             System.out.println(currentImagePath);
             startCropMainActivity(currentImagePath);
 
-        }
-        else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR)
-        {
+        } else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR) {
             mImageView.setImageURI(null);
             System.out.println("----- the amazing crop--");
             Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
