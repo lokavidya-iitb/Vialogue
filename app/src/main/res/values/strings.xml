@@ -124,5 +124,8 @@
     <string name="timer_null_text">"--:--"</string>
     <string name="download">Download</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="projectDesc">One can create projects on clicking this area.</string>
+    <string name="videoDesc">One can view videos on clicking this area.</string>
+    <string name="pause">Pause</string>
 
 </resources>

@@ -3,11 +3,13 @@ package com.comp.iitb.vialogue.adapters;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 
@@ -70,16 +72,7 @@ public abstract class QuestionAnswerDialog extends Dialog {
 
         mDone = (Button) findViewById(R.id.done_button);
 
-        mDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isAnswerCorrect()) {
-                    onAnswerCorrect();
-                } else {
-                    onAnswerIncorrect();
-                }
-            }
-        });
+
         
         mSkip = (Button)findViewById(R.id.skip_button);
         if(isSkipEnabled()){
@@ -91,6 +84,18 @@ public abstract class QuestionAnswerDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 onSkipPressed();
+            }
+        });
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAnswerCorrect()) {
+                    Toast.makeText(getContext(),"Answer is correct", Toast.LENGTH_LONG).show();
+                    dismiss();
+                } else {
+                    Toast.makeText(getContext(),"Err!! Wrong", Toast.LENGTH_LONG).show();
+                    dismiss();
+                }
             }
         });
     }
@@ -137,7 +142,7 @@ public abstract class QuestionAnswerDialog extends Dialog {
 
     protected abstract View onCreateSolutionView();
 
-    protected abstract boolean isAnswerCorrect();
+    public abstract boolean isAnswerCorrect();
 
     protected abstract void onAnswerIncorrect();
 

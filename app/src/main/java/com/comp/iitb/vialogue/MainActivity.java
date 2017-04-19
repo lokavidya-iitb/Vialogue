@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -70,6 +71,7 @@ import com.parse.ParseUser;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -119,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 }
             }
         });
-
         setUpTabs();
         SharedRuntimeContent.previewFab = mPreviewFab;
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
