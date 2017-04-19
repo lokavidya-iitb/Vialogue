@@ -219,7 +219,9 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
                 @Override
                 public Integer doInBackground(Void... params) {
                     ProjectNameUtils projectNameUtils = new ProjectNameUtils(mProjectNamesList);
-                    project.setName(projectNameUtils.getNewProjectName(project));
+                    String newProjectName = projectNameUtils.getNewProjectName(project);
+                    System.out.println("setting new Project name : " + newProjectName);
+                    project.setName(newProjectName);
                     int newProjectIndex = projectNameUtils.getNewProjectIndex(project);
                     System.out.println(newProjectIndex);
                     mProjectViewsList.add(newProjectIndex, new ProjectView(project, newProjectIndex));

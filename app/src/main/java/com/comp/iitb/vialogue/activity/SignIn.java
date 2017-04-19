@@ -68,7 +68,7 @@ public class SignIn extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 007;
     private static final int PASSWORD_NUM_CHARACTERS = 36;
     private static final String PASSWORD = "Gwwla`U1uFJ;x_Khp%Wy>^cK61+[^kqXkX>HO=He";
-    private static final int DELAY_BETWEEN_OTP_REQUESTS_MILLIS = 10000; // 1 second
+    private static final int DELAY_BETWEEN_OTP_REQUESTS_MILLIS = 60000; // 1 minute
 
     // variables
     private Integer mOtp;
@@ -161,7 +161,6 @@ public class SignIn extends AppCompatActivity implements
                     }
                 }
 
-                Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
                 mPhoneNumber = "+91" + mPhoneNumberEditText.getText().toString();
                 verifyOtp(mPhoneNumber);
                 mOtpEditText.setVisibility(View.VISIBLE);
@@ -269,7 +268,6 @@ public class SignIn extends AppCompatActivity implements
 
     private boolean mCanSendOtp = true;
     public void verifyOtp(String phoneNumber) {
-        System.out.println("verifyOtp : called");
         if(mCanSendOtp) {
 
             mCanSendOtp = false;
@@ -280,11 +278,12 @@ public class SignIn extends AppCompatActivity implements
                     // otp generated successfully
                     mOtp = (Integer) object;
 
+                    Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
+
                     // add sms listener
                     SmsOtpListener.bindListener(new OnOtpReceived() {
                         @Override
                         public void onDone(Integer otp) {
-                            System.out.println("smsOtpListener.bindListener : onDone : called");
                             if(otp.equals(mOtp)) {
                                 onOtpVerified();
                             }
@@ -295,17 +294,13 @@ public class SignIn extends AppCompatActivity implements
                     (new AsyncTask<Void, Void, Void>() {
                         @Override
                         public void onPreExecute() {
-                            System.out.println("------------------onPreExecute");
                             mCanSendOtp = false;
                         }
 
                         @Override
                         public Void doInBackground(Void... params) {
-                            System.out.println("doInBackground");
                             try {
-                                System.out.println("starting sleep for : " + DELAY_BETWEEN_OTP_REQUESTS_MILLIS + " seconds");
                                 Thread.sleep(DELAY_BETWEEN_OTP_REQUESTS_MILLIS);
-                                System.out.println("stopping sleep");
                             } catch (InterruptedException e1) {
                                 e1.printStackTrace();
                             }
@@ -326,6 +321,7 @@ public class SignIn extends AppCompatActivity implements
                     // otp could not be generated
                     mCanSendOtp = true;
                     Toast.makeText(SignIn.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
+                    SmsOtpListener.unbindListener();
                     finish();
                 }
             }).execute(phoneNumber);
@@ -333,7 +329,6 @@ public class SignIn extends AppCompatActivity implements
         } else {
             // do nothing, but fool the user
             // make him think that he is at least doing something
-            // TODO
             Toast.makeText(SignIn.this, "OTP Has already been sent to your mobile number", Toast.LENGTH_LONG).show();
         }
     }

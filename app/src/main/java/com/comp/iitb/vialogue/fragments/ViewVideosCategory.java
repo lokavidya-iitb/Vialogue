@@ -104,7 +104,7 @@ public class ViewVideosCategory extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        mView= inflater.inflate(R.layout.fragment_view_videos, container, false);
+        mView = inflater.inflate(R.layout.fragment_view_videos, container, false);
         expListView = (ExpandableListView) mView.findViewById(R.id.video_list);
         recyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
 
@@ -255,21 +255,13 @@ public class ViewVideosCategory extends Fragment {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
-
-
             videoPD.dismiss();
             return "Executed";
         }
 
         @Override
         protected void onPostExecute(String result) {
-
-
-
-
             final CategoriesExpandableAdapter expListAdapter = new CategoriesExpandableAdapter(getActivity(), categoryList);
-
-
             expListView.setAdapter(expListAdapter);
 
         }

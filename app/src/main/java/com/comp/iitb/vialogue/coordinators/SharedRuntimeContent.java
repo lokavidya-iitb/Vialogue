@@ -415,9 +415,11 @@ public class SharedRuntimeContent {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
-            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
+            // Ironstein - did this because Riha did not want filters in
+            // project names
+//            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
+//                return "";
+//            }
             return null;
         }
     };

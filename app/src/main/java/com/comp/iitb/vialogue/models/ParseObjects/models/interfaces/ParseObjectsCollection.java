@@ -102,9 +102,6 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
 
     public void move(int initialPosition, int finalPosition) {
         ArrayList<T> list = getList_();
-        if(initialPosition >= list.size() || finalPosition >= list.size()) {
-            throw new IndexOutOfBoundsException();
-        }
 
         if(initialPosition == finalPosition) {
             return;

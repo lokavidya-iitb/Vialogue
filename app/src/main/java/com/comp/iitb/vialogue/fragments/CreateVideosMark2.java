@@ -3,6 +3,8 @@ package com.comp.iitb.vialogue.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +59,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
+import static android.widget.Toast.makeText;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
@@ -240,7 +243,7 @@ public class CreateVideosMark2 extends Fragment {
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -260,7 +263,7 @@ public class CreateVideosMark2 extends Fragment {
                 try {
                     new File(mStorage.getRealPathFromURI(data.getData()));
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -282,10 +285,18 @@ public class CreateVideosMark2 extends Fragment {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                }
+
+                                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                                m.setDataSource(v.getAbsolutePath());
+                                String orientation = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+                                if(Integer.parseInt(orientation) != 0) {
+                                    Toast.makeText(getContext(), "The imported video has been taken portrait mode. As such, it will be displayed as rotated by 90 degrees in the stitched video.", Toast.LENGTH_LONG).show();
                                 }
                             }
-                        });
+                        }
+                );
             } else {
                 // TODO maybe show a toast
             }
@@ -309,7 +320,7 @@ public class CreateVideosMark2 extends Fragment {
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
+                makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
         } else if (requestCode == Constants.REQUEST_CODE) {
             ArrayList<com.darsh.multipleimageselect.models.Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
@@ -333,7 +344,7 @@ public class CreateVideosMark2 extends Fragment {
                     for (String path : paths) {
                         Uri resizedImage = Image.getResizedImage(getContext(), Uri.parse(path));
                         if(resizedImage == null) {
-                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             continue;
                         }
                         Slide slide = new Slide();
@@ -343,7 +354,7 @@ public class CreateVideosMark2 extends Fragment {
                             mSlides.add(slide);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                         }
                     }
                     return null;
@@ -358,7 +369,7 @@ public class CreateVideosMark2 extends Fragment {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                         }
                     }
                     mProgressDialog.dismiss();
@@ -379,7 +390,7 @@ public class CreateVideosMark2 extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -394,7 +405,7 @@ public class CreateVideosMark2 extends Fragment {
                 try {
                     new File(mStorage.getRealPathFromURI(data.getData()));
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -416,7 +427,7 @@ public class CreateVideosMark2 extends Fragment {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

@@ -651,12 +651,34 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
 
         } else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR) {
             mImageView.setImageURI(null);
-            System.out.println("----- the amazing crop--");
             Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
+
+            // move this image file to a new location
+            File newImageFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, AudioRecordActivity.this);
+            try {
+                newImageFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(AudioRecordActivity.this, "Could not save the image", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(AudioRecordActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.startFragmentPositionKey, FragmentPageAdapter.CREATE_PROJECT);
+                startActivity(intent);
+            }
+            Uri newImageUri = Uri.fromFile(newImageFile);
+            Image.copyFile(new File(mStorage.getRealPathFromURI(editedImageUri)), new File(newImageUri.getPath()));
+            new File(mStorage.getRealPathFromURI(editedImageUri)).delete();
+
+            // It makes the MediaScanner service run again,
+            // which should remove the deleted image from the device's cache.
+            getContentResolver().delete(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Images.Media.DATA + "=?",
+                    new String[]{ new File(mStorage.getRealPathFromURI(editedImageUri)).getAbsolutePath() }
+            );
 
             // save image to slide
             try {
-                Image image = new Image(Uri.fromFile(new File(mStorage.getRealPathFromURI(editedImageUri))));
+                Image image = new Image(newImageUri);
                 mSlide.addResource(image, Slide.ResourceType.IMAGE);
                 if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
                     ((Image) mSlide.getResource()).addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
