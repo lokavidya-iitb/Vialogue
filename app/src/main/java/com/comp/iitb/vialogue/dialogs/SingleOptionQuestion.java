@@ -2,12 +2,14 @@ package com.comp.iitb.vialogue.dialogs;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
@@ -83,8 +85,11 @@ public class SingleOptionQuestion extends QuestionAnswerDialog {
     }
 
     @Override
-    protected boolean isAnswerCorrect() {
-        return false;
+    public boolean isAnswerCorrect(){
+        if(mQuestionAnswer.getAnswers()[0].toString().equals(mSelectedAnswer.getText().toString()))
+            return true;
+        else
+            return false;
     }
 
     @Override

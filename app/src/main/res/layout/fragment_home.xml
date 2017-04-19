@@ -85,7 +85,7 @@
                             android:layout_marginBottom="8dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+                            android:text="@string/projectDesc"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="@dimen/small_font_size" />
 
@@ -146,7 +146,7 @@
                             android:layout_marginBottom="8dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+                            android:text="@string/videoDesc"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="@dimen/small_font_size" />
 
