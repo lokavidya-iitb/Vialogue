@@ -38,4 +38,8 @@ public class Audio extends BaseResourceClass {
         super(uri);
     }
 
+    public boolean doesStoreFile() {
+        return true;
+    }
+
 }

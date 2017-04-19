@@ -170,9 +170,11 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
                 // This has to be done because of the way in which the
                 // ParseObjectsCollection.move function is implemented
-                if (finalPosition > initialPosition) {
+                if ((finalPosition > initialPosition)) {
                     finalPosition += 1;
                 }
+                System.out.println("initialPosition : " + initialPosition);
+                System.out.println("finalPosition : " + finalPosition);
                 SharedRuntimeContent.changeSlidePosition(initialPosition, finalPosition);
             }
             mMovementArray.clear();

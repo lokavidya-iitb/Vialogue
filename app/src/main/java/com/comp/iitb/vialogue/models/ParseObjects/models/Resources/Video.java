@@ -36,4 +36,8 @@ public class Video extends BaseResourceClass {
     public Video(Uri uri) {
         super(uri);
     }
+
+    public boolean doesStoreFile() {
+        return true;
+    }
 }

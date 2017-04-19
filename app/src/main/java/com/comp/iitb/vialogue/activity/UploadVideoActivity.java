@@ -35,6 +35,9 @@ import com.comp.iitb.vialogue.library.SaveParseObjectAsync;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
 import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
@@ -50,6 +53,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Observer;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
@@ -73,6 +78,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     List<String> categories = new ArrayList<>();
     ArrayList<Category> categoryObjects = new ArrayList<>();
     List<ParseObject> receiveEM;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,9 +264,22 @@ public class UploadVideoActivity extends AppCompatActivity {
             SharedRuntimeContent.getProject().setCategory(categoryObjects.get(mCategories.getSelectedItemPosition()-1));
             tagsToUpload = Arrays.asList(tags.getText().toString().split(" "));
 
+            // TODO this is very bad. Ideally, all the stitching logic should be in one place
+            // (the server in our case). Whenever you get time, move this logic to the server side
+            // along with the video and image stitching logic
+
+            // generate questions array
+            ArrayList<Slide> allSlides = SharedRuntimeContent.getAllSlides();
+            for(int i=0; i<allSlides.size(); i++) {
+                if(allSlides.get(i).getSlideType() == Slide.SlideType.QUESTION) {
+                    ((Question) allSlides.get(i).getResource()).setTime(SharedRuntimeContent.getDurationThatSavesQuestion(i));
+                    SharedRuntimeContent.getProject().add(Project.Fields.PROJECT_QUESTIONS, ((Question) allSlides.get(i).getResource()));
+                }
+            }
+
             new SaveParseObjectAsync(
                     UploadVideoActivity.this,
-                    ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),
+                    mProgressDialog = ProgressDialog.show(UploadVideoActivity.this,"Uploading Project", "Please Wait..."),
                     new OnProjectSaved() {
                         @Override
                         public void done(boolean isSaved) {
@@ -431,6 +450,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         super.onDestroy();
         if (mPlayer != null) {
             mPlayer.onDestroy();
+        }
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
         }
     }
 

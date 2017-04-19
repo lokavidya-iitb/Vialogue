@@ -45,7 +45,9 @@ public class SmsOtpListener extends BroadcastReceiver {
             }
 
             if(matchOtpMessage(smsMessage.getDisplayOriginatingAddress(), smsMessage.getMessageBody())) {
-                mOnOtpReceived.onDone(getOtpFromMessageBody(smsMessage.getMessageBody()));
+                if(mOnOtpReceived != null) {
+                    mOnOtpReceived.onDone(getOtpFromMessageBody(smsMessage.getMessageBody()));
+                }
             }
         }
     }
@@ -62,6 +64,10 @@ public class SmsOtpListener extends BroadcastReceiver {
 
     public static void bindListener(OnOtpReceived onOtpReceived) {
         mOnOtpReceived = onOtpReceived;
+    }
+
+    public static void unbindListener() {
+        mOnOtpReceived = null;
     }
 
 }

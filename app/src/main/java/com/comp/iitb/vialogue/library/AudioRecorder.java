@@ -78,7 +78,6 @@ public class AudioRecorder {
         Log.d(LOG_TAG, "stopRecording");
         if (mRecorder != null) {
             Log.d(LOG_TAG, "stopRecording");
-            mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
             mCompletedRecording = true;

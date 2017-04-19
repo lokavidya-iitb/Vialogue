@@ -40,6 +40,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.comp.iitb.vialogue.utils.ProjectNameUtils;
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -265,12 +266,12 @@ public class SharedRuntimeContent {
 
                             case DialogInterface.BUTTON_NEGATIVE:
                                 //No button clicked
-                                try {
-                                    currentProject.delete();
-                                    Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
+                                currentProject.unpinInBackground(new DeleteCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 break;
                         }
                     }
@@ -414,9 +415,11 @@ public class SharedRuntimeContent {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
-            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
+            // Ironstein - did this because Riha did not want filters in
+            // project names
+//            if (source != null && SharedRuntimeContent.blockCharacterSet.contains(("" + source))) {
+//                return "";
+//            }
             return null;
         }
     };
@@ -495,7 +498,7 @@ public class SharedRuntimeContent {
             timeMilliSec = Long.parseLong(mRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
             inputStream.close();
             mRetriever.release();
-        } catch (java.io.IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

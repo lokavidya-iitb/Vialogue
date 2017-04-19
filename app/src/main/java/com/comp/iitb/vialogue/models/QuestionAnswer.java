@@ -1,5 +1,7 @@
 package com.comp.iitb.vialogue.models;
 
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
+
 /**
  * Created by shubh on 10-02-2017.
  */
@@ -110,4 +112,5 @@ public class QuestionAnswer {
     public void setIsEdited(boolean mIsEdited) {
         this.mIsEdited = mIsEdited;
     }
+
 }

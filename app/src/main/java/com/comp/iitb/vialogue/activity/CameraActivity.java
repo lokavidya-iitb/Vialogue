@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.SlideThumbnailsRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.camera.CameraPreview;
 import com.comp.iitb.vialogue.listeners.OnSwipeListener;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseResourceClass;
 
@@ -54,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.contextClickable;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage;
@@ -166,6 +169,11 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
+                            // resize image
+                            if(!Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile))) {
+                                Toast.makeText(CameraActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+
                             return pictureFile.getAbsolutePath();
                         }
 
@@ -219,6 +227,10 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
+                            // resize image
+                            if(!Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile))) {
+                                Toast.makeText(CameraActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
                             return pictureFile.getAbsolutePath();
                         }
 

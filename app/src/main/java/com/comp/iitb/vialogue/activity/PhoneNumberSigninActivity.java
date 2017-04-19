@@ -114,14 +114,13 @@ public class PhoneNumberSigninActivity extends AppCompatActivity {
         new SendOtpAsync(PhoneNumberSigninActivity.this, new OnOtpSent() {
             @Override
             public void onDone(Object object, ParseException e) {
-                if(e == null) {
-                    // otp generated successfully
-                    mOtp.add((Integer) object);
-                } else {
-                    // otp could not be generated
-                    Toast.makeText(PhoneNumberSigninActivity.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
-                    finish();
-                }
+                mOtp.add((Integer) object);
+            }
+
+            @Override
+            public void onCouldNotSend() {
+                Toast.makeText(PhoneNumberSigninActivity.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
+                finish();
             }
         }).execute(phoneNumber);
 

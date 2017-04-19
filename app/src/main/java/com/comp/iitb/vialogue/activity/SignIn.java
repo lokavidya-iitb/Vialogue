@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -67,9 +68,10 @@ public class SignIn extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 007;
     private static final int PASSWORD_NUM_CHARACTERS = 36;
     private static final String PASSWORD = "Gwwla`U1uFJ;x_Khp%Wy>^cK61+[^kqXkX>HO=He";
+    private static final int DELAY_BETWEEN_OTP_REQUESTS_MILLIS = 60000; // 1 minute
 
     // variables
-    private ArrayList<Integer> mOtp;
+    private Integer mOtp;
     private String mPhoneNumber = null;
     private String mPersonName = null;
     private String mProfilePictureUrl = null;
@@ -102,7 +104,6 @@ public class SignIn extends AppCompatActivity implements
         mOtpEditText = (EditText) findViewById(R.id.enter_otp_edit_text);
         mVerifyOtpButton = (Button) findViewById(R.id.verify_otp_button);
         mOrTextView = (TextView) findViewById(R.id.or_text_view);
-        mOtp = new ArrayList<Integer>();
 
         // Add Listeners
         btnSignIn.setOnClickListener(this);
@@ -160,7 +161,6 @@ public class SignIn extends AppCompatActivity implements
                     }
                 }
 
-                Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
                 mPhoneNumber = "+91" + mPhoneNumberEditText.getText().toString();
                 verifyOtp(mPhoneNumber);
                 mOtpEditText.setVisibility(View.VISIBLE);
@@ -173,11 +173,8 @@ public class SignIn extends AppCompatActivity implements
             case R.id.verify_otp_button :
                 try {
                     Integer otp = Integer.parseInt(mOtpEditText.getText().toString());
-                    for(Integer generatedOtp: mOtp) {
-                        if(otp.equals(generatedOtp)) {
-                            onOtpVerified();
-                            return;
-                        }
+                    if(otp.equals(mOtp)) {
+                        onOtpVerified();
                     }
                 } catch (Exception e) {}
                 Toast.makeText(SignIn.this, R.string.invalidOTP, Toast.LENGTH_SHORT).show();
@@ -269,36 +266,76 @@ public class SignIn extends AppCompatActivity implements
         }
     }
 
+    private boolean mCanSendOtp = true;
     public void verifyOtp(String phoneNumber) {
+        if(mCanSendOtp) {
 
-        new SendOtpAsync(SignIn.this, new OnOtpSent() {
-            @Override
-            public void onDone(Object object, ParseException e) {
-                if(e == null) {
+            mCanSendOtp = false;
+            new SendOtpAsync(SignIn.this, new OnOtpSent() {
+                @Override
+                public void onDone(Object object, ParseException e) {
+
                     // otp generated successfully
-                    mOtp.add((Integer) object);
-                } else {
+                    mOtp = (Integer) object;
+
+                    Toast.makeText(getBaseContext(), R.string.otpVerification, Toast.LENGTH_SHORT).show();
+
+                    // add sms listener
+                    SmsOtpListener.bindListener(new OnOtpReceived() {
+                        @Override
+                        public void onDone(Integer otp) {
+                            if(otp.equals(mOtp)) {
+                                onOtpVerified();
+                            }
+                        }
+                    });
+
+                    // wait until new otp can be generated
+                    (new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        public void onPreExecute() {
+                            mCanSendOtp = false;
+                        }
+
+                        @Override
+                        public Void doInBackground(Void... params) {
+                            try {
+                                Thread.sleep(DELAY_BETWEEN_OTP_REQUESTS_MILLIS);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        public void onPostExecute(Void result) {
+                            System.out.println("onPostExecute : called");
+                            mCanSendOtp = true;
+                        }
+                    }).execute();
+
+                }
+
+                @Override
+                public void onCouldNotSend() {
                     // otp could not be generated
+                    mCanSendOtp = true;
                     Toast.makeText(SignIn.this, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
+                    SmsOtpListener.unbindListener();
                     finish();
                 }
-            }
-        }).execute(phoneNumber);
+            }).execute(phoneNumber);
 
-        SmsOtpListener.bindListener(new OnOtpReceived() {
-            @Override
-            public void onDone(Integer otp) {
-                for(Integer generatedOtp: mOtp) {
-                    if(otp.equals(generatedOtp)) {
-                        onOtpVerified();
-                    }
-                }
-            }
-        });
+        } else {
+            // do nothing, but fool the user
+            // make him think that he is at least doing something
+            Toast.makeText(SignIn.this, "OTP Has already been sent to your mobile number", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onOtpVerified() {
         Toast.makeText(SignIn.this, R.string.otpVerified, Toast.LENGTH_SHORT).show();
+        SmsOtpListener.unbindListener();
         signInParseUser();
     }
 

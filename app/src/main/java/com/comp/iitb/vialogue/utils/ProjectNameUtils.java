@@ -86,6 +86,9 @@ public class ProjectNameUtils {
         }
 
         String newProjectName = newProject.getName();
+        if(newProject == null) {
+            return getNewUndefinedProjectName();
+        }
         int i = 0;
         while(true) {
             while((i < mExistingProjectNamesList.size()) && (compareStrings(newProjectName, mExistingProjectNamesList.get(i)) == 1)) {

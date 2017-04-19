@@ -29,10 +29,15 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 public class App extends Application implements IAdobeAuthClientCredentials {
 
+    // constants
     private static final String CREATIVE_SDK_CLIENT_ID      = "f71339a291b841acbc45c18cf50ab10c";
     private static final String CREATIVE_SDK_CLIENT_SECRET  = "5ef66814-7fd7-4063-ab3e-8fadefd46ab3";
     private static final String CREATIVE_SDK_REDIRECT_URI   = "ams+2c0aaf828a578c32b47110b21fdd7300961250cd://adobeid/f71339a291b841acbc45c18cf50ab10c";
     private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
+    private static final String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
+    private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
+//    private static final String serverUrl = "http://best-erp.com:5000/parse";
+//    private static final String serverUrl = "http://192.168.1.100:27017/parse";
 
 //    private RefWatcher refWatcher;
 
@@ -43,6 +48,7 @@ public class App extends Application implements IAdobeAuthClientCredentials {
 
     @Override
     public void onCreate() {
+        super.onCreate();
             /*super.onCreate();*/
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
@@ -70,9 +76,6 @@ public class App extends Application implements IAdobeAuthClientCredentials {
         ParseObject.registerSubclass(Audio.class);
         ParseObject.registerSubclass(Video.class);
 
-        String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
-        String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
-
         Parse.enableLocalDatastore(getBaseContext());
 
         // setup Parse
@@ -82,9 +85,6 @@ public class App extends Application implements IAdobeAuthClientCredentials {
             .enableLocalDataStore()
             .build()
         );
-
-        /*
-*/
     }
 
 

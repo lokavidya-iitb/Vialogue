@@ -1,8 +1,12 @@
 package com.comp.iitb.vialogue.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
@@ -54,6 +59,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
+import static android.widget.Toast.makeText;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
@@ -203,7 +209,15 @@ public class CreateVideosMark2 extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             SharedRuntimeContent.calculatePreviewFabVisibility();
-        } else {}
+        } else {
+            try {
+                View view = getActivity().getCurrentFocus();
+                if(view != null) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                }
+            } catch (Exception e) {}
+        }
     }
 
     /**
@@ -229,7 +243,7 @@ public class CreateVideosMark2 extends Fragment {
         if (resultCode == RESULT_OK) {
             handlePickedData(requestCode, data);
         } else {
-            Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -249,7 +263,7 @@ public class CreateVideosMark2 extends Fragment {
                 try {
                     new File(mStorage.getRealPathFromURI(data.getData()));
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -271,10 +285,18 @@ public class CreateVideosMark2 extends Fragment {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                }
+
+                                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                                m.setDataSource(v.getAbsolutePath());
+                                String orientation = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+                                if(Integer.parseInt(orientation) != 0) {
+                                    Toast.makeText(getContext(), "The imported video has been taken portrait mode. As such, it will be displayed as rotated by 90 degrees in the stitched video.", Toast.LENGTH_LONG).show();
                                 }
                             }
-                        });
+                        }
+                );
             } else {
                 // TODO maybe show a toast
             }
@@ -298,44 +320,62 @@ public class CreateVideosMark2 extends Fragment {
                 SharedRuntimeContent.addSlide(slide);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
+                makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT);
             }
         } else if (requestCode == Constants.REQUEST_CODE) {
             ArrayList<com.darsh.multipleimageselect.models.Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
-
-            Log.d("-----sizeimage",""+images.get(0));
             ArrayList<String> paths = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
                 paths.add(images.get(i).path.toString());
             }
-            Log.d("-----sizeimage",""+paths.get(0));
 
-            for (String path : paths) {
-                Slide slide = new Slide();
-                final Image image = new Image(getContext());
-                Log.d("-----sizeimage",""+paths.get(0));
-                mStorage.addFileToDirectory(
-                        new File(path),
-                        image.getResourceFile(),
-                        new FileCopyUpdateListener(getContext()),
-                        new OnFileCopyCompleted() {
-                            @Override
-                            public void done(File file, boolean isSuccessful) {
+            (new AsyncTask<Void, Void, Void>() {
+                private ProgressDialog mProgressDialog;
+                private ArrayList<Slide> mSlides;
 
-                                Slide slide = new Slide();
-                                try {
-                                    slide.addResource(image, Slide.ResourceType.IMAGE);
-                                    if (!SharedRuntimeContent.addSlide(slide)) {
-                                        throw new Exception();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
-                                }
+                @Override
+                public void onPreExecute() {
+                    mProgressDialog = ProgressDialog.show(getContext(), "Importing Images", "Please Wait...");
+                    mSlides = new ArrayList<Slide>();
+                }
+
+                @Override
+                public Void doInBackground(Void... params) {
+                    for (String path : paths) {
+                        Uri resizedImage = Image.getResizedImage(getContext(), Uri.parse(path));
+                        if(resizedImage == null) {
+                            makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            continue;
+                        }
+                        Slide slide = new Slide();
+                        Image image = new Image(resizedImage);
+                        try {
+                            slide.addResource(image, Slide.ResourceType.IMAGE);
+                            mSlides.add(slide);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onPostExecute(Void result) {
+                    for(Slide slide: mSlides) {
+                        try {
+                            if (!SharedRuntimeContent.addSlide(slide)) {
+                                throw new Exception();
                             }
-                        });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    mProgressDialog.dismiss();
+                }
+            }).execute();
 
-            }
         } else if (requestCode == SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES) {
             ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
             System.out.print("-------------reached" + paths.toString());
@@ -350,7 +390,7 @@ public class CreateVideosMark2 extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -365,7 +405,7 @@ public class CreateVideosMark2 extends Fragment {
                 try {
                     new File(mStorage.getRealPathFromURI(data.getData()));
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), "The selected video file is either corrupted or not supported", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -387,7 +427,7 @@ public class CreateVideosMark2 extends Fragment {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+                                    makeText(getContext(), R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

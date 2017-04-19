@@ -52,7 +52,7 @@ public class SaveParseObjectAsync extends AsyncTask<String, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(String... params) {
         try {
-            mProject.saveParseObject();
+            mProject.saveParseObject(mContext);
             return true;
         } catch (ParseException e) {
             return false;

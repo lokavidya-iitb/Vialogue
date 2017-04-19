@@ -30,7 +30,13 @@ public class SendOtpAsync {
         ParseCloud.callFunctionInBackground("sendOtp", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object object, ParseException e) {
-                mOnOtpSent.onDone(object, e);
+                if(e == null) {
+                    // success
+                    mOnOtpSent.onDone(object, e);
+                } else {
+                    // fail
+                    mOnOtpSent.onCouldNotSend();
+                }
             }
         });
     }
