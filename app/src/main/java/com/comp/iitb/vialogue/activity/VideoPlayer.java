@@ -83,11 +83,11 @@ public class VideoPlayer extends AppCompatActivity {
         setSupportActionBar(toolbar);
         id = getIntent().getStringExtra("id");
         Log.d("-------id",""+id);
-        ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Videos");
+        ParseQuery<ParseObject> innerQuery = ParseQuery.getQuery("Project");
         innerQuery.whereEqualTo("objectId",id);
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Question");
 
-        query.whereMatchesQuery("video",innerQuery);
+        query.whereMatchesQuery("project",innerQuery);
 
         /*ParseObject queryingObj = ParseObject.createWithoutData("Videos",id);
         query.whereEqualTo("video", queryingObj);*/
@@ -103,6 +103,8 @@ public class VideoPlayer extends AppCompatActivity {
                     for (ParseObject iterator : recieveEm) {
                         QuestionAnswer questionAnswer = new QuestionAnswer();
                         String question_string = ((String) iterator.get("question_string"));
+                        String solution[] = new String[4];
+                        solution[0]= (String) iterator.get("solution");
                         List<String> optionList = (List<String>) iterator.get("options");
                         String options[] = new String[optionList.size()];
                         options = optionList.toArray(options);
@@ -110,6 +112,7 @@ public class VideoPlayer extends AppCompatActivity {
                         questionAnswer.setOptions(options);
                         questionAnswer.setTime(time);
                         questionAnswer.setQuestion(question_string);
+                        questionAnswer.setAnswers(solution);
                         questionLists.add(questionAnswer);
                     }
                     Log.d("-------questionList",""+questionLists);
@@ -357,7 +360,10 @@ public class VideoPlayer extends AppCompatActivity {
                     Log.d("popped time",""+questionLists.remove(0));
 
                 }
+
             });
+            /*if(adapter.isAnswerCorrect())
+                Log.d("popped time",""+questionLists.remove(0));*/
             adapter.show();
         }
     }

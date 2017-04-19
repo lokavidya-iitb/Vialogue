@@ -50,14 +50,11 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
         }
     }
-
-
     public ProjectsVideoAdapter(Activity activity, Context mContext, List<ProjectsShowcase> albumList) {
         this.mContext = mContext;
         this.albumList = albumList;
         mActivity = activity;
     }
-
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -65,14 +62,12 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
 
         return new MyViewHolder(itemView);
     }
-
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         ProjectsShowcase album = albumList.get(position);
         holder.title.setText(album.getName());
         File Video = new File(Master.getSavedVideosPath()+"/"+album.getName()+"/"+album.getName()+".mp4");
         holder.thumbnail.setImageBitmap(new Storage(mContext).getVideoThumbnail(Environment.getExternalStorageDirectory()+Video.getAbsolutePath()));
-
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,16 +75,12 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
                 /* Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Video.getAbsolutePath()));
                 intent.setDataAndType(Uri.parse(Video.getAbsolutePath()), "video/mp4");
                 mContext.startActivity(intent);*/
-
                 Intent viewVid = new Intent(mContext, OfflineVideoPlayer.class);
                 viewVid.putExtra("url",Environment.getExternalStorageDirectory()+Video.getPath());
                 viewVid.putExtra("name",""+album.getName());
                 mContext.startActivity(viewVid);
-
             }
         });
-
-
         holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -99,12 +90,9 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
         });
 
         }
-
     class ActionBarCallBack implements ActionMode.Callback {
         private String projectName;
         private int position;
-
-
         public ActionBarCallBack(String projectName, int position){
             this.projectName = projectName;
             this.position = position;
@@ -118,9 +106,6 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
             share.putExtra(Intent.EXTRA_STREAM, uri);
             mContext.startActivity(Intent.createChooser(share, "Share Video!"));
         }
-
-
-
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // delete project
@@ -129,20 +114,15 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
              return false;
 
         }
-
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
             mode.getMenuInflater().inflate(R.menu.share_video, menu);
             return true;
         }
-
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
-
         }
-
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
@@ -150,11 +130,7 @@ public class ProjectsVideoAdapter extends RecyclerView.Adapter<ProjectsVideoAdap
             mode.setTitle("Confirm delete?");
             return false;
         }
-
     }
-
-
-
     @Override
     public int getItemCount() {
         return albumList.size();
