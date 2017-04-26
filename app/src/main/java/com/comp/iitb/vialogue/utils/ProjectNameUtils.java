@@ -110,6 +110,8 @@ public class ProjectNameUtils {
         int maxNum = 0;
         for (Project project : localProjects) {
             if ((project.getName() != null) && project.getName().matches(untitledProjectNameRegex)) {
+                System.out.println("&&&&&&&& -------- " + project.getName());
+                System.out.println(project.getObjectId());
                 try {
                     int number = Integer.parseInt(project.getName().substring(17));
                     if (number >= maxNum) {

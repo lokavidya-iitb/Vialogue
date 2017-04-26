@@ -47,6 +47,7 @@ import org.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,9 +127,15 @@ public class VideoPlayer extends AppCompatActivity {
                                     project = mainQuery.getFirst();
                                     name = (String)project.get("name");
                                     URL= (String)project.get("video_path");
-                                    Log.d("URL from video",""+URL);
-                                    mPlayer.setTitle(name);
-                                    mPlayer.play(URL);
+                                    try {
+                                        InputStream inputStream = project.getParseFile("project_video").getDataStream();
+                                        Log.d("URL from video",""+URL);
+                                        mPlayer.setTitle(name);
+                                        mPlayer.play(inputStream);
+                                    } catch (Exception e2) {
+                                        //TODO: check if String URL present
+                                        Toast.makeText(VideoPlayer.this, "This video is not available", Toast.LENGTH_SHORT).show();
+                                    }
                                 } catch (ParseException e1) {
                                     e1.printStackTrace();
                                 }

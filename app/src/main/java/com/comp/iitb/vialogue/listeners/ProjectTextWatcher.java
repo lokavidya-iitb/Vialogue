@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 
 import java.io.File;
 
@@ -40,6 +41,8 @@ public class ProjectTextWatcher implements TextWatcher {
                 SharedRuntimeContent.setProjectName(projectName);
             } else if(projectName.length() >= 50){
                 Snackbar.make(mDestination, R.string.storage_error,Snackbar.LENGTH_LONG).show();
+            } else if(projectName.length() == 0) {
+                SharedRuntimeContent.setProjectName(ProjectNameUtils.getNewUndefinedProjectName());
             }
         }
     }

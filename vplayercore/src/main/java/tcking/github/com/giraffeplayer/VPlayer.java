@@ -31,8 +31,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -682,6 +686,48 @@ public class VPlayer implements SimulationHandler {
         isSimulation = true;
         $.id(R.id.app_video_loading).visible();
         new SimulationAsyncTask(urlList).execute();
+    }
+
+    public boolean play(InputStream inputStream) {
+        File temp = null;
+        try {
+            temp = File.createTempFile("mediaplayertmp", "dat");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        temp.deleteOnExit();
+        String tempPath = temp.getAbsolutePath();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        byte buf[] = new byte[128];
+        try {
+            do {
+                int numread = inputStream.read(buf);
+                if (numread <= 0)
+                    break;
+                fos.write(buf, 0, numread);
+            } while (true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            inputStream.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        playRaw(tempPath, 0);
+        this.play(tempPath);
+        // TODO delete the temp file when the activity is stopped
+        return true;
     }
 
     private void initialize() {
