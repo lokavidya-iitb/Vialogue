@@ -205,6 +205,21 @@ public abstract class BaseParseClass extends ParseObject {
         }
     }
 
+    public void fetchChildrenObjectsFromServer() {
+        for(String key : keySet()) {
+            if(get(key) instanceof BaseParseClass) {
+                try {
+                    getParseObject(key).fetch().pin();
+                    ((BaseParseClass) getParseObject(key)).fetchChildrenObjectsFromServer();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else if(get(key) instanceof BaseResourceClass) {
+
+            }
+        }
+    }
+
     public abstract BaseParseClass getNewInstance();
 
 }

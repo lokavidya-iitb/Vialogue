@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AndroidRuntimeException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -31,8 +32,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -684,6 +689,48 @@ public class VPlayer implements SimulationHandler {
         new SimulationAsyncTask(urlList).execute();
     }
 
+    public boolean play(InputStream inputStream) {
+        File temp = null;
+        try {
+            temp = File.createTempFile("mediaplayertmp", "dat");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        temp.deleteOnExit();
+        String tempPath = temp.getAbsolutePath();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        byte buf[] = new byte[128];
+        try {
+            do {
+                int numread = inputStream.read(buf);
+                if (numread <= 0)
+                    break;
+                fos.write(buf, 0, numread);
+            } while (true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            inputStream.close();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        playRaw(tempPath, 0);
+        this.play(tempPath);
+        // TODO delete the temp file when the activity is stopped
+        return true;
+    }
+
     private void initialize() {
         playerModels = new ArrayList<>();
         mDurationList = new ArrayList<>();
@@ -829,11 +876,18 @@ public class VPlayer implements SimulationHandler {
         if (type == PlayerModel.MediaType.IMAGE_AUDIO) {
             mVideoView.setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
-            Glide
-                    .with(activity)
-                    .load(model.getPath())
-                    .crossFade()
-                    .into(mImageView);
+
+            // crashes when this code runs even though the activity
+            // is being destroyed. So, when you come to this activity
+            // and press back immediately, sometimes, this code crashes
+            try {
+                Glide
+                        .with(activity)
+                        .load(model.getPath())
+                        .crossFade()
+                        .into(mImageView);
+            } catch (AndroidRuntimeException e) {}
+
             playRaw(model.getAudioPath(), seek);
         } else if (type == PlayerModel.MediaType.VIDEO) {
             mImageView.setVisibility(View.GONE);

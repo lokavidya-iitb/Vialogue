@@ -130,7 +130,16 @@ public class SharedRuntimeContent {
 
     public static void changeSlidePosition(int current, int destination) {
         project.moveSlideToPosition(current, destination);
-        projectAdapter.notifyDataSetChanged();
+        try {
+            projectAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            // Throws an exception when this method is called when the
+            // recycler view is being scrolled. Exactly why the onBindViewHolder
+            // method in SlidesRecyclerViewAdapterMark2 is being
+            // called is still a mystery, but I don't have time to figure it out
+            // -- ironstein
+            e.printStackTrace();
+        }
         calculatePreviewFabVisibility();
     }
 

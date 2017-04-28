@@ -25,6 +25,8 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.util.Pair;
 
@@ -74,7 +76,6 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
         for(int i=0; i<mDeleteArray.size(); i++) {
             if(mDeleteArray.get(i).slidePosition == slideViewHolder.slidePosition) {
                 mDeleteArray.remove(i);
-                return;
             }
         }
         slideViewHolder.thumbnail.setColorFilter(Color.argb(0, 0, 0, 0)); // no tint
@@ -83,12 +84,30 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
     public void deleteSlides() {
         System.out.println("mDeleteArray : " + mDeleteArray);
-        for(int i=0; i<mDeleteArray.size(); i++) {
-            SharedRuntimeContent.justDeleteSlide(mDeleteArray.get(i).slidePosition);
-            notifyItemRemoved(mDeleteArray.get(i).slidePosition);
+        Collections.sort(mDeleteArray, new Comparator<SlideViewHolder>() {
+            @Override
+            public int compare(SlideViewHolder sv1, SlideViewHolder sv2) {
+                if (sv1.slidePosition > sv2.slidePosition) {
+                    return 1;
+                } else if(sv1.slidePosition < sv2.slidePosition) {
+                    return -1;
+                } return 0;
+            }
+        });
+
+        while(mDeleteArray.size() > 0) {
+            SharedRuntimeContent.justDeleteSlide(mDeleteArray.get(0).slidePosition);
+            notifyItemRemoved(mDeleteArray.get(0).slidePosition);
+            mDeleteArray.remove(0);
+            for (int i=0; i<mDeleteArray.size(); i++) {
+                mDeleteArray.get(i).slidePosition -= 1;
+            }
         }
         mDeleteArray.clear();
-//        mRecyclerView.getRecycledViewPool().clear();
+
+        // since the slide positions have changed, we need to
+        // recalculate SlideViewHolder instances
+        notifyDataSetChanged();
         mRecyclerView.invalidate();
     }
 
@@ -173,8 +192,6 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
                 if ((finalPosition > initialPosition)) {
                     finalPosition += 1;
                 }
-                System.out.println("initialPosition : " + initialPosition);
-                System.out.println("finalPosition : " + finalPosition);
                 SharedRuntimeContent.changeSlidePosition(initialPosition, finalPosition);
             }
             mMovementArray.clear();
@@ -207,6 +224,7 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
         final Slide slide = SharedRuntimeContent.getSlideAt(position);
         slideViewHolder.slidePosition = position;
+        slideViewHolder.onItemClear();
         if (slide.getSlideType() == Slide.SlideType.IMAGE) {
             // IMAGE
             Glide
@@ -258,6 +276,9 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
                         // Notify the active callbacks interface (the activity, if the
                         // fragment is attached to one) that an item has been selected.
                         mOnListFragmentInteractionListener.onListFragmentInteraction(slide);
+
+                        // empty the delete array
+                        mDeleteArray.clear();
                     }
                 }
             }
