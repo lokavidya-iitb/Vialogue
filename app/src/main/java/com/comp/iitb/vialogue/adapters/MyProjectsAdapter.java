@@ -50,6 +50,7 @@ import com.daimajia.slider.library.SliderAdapter;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.ByteArrayOutputStream;
@@ -194,10 +195,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 //                }
 
                 project.fetchChildrenObjects();
+
                 if(project.isEmpty()) {
-                    project.delete();
+                    project.unpinInBackground();
                     continue;
                 }
+
+//                if(project.get.equals(ParseUser.getCurrentUser())) {
+//
+//                }
+
                 mProjectViewsList.add(new ProjectView(project, i));
                 mProjectNamesList.add(project.getName());
             }

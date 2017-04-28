@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -72,6 +73,7 @@ public class CameraActivity extends AppCompatActivity {
     public static final String IMAGE_PATHS_ARRAY = "image_paths_array";
     public static final String CAPTURE_MULTIPLE_IMAGES_INTENT_KEY = "capture_multiple_images";
     public static final String CAPTURE_SINGLE_IMAGE_INTENT_KEY = "capture_single_image";
+    public static final int FOCUS_AREA_SIZE = 100;
 
     // state variables
     private int mPermissionsRequiredCount;
@@ -86,6 +88,7 @@ public class CameraActivity extends AppCompatActivity {
     private int mCameraDisplayRotation;
     private ArrayList<String> mImagePaths;
     private boolean mCaptureMultipleImages;
+    private Camera.AutoFocusCallback mAutoFocusTakePictureCallback;
 
     // UI Variables
     private FrameLayout mCameraPreviewFrameLayout;
@@ -205,6 +208,11 @@ public class CameraActivity extends AppCompatActivity {
                     (new AsyncTask<Void, Void, String>() {
 
                         @Override
+                        public void onPreExecute() {
+                            mCamera.stopPreview();
+                        }
+
+                        @Override
                         public String doInBackground(Void... params) {
 
                             File pictureFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, CameraActivity.this);
@@ -227,10 +235,6 @@ public class CameraActivity extends AppCompatActivity {
                                 }
                             }
 
-                            // resize image
-                            if(!Image.resizeImage(CameraActivity.this, Uri.fromFile(pictureFile))) {
-                                Toast.makeText(CameraActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                            }
                             return pictureFile.getAbsolutePath();
                         }
 
@@ -269,6 +273,18 @@ public class CameraActivity extends AppCompatActivity {
                         mFrameOverlay.setVisibility(View.GONE);
                     }
                 }).execute();
+            }
+        };
+
+        mAutoFocusTakePictureCallback = new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
+                if (success) {
+                    System.out.println("auto focus success");
+                    // TODO show an indication of focusing
+                } else {
+                    System.out.println("auto focus failed");
+                }
             }
         };
 
@@ -368,7 +384,27 @@ public class CameraActivity extends AppCompatActivity {
 
     public void startCamera() {
         mCameraPreview = new CameraPreview(CameraActivity.this, CameraActivity.this, mCamera);
+
+        // set camera picture and preview size
+        // based on the sizes calculated in the mCameraPreview
+        Camera.Parameters params = mCamera.getParameters();
+        params.setPreviewSize(mCameraPreview.getPreviewWidth(), mCameraPreview.getPreviewHeight());
+        params.setPictureSize(mCameraPreview.getPreviewWidth(), mCameraPreview.getPreviewHeight());
+        mCamera.setParameters(params);
+
+        // start camera (finally)
         mCameraPreviewFrameLayout.addView(mCameraPreview);
+
+        // focus on touch
+        mCameraPreview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    focusOnTouch(event);
+                }
+                return true;
+            }
+        });
     }
 
     public void setCameraDisplayOrientation() {
@@ -537,6 +573,47 @@ public class CameraActivity extends AppCompatActivity {
         public int getItemCount() {
             return mImagePaths.size();
         }
+    }
+
+    private void focusOnTouch(MotionEvent event) {
+        if (mCamera != null ) {
+
+            Camera.Parameters parameters = mCamera.getParameters();
+            if (parameters.getMaxNumMeteringAreas() > 0){
+                Rect rect = calculateFocusArea(event.getX(), event.getY());
+
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
+                meteringAreas.add(new Camera.Area(rect, 800));
+                parameters.setFocusAreas(meteringAreas);
+
+                mCamera.setParameters(parameters);
+                mCamera.autoFocus(mAutoFocusTakePictureCallback);
+            }else {
+                mCamera.autoFocus(mAutoFocusTakePictureCallback);
+            }
+        }
+    }
+
+    private Rect calculateFocusArea(float x, float y) {
+        int left = clamp(Float.valueOf((x / mCameraPreview.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+        int top = clamp(Float.valueOf((y / mCameraPreview.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+
+        return new Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
+    }
+
+    private int clamp(int touchCoordinateInCameraReper, int focusAreaSize) {
+        int result;
+        if (Math.abs(touchCoordinateInCameraReper)+focusAreaSize/2>1000){
+            if (touchCoordinateInCameraReper>0){
+                result = 1000 - focusAreaSize/2;
+            } else {
+                result = -1000 + focusAreaSize/2;
+            }
+        } else{
+            result = touchCoordinateInCameraReper - focusAreaSize/2;
+        }
+        return result;
     }
 
 }

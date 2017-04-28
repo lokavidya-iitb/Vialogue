@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,27 +16,23 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CameraActivity;
-import com.comp.iitb.vialogue.activity.CropMainActivity;
-import com.comp.iitb.vialogue.activity.GalleryActivity;
 import com.comp.iitb.vialogue.adapters.SlidesRecyclerViewAdapterMark2;
 import com.comp.iitb.vialogue.coordinators.OnFileCopyCompleted;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.dialogs.ChooseImageDialog;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.ChangeVisibilityOnFocus;
 import com.comp.iitb.vialogue.listeners.FileCopyUpdateListener;
@@ -52,7 +49,6 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.utils.ProjectNameUtils;
 import com.darsh.multipleimageselect.helpers.Constants;
-import com.sangcomz.fishbun.define.Define;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
@@ -60,7 +56,6 @@ import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.Toast.makeText;
-import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_CAMERA_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_IMAGE;
 import static com.comp.iitb.vialogue.coordinators.SharedRuntimeContent.GET_VIDEO;
 
@@ -77,7 +72,7 @@ public class CreateVideosMark2 extends Fragment {
     // UI Components
     private Button mImagePicker;
     private Button mVideoPicker;
-    private Button mCameraPicker;
+    private Button mAudioPicker;
     private Button mQuestionPicker;
     private EditText mProjectName;
     private TextView mProjectNameDisplay;
@@ -118,7 +113,7 @@ public class CreateVideosMark2 extends Fragment {
 
         // Initialize UI Components
         mImagePicker = (Button) view.findViewById(R.id.image_picker);
-        mCameraPicker = (Button) view.findViewById(R.id.camera_image_picker);
+        mAudioPicker = (Button) view.findViewById(R.id.camera_image_picker);
         mVideoPicker = (Button) view.findViewById(R.id.video_picker);
         mQuestionPicker = (Button) view.findViewById(R.id.question_picker);
         mProjectName = (EditText) view.findViewById(R.id.project_name);
@@ -153,26 +148,62 @@ public class CreateVideosMark2 extends Fragment {
         mProjectName.setOnFocusChangeListener(new ChangeVisibilityOnFocus(mProjectName, mProjectNameDisplay));
         mProjectName.addTextChangedListener(new ProjectTextWatcher(mProjectNameDisplay));
         mProjectName.setFilters(new InputFilter[] { SharedRuntimeContent.filter });
-        // Camera Image Picker
-        mCameraPicker.setOnClickListener(new View.OnClickListener() {
+
+        // Audio Picker
+        mAudioPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), CameraActivity.class);
-                startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
+                (new AsyncTask<Void, Void, Void>() {
+                    private Image mImage;
+                    private ProgressDialog mProgressDialog;
+
+                    @Override
+                    public void onPreExecute() {
+                        mProgressDialog = ProgressDialog.show(getContext(), "Creating New Slide", "Please Wait...");
+                    }
+
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        mImage = new Image(getContext());
+                        mImage.doesReallyHaveImage = false;
+                        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no_image);
+                        mStorage.saveBitmapToFile(mImage.getResourceFile(), bitmap);
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        Slide slide = new Slide();
+                        try {
+                            slide.addResource(mImage, Slide.ResourceType.IMAGE);
+                            SharedRuntimeContent.addSlide(slide);
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mProgressDialog.dismiss();
+
+                        // start AudioRecordActivity
+                        Intent intent = new Intent(getContext(), AudioRecordActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(AudioRecordActivity.SLIDE_NO, SharedRuntimeContent.getAllSlides().size()-1);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                }).execute();
             }
         });
+
         //Image Picker
-        mImagePickerClick = new ImagePickerClick(CreateVideosMark2.this);
-        mImagePicker.setOnClickListener(mImagePickerClick);
-//        mMultipleImagePicker = new MultipleImagePicker(view.getContext(), getActivity());
-//        mImagePicker.setOnClickListener(mMultipleImagePicker);
-//        mImagePicker.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(getContext(), GalleryActivity.class);
-//                startActivityForResult(intent, 1456);
-//            }
-//        });
+        mImagePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChooseImageDialog d = new ChooseImageDialog(getActivity(), CreateVideosMark2.this);
+                d.show();
+            }
+        });
+
         //Video Picker
         VideoPickerClick videoPickerClickListener = new VideoPickerClick(this);
         mVideoPicker.setOnClickListener(videoPickerClickListener);

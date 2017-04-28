@@ -30,6 +30,7 @@ import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.parse.FindCallback;
@@ -71,6 +72,7 @@ public class VideoPlayer extends AppCompatActivity {
     private List<ParseObject> recieveEm = new ArrayList<>();
     private ParseObject project;
     private Button button;
+    private Button downloadProjectButton;
     private ProgressDialog progressDialog;
 
     public static String URL;
@@ -212,6 +214,7 @@ public class VideoPlayer extends AppCompatActivity {
         });
 
         button = (Button) findViewById(R.id.button);
+        downloadProjectButton = (Button) findViewById(R.id.download_project_button);
 
         // Capture button clicks
         button.setOnClickListener(new View.OnClickListener() {
@@ -220,10 +223,51 @@ public class VideoPlayer extends AppCompatActivity {
                 if(!(URL==null))
                     new downloader().execute();
             }
+        });
 
+        downloadProjectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                (new AsyncTask<Void, Void, Void>() {
 
+                    private ProgressDialog mProgressDialog;
+                    private ParseQuery<ParseObject> mParseQuery;
+                    private boolean mProjectDownloadedSuccessfully = false;
 
-    });
+                    @Override
+                    public void onPreExecute() {
+                        mParseQuery = new ParseQuery<ParseObject>("Project");
+                        mParseQuery.whereEqualTo("objectId", id);
+                        mProgressDialog = ProgressDialog.show(VideoPlayer.this, "Downloading Project", "Please Wait...");
+                    }
+
+                    @Override
+                    public Void doInBackground(Void... params) {
+                        try {
+                            Project project = (Project) mParseQuery.getFirst();
+                            project.fetchChildrenObjectsFromServer();
+                            project.pin();
+                            mProjectDownloadedSuccessfully = true;
+                        } catch (ParseException e) {
+                            // TODO handle various exceptions
+                            // display different error messages for each type of exception
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void onPostExecute(Void result) {
+                        mProgressDialog.dismiss();
+                        if(!mProjectDownloadedSuccessfully) {
+                            Toast.makeText(VideoPlayer.this, "Could not download project. Please Check your internet connection", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(VideoPlayer.this, "Downloaded project successfully", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                }).execute();
+            }
+        });
     }
 
     @Override

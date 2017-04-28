@@ -117,6 +117,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // pause video if playing already
+                mPlayer.pause();
+
                 if (name.getText().toString().trim().length() == 0) {
                     name.setError("Required");
                 } else if (description.getText().toString().trim().length() == 0) {

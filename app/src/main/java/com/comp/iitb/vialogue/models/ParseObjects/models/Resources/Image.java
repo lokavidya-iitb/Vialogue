@@ -34,6 +34,8 @@ import java.io.OutputStream;
 @ParseClassName("Image")
 public class Image extends CanSaveAudioResource {
 
+    public boolean doesReallyHaveImage = true;
+
     // default constructor required by Parse
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING

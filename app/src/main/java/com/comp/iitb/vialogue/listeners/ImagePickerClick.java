@@ -23,9 +23,6 @@ public class ImagePickerClick implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        /*Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        mFragment.startActivityForResult(galleryIntent, GET_IMAGE);*/
         Intent intent = new Intent(mFragment.getActivity(), AlbumSelectActivity.class);
         //set limit on number of images that can be selected, default is 10
         intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 10);

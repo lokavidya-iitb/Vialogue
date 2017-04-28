@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AndroidRuntimeException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -875,11 +876,18 @@ public class VPlayer implements SimulationHandler {
         if (type == PlayerModel.MediaType.IMAGE_AUDIO) {
             mVideoView.setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
-            Glide
-                    .with(activity)
-                    .load(model.getPath())
-                    .crossFade()
-                    .into(mImageView);
+
+            // crashes when this code runs even though the activity
+            // is being destroyed. So, when you come to this activity
+            // and press back immediately, sometimes, this code crashes
+            try {
+                Glide
+                        .with(activity)
+                        .load(model.getPath())
+                        .crossFade()
+                        .into(mImageView);
+            } catch (AndroidRuntimeException e) {}
+
             playRaw(model.getAudioPath(), seek);
         } else if (type == PlayerModel.MediaType.VIDEO) {
             mImageView.setVisibility(View.GONE);

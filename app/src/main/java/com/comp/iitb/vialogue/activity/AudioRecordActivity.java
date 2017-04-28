@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -201,7 +202,11 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCropMainActivity();
+                if(((Image)SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).doesReallyHaveImage) {
+                    startCropMainActivity();
+                } else {
+                    Toast.makeText(AudioRecordActivity.this, "No Image selected for this slide", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -405,6 +410,19 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             // slide does not contain Audio
             mAudio = new Audio(AudioRecordActivity.this);
         }
+
+
+        // =================================
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+
+        //Returns null, sizes are in the options variable
+        BitmapFactory.decodeFile(mImagePath, options);
+        int width = options.outWidth;
+        int height = options.outHeight;
+
+        System.out.println("width : " + width);
+        System.out.println("height : " + height);
     }
 
     private void setUpUI() {
@@ -612,27 +630,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             // GET IMAGE FROM GALLERY
             if (data != null) {
                 currentImagePath = mStorage.getRealPathFromURI(data.getData());
-                (new AsyncTask<Void, Void, Void>() {
-                    private ProgressDialog mProgressDialog;
-
-                    @Override
-                    public void onPreExecute() {
-                        mProgressDialog = ProgressDialog.show(AudioRecordActivity.this, "Loading Image", "Please Wait...");
-                    }
-
-                    @Override
-                    public Void doInBackground(Void... params) {
-                        Uri newImage = Image.getResizedImage(getBaseContext(), Uri.fromFile(new File(currentImagePath)));
-                        currentImagePath = newImage.getPath();
-                        return null;
-                    }
-
-                    @Override
-                    public void onPostExecute(Void result) {
-                        startCropMainActivity(currentImagePath);
-                        mProgressDialog.dismiss();
-                    }
-                }).execute();
+                startCropMainActivity(currentImagePath);
             }
         } else if(requestCode == SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT) {
             // Update State (but don't replace the current audio)
@@ -642,55 +640,73 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
             // Update thumbnails
             mSlideThumbnailsRecyclerView.getAdapter().notifyItemChanged(mSlidePosition);
         } else if(requestCode == SharedRuntimeContent.GET_SINGLE_CAMERA_IMAGE) {
-            System.out.println("getSingleImage : called");
             ArrayList<String> paths = data.getStringArrayListExtra(CameraActivity.RESULT_KEY);
             currentImagePath = paths.get(0);
-            System.out.println(paths.get(0));
-            System.out.println(currentImagePath);
             startCropMainActivity(currentImagePath);
 
         } else if(requestCode ==REQ_CODE_CSDK_IMAGE_EDITOR) {
             mImageView.setImageURI(null);
-            Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
 
-            // move this image file to a new location
-            File newImageFile = BaseResourceClass.makeTempResourceFile(Slide.ResourceType.IMAGE, AudioRecordActivity.this);
-            try {
-                newImageFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(AudioRecordActivity.this, "Could not save the image", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(AudioRecordActivity.this, MainActivity.class);
-                intent.putExtra(MainActivity.startFragmentPositionKey, FragmentPageAdapter.CREATE_PROJECT);
-                startActivity(intent);
-            }
-            Uri newImageUri = Uri.fromFile(newImageFile);
-            Image.copyFile(new File(mStorage.getRealPathFromURI(editedImageUri)), new File(newImageUri.getPath()));
-            new File(mStorage.getRealPathFromURI(editedImageUri)).delete();
+            (new AsyncTask<Void, Void, Void>() {
 
-            // It makes the MediaScanner service run again,
-            // which should remove the deleted image from the device's cache.
-            getContentResolver().delete(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    MediaStore.Images.Media.DATA + "=?",
-                    new String[]{ new File(mStorage.getRealPathFromURI(editedImageUri)).getAbsolutePath() }
-            );
+                private Uri mResizedImage;
+                private ProgressDialog mProgressDialog;
 
-            // save image to slide
-            try {
-                Image image = new Image(newImageUri);
-                mSlide.addResource(image, Slide.ResourceType.IMAGE);
-                if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
-                    ((Image) mSlide.getResource()).addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
+                @Override
+                public void onPreExecute() {
+                    mProgressDialog = ProgressDialog.show(AudioRecordActivity.this, "Processing Image", "Please Wait...");
                 }
-                SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, mSlide);
-            } catch (Exception e) {
-                Toast.makeText(AudioRecordActivity.this, "Could not save the image", Toast.LENGTH_SHORT).show();
-            }
 
-            Intent intent = new Intent(AudioRecordActivity.this, MainActivity.class);
-            intent.putExtra(MainActivity.startFragmentPositionKey, FragmentPageAdapter.CREATE_PROJECT);
-            startActivity(intent);
+                @Override
+                public Void doInBackground(Void... params) {
+                    Uri editedImageUri = data.getParcelableExtra(AdobeImageIntent.EXTRA_OUTPUT_URI);
+
+                    // resize image
+                    mResizedImage = Image.getResizedImage(AudioRecordActivity.this, Uri.fromFile(new File(mStorage.getRealPathFromURI(editedImageUri))));
+                    if(mResizedImage == null) {
+                        Toast.makeText(AudioRecordActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        return null;
+                    }
+
+                    // delete the original file
+                    new File(mStorage.getRealPathFromURI(editedImageUri)).delete();
+
+                    // It makes the MediaScanner service run again,
+                    // which should remove the deleted image from the device's cache.
+                    getContentResolver().delete(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            MediaStore.Images.Media.DATA + "=?",
+                            new String[]{ new File(mStorage.getRealPathFromURI(editedImageUri)).getAbsolutePath() }
+                    );
+                    return null;
+                }
+
+                @Override
+                public void onPostExecute(Void result) {
+
+                    // save image to slide
+                    try {
+                        Slide slide = new Slide();
+                        Image image = new Image(mResizedImage);
+                        if(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).hasAudio()) {
+                            System.out.println("has audio");
+                            image.addAudio(((Image) SharedRuntimeContent.getSlideAt(mSlidePosition).getResource()).getAudio());
+                        } else {
+                            System.out.println("does not have audio");
+                        }
+                        slide.addResource(image, Slide.ResourceType.IMAGE);
+                        SharedRuntimeContent.changeSlideAtPosition(mSlidePosition, slide);
+                    } catch (Exception e) {
+                        Toast.makeText(AudioRecordActivity.this, "Could not save the image", Toast.LENGTH_SHORT).show();
+                    }
+
+                    mProgressDialog.dismiss();
+
+                    Intent intent = new Intent(AudioRecordActivity.this, MainActivity.class);
+                    intent.putExtra(MainActivity.startFragmentPositionKey, FragmentPageAdapter.CREATE_PROJECT);
+                    startActivity(intent);
+                }
+            }).execute();
 
 //            loadStateFromSlide(SharedRuntimeContent.getSlideAt(mSlidePosition), mSlidePosition, false);
 //            // Update UI
