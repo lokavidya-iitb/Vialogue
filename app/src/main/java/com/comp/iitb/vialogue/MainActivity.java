@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 switch (mViewPager.getCurrentItem()) {
                     case 2:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
+                        SharedRuntimeContent.blankImages= SharedRuntimeContent.getBlankSlides();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
 //                        intent.putStringArrayListExtra()
                         startActivity(intent);

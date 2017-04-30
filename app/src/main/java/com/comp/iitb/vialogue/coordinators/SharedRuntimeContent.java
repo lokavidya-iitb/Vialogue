@@ -2,7 +2,6 @@ package com.comp.iitb.vialogue.coordinators;
 
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -15,24 +14,20 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.MyProjectsAdapter;
-import com.comp.iitb.vialogue.adapters.SlideRecyclerViewAdapter;
 import com.comp.iitb.vialogue.library.ExifUtils;
-import com.comp.iitb.vialogue.library.Storage;
+import com.comp.iitb.vialogue.models.BlankImage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Image;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
@@ -48,8 +43,6 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +76,7 @@ public class SharedRuntimeContent {
     public static boolean isSelected = false;
     public static int selectedPosition;
     public static List<QuestionAnswer> questionsList = new ArrayList<>();
+    public static List<BlankImage> blankImages = new ArrayList<>();
     public static AVLoadingIndicatorView loadingAnimation;
     public static MenuItem saveMenuItem;
 
@@ -473,7 +467,7 @@ public class SharedRuntimeContent {
                         stringConvertedAnswers[iterator]=optionsArray[answerArray[iterator]];
                     questionAnswer.setAnswers(stringConvertedAnswers);
                     positionThatSaves = getSlidePosition(slide);
-                    questionAnswer.setTime(getDurationThatSavesQuestion(positionThatSaves));
+                    questionAnswer.setTime(getDurationBeforeASlide(positionThatSaves));
                     questionAnswer.setQuestion(question.getQuestionString());
                     list.add(questionAnswer);
                 }
@@ -482,7 +476,28 @@ public class SharedRuntimeContent {
         return list;
     }
 
-    public static int getDurationThatSavesQuestion(int position) {
+
+    public static List<BlankImage> getBlankSlides() {
+        int i=0;
+        ArrayList<BlankImage> list = new ArrayList<>();
+        if (project.getSlides().getAll() != null) {
+            int positionThatSaves = 0;
+            for (Slide slide : project.getSlides().getAll()) {
+                BlankImage one = new BlankImage();
+                if(slide.getSlideType().equals(Slide.SlideType.IMAGE)){
+                   if((((Image)SharedRuntimeContent.getSlideAt(positionThatSaves).getResource()).doesReallyHaveImage)==false) {
+                       one.setPosition(positionThatSaves);
+                       one.setTime(getDurationBeforeASlide(positionThatSaves));
+                       list.add(one);
+                   }
+                }
+                positionThatSaves++;
+            }
+        }
+        return list;
+    }
+
+    public static int getDurationBeforeASlide(int position) {
         int totalTime=0;
         List<Slide> slides = getAllSlides();
         for(int stub=0;stub<position;stub++)
