@@ -1,5 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,37 +32,36 @@ import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.coordinators.OnDone;
 import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
+import com.comp.iitb.vialogue.dialogs.ChooseImageDialog;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.library.SaveParseObjectAsync;
+import com.comp.iitb.vialogue.models.BlankImage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Category;
-import com.comp.iitb.vialogue.models.ParseObjects.models.CategoryType;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
-import com.parse.FunctionCallback;
+import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Observer;
 
 import tcking.github.com.giraffeplayer.PlayerDialogAdapter;
 import tcking.github.com.giraffeplayer.PlayerModel;
 import tcking.github.com.giraffeplayer.SimulationHandler;
 import tcking.github.com.giraffeplayer.VPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+
+import static android.widget.Toast.makeText;
 
 public class UploadVideoActivity extends AppCompatActivity {
 
@@ -79,6 +80,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     ArrayList<Category> categoryObjects = new ArrayList<>();
     List<ParseObject> receiveEM;
     private ProgressDialog mProgressDialog;
+    public static List<BlankImage> blankImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         // Initialize variables
         mPlayer = new VPlayer(this);
         questionLists = SharedRuntimeContent.questionsList;
+        blankImages = SharedRuntimeContent.blankImages;
         URL = getIntent().getStringExtra("URL");
        /* mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
         mPlayer.play(new PlayerModel("htt p://"+URL, null));
@@ -200,6 +203,22 @@ public class UploadVideoActivity extends AppCompatActivity {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
+                try {
+                    int position=0;
+                    int time=0;
+                    if (blankImages.size() != 0) {
+                        position = blankImages.get(0).getPosition();
+                        time = blankImages.get(0).getTime();
+                        Log.d("time for blank images", "" + time);
+                        if (currentPosition > time) {
+                            showDialog(UploadVideoActivity.this,"Seriously?","Wanna Add?", position, currentPosition,time);
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             @Override
@@ -276,7 +295,7 @@ public class UploadVideoActivity extends AppCompatActivity {
             ArrayList<Slide> allSlides = SharedRuntimeContent.getAllSlides();
             for(int i=0; i<allSlides.size(); i++) {
                 if(allSlides.get(i).getSlideType() == Slide.SlideType.QUESTION) {
-                    ((Question) allSlides.get(i).getResource()).setTime(SharedRuntimeContent.getDurationThatSavesQuestion(i));
+                    ((Question) allSlides.get(i).getResource()).setTime(SharedRuntimeContent.getDurationBeforeASlide(i));
                     SharedRuntimeContent.getProject().add(Project.Fields.PROJECT_QUESTIONS, ((Question) allSlides.get(i).getResource()));
                 }
             }
@@ -338,7 +357,16 @@ public class UploadVideoActivity extends AppCompatActivity {
         }
     }
 
-
+   /* @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("onActivityResult");
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(getClass().getName(), requestCode + " " + resultCode);
+        if (resultCode == RESULT_OK) {
+        } else {
+            makeText(this, R.string.wrongBuddy, Toast.LENGTH_SHORT).show();
+        }
+    }*/
     @Override
     protected void onPause() {
         super.onPause();
@@ -496,7 +524,37 @@ public class UploadVideoActivity extends AppCompatActivity {
                 }
             });
             adapter.show();
+            /*ChooseImageDialog dialog = new ChooseImageDialog(UploadVideoActivity.this);
+            dialog.show();*/
+
+
         }
     }
+    public void showDialog(Activity activity, String title, CharSequence message, int position, int currentPosition, int slideTime) {
+        if (currentPosition > slideTime && currentPosition < slideTime + 500) {
+            mPlayer.pause();
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
+            if (title != null) builder.setTitle(title);
+
+            builder.setMessage(message);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    blankImages.remove(0);
+                    Intent intent = new Intent(UploadVideoActivity.this, AudioRecordActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(AudioRecordActivity.SLIDE_NO, position);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                    mPlayer.start();
+                }
+            });
+            builder.show();
+        }
+    }
 }

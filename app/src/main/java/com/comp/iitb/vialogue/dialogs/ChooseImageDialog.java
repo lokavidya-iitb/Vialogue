@@ -40,12 +40,19 @@ public class ChooseImageDialog extends Dialog {
     private Context mContext;
     private Button mChooseGalleryImageButton;
     private Button mTakeCameraImageButton;
+    private boolean isItAFragment = true;
 
     public ChooseImageDialog(Context context, Fragment fragment) {
         super(context);
         mFragment = fragment;
         mActivity = fragment.getActivity();
         mContext = context;
+    }
+    public ChooseImageDialog(Context context) {
+        super(context);
+        mContext = context;
+        mActivity = (Activity)mContext;
+        isItAFragment= false;
     }
 
     @Override
@@ -64,11 +71,23 @@ public class ChooseImageDialog extends Dialog {
         mChooseGalleryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isItAFragment)
+                {
                 Intent intent = new Intent(mFragment.getActivity(), AlbumSelectActivity.class);
                 //set limit on number of images that can be selected, default is 10
                 intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 10);
                 mFragment.startActivityForResult(intent, Constants.REQUEST_CODE);
                 ChooseImageDialog.this.dismiss();
+                }
+                else
+                {
+                    Intent intent = new Intent(mContext, AlbumSelectActivity.class);
+                    //set limit on number of images that can be selected, default is 10
+                    intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 10);
+                    mActivity.startActivityForResult(intent, Constants.REQUEST_CODE);
+                    ChooseImageDialog.this.dismiss();
+                }
+
             }
         });
 
@@ -76,7 +95,10 @@ public class ChooseImageDialog extends Dialog {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), CameraActivity.class);
-                mFragment.startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
+                if(isItAFragment)
+                    mFragment.startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
+                else
+                    mActivity.startActivityForResult(intent, SharedRuntimeContent.GET_MULTIPLE_CAMERA_IMAGES);
                 ChooseImageDialog.this.dismiss();
             }
         });
