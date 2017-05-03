@@ -30,7 +30,7 @@ public class SetMyProjectsAdapterAsync extends AsyncTask<String, Void, Boolean> 
 
     @Override
     public Boolean doInBackground(String... params) {
-        mMyProjectsAdapter = new MyProjectsAdapter(mActivity, mLoadingAnimation);
+        mMyProjectsAdapter = new MyProjectsAdapter(mActivity, mLoadingAnimation, mRecyclerView);
         return true;
     }
 

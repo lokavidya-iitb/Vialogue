@@ -550,4 +550,11 @@ public class SignIn extends AppCompatActivity implements
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mOtp = null;
+        SmsOtpListener.unbindListener();
+    }
 }

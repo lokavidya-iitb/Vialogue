@@ -36,6 +36,7 @@ public class App extends Application implements IAdobeAuthClientCredentials {
     private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
     private static final String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
     private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
+//    private static final String serverUrl = "https://10.196.31.255:5000/parse";
 //    private static final String serverUrl = "http://best-erp.com/lokavidya/parse";
 //    private static final String serverUrl = "http://192.168.1.100:27017/parse";
 

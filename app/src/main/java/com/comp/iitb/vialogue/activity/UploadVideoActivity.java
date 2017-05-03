@@ -211,7 +211,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                         time = blankImages.get(0).getTime();
                         Log.d("time for blank images", "" + time);
                         if (currentPosition > time) {
-                            showDialog(UploadVideoActivity.this,"Seriously?","Wanna Add?", position, currentPosition,time);
+                            showDialog(UploadVideoActivity.this,"Add Image To Slide","This slide does not contain any image. Do you want to add an image to this slide now?", position, currentPosition,time);
                         }
                     }
                 } catch (NullPointerException e) {
@@ -511,7 +511,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     }
 
     public void popupQuestion(int currentPosition, long intendedPosition, SimulationHandler mSimulationHandler, QuestionAnswer question) {
-        if (currentPosition > intendedPosition && currentPosition < intendedPosition + 500) {
+        if (currentPosition > intendedPosition && currentPosition < intendedPosition + SharedRuntimeContent.VIDEO_INTERVAL_TIME) {
             mPlayer.pause();
 
         /*questionAnswer.setIsCompulsory(false);*/

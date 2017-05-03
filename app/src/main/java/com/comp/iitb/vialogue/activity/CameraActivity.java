@@ -378,7 +378,12 @@ public class CameraActivity extends AppCompatActivity {
         Camera.Parameters params = mCamera.getParameters();
         //*EDIT*//params.setFocusMode("continuous-picture");
         //It is better to use defined constraints as opposed to String
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        for(String focusMode: params.getSupportedFocusModes()) {
+            if(focusMode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            }
+        }
+
         mCamera.setParameters(params);
     }
 

@@ -81,7 +81,7 @@ public class VPlayer implements SimulationHandler {
     private static final int MESSAGE_SEEK_NEW_POSITION = 3;
     private static final int MESSAGE_HIDE_CENTER_BOX = 4;
     private static final int MESSAGE_RESTART_PLAY = 5;
-    private static final long UPDATE_INTERVAL = 500;
+    private static final long UPDATE_INTERVAL = 50;
     private final Activity activity;
     private final IjkVideoView mVideoView;
     private ImageView mImageView;

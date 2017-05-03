@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
+import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.comp.iitb.vialogue.utils.ReadJSONFile;
@@ -179,7 +180,7 @@ public class OfflineVideoPlayer extends AppCompatActivity {
 
     public void popupQuestion(int currentPosition,int intendedPosition, SimulationHandler mSimulationHandler, QuestionAnswer question)
     {
-        if (currentPosition > intendedPosition  && currentPosition<intendedPosition+500) {
+        if (currentPosition > intendedPosition  && currentPosition<intendedPosition+ SharedRuntimeContent.VIDEO_INTERVAL_TIME) {
             mPlayer.pause();
 
         /*questionAnswer.setIsCompulsory(false);*/
