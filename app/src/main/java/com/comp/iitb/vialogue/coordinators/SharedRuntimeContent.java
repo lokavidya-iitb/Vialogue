@@ -64,6 +64,7 @@ public class SharedRuntimeContent {
     public static final int GET_MULTIPLE_CAMERA_IMAGES = 547;
     public static final int GET_SINGLE_CAMERA_IMAGE = 548;
     public static final String blockCharacterSet = "~#^|$%&*!/><.,;:{}[]+=-*|()@#%\n";
+    public static final int VIDEO_INTERVAL_TIME = 80;
 
     // Variables
     public static RecyclerView.Adapter projectAdapter;

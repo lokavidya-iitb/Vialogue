@@ -76,7 +76,7 @@ public class InceptionMyProjects extends Fragment {
 //        initCollapsingToolbar();
 
         mProjectList = new ArrayList<>();
-        mMyProjectsAdapter = new MyProjectsAdapter(getActivity());
+        mMyProjectsAdapter = new MyProjectsAdapter(getActivity(), mRecyclerView);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         layoutManager.setOrientation(GridLayoutManager.VERTICAL);

@@ -399,7 +399,7 @@ public class VideoPlayer extends AppCompatActivity {
 
     public void popupQuestion(int currentPosition,int intendedPosition, SimulationHandler mSimulationHandler, QuestionAnswer question)
     {
-        if (currentPosition > intendedPosition  && currentPosition<intendedPosition+500) {
+        if (currentPosition > intendedPosition  && currentPosition<intendedPosition+SharedRuntimeContent.VIDEO_INTERVAL_TIME) {
             mPlayer.pause();
 
         /*questionAnswer.setIsCompulsory(false);*/

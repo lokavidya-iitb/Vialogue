@@ -70,6 +70,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     private ViewPager viewpager;
     private ArrayList<ProjectView> mProjectViewsList;
     private ArrayList<String> mProjectNamesList;
+    private RecyclerView mRecyclerView;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
@@ -107,6 +108,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             Project project = new Project();
             try {
                 List<ParseObject> localObjects = query.find();
+                System.out.println("index : " + mIndex);
                 project = (Project) localObjects.get(mIndex);
                 project.fetchChildrenObjects();
             } catch (ParseException e) {
@@ -133,15 +135,16 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         }
     }
 
-    public MyProjectsAdapter(Activity activity) {
-        this(activity, null);
+    public MyProjectsAdapter(Activity activity, RecyclerView recyclerView) {
+        this(activity, null, recyclerView);
     }
 
-    public MyProjectsAdapter(Activity activity, AVLoadingIndicatorView loadingAnimation) {
+    public MyProjectsAdapter(Activity activity, AVLoadingIndicatorView loadingAnimation, RecyclerView recyclerView) {
         mActivity = activity;
         mLoadingAnimation = loadingAnimation;
         mContext = activity.getBaseContext();
         mStorage = new Storage(mContext);
+        mRecyclerView = recyclerView;
         populateProjectsList();
     }
 
@@ -167,43 +170,12 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             List<ParseObject> localObjects = query.find();
             for(int i=0; i<localObjects.size(); i++) {
                 Project project = (Project) localObjects.get(i);
-
-                // -------------------------------------------------------------
-                // BEFORE UNCOMMENTING THIS CODE, JUST A DISCLAIMER
-                // THIS CODE RUNS INTO AN INFINITE (NO IDEA WHATSOEVER, REALLY
-                // TRIED VERY HARD TO FIGURE IT OUT).
-                // ALSO, AS A BONUS, IT CORRUPTS ALL THE PROJECTS ON YOUR SYSTEM
-                //                   -------------------------------------------
-                // SO, MAKE SURE YOU HAVE BACKUPS OR SOMETHING (AS OF WHEN I AM
-                // WRITING THIS, THERE IS NO WAY OF DOING SO).
-                // -- IRONSTEIN
-                // -------------------------------------------------------------
-//                // rename project to avoid duplicate names
-//                while (true) {
-//                    int j = 0;
-//                    while(j < i) {
-//                        j++;
-//                        Project previousProject = (Project) localObjects.get(i);
-//                        if(previousProject.getName().equals(project.getName())) {
-//                            project.setName(project.getName() + "_new");
-//                            break;
-//                        }
-//                        System.out.println(j);
-//                    } if(j == i) {
-//                        break;
-//                    }
-//                }
-
                 project.fetchChildrenObjects();
 
                 if(project.isEmpty()) {
                     project.unpinInBackground();
                     continue;
                 }
-
-//                if(project.get.equals(ParseUser.getCurrentUser())) {
-//
-//                }
 
                 mProjectViewsList.add(new ProjectView(project, i));
                 mProjectNamesList.add(project.getName());
@@ -212,7 +184,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             e.printStackTrace();
         }
 
-        System.out.print("----------------------------------123456789012345678901234567890");
         System.out.println(mProjectNamesList);
     }
 
@@ -360,8 +331,11 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         public boolean deleteProject(int position) {
             try {
                 mProjectViewsList.get(position).getProject().unpin();
-                mProjectViewsList.get(position).getProject().delete();
                 mProjectViewsList.remove(position);
+                mProjectNamesList.remove(position);
+                for(int i=position; i<mProjectViewsList.size(); i++) {
+                    mProjectViewsList.get(i).mIndex -= 1;
+                }
             } catch (com.parse.ParseException e) {
                 Toast.makeText(mContext, R.string.wrongBuddy, Toast.LENGTH_SHORT);
                 return false;
@@ -371,6 +345,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // delete project
+            System.out.println("position : " + position);
             if(deleteProject(position)) {
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mProjectViewsList.size());
