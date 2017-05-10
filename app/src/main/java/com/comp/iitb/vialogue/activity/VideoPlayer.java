@@ -94,10 +94,11 @@ public class VideoPlayer extends AppCompatActivity {
 
         /*ParseObject queryingObj = ParseObject.createWithoutData("Videos",id);
         query.whereEqualTo("video", queryingObj);*/
+        mPlayer = new VPlayer(VideoPlayer.this);
+        mPlayer.getSeekBar().setActivated(false);
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> comments, ParseException e) {
                 if (e == null) {
-                    mPlayer = new VPlayer(VideoPlayer.this);
                     try {
                         recieveEm = query.find();
                     } catch (ParseException e1) {
@@ -134,6 +135,7 @@ public class VideoPlayer extends AppCompatActivity {
                                         Log.d("URL from video",""+URL);
                                         mPlayer.setTitle(name);
                                         mPlayer.play(inputStream);
+                                        mPlayer.getSeekBar().setActivated(true);
                                     } catch (Exception e2) {
                                         //TODO: check if String URL present
                                         Toast.makeText(VideoPlayer.this, "This video is not available", Toast.LENGTH_SHORT).show();
