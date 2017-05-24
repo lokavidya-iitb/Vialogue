@@ -1384,6 +1384,10 @@ public class VPlayer implements SimulationHandler {
         return this;
     }
 
+    public SeekBar getSeekBar(){
+        return this.seekBar;
+    }
+
     public void toggleFullScreen() {
         if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

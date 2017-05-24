@@ -55,6 +55,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         mSurfaceHolder.addCallback(this);
+        mSurfaceHolder.setSizeFromLayout();
         // deprecated setting, but required on Android versions prior to 3.0
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
