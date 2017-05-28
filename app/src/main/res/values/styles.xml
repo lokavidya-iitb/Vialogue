@@ -63,6 +63,7 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
 
     </style>
+
     <style name="MIP_theme" parent="AppTheme">
 
         <item name="windowActionBar">false</item>

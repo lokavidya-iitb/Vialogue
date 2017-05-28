@@ -55,10 +55,9 @@ dependencies {
     compile project(':vplayercore')
 
     // Dependency for Google Sign-In
-    
 
     // ACRA Crash Reporting
-    
+
     // Loading Animations
     //Creative SDKcompile ('com.adobe.creativesdk.foundation:auth:0.9.1251') {
 //        exclude group: 'com.google.android.gms'

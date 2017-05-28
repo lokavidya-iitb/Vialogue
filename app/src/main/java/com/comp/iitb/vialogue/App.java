@@ -39,7 +39,7 @@ public class App extends Application implements IAdobeAuthClientCredentials {
 //    private static final String serverUrl = "https://10.196.31.255:5000/parse";
 //    private static final String serverUrl = "http://best-erp.com/lokavidya/parse";
 //    private static final String serverUrl = "http://192.168.1.100:27017/parse";
-    private static final String serverUrl = "http://54.218.78.174:5000/parse";
+    private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
 
     @Override
     public void onCreate() {

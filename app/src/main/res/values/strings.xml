@@ -127,5 +127,6 @@
     <string name="projectDesc">Create videos and share them with hundreds of other usersx.</string>
     <string name="videoDesc">Enjoy viewing videos from multiple categories created by other users.</string>
     <string name="pause">Pause</string>
+    <string name="title_activity_sign_in_mark2">SignInMark2</string>
 
 </resources>
