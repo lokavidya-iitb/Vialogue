@@ -35,30 +35,16 @@ public class App extends Application implements IAdobeAuthClientCredentials {
     private static final String CREATIVE_SDK_REDIRECT_URI   = "ams+2c0aaf828a578c32b47110b21fdd7300961250cd://adobeid/f71339a291b841acbc45c18cf50ab10c";
     private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
     private static final String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
-    private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
+//    private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
 //    private static final String serverUrl = "https://10.196.31.255:5000/parse";
 //    private static final String serverUrl = "http://best-erp.com/lokavidya/parse";
 //    private static final String serverUrl = "http://192.168.1.100:27017/parse";
-
-//    private RefWatcher refWatcher;
-
-//    public static RefWatcher getRefWatcher(Context context) {
-//        App application = (App) context.getApplicationContext();
-//        return application.refWatcher;
-//    }
+    private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
 
     @Override
     public void onCreate() {
         super.onCreate();
-            /*super.onCreate();*/
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not init your app in this process.
-//            return;
-//        }
-//        refWatcher = LeakCanary.install(this);
-//        // Normal app init code...
-//
+
         // start service that will save the current project
         // whenever the app is stopped, no matter in what fashion
         AdobeCSDKFoundation.initializeCSDKFoundation(getApplicationContext());

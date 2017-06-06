@@ -275,7 +275,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         if (ParseUser.getCurrentUser() == null) {
             // User not signed in
             Toast.makeText(UploadVideoActivity.this, R.string.signIn, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(UploadVideoActivity.this, SignIn.class);
+            Intent intent = new Intent(UploadVideoActivity.this, SignUpOrSignIn.class);
             startActivity(intent);
         } else {
             // User signed in, save project

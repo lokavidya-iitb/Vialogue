@@ -13,8 +13,21 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
+    <!-- for push notifications -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.comp.iitb.vialogue.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.comp.iitb.vialogue.permission.C2D_MESSAGE" />
+
     <intent-filter>
         <action android:name="android.intent.action.MEDIA_MOUNTED" />
+
         <data android:scheme="file" />
     </intent-filter>
 
@@ -23,6 +36,7 @@
 
     <uses-feature android:name="android.hardware.camera.any" />
 
+    <!-- Add this INSIDE the application node... -->
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -51,8 +65,7 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ExperimentingParse.SingleItemView" />
         <activity
             android:name=".ExperimentingParse.CanYouLoadMore"
@@ -70,6 +83,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.parse.push.gcm_sender_id"
+            android:value="BZUAW2k3SwW6IHLY-V3umhOggElLu9y4Z-JDKOIvAfEonFkGNXGfc-ASVrA2h-piCuX9QG04aKeX__ap-FRpWL3AhoKJN4agEX327biYOUu2C" />
 
         <activity
             android:name=".activity.CropMainActivity"
@@ -116,7 +132,7 @@
         <activity
             android:name=".activity.GalleryActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.CropMainActivityMark2"></activity>
+        <activity android:name=".activity.CropMainActivityMark2" />
         <activity
             android:name="com.darsh.multipleimageselect.activities.AlbumSelectActivity"
             android:theme="@style/MultipleImageSelectTheme">
@@ -124,6 +140,36 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.comp.iitb.vialogue" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver
+            android:name="com.parse.ParsePushBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".activity.SignInMark2"
+            android:label="@string/title_activity_sign_in_mark2"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.SignUpOrSignIn" />
+        <activity android:name=".activity.CreateNewAccountScreen1"></activity>
     </application>
 
 </manifest>
