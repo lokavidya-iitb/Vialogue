@@ -223,12 +223,12 @@ public class SharedRuntimeContent {
         if((project.getName() != null) && (project.getName() != "") && (!project.getName().matches(ProjectNameUtils.untitledProjectNameRegex))) {
             projectNameString = project.getName();
         } else {
-            projectNameString = "Add project title";
+            projectNameString = activity.getResources().getString(R.string.project_title);
         }
 
         projectNameDisplay.setText("");
         projectNameDisplay.setHint(projectNameString);
-        if(projectNameString != "Add project title") {
+        if(projectNameString != activity.getResources().getString(R.string.project_title)) {
             projectName.setText(projectNameString);
         }
 
@@ -263,7 +263,7 @@ public class SharedRuntimeContent {
                                         // in the current project (if the name is changed, or the project
                                         // was not previously displayed (because it was new))
                                         myProjectsAdapter.addProject(currentProject);
-                                        Toast.makeText(activity.getBaseContext(), "Project saved successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity.getBaseContext(), activity.getResources().getString(R.string.project_saved_successfully), Toast.LENGTH_SHORT).show();
                                     }
                                 }).execute();
                                 break;
@@ -273,7 +273,7 @@ public class SharedRuntimeContent {
                                 currentProject.unpinInBackground(new DeleteCallback() {
                                     @Override
                                     public void done(ParseException e) {
-                                        Toast.makeText(activity.getBaseContext(), "Project discarded", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity.getBaseContext(), activity.getResources().getString(R.string.project_discarded), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 break;

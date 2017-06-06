@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:text="Select a method"
+        android:text="@string/select_a_method"
         android:textSize="20sp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
@@ -29,7 +29,7 @@
         android:textSize="15sp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:text="Gallery"/>
+        android:text="@string/gallery"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
         android:textSize="15sp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:text="Camera"/>
+        android:text="@string/select_camera"/>
 
     <TextView
         android:layout_width="match_parent"
