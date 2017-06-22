@@ -415,11 +415,11 @@ public class SignIn extends AppCompatActivity implements
             // SIGN IN WITH EMAIL ID
             userName = mEmail;
         }
-
         ParseUser user = new ParseUser();
         user.logInInBackground(userName, PASSWORD, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
+
                 onSignedIn();
             }
         });

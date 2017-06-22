@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         System.out.println("mStartFragmentPosition : " + mStartFragmentPosition);
 
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = ((ViewPager) findViewById(R.id.viewpager));
