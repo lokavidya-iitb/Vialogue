@@ -4,20 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 
 public class PermissionsActivity extends AppCompatActivity {
 
     private static final int REQUEST_STORAGE_ACCESS_PERMISSION = 1234;
+    Intent intent=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +51,7 @@ public class PermissionsActivity extends AppCompatActivity {
     }
 
     public void onAllPermissionsGranted() {
-        Intent intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, WhoAreYou.class);
         startActivity(intent);
         finish();
     }

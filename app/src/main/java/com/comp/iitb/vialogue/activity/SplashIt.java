@@ -6,18 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.comp.iitb.vialogue.MainActivity;
-import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.ForgotPassword;
-import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
-import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogOut;
-import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.ResetPassword;
-import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.SignUp;
-import com.comp.iitb.vialogue.coordinators.OnDoneForgotPassword;
-import com.comp.iitb.vialogue.coordinators.OnDoneLogIn;
-import com.comp.iitb.vialogue.coordinators.OnDoneLogOut;
-import com.comp.iitb.vialogue.coordinators.OnDoneResetPassword;
-import com.comp.iitb.vialogue.coordinators.OnDoneSignIn;
-
 public class SplashIt extends AppCompatActivity {
 
     @Override
@@ -64,14 +52,16 @@ public class SplashIt extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 // permission granted
-                intent = new Intent(this, MainActivity.class);
+
+                intent = new Intent(this, WhoAreYou.class);
+
             } else {
                 // permission not granted
                 // ask for permission
                 intent = new Intent(this, PermissionsActivity.class);
             }
         } else {
-            intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, WhoAreYou.class);
         }
 
         startActivity(intent);

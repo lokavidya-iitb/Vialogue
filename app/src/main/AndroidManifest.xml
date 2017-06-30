@@ -169,7 +169,10 @@
             android:label="@string/title_activity_sign_in_mark2"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.SignUpOrSignIn" />
-        <activity android:name=".activity.CreateNewAccountScreen1"></activity>
+        <activity android:name=".activity.CreateNewAccountScreen1" />
+        <activity android:name=".activity.CreateYourAccount"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.WhoAreYou" />
+        <activity android:name=".dialogs.VerifyOtp" />
     </application>
-
 </manifest>

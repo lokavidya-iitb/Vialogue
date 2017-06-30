@@ -1,22 +1,12 @@
 package com.comp.iitb.vialogue;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,54 +18,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
-import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
-import com.comp.iitb.vialogue.customUiComponents.ViewPagerWithDisableOption;
-import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
-import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
-import com.comp.iitb.vialogue.service.ClosingService;
-import com.comp.iitb.vialogue.utils.ProjectNameUtils;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import static android.content.ContentValues.TAG;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener, TabSelectedHelper, GoogleApiClient.OnConnectionFailedListener {
