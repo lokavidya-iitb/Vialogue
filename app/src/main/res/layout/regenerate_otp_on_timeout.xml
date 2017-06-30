@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_marginBottom="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="SORRY!!! TIME'S UP"
+        android:textColor="@color/colorPrimary"
+        android:textSize="25dp" />
+
+    <TextView
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:text="Enter Phone No"/>
+
+    <EditText
+        android:layout_marginBottom="30dp"
+        android:id="@+id/timeout_phone_no_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:maxLength="13"
+        android:textColor="@color/colorPrimary"
+        />
+
+
+    <Button
+        android:id="@+id/timeout_generate_otp"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:text="Regenerate OTP"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
