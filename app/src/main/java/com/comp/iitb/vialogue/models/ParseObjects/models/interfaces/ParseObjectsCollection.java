@@ -1,19 +1,12 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.interfaces;
 
-import android.app.Application;
 import android.content.Context;
 
-import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Created by ironstein on 20/02/17.
@@ -57,7 +50,9 @@ public class ParseObjectsCollection<T extends BaseParseClass> extends BaseParseC
         } catch (Exception e) {}
         for(T object: list) {
             add(Fields.ELEMENTS_FIELD, object);
+            System.out.print("list: " +Fields.ELEMENTS_FIELD);
         }
+        //System.out.print("list: " +Fields.ELEMENTS_FIELD);
     }
 
     private ArrayList<T> getList_() {

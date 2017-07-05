@@ -1,9 +1,9 @@
 package com.comp.iitb.vialogue.Network.LokavidyaSso.Apis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 
 import com.comp.iitb.vialogue.Network.LokavidyaSso.ApiStrings;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
@@ -158,11 +158,29 @@ public class LogIn {
 
     public static void logInInBackground(Context context, RegistrationType registrationType, String registrationData, String password, OnDoneLogIn onDoneLogIn) {
         (new AsyncTask<Void, Void, Void>() {
+            private LogInResponse mLogInResponse;
+            ProgressDialog asyncDialog = new ProgressDialog(context);
+
+            @Override
+            protected void onPreExecute() {
+                asyncDialog.setMessage("Please Wait..");
+                asyncDialog.show();
+                super.onPreExecute();
+            }
+
             @Override
             public Void doInBackground(Void... params) {
-                onDoneLogIn.done(logIn(context, registrationType, registrationData, password));
+                mLogInResponse = logIn(context, registrationType, registrationData, password);
                 return null;
             }
+
+            @Override
+            public void onPostExecute(Void result) {
+                asyncDialog.dismiss();
+                //System.out.println(mLogInResponse);
+                onDoneLogIn.done(mLogInResponse);
+            }
+
         }).execute();
     }
 

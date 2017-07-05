@@ -160,7 +160,7 @@ public class CreateVideosMark2 extends Fragment {
                     @Override
                     public void onPreExecute() {
                         mProgressDialog = ProgressDialog.show(getContext(), "Creating New Slide", "Please Wait...");
-                    }
+                }
 
                     @Override
                     public Void doInBackground(Void... params) {

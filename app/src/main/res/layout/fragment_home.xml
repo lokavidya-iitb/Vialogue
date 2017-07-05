@@ -153,7 +153,7 @@
                         <Button
                             android:layout_width="100dp"
                             android:layout_height="25dp"
-                            android:layout_marginBottom="3dp"
+                            android:layout_marginBottom="5dp"
                             android:background="@drawable/rectangle_button"
                             android:includeFontPadding="true"
                             android:minHeight="0dp"

@@ -1,7 +1,7 @@
 package com.comp.iitb.vialogue.Network.LokavidyaSso.Apis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Network;
 import android.os.AsyncTask;
 
 import com.comp.iitb.vialogue.Network.LokavidyaSso.ApiStrings;
@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import okhttp3.Response;
 
@@ -139,11 +138,29 @@ public class ForgotPassword {
 
     public static void forgotPasswordInBackground(Context context, RegistrationType registrationType, String registrationData, OnDoneForgotPassword onDoneForgotPassword) {
         (new AsyncTask<Void, Void, Void>() {
+            private ForgotPasswordResponse mForgotPasswordResponse;
+            ProgressDialog asyncDialog = new ProgressDialog(context);
+
+            @Override
+            protected void onPreExecute() {
+                asyncDialog.setMessage("Please Wait..");
+                asyncDialog.show();
+                super.onPreExecute();
+            }
+
             @Override
             public Void doInBackground(Void... params) {
-                onDoneForgotPassword.done(forgotPassword(context, registrationType, registrationData));
+                mForgotPasswordResponse = forgotPassword(context, registrationType, registrationData);
                 return null;
             }
+
+            @Override
+            public void onPostExecute(Void result) {
+                asyncDialog.dismiss();
+                //System.out.println(mLogInResponse);
+                onDoneForgotPassword.done(mForgotPasswordResponse);
+            }
+
         }).execute();
     }
 
