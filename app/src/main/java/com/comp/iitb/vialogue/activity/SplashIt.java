@@ -32,14 +32,14 @@ public class SplashIt extends AppCompatActivity {
 //                System.out.println(logOutResponse.getResponseString());
 //            }
 //        });
-
+//
 //        ForgotPassword.forgotPasswordInBackground(SplashIt.this, ForgotPassword.RegistrationType.PHONE_NUMBER, "+919920579150", new OnDoneForgotPassword() {
 //            @Override
 //            public void done(ForgotPassword.ForgotPasswordResponse response) {
 //                System.out.println(response.getResponseString());
 //            }
 //        });
-
+//
 //        ResetPassword.resetPasswordInBackground(SplashIt.this, ResetPassword.RegistrationType.PHONE_NUMBER, "+919920579150", "009260", "newPassword", new OnDoneResetPassword() {
 //            @Override
 //            public void done(ResetPassword.ResetPasswordResponse resetPasswordResponse) {
@@ -63,10 +63,12 @@ public class SplashIt extends AppCompatActivity {
         } else {
                 intent = new Intent(this, WhoAreYou.class);
         }
-
+        intent.putExtra("context",0);
         startActivity(intent);
         finish();
 
     }
+
+
 
 }

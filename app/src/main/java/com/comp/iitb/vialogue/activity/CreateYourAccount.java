@@ -2,10 +2,15 @@ package com.comp.iitb.vialogue.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,23 +19,34 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnOtpReceived;
 import com.comp.iitb.vialogue.coordinators.OnOtpSent;
 import com.comp.iitb.vialogue.coordinators.OnPhoneNumberValidityChanged;
+import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.dialogs.VerifyOtp;
 import com.comp.iitb.vialogue.library.SendOtpAsync;
 import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.comp.iitb.vialogue.listeners.SmsOtpListener;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import static android.provider.Telephony.Carriers.PASSWORD;
 
-public class CreateYourAccount extends AppCompatActivity implements View.OnClickListener {
+public class CreateYourAccount extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     // constants
     private static final int SMS_READ_PERMISSION = 1235;
@@ -43,7 +59,9 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
     private String mEmail = null;
     private Integer mOtp;
     private static final int DELAY_BETWEEN_OTP_REQUESTS_MILLIS = 60000; // 1 minute
-
+    private static final int RC_SIGN_IN = 007;
+    private boolean mSilentSignIn = false;
+    private static final String TAG = CreateYourAccount.class.getSimpleName();
 
     //others
     String PHONE_NUMBER = "User_mobile_number";
@@ -88,6 +106,16 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
         );
 
 
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+
     }
 
 
@@ -98,7 +126,7 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
         switch (id) {
             // GOOGLE SIGN IN
             case R.id.google_sign_in:
-                //signIn();
+                signIn();
                 break;
 
             // GENERATE OTP
@@ -126,18 +154,191 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
                 mPhoneNumber = "+91" + enterPhoneNoEditText.getText().toString();
                 Bundle dialogInfo = new Bundle();
                 dialogInfo.putString(PHONE_NUMBER, mPhoneNumber);
-                //verifyOtp(mPhoneNumber);
-
+                verifyOtp(mPhoneNumber);
                 VerifyOtp verifyOtpDialog = new VerifyOtp(CreateYourAccount.this, dialogInfo);
                 verifyOtpDialog.show();
                 break;
 
         }
     }
+// FOR GOOGLE SIGN IN
+
+    private void signIn() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if(isNetworkAvailable()) {
+            // network available
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } else {
+            onCouldNotSignIn();
+        }
+
+    }
+
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("inside onactivityresult ");
+        if (requestCode == RC_SIGN_IN) {
+            System.out.println("inside onactivityresult if");
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            System.out.println("result " + result.isSuccess());
+            handleSignInResult(result);
+        }
+    }
+
+
+    private void handleSignInResult(GoogleSignInResult result) {
+            if (result.isSuccess()) {
+            GoogleSignInAccount acct = result.getSignInAccount();
+            mPersonName = acct.getDisplayName();
+            mEmail = acct.getEmail();
+            try {
+                mProfilePictureUrl = acct.getPhotoUrl().toString();
+            } catch (NullPointerException e) {mProfilePictureUrl = "";}
+
+            // sign out of Google
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                        }
+                    });
+            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {}
+                    });
+
+            // sign into Parse
+            signInParseUser();
+        } else {
+            if(mSilentSignIn || isNetworkAvailable()) {
+                mSilentSignIn = false;
+            } else {
+                onCouldNotSignIn();
+            }
+        }
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
 
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mSilentSignIn = true;
 
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(TAG, "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+
+            try {
+                showProgressDialog();
+            } catch (Exception e) {}
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    try {
+                        hideProgressDialog();
+                    } catch (Exception e) {}
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
+    }
+
+
+    public static void signOut(Context context, final OnSignedOut onSignedOut) {
+        final Context context_ = context;
+        mProgressDialog = ProgressDialog.show(context, "Logging Out", "Please wait ...");
+//        try {
+//            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+//                    new ResultCallback<Status>() {
+//                        @Override
+//                        public void onResult(Status status) {
+//                        }
+//                    });
+//            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+//                    new ResultCallback<Status>() {
+//                        @Override
+//                        public void onResult(Status status) {}
+//                    });
+//        } catch (Exception e) {}
+
+        ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null) {
+                    onLoggedOut(context_);
+                } else {
+                    onCouldNotLogOut(context_);
+                }
+                onSignedOut.done(e);
+            }
+        });
+    }
+
+    private static void onLoggedOut(Context context) {
+        Toast.makeText(context, R.string.loggedOut, Toast.LENGTH_LONG).show();
+        try {
+            mProgressDialog.dismiss();
+        } catch (Exception e) {}
+    }
+
+    private static void onCouldNotLogOut(Context context) {
+        Toast.makeText(context, R.string.cannotSignIn, Toast.LENGTH_LONG).show();
+        try {
+            mProgressDialog.dismiss();
+        } catch (Exception e) {}
+    }
+
+
+
+    // FOR GENERATING AND VERIFYING OTP
     private boolean mCanSendOtp = true;
     public void verifyOtp(String phoneNumber) {
         if(mCanSendOtp) {
@@ -292,7 +493,10 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
         try {
             mProgressDialog.dismiss();
         } catch (Exception e) {}
-        finish();
+        //intent to main activity
+        Intent intent = new Intent(CreateYourAccount.this, MainActivity.class);
+        startActivity(intent);
+           finish();
     }
 
     public void onCouldNotSignIn() {
@@ -302,5 +506,13 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
         } catch (Exception e) {}
     }
 
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mOtp = null;
+        SmsOtpListener.unbindListener();
+    }
 
 }

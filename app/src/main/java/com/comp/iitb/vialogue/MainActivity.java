@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
+import com.comp.iitb.vialogue.activity.WhoAreYou;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
@@ -256,7 +257,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 });
             } else {
                 // already Signed out, Sign in
-                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+                Intent intent = new Intent(getApplicationContext(), WhoAreYou.class);
+                intent.putExtra("context",1);
                 startActivity(intent);
             }
 

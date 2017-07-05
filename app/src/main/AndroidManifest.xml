@@ -173,6 +173,5 @@
         <activity android:name=".activity.CreateYourAccount"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.WhoAreYou" />
-        <activity android:name=".dialogs.VerifyOtp" />
     </application>
 </manifest>

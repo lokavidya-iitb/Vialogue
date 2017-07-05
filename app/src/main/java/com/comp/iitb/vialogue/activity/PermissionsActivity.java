@@ -52,6 +52,7 @@ public class PermissionsActivity extends AppCompatActivity {
 
     public void onAllPermissionsGranted() {
             intent = new Intent(this, WhoAreYou.class);
+        intent.putExtra("context",0);
         startActivity(intent);
         finish();
     }
