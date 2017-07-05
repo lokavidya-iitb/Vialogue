@@ -1,6 +1,5 @@
 package com.comp.iitb.vialogue.dialogs;
 
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -150,7 +149,6 @@ public class VerifyOtp extends Dialog {
                 resetActivityCode = 0;
             } else {
                 //startCreateyouraccount2
-
                 if((Integer.valueOf(otp)).equals(mOtp)) {
                     onOtpVerified();
                 }
@@ -236,32 +234,5 @@ public class VerifyOtp extends Dialog {
         mContext.startActivity(intent);
     }
 
-    /*private void VerifyOtpNext() {
-        Log.d("VerifyOtp", "inside verfy otp next");
-        String otp = OtpEditText.getText().toString();
-        if (otp.length() != 0) {
-            if (otp.equals("1234")) {
-                Log.d("VerifyOtp", "inside verfy otp next if");
-                Toast.makeText(mContext, "Phone No successfully verified", Toast.LENGTH_LONG).show();
-                // INTENT TO REGISTRATION FORM.
-                if(resetActivityCode == 1) {
-                    //startresetactivity
-                    VerifyOtp.TimeoutTimer.cancel();
-                    VerifyOtp.this.dismiss();
-                    info.putString(mContext.getResources().getString(R.string.otp), otp);
-                    Intent intent = new Intent(mContext, ResetPasswordActivity.class);
-                    intent.putExtras(info);
-                    mContext.startActivity(intent);
-                } else {
-                    //startCreateyouraccount2
-                    VerifyOtp.TimeoutTimer.cancel();
-                    VerifyOtp.this.dismiss();
-                    Intent intent = new Intent(mContext, CreateYourAccount2.class);
-                    intent.putExtras(info);
-                    mContext.startActivity(intent);
-                }
-                resetActivityCode = 0;
-            }
-        }
-    }*/
+
 }

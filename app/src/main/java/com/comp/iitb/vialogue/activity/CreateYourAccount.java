@@ -1,3 +1,4 @@
+
 package com.comp.iitb.vialogue.activity;
 
 import android.Manifest;
@@ -28,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
@@ -54,7 +56,7 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
     private PhoneNumberEditTextValidityListener PhoneNumberEditTextValidityListener;
     public static GoogleApiClient mGoogleApiClient;
     private static ProgressDialog mProgressDialog;
-
+    boolean mSilentSignIn =false;
     private Bundle info;
 
     //UI elements
@@ -212,7 +214,65 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
             startActivity(intent);
             finish();
         }
+        else {
+            if(mSilentSignIn || isNetworkAvailable()) {
+                mSilentSignIn = false;
+            } else {
+                onCouldNotSignIn();
+            }
+        }
     }
+
+    //for silent google sign in
+    @Override
+    public void onStart() {
+        super.onStart();
+        mSilentSignIn = true;
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(TAG, "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+
+            try {
+                showProgressDialog();
+            } catch (Exception e) {}
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    try {
+                        hideProgressDialog();
+                    } catch (Exception e) {}
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
+    }
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

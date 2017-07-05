@@ -1,5 +1,10 @@
 package com.comp.iitb.vialogue.dialogs;
 
+import android.content.Context;
+import android.os.Bundle;
+
+import com.comp.iitb.vialogue.dialogs.VerifyOtp;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,38 +16,34 @@ import android.widget.EditText;
 
 import com.comp.iitb.vialogue.R;
 
+import static it.sephiroth.android.library.exif2.ExifInterface.ComponentsConfiguration.R;
+
 /**
  * Created by shubham on 27/6/17.
  */
 
 public class RegenerateOtp extends Dialog implements View.OnClickListener {
 
+    String PHONE_NUMBER = "User_mobile_number";
+    VerifyOtp verifyOtpOnTimeout;
     private Bundle info;
     private Context mContext;
     private EditText TimeoutPhoneNoEditText;
     private Button TimeoutRegenerateOtpButton;
-
-
     private String mPhoneNumber = null;
-    String PHONE_NUMBER = "User_mobile_number";
     private boolean mCanSendOtp = true;
-
     private int resetActivityCode = 0;
 
-    VerifyOtp verifyOtpOnTimeout;
-
-    RegenerateOtp(Context context , Bundle info)
-    {
+    RegenerateOtp(Context context, Bundle info) {
         super(context);
-        mContext=context;
-        this.info=info;
+        mContext = context;
+        this.info = info;
     }
 
-    RegenerateOtp(Context context , Bundle info, int resetActivityCode)
-    {
+    RegenerateOtp(Context context, Bundle info, int resetActivityCode) {
         super(context);
-        mContext=context;
-        this.info=info;
+        mContext = context;
+        this.info = info;
         this.resetActivityCode = resetActivityCode;
     }
 
@@ -55,8 +56,8 @@ public class RegenerateOtp extends Dialog implements View.OnClickListener {
         mPhoneNumber = info.getString(mContext.getResources().getString(R.string.registrationData));
         Log.d("RegenerateOtp", mContext.getResources().getString(R.string.registrationData));
 
-        TimeoutPhoneNoEditText = (EditText)findViewById(R.id.timeout_phone_no_edit_text);
-        TimeoutRegenerateOtpButton= (Button)findViewById(R.id.timeout_generate_otp);
+        TimeoutPhoneNoEditText = (EditText) findViewById(R.id.timeout_phone_no_edit_text);
+        TimeoutRegenerateOtpButton = (Button) findViewById(R.id.timeout_generate_otp);
 
         TimeoutPhoneNoEditText.setText(mPhoneNumber);
         TimeoutRegenerateOtpButton.setOnClickListener(this);
@@ -65,13 +66,13 @@ public class RegenerateOtp extends Dialog implements View.OnClickListener {
         RegenerateOtp.this.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                Log.d("RegenerateOtp","inside on cancel");
+                Log.d("RegenerateOtp", "inside on cancel");
             }
         });
         RegenerateOtp.this.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                Log.d("RegenerateOtp","inside on dismiss");
+                Log.d("RegenerateOtp", "inside on dismiss");
             }
         });
 
@@ -80,7 +81,7 @@ public class RegenerateOtp extends Dialog implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(resetActivityCode == 1) {
+        if (resetActivityCode == 1) {
             verifyOtpOnTimeout = new VerifyOtp(mContext, info, 1);
         } else {
             verifyOtpOnTimeout = new VerifyOtp(mContext, info);

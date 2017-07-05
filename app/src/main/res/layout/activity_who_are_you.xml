@@ -69,11 +69,12 @@
         android:textColor="@android:color/darker_gray"/>
     </LinearLayout>
     <TextView
+        android:padding="8dp"
         android:id="@+id/skip_button"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="skip to dashboard"
-        android:textSize="18sp"
+        android:text="skip"
+        android:textSize="20sp"
         android:textColor="@android:color/holo_blue_dark">
         </TextView>
 </LinearLayout>
