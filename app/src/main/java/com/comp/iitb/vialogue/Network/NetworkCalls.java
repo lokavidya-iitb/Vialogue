@@ -8,8 +8,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static org.acra.sender.HttpSender.Type.JSON;
-
 /**
  * Created by DELL on 5/10/2017.
  */
@@ -24,6 +22,8 @@ public class NetworkCalls {
     }
 
     public Response doPostRequest(String url, String json) throws IOException {
+        System.out.println("doPostRequest : url : " + url);
+        System.out.println("doPostRequest : body : " + json.toString());
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -34,6 +34,7 @@ public class NetworkCalls {
     }
 
     public Response doGetRequest(String url) throws IOException {
+        System.out.println("doGetRequest : url : " + url);
         Request request = new Request.Builder()
                 .url(url)
                 .get()

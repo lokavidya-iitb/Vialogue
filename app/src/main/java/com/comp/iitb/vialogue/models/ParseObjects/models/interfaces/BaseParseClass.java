@@ -4,13 +4,9 @@ import android.content.Context;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Created by ironstein on 13/02/17.
@@ -18,7 +14,7 @@ import java.util.Observer;
 
 public abstract class BaseParseClass extends ParseObject {
 
-    // default constructor required by Parse
+    // default constructor required by fParse
     // DO NOT USE THIS CONSTRUCTOR (ONLY FOR USE BY PARSE)
     // USE THE OTHER CONSTRUCTOR THAT REQUIRES PARAMETERS DURING
     // INSTANTIATING THE OBJECT

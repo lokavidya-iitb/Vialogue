@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="32dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:textSize="25dp"
+            android:layout_gravity="center"
+            android:text="Create Your Account"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:text="Choose Email"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"/>
+        <Button
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:id="@+id/google_sign_in"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="Google Sign In"
+            android:layout_weight=".5"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="1dp"
+            android:background="#9E9E9E"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/darker_gray"
+            ></View>
+
+        <TextView
+            android:id="@+id/or_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="or"
+            android:textSize="20dp"
+            android:textColor="@android:color/darker_gray"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="1dp"
+            android:background="#9E9E9E"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/darker_gray"
+            ></View>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <TextView
+            android:id="@+id/enter_phone_no"
+            android:textSize="16dp"
+            android:text="Enter Phone no."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/enter_phone_no"
+            android:orientation="horizontal">
+            <TextView
+                android:textSize="16dp"
+                android:text="+91"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"  />
+            <EditText
+                android:id="@+id/enter_phone_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:shadowColor="@android:color/darker_gray"
+                android:inputType="phone"
+                android:maxLength="10"
+                android:backgroundTint="#037766"
+                android:textCursorDrawable="@null"
+                />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/next"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate otp"
+            android:enabled="false"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="25dp" />
+    </RelativeLayout>
+</LinearLayout>

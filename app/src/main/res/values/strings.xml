@@ -4,7 +4,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="sign_in">Sign In</string>
     <string name="create_project">Create Project</string>
-    <string name="fragment_view_videos">View Videos</string>
+    <string name="fragment_view_videos">My Projects</string>
     <string name="view_videos">Videos</string>
     <string name="user_account">Profile</string>
     <string name="camera">Take\nImage</string>
@@ -27,9 +27,8 @@
     <string name="save_project">Save Project</string>
     <string-array name="tab_titles">
         <item>LVCreate</item>
-        <item>View Videos</item>
         <item>Create Project</item>
-        <item>My Account</item>
+        <item>My Projects</item>
     </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_audio_record">Add Audio</string>
@@ -81,7 +80,7 @@
     <string name="language">language</string>
     <string name="tags">Enter only 50 tags</string>
     <string name="video_name">Video Name</string>
-    <string name="project_string">Project Name</string>
+    <string name="project_string">Projects</string>
     <string name="loading">Hold on!</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_splash_it">SplashIt</string>
@@ -119,8 +118,8 @@
     <string name="timer_null_text">"--:--"</string>
     <string name="download">Download</string>
     <string name="title_activity_test">TestActivity</string>
-    <string name="projectDesc">Create videos and share them with hundreds of other usersx.</string>
-    <string name="videoDesc">Enjoy viewing videos from multiple categories created by other users.</string>
+    <string name="projectDesc">See your created videos and projects.</string>
+    <string name="videoDesc">Create videos and share them with hundreds of other users.</string>
     <string name="pause">Pause</string>
     <string name="title_activity_sign_in_mark2">SignInMark2</string>
     <string name="existing_lokavidya_user">EXISTING LOKAVIDYA USER</string>
@@ -140,5 +139,9 @@
     <string name="add_nimage">Add  \nImage</string>
     <string name="add_nvideo">Add  \nVideo</string>
     <string name="add_nquestion">Add  \nQuestion</string>
-
+    <string name="phoneNo">phoneNo</string>
+    <string name="email">email</string>
+    <string name="registrationData">registrationData</string>
+    <string name="registrationType">registrationType</string>
+    <string name="otp">otp</string>
 </resources>

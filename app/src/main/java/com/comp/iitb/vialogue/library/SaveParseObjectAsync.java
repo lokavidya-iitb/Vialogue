@@ -2,16 +2,12 @@ package com.comp.iitb.vialogue.library;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
-import com.comp.iitb.vialogue.coordinators.OnThumbnailCreated;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.parse.ParseException;
-
-import java.io.File;
 
 /**
  * Created by ironstein on 07/03/17.
@@ -29,7 +25,6 @@ public class SaveParseObjectAsync extends AsyncTask<String, Integer, Boolean> {
         mContext = context;
         mProgressDialog = progressDialog;
         mOnProjectSaved = onProjectSaved;
-
     }
 
     @Override

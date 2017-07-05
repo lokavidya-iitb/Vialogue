@@ -3,29 +3,20 @@ package com.comp.iitb.vialogue.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.comp.iitb.vialogue.App;
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
-import com.comp.iitb.vialogue.adapters.HeroAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.viewGroups.PagerContainer;
-
-import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -105,13 +96,13 @@ public class Home extends Fragment {
         viewVideosRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewpager.setCurrentItem(FragmentPageAdapter.VIEW_VIDEOS,true);
+                viewpager.setCurrentItem(FragmentPageAdapter.INCEPTIONMYPROJECTS,true);
             }
         });
         viewVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewpager.setCurrentItem(FragmentPageAdapter.VIEW_VIDEOS,true);
+                viewpager.setCurrentItem(FragmentPageAdapter.INCEPTIONMYPROJECTS,true);
             }
         });
 

@@ -42,7 +42,7 @@ public class PhoneNumberEditTextValidityListener {
                 } else {
                     if(isValid) {
                         isValid = false;
-                        onPhoneNumberValidityChanged.onValidityChanged(false);
+                        mOnPhoneNumberValidityChanged.onValidityChanged(false);
                     }
                 }
             }
