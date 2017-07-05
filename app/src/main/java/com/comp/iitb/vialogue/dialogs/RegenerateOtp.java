@@ -1,10 +1,5 @@
 package com.comp.iitb.vialogue.dialogs;
 
-import android.content.Context;
-import android.os.Bundle;
-
-import com.comp.iitb.vialogue.dialogs.VerifyOtp;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,23 +11,25 @@ import android.widget.EditText;
 
 import com.comp.iitb.vialogue.R;
 
-import static it.sephiroth.android.library.exif2.ExifInterface.ComponentsConfiguration.R;
-
 /**
  * Created by shubham on 27/6/17.
  */
 
 public class RegenerateOtp extends Dialog implements View.OnClickListener {
 
-    String PHONE_NUMBER = "User_mobile_number";
-    VerifyOtp verifyOtpOnTimeout;
     private Bundle info;
     private Context mContext;
     private EditText TimeoutPhoneNoEditText;
     private Button TimeoutRegenerateOtpButton;
+
+
     private String mPhoneNumber = null;
+    String PHONE_NUMBER = "User_mobile_number";
     private boolean mCanSendOtp = true;
+
     private int resetActivityCode = 0;
+
+    VerifyOtp verifyOtpOnTimeout;
 
     RegenerateOtp(Context context, Bundle info) {
         super(context);
