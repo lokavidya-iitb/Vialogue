@@ -57,6 +57,7 @@ public class VerifyOtp extends Dialog {
         super(context);
         mContext = context;
         this.info = info;
+        System.out.println(info.getString(mContext.getResources().getString(R.string.registrationData)));
         verifyOtp(info.getString(mContext.getResources().getString(R.string.registrationData)));
     }
 
@@ -213,6 +214,7 @@ public class VerifyOtp extends Dialog {
                     Toast.makeText(mContext, R.string.cannotGenOTP, Toast.LENGTH_LONG).show();
                     SmsOtpListener.unbindListener();
                     VerifyOtp.this.dismiss();
+                    VerifyOtp.TimeoutTimer.cancel();
                 }
             }).execute(phoneNumber);
 

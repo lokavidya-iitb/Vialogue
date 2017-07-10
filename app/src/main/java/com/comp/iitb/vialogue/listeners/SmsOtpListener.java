@@ -15,7 +15,7 @@ import com.comp.iitb.vialogue.coordinators.OnOtpReceived;
 
 public class SmsOtpListener extends BroadcastReceiver {
 
-    private String SMS_FORMAT_REGEX = "Hello from Lokavidya. Your OTP is (\\d{4})$";
+    private String SMS_FORMAT_REGEX = "Sent from your Twilio trial account - Hello from Lokavidya. Your OTP is (\\d{4})$";
 
     private static OnOtpReceived mOnOtpReceived;
 
@@ -59,7 +59,7 @@ public class SmsOtpListener extends BroadcastReceiver {
     }
 
     public Integer getOtpFromMessageBody(String messageBody) {
-        return Integer.parseInt(messageBody.substring(34));
+        return Integer.parseInt(messageBody.substring(72));
     }
 
     public static void bindListener(OnOtpReceived onOtpReceived) {
