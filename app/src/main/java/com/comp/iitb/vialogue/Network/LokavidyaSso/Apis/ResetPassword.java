@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.Network.LokavidyaSso.Apis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -149,11 +150,29 @@ public class ResetPassword {
 
     public static void resetPasswordInBackground(Context context, RegistrationType registrationType, String registrationData, String otp, String newPassword, OnDoneResetPassword onDoneResetPassword) {
         (new AsyncTask<Void, Void, Void>() {
+            private ResetPasswordResponse mResetPasswordResponse;
+            ProgressDialog asyncDialog = new ProgressDialog(context);
+
+            @Override
+            protected void onPreExecute() {
+                asyncDialog.setMessage("Please Wait..");
+                asyncDialog.show();
+                super.onPreExecute();
+            }
+
             @Override
             public Void doInBackground(Void... params) {
-                onDoneResetPassword.done(resetPassword(context, registrationType, registrationData, otp, newPassword));
+                mResetPasswordResponse = resetPassword(context, registrationType, registrationData, otp, newPassword);
                 return null;
             }
+
+            @Override
+            public void onPostExecute(Void result) {
+                asyncDialog.dismiss();
+                //System.out.println(mLogInResponse);
+                onDoneResetPassword.done(mResetPasswordResponse);
+            }
+
         }).execute();
     }
 

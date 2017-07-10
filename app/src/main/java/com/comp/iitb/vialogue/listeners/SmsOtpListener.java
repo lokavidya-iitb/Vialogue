@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;
 
 import com.comp.iitb.vialogue.coordinators.OnOtpReceived;
 
@@ -47,6 +46,7 @@ public class SmsOtpListener extends BroadcastReceiver {
             if(matchOtpMessage(smsMessage.getDisplayOriginatingAddress(), smsMessage.getMessageBody())) {
                 if(mOnOtpReceived != null) {
                     mOnOtpReceived.onDone(getOtpFromMessageBody(smsMessage.getMessageBody()));
+
                 }
             }
         }

@@ -1,22 +1,12 @@
 package com.comp.iitb.vialogue;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,54 +18,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
+import com.comp.iitb.vialogue.activity.CreateYourAccount;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
+import com.comp.iitb.vialogue.activity.WhoAreYou;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
-import com.comp.iitb.vialogue.adapters.SavedProjectsAdapter;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
 import com.comp.iitb.vialogue.coordinators.OnProjectSaved;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
-import com.comp.iitb.vialogue.customUiComponents.ViewPagerWithDisableOption;
-import com.comp.iitb.vialogue.fragments.CreateVideos;
 import com.comp.iitb.vialogue.fragments.SingleChoiceQuestionDialog;
-import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.helpers.TabSelectedHelper;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.listeners.OnTabSelectedListener;
 import com.comp.iitb.vialogue.listeners.QuestionDoneListener;
-import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
-import com.comp.iitb.vialogue.service.ClosingService;
-import com.comp.iitb.vialogue.utils.ProjectNameUtils;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import static android.content.ContentValues.TAG;
-import static com.comp.iitb.vialogue.activity.AudioRecordActivity.SLIDE_NO;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener, TabSelectedHelper, GoogleApiClient.OnConnectionFailedListener {
@@ -98,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         Bundle data = getIntent().getExtras();
         if(data != null) {
             Integer startFragmentPosition = data.getInt(startFragmentPositionKey);
-            if(startFragmentPosition != null && startFragmentPosition < 4) {
+            if(startFragmentPosition != null && startFragmentPosition < 3) {
                 mStartFragmentPosition = startFragmentPosition;
             }
         } if(mStartFragmentPosition == null) {
@@ -107,12 +74,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         System.out.println("mStartFragmentPosition : " + mStartFragmentPosition);
 
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mViewPager = ((ViewPager) findViewById(R.id.viewpager));
         mViewPager.setAdapter(new FragmentPageAdapter(getSupportFragmentManager(), MainActivity.this));
-        mViewPager.setOffscreenPageLimit(3);
+        //mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(2);
 
         mStorage = new Storage(getBaseContext());
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -123,14 +90,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             @Override
             public void onClick(View view) {
                 switch (mViewPager.getCurrentItem()) {
-                    case 2:
+                    case 1:
                         SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
                         SharedRuntimeContent.blankImages= SharedRuntimeContent.getBlankSlides();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
 //                        intent.putStringArrayListExtra()
                         startActivity(intent);
                         break;
-                    case 3:
+                    case 2:
                         SharedRuntimeContent.createEmptyProject(MainActivity.this);
                         SharedRuntimeContent.questionsList.clear();
                         mViewPager.setCurrentItem(FragmentPageAdapter.CREATE_PROJECT, true);
@@ -200,10 +167,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 case FragmentPageAdapter.CREATE_PROJECT:
                     tab.setIcon(R.drawable.create_videos);
                     break;
-                case FragmentPageAdapter.VIEW_VIDEOS:
+                /*case FragmentPageAdapter.VIEW_VIDEOS:
                     tab.setIcon(R.drawable.view_videos);
-                    break;
-                case FragmentPageAdapter.USER_ACCOUNT:
+                    break;*/
+                case FragmentPageAdapter.INCEPTIONMYPROJECTS:
                     tab.setIcon(R.drawable.profile);
                     break;
             }
@@ -292,7 +259,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 });
             } else {
                 // already Signed out, Sign in
-                Intent intent = new Intent(getApplicationContext(), SignIn.class);
+
+                Intent intent = new Intent(getApplicationContext(), WhoAreYou.class);
+                intent.putExtra("context",1);
                 startActivity(intent);
             }
 
@@ -390,19 +359,19 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     mMenu.findItem(R.id.save_project).setVisible(false);
                 } catch (Exception e) {}
                 break;
-            case FragmentPageAdapter.VIEW_VIDEOS:
+            /*case FragmentPageAdapter.VIEW_VIDEOS:
                 mPreviewFab.hide();
                 try {
                     mMenu.findItem(R.id.save_project).setVisible(false);
                 } catch (Exception e) {}
-                break;
+                break;*/
             case FragmentPageAdapter.CREATE_PROJECT:
                 SharedRuntimeContent.calculatePreviewFabVisibility();
                 try {
                     SharedRuntimeContent.calculateSaveMenuItemVisibility();
                 } catch (Exception e) {}
                 break;
-            case FragmentPageAdapter.USER_ACCOUNT:
+            case FragmentPageAdapter.INCEPTIONMYPROJECTS:
                 mPreviewFab.setImageResource(R.drawable.plus_png);
                 try {
                     mMenu.findItem(R.id.save_project).setVisible(false);

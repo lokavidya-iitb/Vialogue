@@ -5,11 +5,8 @@ import android.net.Uri;
 import android.os.Environment;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
-import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,11 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import static com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass.Fields.CHILDREN_RESOURCES;
 
 /**
  * Created by ironstein on 16/02/17.

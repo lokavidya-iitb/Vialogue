@@ -3,11 +3,11 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-    /*// http://tools.android.com/tech-docs/new-build-system/tips
-    //noinspection GroovyAssignabilityCheck
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    //noinspection GroovyAssignabilityCheck
-    buildToolsVersion rootProject.ext.buildToolsVersion
+/*// http://tools.android.com/tech-docs/new-build-system/tips
+//noinspection GroovyAssignabilityCheck
+compileSdkVersion rootProject.ext.compileSdkVersion
+//noinspection GroovyAssignabilityCheck
+buildToolsVersion rootProject.ext.buildToolsVersion
 */
     defaultConfig {
         minSdkVersion 9

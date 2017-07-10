@@ -22,14 +22,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.comp.iitb.vialogue.GlobalStuff.Master;
-import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnOtpReceived;
 import com.comp.iitb.vialogue.coordinators.OnOtpSent;
 import com.comp.iitb.vialogue.coordinators.OnPhoneNumberValidityChanged;
 import com.comp.iitb.vialogue.coordinators.OnSignedOut;
-import com.comp.iitb.vialogue.helpers.SharedPreferenceHelper;
 import com.comp.iitb.vialogue.library.SendOtpAsync;
 import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.comp.iitb.vialogue.listeners.SmsOtpListener;
@@ -38,8 +35,8 @@ import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -47,12 +44,8 @@ import com.google.android.gms.common.api.Status;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 
 public class SignIn extends AppCompatActivity implements
@@ -415,11 +408,11 @@ public class SignIn extends AppCompatActivity implements
             // SIGN IN WITH EMAIL ID
             userName = mEmail;
         }
-
         ParseUser user = new ParseUser();
         user.logInInBackground(userName, PASSWORD, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
+
                 onSignedIn();
             }
         });
@@ -467,6 +460,7 @@ public class SignIn extends AppCompatActivity implements
 
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            System.out.println("result:"+result.isSuccess());
             handleSignInResult(result);
         }
     }

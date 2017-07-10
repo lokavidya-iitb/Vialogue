@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.Network.LokavidyaSso.Apis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -105,11 +106,29 @@ public class SignUp {
 
     public static void signUpInBackground(Context context, String userName, RegistrationType registrationType, String registrationData, String password, OnDoneSignIn onDoneSignIn) {
         (new AsyncTask<Void, Void, Void>() {
+            private SignUpResponse mSignUpResponse;
+            ProgressDialog asyncDialog = new ProgressDialog(context);
+
+            @Override
+            protected void onPreExecute() {
+                asyncDialog.setMessage("Please Wait..");
+                asyncDialog.show();
+                super.onPreExecute();
+            }
+
             @Override
             public Void doInBackground(Void... params) {
-                onDoneSignIn.done(signUp(context, userName, registrationType, registrationData, password));
+                mSignUpResponse = signUp(context, userName, registrationType, registrationData, password);
                 return null;
             }
+
+            @Override
+            public void onPostExecute(Void result) {
+                asyncDialog.dismiss();
+                System.out.println(mSignUpResponse);
+                onDoneSignIn.done(mSignUpResponse);
+            }
+
         }).execute();
     }
 

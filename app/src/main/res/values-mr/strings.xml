@@ -25,9 +25,8 @@
     <string name="cannot_play">रेकॉर्डिंग करत असताना प्ले करू शकत नाही  </string>
     <string-array name="tab_titles">
         <item>LVCreate</item>
-        <item>व्हिडिओ बघा</item>
         <item>व्हिडिओ तयार करा</item>
-        <item>माझे खाते</item>
+        <item>माझे प्रोजेक्ट</item>
     </string-array>
     <string name="hello_blank_fragment">हॅलो - रिक्त तुकडा</string>
 
@@ -90,7 +89,7 @@
     <string name="language">भाषा </string>
     <string name="tags">केवळ ५० टॅग प्रविष्ट करा </string>
     <string name="video_name">व्हिडिओचे नाव</string>
-    <string name="project_string"> योजना नाव</string>
+    <string name="project_string">प्रोजेक्टस</string>
     <string name="loading">कृपया थांबा</string>
     <string name="title_activity_main2">मुख्य क्रियाकलाप</string>
     
@@ -124,4 +123,6 @@
     <string name="networkConnect">आपले इंटरनेट कनेक्टिव्हिटी तपासा</string>
     <string name="imagePermissiondenied"> रद्द, आवश्यक परवानगी मंजूर केलेली नाही </string>
     <string name="create_and_share">तयार आणि शेअर करा</string>
+    <string name="videoDesc">व्हिडिओ तयार करा आणि शेकडो इतर वापरकर्त्यांसह सामायिक करा.</string>
+    <string name="projectDesc">आपले तयार केलेले व्हिडिओ आणि प्रोजेक्ट पहा.</string>
 </resources>

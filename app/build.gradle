@@ -26,7 +26,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    /*  Exclude duplicate licenses */
+/* Exclude duplicate licenses */
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/LICENSE'
@@ -46,22 +46,22 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    /*compile 'com.github.hotchemi:permissionsdispatcher:2.3.1'
-    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
-    */
+/*compile 'com.github.hotchemi:permissionsdispatcher:2.3.1'
+annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
+*/
     compile('com.parse:parse-android:1.14.1') {
         exclude group: 'com.squareup.okhttp', module: 'okhttp'
     }
     compile project(':vplayercore')
 
-    // Dependency for Google Sign-In
+// Dependency for Google Sign-In
 
-    // ACRA Crash Reporting
+// ACRA Crash Reporting
 
-    // Loading Animations
-    //Creative SDKcompile ('com.adobe.creativesdk.foundation:auth:0.9.1251') {
-//        exclude group: 'com.google.android.gms'
-//    }
+// Loading Animations
+//Creative SDKcompile ('com.adobe.creativesdk.foundation:auth:0.9.1251') {
+// exclude group: 'com.google.android.gms'
+// }
     compile("com.adobe.creativesdk:image:4.8.4") {
         exclude group: 'com.google.android.gms'
     }
@@ -69,14 +69,15 @@ dependencies {
         exclude group: 'com.google.android.gms'
     }
 
-    // LeakCanary
-    // TODO remove in production build
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-//    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+// LeakCanary
+// TODO remove in production build
+// debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
 
-    // fishbun (for selecting multiple images) (only for API < 18)
-    // TODO change implementation for API > 18
+// releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+// testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+// fishbun (for selecting multiple images) (only for API < 18)
+// TODO change implementation for API > 18
     compile('com.sangcomz:FishBun:0.6.4@aar') {
         transitive = true
     }
@@ -101,6 +102,7 @@ dependencies {
     compile 'com.wang.avi:library:2.1.3'
     compile 'com.android.support:support-vector-drawable:25.1.1'
     compile 'com.google.firebase:firebase-messaging:9.2.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
 }

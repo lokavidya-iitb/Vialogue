@@ -477,7 +477,6 @@ public class SharedRuntimeContent {
         return list;
     }
 
-
     public static List<BlankImage> getBlankSlides() {
         int i=0;
         ArrayList<BlankImage> list = new ArrayList<>();
