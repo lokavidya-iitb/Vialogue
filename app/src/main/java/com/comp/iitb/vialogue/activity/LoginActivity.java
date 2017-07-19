@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -11,10 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnDoneLogIn;
 import com.comp.iitb.vialogue.dialogs.ForgotPasswordDialog;
+
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -75,12 +79,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(mLoginId.matches(PHONE_NUMBER_REGEX)) {
                     mRegistrationType = LogIn.RegistrationType.PHONE_NUMBER;
+                    mRegistrationData = "+91" + mLoginId;
                 } else {
                     mRegistrationType = LogIn.RegistrationType.EMAIL_ID;
+                    mRegistrationData = mLoginId;
                 }
 
                 System.out.println("mRegistrationType: " + mRegistrationType);
-                mRegistrationData = mLoginId;
+
 
                 login(mContext, mRegistrationType, mRegistrationData, mPassword);
             }
@@ -109,6 +115,8 @@ public class LoginActivity extends AppCompatActivity {
                 switch (logInResponse.getResponseType()) {
                     case LOGGED_IN:
                         mResponseString = logInResponse.getResponseString();
+                        Intent intent = new Intent(context , MainActivity.class);
+                        context.startActivity(intent);
                     case PASSWORD_DOES_NOT_MATCH:
                         mResponseString = logInResponse.getResponseString();
                     case USER_NOT_ACTIVE:

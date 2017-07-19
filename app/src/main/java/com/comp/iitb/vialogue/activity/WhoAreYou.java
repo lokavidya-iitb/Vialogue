@@ -12,6 +12,7 @@ import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 
 
+
 public class WhoAreYou extends AppCompatActivity {
 
 
@@ -70,8 +71,8 @@ public class WhoAreYou extends AppCompatActivity {
             // The code in this method will be executed when the existing user button is clicked on.
             @Override
             public void onClick(View view) {
-//            Intent i = new Intent(view.getContext(), CreateYourAccount.class);      todo: intent to login page
-//                startActivity(i);
+            Intent i = new Intent(view.getContext(), LoginActivity.class);
+                startActivity(i);
                 finish();
             }
 

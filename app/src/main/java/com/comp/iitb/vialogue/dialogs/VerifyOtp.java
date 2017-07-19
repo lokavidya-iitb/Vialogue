@@ -175,6 +175,7 @@ public class VerifyOtp extends Dialog {
                     SmsOtpListener.bindListener(new OnOtpReceived() {
                         @Override
                         public void onDone(Integer otp) {
+                            System.out.println(".................inside sms otp listner...listner is working............................ ");
                             if(otp.equals(mOtp)) {
                                 onOtpVerified();
                             }
