@@ -13,7 +13,7 @@ import java.net.URLEncoder;
  */
 public class ApiStrings {
 
-    public static final String lokavidyaSsoBaseUrl = "https://sso.lokavidya.com/";
+    public static final String lokavidyaSsoBaseUrl = "https://lvsso.herokuapp.com/";//"https://sso.lokavidya.com/"
     public static final String projectsApiBaseUrl = "http://employee-dev-env.dkprxv4uh3.us-west-2.elasticbeanstalk.com/";
     public static enum RegistrationType {PHONE_NUMBER, EMAIL_ID}
 

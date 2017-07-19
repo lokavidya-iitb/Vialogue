@@ -108,6 +108,8 @@ public class CreateVideosMark2 extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        System.out.println("container's id : "+ container.getId());
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_videos_mark2, container, false);
 

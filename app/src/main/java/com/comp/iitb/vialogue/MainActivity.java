@@ -1,4 +1,5 @@
-package com.comp.iitb.vialogue;
+package
+        com.comp.iitb.vialogue;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -6,9 +7,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,10 +21,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
-import com.comp.iitb.vialogue.activity.CreateYourAccount;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
 import com.comp.iitb.vialogue.activity.WhoAreYou;
@@ -44,9 +49,17 @@ import com.parse.ParseUser;
 
 import static android.content.ContentValues.TAG;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnListFragmentInteractionListener,
+//import static it.sephiroth.android.library.exif2.ExifInterface.ComponentsConfiguration.R;
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener, OnListFragmentInteractionListener,
         OnProgressUpdateListener, TabSelectedHelper, GoogleApiClient.OnConnectionFailedListener {
 
+
+    public static final String startFragmentPositionKey = "start_fragment_position";
+    DrawerLayout drawer;
+    ImageView UserImage;
+    Toast backToast;
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private Storage mStorage;
@@ -55,24 +68,31 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private ViewPager mViewPager;
     private Integer mStartFragmentPosition;
 
-    public static final String startFragmentPositionKey = "start_fragment_position";
+    //main activity part
+    // Back Button logic
+    private boolean shouldExitOnBack = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_mark2);
+
 
         Bundle data = getIntent().getExtras();
-        if(data != null) {
+        if (data != null) {
             Integer startFragmentPosition = data.getInt(startFragmentPositionKey);
-            if(startFragmentPosition != null && startFragmentPosition < 3) {
+            if (startFragmentPosition != null && startFragmentPosition < 3) {
                 mStartFragmentPosition = startFragmentPosition;
             }
-        } if(mStartFragmentPosition == null) {
+        }
+        if (mStartFragmentPosition == null) {
             mStartFragmentPosition = 0;
         }
 
         System.out.println("mStartFragmentPosition : " + mStartFragmentPosition);
+
+
+        UserImage = (ImageView) findViewById(R.id.user_image);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -86,13 +106,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
         mPreviewFab = (FloatingActionButton) findViewById(R.id.preview_fab);
+
+
         mPreviewFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        SharedRuntimeContent.questionsList= SharedRuntimeContent.getQuestions();
-                        SharedRuntimeContent.blankImages= SharedRuntimeContent.getBlankSlides();
+                        SharedRuntimeContent.questionsList = SharedRuntimeContent.getQuestions();
+                        SharedRuntimeContent.blankImages = SharedRuntimeContent.getBlankSlides();
                         Intent intent = new Intent(getBaseContext(), UploadVideoActivity.class);
 //                        intent.putStringArrayListExtra()
                         startActivity(intent);
@@ -110,36 +132,49 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
         refreshSignInOutOptions();
         mViewPager.setCurrentItem(mStartFragmentPosition);
-    }
 
-    // Back Button logic
-    private boolean shouldExitOnBack = false;
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                MainActivity.this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && mViewPager.getCurrentItem()!=1) {
-            if(shouldExitOnBack) {
-                finish();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
                 return true;
             } else {
-                Toast.makeText(MainActivity.this, "Press back again to exit the application.", Toast.LENGTH_LONG).show();
-                shouldExitOnBack = true;
-                (new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    public Void doInBackground(Void... params) {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        shouldExitOnBack = false;
-                        return null;
+                if (mViewPager.getCurrentItem() != 1) {
+                    if (shouldExitOnBack) {
+                        return super.onKeyDown(keyCode, event);
+                    } else {
+                        backToast = Toast.makeText(MainActivity.this, "Press back again to exit the application.", Toast.LENGTH_LONG);
+                        backToast.show();
+                        shouldExitOnBack = true;
+                        (new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            public Void doInBackground(Void... params) {
+                                try {
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                shouldExitOnBack = false;
+                                return null;
+                            }
+                        }).execute();
+                        return true;
                     }
-                }).execute();
-                return true;
+                }
             }
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -199,7 +234,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.saveMenuItem = mMenu.findItem(R.id.save_project);
         try {
             mMenu.findItem(R.id.save_project).setVisible(false);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         SharedRuntimeContent.saveMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -208,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 SharedRuntimeContent.pinProjectInBackground(MainActivity.this, new OnProjectSaved() {
                     @Override
                     public void done(boolean isSaved) {
-                        if(!SharedRuntimeContent.getProject().doesItExistInLocalDatastore()) {
+                        if (!SharedRuntimeContent.getProject().doesItExistInLocalDatastore()) {
                             SharedRuntimeContent.myProjectsAdapter.addProject(SharedRuntimeContent.getProject());
                             SharedRuntimeContent.getProject().existsInLocalDatastore();
                             Toast.makeText(MainActivity.this, "Project Saved Successfully", Toast.LENGTH_SHORT).show();
@@ -228,14 +264,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     public void refreshSignInOutOptions() {
         try {
-            if(ParseUser.getCurrentUser() == null) {
+            if (ParseUser.getCurrentUser() == null) {
                 // signed out
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_in);
             } else {
                 // signed in
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_out);
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -246,22 +283,23 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         //noinspection SimplifiableIfStatement
         if (item.getItemId() == R.id.action_settings) {
-            if(ParseUser.getCurrentUser() != null) {
+            if (ParseUser.getCurrentUser() != null) {
                 // already Signed in, Sign out
                 SignIn.signOut(
                         MainActivity.this,
                         new OnSignedOut() {
                             @Override
                             public void done(ParseException e) {
-                                if(e == null) {}
+                                if (e == null) {
+                                }
                                 refreshSignInOutOptions();
-                        }
-                });
+                            }
+                        });
             } else {
                 // already Signed out, Sign in
 
                 Intent intent = new Intent(getApplicationContext(), WhoAreYou.class);
-                intent.putExtra("context",1);
+                intent.putExtra("context", 1);
                 startActivity(intent);
             }
 
@@ -276,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("Main Activity", "resultCode " + resultCode + " request code " + requestCode);
 
-        if(requestCode == SharedRuntimeContent.GET_QUESTION) {
+        if (requestCode == SharedRuntimeContent.GET_QUESTION) {
             Bundle extras = data.getExtras();
             System.out.println("MainActivity : slideNumber : " + extras.getInt(QuestionDoneListener.SLIDE_NUMBER_FIELD));
             Question question = new Question(
@@ -321,13 +359,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             intent.putExtras(bundle);
             startActivity(intent);
 
-        } else if(item.getSlideType() == Slide.SlideType.VIDEO){
+        } else if (item.getSlideType() == Slide.SlideType.VIDEO) {
             System.out.println("playing video");
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile((item.getResource().getResourceFile())), "video/*");
             startActivity(intent);
 
-        } else if(item.getSlideType() == Slide.SlideType.QUESTION) {
+        } else if (item.getSlideType() == Slide.SlideType.QUESTION) {
             // TODO display question
             System.out.println("MainActivity : slideNumber : " + SharedRuntimeContent.getSlidePosition(item));
             SingleChoiceQuestionDialog qaDialog = new SingleChoiceQuestionDialog(MainActivity.this, new QuestionDoneListener(MainActivity.this, MainActivity.this), (Question) item.getResource(), SharedRuntimeContent.getSlidePosition(item));
@@ -357,7 +395,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 mPreviewFab.hide();
                 try {
                     mMenu.findItem(R.id.save_project).setVisible(false);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
                 break;
             /*case FragmentPageAdapter.VIEW_VIDEOS:
                 mPreviewFab.hide();
@@ -369,19 +408,23 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 SharedRuntimeContent.calculatePreviewFabVisibility();
                 try {
                     SharedRuntimeContent.calculateSaveMenuItemVisibility();
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
                 break;
             case FragmentPageAdapter.INCEPTIONMYPROJECTS:
                 mPreviewFab.setImageResource(R.drawable.plus_png);
                 try {
                     mMenu.findItem(R.id.save_project).setVisible(false);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
                 mPreviewFab.show();
         }
     }
 
     @Override
     public void onStop() {
+        if(backToast!=null)
+        backToast.cancel();
         super.onStop();
     }
 
@@ -396,5 +439,38 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_dashboard) {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intent);
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        } else if (id == R.id.nav_notification) {
+
+        } else if (id == R.id.nav_lok_manual) {
+
+        } else if (id == R.id.nav_settings) {
+
+        } else if (id == R.id.nav_help) {
+
+        } else if (id == R.id.nav_about) {
+
+        } else if (id == R.id.nav_rate_us) {
+
+        }
+
+        Intent intent = new Intent(MainActivity.this, UnderDevelopmentActivity.class);
+        startActivity(intent);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 
 }

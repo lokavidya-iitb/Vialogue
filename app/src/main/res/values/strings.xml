@@ -144,4 +144,8 @@
     <string name="registrationData">registrationData</string>
     <string name="registrationType">registrationType</string>
     <string name="otp">otp</string>
+    <string name="title_activity_main_mark2">MainActivityMark2</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
