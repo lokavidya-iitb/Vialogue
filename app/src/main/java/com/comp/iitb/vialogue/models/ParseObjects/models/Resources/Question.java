@@ -1,11 +1,9 @@
 package com.comp.iitb.vialogue.models.ParseObjects.models.Resources;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.library.Storage;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseFieldsClass;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.BaseParseClass;
