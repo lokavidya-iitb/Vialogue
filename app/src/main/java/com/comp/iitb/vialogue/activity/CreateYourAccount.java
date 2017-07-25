@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnPhoneNumberValidityChanged;
-import com.comp.iitb.vialogue.dialogs.VerifyOtp;
 import com.comp.iitb.vialogue.listeners.PhoneNumberEditTextValidityListener;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -58,6 +57,7 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
     private static ProgressDialog mProgressDialog;
     boolean mSilentSignIn =false;
     private Bundle info;
+    Intent intent;
 
     //UI elements
     Button googleSignInButton;
@@ -77,6 +77,8 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
         generateOtp = (Button) findViewById(R.id.next);
 
         info = new Bundle();
+
+        intent = new Intent(CreateYourAccount.this, CreateYourAccount2.class);
 
         // adding listeners
 
@@ -139,10 +141,8 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
                 mPhoneNumber = "+91" + enterPhoneNoEditText.getText().toString();
                 info.putString(getResources().getString(R.string.registrationData), mPhoneNumber);
                 info.putString(getResources().getString(R.string.registrationType), getResources().getString(R.string.phoneNo));
-                //verifyotp logic to be called here
-
-                VerifyOtp verifyOtpDialog = new VerifyOtp(CreateYourAccount.this, info);
-                verifyOtpDialog.show();
+                intent.putExtras(info);
+                startActivity(intent);
                 break;
 
         }
@@ -209,7 +209,6 @@ public class CreateYourAccount extends AppCompatActivity implements View.OnClick
 
             info.putString(getResources().getString(R.string.registrationData), mEmail);
             info.putString(getResources().getString(R.string.registrationType), getResources().getString(R.string.email));
-            Intent intent = new Intent(CreateYourAccount.this, CreateYourAccount2.class);
             intent.putExtras(info);
             startActivity(intent);
             finish();

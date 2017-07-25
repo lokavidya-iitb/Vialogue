@@ -8,6 +8,7 @@ import com.comp.iitb.vialogue.Network.LokavidyaSso.ApiStrings;
 import com.comp.iitb.vialogue.Network.NetworkCalls;
 import com.comp.iitb.vialogue.coordinators.OnDoneSignIn;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -29,7 +30,8 @@ public class SignUp {
         USER_ALREADY_EXISTS,
         USER_SIGNED_UP,
         NETWORK_ERROR,
-        COULD_NOT_SIGN_UP
+        COULD_NOT_SIGN_UP,
+        SOMETHING_WENT_WRONG
     }
 
     public static class SignUpResponse {
@@ -38,9 +40,15 @@ public class SignUp {
         private SignUpResponseType mResponseType;
         private String mResponseString;
 
+        JSONObject responseBody = null;
+        private String mUniqueId;
+        int responseCode;
+
         public SignUpResponse(Response response) {
             mResponse = response;
+            System.out.println("response:" +mResponse);
             if(mResponse == null) {
+                System.out.println("response is null");
                 mResponseType = SignUpResponseType.NETWORK_ERROR;
                 mResponseString = "Could not Sign Up, please check your network connection";
                 return;
@@ -49,11 +57,30 @@ public class SignUp {
             switch(mResponse.code()) {
                 case(200): {
                     // successful
+                    try {
+                        responseBody = new JSONObject(response.body().string());
+                        //responseCode = Integer.parseInt(responseBody.getString("status"));
+                        //System.out.println("rcode:" +responseCode);
+                        //System.out.println("rcode1:" + mResponse.code());
+                        mUniqueId = responseBody.getString("uuid");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        mResponseType = SignUpResponseType.SOMETHING_WENT_WRONG;
+                        mResponseString = "Something went wrong";
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        mResponseType = SignUpResponseType.SOMETHING_WENT_WRONG;
+                        mResponseString = "Something went wrong";
+                        return;
+                    }
+                    System.out.println("success:");
                     mResponseType = SignUpResponseType.USER_SIGNED_UP;
-                    mResponseString = "User Successfully Signed Up";
+                    mResponseString = "Please enter the otp we have sent";
                     break;
                 } default: {
                     // user already exists
+                    System.out.println("default:");
                     mResponseType = SignUpResponseType.USER_ALREADY_EXISTS;
                     mResponseString = "A User with these credentials already exists";
                     break;
@@ -68,9 +95,11 @@ public class SignUp {
         public String getResponseString() {
             return mResponseString;
         }
+
+        public String getUniqueId() { return mUniqueId; }
     }
 
-    public static SignUpResponse signUp(Context context, String userName, RegistrationType registrationType, String registrationData, String password) {
+    public static SignUpResponse signUp(Context context, String userName, RegistrationType registrationType, String registrationData, String password, String uniqueId) {
         JSONObject user;
         JSONObject body;
         Response response;
@@ -89,6 +118,9 @@ public class SignUp {
             }
             user.put("password", password);
             user.put("password_confirmation", password);
+            if(uniqueId != null) {
+                user.put("uuid", uniqueId);
+            }
             body.put("user", user);
         } catch (org.json.JSONException e) {
             e.printStackTrace();
@@ -104,9 +136,9 @@ public class SignUp {
         }
     }
 
-    public static void signUpInBackground(Context context, String userName, RegistrationType registrationType, String registrationData, String password, OnDoneSignIn onDoneSignIn) {
+    public static void signUpInBackground(Context context, String userName, SignUp.RegistrationType registrationType, String registrationData, String password, String uniqueId, OnDoneSignIn onDoneSignIn) {
         (new AsyncTask<Void, Void, Void>() {
-            private SignUpResponse mSignUpResponse;
+            private SignUp.SignUpResponse mSignUpResponse;
             ProgressDialog asyncDialog = new ProgressDialog(context);
 
             @Override
@@ -118,7 +150,7 @@ public class SignUp {
 
             @Override
             public Void doInBackground(Void... params) {
-                mSignUpResponse = signUp(context, userName, registrationType, registrationData, password);
+                mSignUpResponse = signUp(context, userName, registrationType, registrationData, password, uniqueId);
                 return null;
             }
 

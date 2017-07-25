@@ -16,7 +16,9 @@ import android.widget.Toast;
 
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.SignUp;
 import com.comp.iitb.vialogue.R;
-import com.comp.iitb.vialogue.coordinators.OnDoneSignIn;
+import com.comp.iitb.vialogue.coordinators.OnDoneCallingSsoApiResult;
+import com.comp.iitb.vialogue.dialogs.VerifyOtpDialogue;
+import com.comp.iitb.vialogue.library.SsoMethods;
 
 public class CreateYourAccount2 extends AppCompatActivity {
 
@@ -41,7 +43,9 @@ public class CreateYourAccount2 extends AppCompatActivity {
     private boolean isDotConPass = true;
     private Toast mToast;
     private Context mContext;
-    String responseString;
+    private static String responseString;
+
+    private String mUniqueId = null;
 
     SignUp.RegistrationType mRegistrationType;
 
@@ -154,33 +158,30 @@ public class CreateYourAccount2 extends AppCompatActivity {
 
                 if(mPassword.equals(mConfirmPassword)) {
                     Log.d(TAG, "passwords match");
-                    Intent intent = new Intent(mContext, LoginActivity.class);
-                    SignUp.signUpInBackground(
-                            mContext,
-                            mUserName,
-                            mRegistrationType,
-                            registrationData,
-                            mPassword,
-                            new OnDoneSignIn() {
-                                @Override
-                                public void done(SignUp.SignUpResponse signUpResponse) {
-                                    switch (signUpResponse.getResponseType()) {
-                                        case USER_SIGNED_UP:
-                                            responseString = signUpResponse.getResponseString();
-                                            startActivity(intent);
-                                        case USER_ALREADY_EXISTS:
-                                            responseString = signUpResponse.getResponseString();
-                                            startActivity(intent);
-                                        case COULD_NOT_SIGN_UP:
-                                            responseString = signUpResponse.getResponseString();
-                                        case NETWORK_ERROR:
-                                            responseString = signUpResponse.getResponseString();
-                                    }
-                                    Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
-                                    System.out.println("signUpResponse:" + signUpResponse);
-                                }
-                            });
-
+                    new SsoMethods(new OnDoneCallingSsoApiResult() {
+                        @Override
+                        public void onDone(Bundle bundleInfo) {
+                            mUniqueId = bundleInfo.getString(mContext.getResources().getString(R.string.uniqueId));
+                            boolean user_exists = bundleInfo.getBoolean("user_exists");
+                            //Intent intent = new Intent(CreateYourAccount2.this, LoginActivity.class);
+                            if(mUniqueId != null) {
+                                //if(bundleInfo.getString(mContext.getResources().getString(R.string.registrationType)).equals(mContext.getResources().getString(R.string.phoneNo))) {
+                                    Bundle info = new Bundle();
+                                    info.putString(mContext.getResources().getString(R.string.uniqueId), mUniqueId);
+                                    info.putString(mContext.getResources().getString(R.string.userName), mUserName);
+                                    info.putString(mContext.getResources().getString(R.string.password), mPassword);
+                                    info.putString(mContext.getResources().getString(R.string.registrationType), mContext.getResources().getString(R.string.phoneNo));
+                                    info.putString(mContext.getResources().getString(R.string.registrationData), registrationData);
+                                    new VerifyOtpDialogue(CreateYourAccount2.this, info).show();
+                                } //else {
+                                //    startActivity(intent);
+                                //}
+                            //} else if(user_exists) {
+                            //    startActivity(intent);
+                            //}
+                            //Toast.makeText(mContext, bundleInfo.getString("responseString"), Toast.LENGTH_SHORT).show();
+                        }
+                    }).signUp(mContext, mUserName, mRegistrationType, registrationData, mPassword, mUniqueId);
                 } else {
                     Toast.makeText(mContext, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 }
@@ -188,5 +189,23 @@ public class CreateYourAccount2 extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.out.println("pause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("stop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("destroy");
     }
 }

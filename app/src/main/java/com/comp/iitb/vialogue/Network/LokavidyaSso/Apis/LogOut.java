@@ -1,5 +1,6 @@
 package com.comp.iitb.vialogue.Network.LokavidyaSso.Apis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -72,7 +73,7 @@ public class LogOut {
                     break;
                 } default: {
                     mResponseType = LogOutResponseType.NETWORK_ERROR;
-                    mResponseString = "Could not Log In, please check your network connection";
+                    mResponseString = "Could not Log out, please check your network connection";
                     break;
                 }
             }
@@ -99,13 +100,33 @@ public class LogOut {
     }
 
     public static void logOutInBackground(Context context, OnDoneLogOut onDoneLogOut) {
+
         (new AsyncTask<Void, Void, Void>() {
+            private LogOutResponse mLogOutResponse;
+            ProgressDialog asyncDialog = new ProgressDialog(context);
+
+            @Override
+            protected void onPreExecute() {
+                asyncDialog.setMessage("Logging out..");
+                asyncDialog.show();
+                super.onPreExecute();
+            }
+
             @Override
             public Void doInBackground(Void... params) {
-                onDoneLogOut.done(logOut(context));
+                mLogOutResponse = logOut(context);
                 return null;
             }
+
+            @Override
+            public void onPostExecute(Void result) {
+                asyncDialog.dismiss();
+                //System.out.println(mLogOutResponse);
+                onDoneLogOut.done(mLogOutResponse);
+            }
+
         }).execute();
+
     }
 
     public static void removeSessionDetails(Context context, LogOutResponse logOutResponse) {
@@ -116,7 +137,7 @@ public class LogOut {
             editor.putString(SharedPreferencesDetails.SESSION_TOKEN_KEY, "");
             editor.putString(SharedPreferencesDetails.SESSION_UUID_KEY, "");
             editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false);
-            editor.commit();
+            editor.apply();
         }
     }
 

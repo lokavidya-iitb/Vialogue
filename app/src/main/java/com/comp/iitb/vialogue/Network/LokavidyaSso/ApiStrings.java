@@ -13,7 +13,10 @@ import java.net.URLEncoder;
  */
 public class ApiStrings {
 
-    public static final String lokavidyaSsoBaseUrl = "https://sso.lokavidya.com/";
+    public static final String lokavidyaSsoBaseUrl = "https://lvsso.herokuapp.com/"; //"https://sso.lokavidya.com/";
+    public static final String getUpdateUserDetailsApi(String sessionToken, int sessionUuid) {
+        return lokavidyaSsoBaseUrl + "api/update?token=" + sessionToken + "&uuid=" + sessionUuid;
+    }
     public static final String projectsApiBaseUrl = "http://employee-dev-env.dkprxv4uh3.us-west-2.elasticbeanstalk.com/";
     public static enum RegistrationType {PHONE_NUMBER, EMAIL_ID}
 
@@ -22,15 +25,16 @@ public class ApiStrings {
         return lokavidyaSsoBaseUrl + "api/signup";
     }
 
+    public static final String getVerifyOtpApi() {
+        return lokavidyaSsoBaseUrl + "api/check";
+    }
+
     // api/find?token=:session_token&uuid=:session_uuid
     public static final String getFetchUserDetailsApi(String sessionToken, int sessionUuid) {
         return lokavidyaSsoBaseUrl + "api/find?token=" + sessionToken + "&uuid=" + sessionUuid;
     }
 
     // api/update?token=:session_token&uuid=:session_uuid
-    public static final String getUpdateUserDetailsApi(String sessionToken, int sessionUuid) {
-        return lokavidyaSsoBaseUrl + "api/update?token=" + sessionToken + "&uuid=" + sessionUuid;
-    }
 
     // api/delete?token=:session_token&uuid=:session_uuid
     public static final String getDeleteUserApi(String sessionToken, int sessionUuid) {
@@ -48,21 +52,29 @@ public class ApiStrings {
     }
 
     // api/forgot?email=xyz@abc.com&token=:session_token
-    public static final String getForgotPasswordApi(RegistrationType registrationType, String registrationData) throws UnsupportedEncodingException {
+    /*public static final String getForgotPasswordApi(RegistrationType registrationType, String registrationData) throws UnsupportedEncodingException {
         if(registrationType == RegistrationType.PHONE_NUMBER) {
             return lokavidyaSsoBaseUrl + "api/forgot?phone=" + URLEncoder.encode(registrationData, "UTF-8");
         } else {
             return lokavidyaSsoBaseUrl + "api/forgot?email=" + registrationData;
         }
-    }
+    }*/
 
     // api/reset?email=xyz@abc.com&token=session_token&otp=xxxxxx
-    public static final String getResetPasswordApi(RegistrationType registrationType, String registrationData, String otp) throws UnsupportedEncodingException {
+    /*public static final String getResetPasswordApi(RegistrationType registrationType, String registrationData, String otp) throws UnsupportedEncodingException {
         if(registrationType == RegistrationType.PHONE_NUMBER) {
             return lokavidyaSsoBaseUrl + "api/reset?phone=" + URLEncoder.encode(registrationData, "UTF-8") + "&otp=" + otp;
         } else {
             return lokavidyaSsoBaseUrl + "api/reset?email=" + registrationData + "&otp=" + otp;
         }
+    }*/
+
+    public static final String getForgotPasswordApi() throws UnsupportedEncodingException {
+        return lokavidyaSsoBaseUrl + "api/forgot";
+    }
+
+    public static final String getResetPasswordApi() throws UnsupportedEncodingException {
+        return lokavidyaSsoBaseUrl + "api/reset";
     }
 
     // api/v1/categories/FetchCategories

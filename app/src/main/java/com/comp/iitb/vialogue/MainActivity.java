@@ -1,6 +1,8 @@
 package com.comp.iitb.vialogue;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,12 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogOut;
+import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
 import com.comp.iitb.vialogue.activity.CreateYourAccount;
 import com.comp.iitb.vialogue.activity.SignIn;
 import com.comp.iitb.vialogue.activity.UploadVideoActivity;
 import com.comp.iitb.vialogue.activity.WhoAreYou;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
+import com.comp.iitb.vialogue.coordinators.OnDoneLogOut;
 import com.comp.iitb.vialogue.coordinators.OnFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnListFragmentInteractionListener;
 import com.comp.iitb.vialogue.coordinators.OnProgressUpdateListener;
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private FloatingActionButton mPreviewFab;
     private ViewPager mViewPager;
     private Integer mStartFragmentPosition;
+    private Context mContext;
+    SharedPreferences mLokavidyaSsoSharedPreferences;
+    public static boolean mIsLoggedIn = false;
+    String mResponseString;
 
     public static final String startFragmentPositionKey = "start_fragment_position";
 
@@ -61,6 +70,18 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = MainActivity.this;
+        mLokavidyaSsoSharedPreferences = mContext.getSharedPreferences(SharedPreferencesDetails.SHARED_PREFERENCES_NAME, 0);
+        if(!mIsLoggedIn) {
+            SharedPreferences.Editor editor = mLokavidyaSsoSharedPreferences.edit();
+            editor.putString(SharedPreferencesDetails.SESSION_TOKEN_KEY, "");
+            editor.putString(SharedPreferencesDetails.SESSION_UUID_KEY, "");
+            editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false);
+            editor.apply();
+        } else {
+
+        }
 
         Bundle data = getIntent().getExtras();
         if(data != null) {
@@ -226,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         return true;
     }
 
-    public void refreshSignInOutOptions() {
+    /*public void refreshSignInOutOptions() {
         try {
             if(ParseUser.getCurrentUser() == null) {
                 // signed out
@@ -234,6 +255,25 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             } else {
                 // signed in
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_out);
+            }
+        } catch (Exception e) {}
+    }*/
+
+    public void refreshSignInOutOptions() {
+        //mLokavidyaSsoSharedPreferences = mContext.getSharedPreferences(SharedPreferencesDetails.SHARED_PREFERENCES_NAME, 0);
+        //mIsLoggedIn = mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, true);
+        System.out.println("aaaaaa "+mIsLoggedIn);
+        System.out.println("bbbbbb "+mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false));
+        try {
+            if (!mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false)) {
+                System.out.println("loggedin: "+mIsLoggedIn);
+                mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_in);
+            } else {
+                System.out.println("loggedin: "+mIsLoggedIn);
+                mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_out);
+                SharedPreferences.Editor editor = mLokavidyaSsoSharedPreferences.edit();
+                editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false);
+                editor.apply();
             }
         } catch (Exception e) {}
     }
@@ -246,9 +286,28 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         //noinspection SimplifiableIfStatement
         if (item.getItemId() == R.id.action_settings) {
-            if(ParseUser.getCurrentUser() != null) {
+            System.out.println("loggedin: "+mIsLoggedIn);
+            if(mIsLoggedIn) {
+                //ParseUser.getCurrentUser() != null
                 // already Signed in, Sign out
-                SignIn.signOut(
+                System.out.println("logout");
+                LogOut.logOutInBackground(mContext, new OnDoneLogOut() {
+                    @Override
+                    public void done(LogOut.LogOutResponse logOutResponse) {
+                        switch (logOutResponse.getResponseType()) {
+                            case LOGGED_OUT:
+                                mResponseString = logOutResponse.getResponseString();
+                                break;
+                            default:
+                                mResponseString = logOutResponse.getResponseString();
+                        }
+                        Toast.makeText(mContext, mResponseString, Toast.LENGTH_SHORT).show();
+                        mIsLoggedIn = false;
+                        refreshSignInOutOptions();
+                    }
+                });
+
+                /*SignIn.signOut(
                         MainActivity.this,
                         new OnSignedOut() {
                             @Override
@@ -256,10 +315,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                                 if(e == null) {}
                                 refreshSignInOutOptions();
                         }
-                });
+                });*/
             } else {
                 // already Signed out, Sign in
-
+                System.out.println("open whoareyeou");
                 Intent intent = new Intent(getApplicationContext(), WhoAreYou.class);
                 intent.putExtra("context",1);
                 startActivity(intent);

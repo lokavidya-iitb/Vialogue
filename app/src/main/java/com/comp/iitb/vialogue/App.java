@@ -13,6 +13,9 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Video;
 import com.comp.iitb.vialogue.service.ClosingService;
 import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 import com.comp.iitb.vialogue.models.ParseObjects.models.Author;
@@ -21,6 +24,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Language;
 import com.comp.iitb.vialogue.models.ParseObjects.models.interfaces.ParseObjectsCollection;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Project;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
+import com.parse.SaveCallback;
 
 
 /**
@@ -39,7 +43,8 @@ public class App extends Application implements IAdobeAuthClientCredentials {
 //    private static final String serverUrl = "https://10.196.31.255:5000/parse";
 //    private static final String serverUrl = "http://best-erp.com/lokavidya/parse";
 //    private static final String serverUrl = "http://192.168.1.100:27017/parse";
-    private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
+    //private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
+    private static final String serverUrl = "http://192.168.43.83:5000/parse";
 
     @Override
     public void onCreate() {
@@ -47,6 +52,7 @@ public class App extends Application implements IAdobeAuthClientCredentials {
 
         // start service that will save the current project
         // whenever the app is stopped, no matter in what fashion
+
         AdobeCSDKFoundation.initializeCSDKFoundation(getApplicationContext());
         startService(new Intent(getApplicationContext(), ClosingService.class));
 
@@ -72,6 +78,16 @@ public class App extends Application implements IAdobeAuthClientCredentials {
             .enableLocalDataStore()
             .build()
         );
+
+        //ParseInstallation.getCurrentInstallation().saveInBackground();
+        ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                String deviceToken = (String) ParseInstallation.getCurrentInstallation().get("deviceToken");
+                System.out.println("deviceToken: " +deviceToken);
+            }
+        });
+
     }
 
 

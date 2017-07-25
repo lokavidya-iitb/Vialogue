@@ -144,4 +144,7 @@
     <string name="registrationData">registrationData</string>
     <string name="registrationType">registrationType</string>
     <string name="otp">otp</string>
+    <string name="userName">userName</string>
+    <string name="password">password</string>
+    <string name="uniqueId">uniqueId</string>
 </resources>

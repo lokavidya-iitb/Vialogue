@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.ApiStrings;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
 import com.comp.iitb.vialogue.Network.NetworkCalls;
@@ -33,7 +34,8 @@ public class LogIn {
         PASSWORD_DOES_NOT_MATCH,
         USER_NOT_ACTIVE,
         SOMETHING_WENT_WRONG,
-        NETWORK_ERROR
+        NETWORK_ERROR,
+        USER_DOES_NOT_EXIST
     }
 
     public static class LogInResponse {
@@ -45,6 +47,7 @@ public class LogIn {
 
         public LogInResponse(Response response) {
             mResponse = response;
+            System.out.println(response);
             mSessionToken = null;
             mSessionUuid = null;
             if(mResponse == null) {
@@ -59,11 +62,13 @@ public class LogIn {
                 responseBody = new JSONObject(response.body().string());
                 responseCode = Integer.parseInt(responseBody.getString("status"));
             } catch (JSONException e) {
+                System.out.println("catch1");
                 e.printStackTrace();
                 mResponseType = LogInResponseType.SOMETHING_WENT_WRONG;
                 mResponseString = "Something went wrong";
                 return;
             } catch (IOException e) {
+                System.out.println("catch2");
                 e.printStackTrace();
                 mResponseType = LogInResponseType.SOMETHING_WENT_WRONG;
                 mResponseString = "Something went wrong";
@@ -96,6 +101,9 @@ public class LogIn {
                     mResponseType = LogInResponseType.SOMETHING_WENT_WRONG;
                     mResponseString = "Something went wrong";
                     break;
+                } case(404) : {
+                    mResponseType = LogInResponseType.USER_DOES_NOT_EXIST;
+                    mResponseString = "User does not exist, please register to login";
                 } default: {
                     mResponseType = LogInResponseType.NETWORK_ERROR;
                     mResponseString = "Could not Log In, please check your network connection";
@@ -192,7 +200,8 @@ public class LogIn {
             editor.putString(SharedPreferencesDetails.SESSION_TOKEN_KEY, logInResponse.getSessionToken());
             editor.putString(SharedPreferencesDetails.SESSION_UUID_KEY, logInResponse.getSessionUuid());
             editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, true);
-            editor.commit();
+            editor.apply();
+            MainActivity.mIsLoggedIn = true;
         }
     }
 

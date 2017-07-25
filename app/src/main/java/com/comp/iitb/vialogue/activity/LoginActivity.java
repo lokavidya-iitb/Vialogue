@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnDoneLogIn;
@@ -75,12 +77,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(mLoginId.matches(PHONE_NUMBER_REGEX)) {
                     mRegistrationType = LogIn.RegistrationType.PHONE_NUMBER;
+                    mRegistrationData = "+91" + mLoginId;
                 } else {
                     mRegistrationType = LogIn.RegistrationType.EMAIL_ID;
                 }
 
                 System.out.println("mRegistrationType: " + mRegistrationType);
-                mRegistrationData = mLoginId;
 
                 login(mContext, mRegistrationType, mRegistrationData, mPassword);
             }
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public static void login(Context context, LogIn.RegistrationType registrationType, String registrationData, String password) {
+    public void login(Context context, LogIn.RegistrationType registrationType, String registrationData, String password) {
 
         LogIn.logInInBackground(context, registrationType, registrationData, password, new OnDoneLogIn() {
             @Override
@@ -109,6 +111,8 @@ public class LoginActivity extends AppCompatActivity {
                 switch (logInResponse.getResponseType()) {
                     case LOGGED_IN:
                         mResponseString = logInResponse.getResponseString();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
                     case PASSWORD_DOES_NOT_MATCH:
                         mResponseString = logInResponse.getResponseString();
                     case USER_NOT_ACTIVE:
@@ -116,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                     case SOMETHING_WENT_WRONG:
                         mResponseString = logInResponse.getResponseString();
                     case NETWORK_ERROR:
+                        mResponseString = logInResponse.getResponseString();
+                    case USER_DOES_NOT_EXIST:
                         mResponseString = logInResponse.getResponseString();
                 }
                 Toast.makeText(context, mResponseString, Toast.LENGTH_SHORT).show();

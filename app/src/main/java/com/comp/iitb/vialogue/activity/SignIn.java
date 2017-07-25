@@ -176,9 +176,6 @@ public class SignIn extends AppCompatActivity implements
     }
 
     private void signIn() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if(isNetworkAvailable()) {
             // network available
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -388,6 +385,8 @@ public class SignIn extends AppCompatActivity implements
                             break;
                         default:
                             // some other error
+                            System.out.println("getmess" +e.getMessage());
+                            System.out.println("getcode" +e.getCode());
                             onCouldNotSignIn();
                             break;
                     }

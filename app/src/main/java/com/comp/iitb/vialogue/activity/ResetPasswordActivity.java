@@ -32,6 +32,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private String mResponseString;
     String mOtp;
     String mRegistrationData;
+    String mUniqueId;
 
     ResetPassword.RegistrationType mResetRegistrationType;
 
@@ -45,21 +46,22 @@ public class ResetPasswordActivity extends AppCompatActivity {
         mContext = ResetPasswordActivity.this;
 
         Bundle args = getIntent().getExtras();
-        String registrationData = args.getString(getResources().getString(R.string.registrationData));
-        String registrationType = args.getString(getResources().getString(R.string.registrationType));
-        mOtp = args.getString(getResources().getString(R.string.otp));
+        mUniqueId = args.getString("uniqueId");
+        //String registrationData = args.getString(getResources().getString(R.string.registrationData));
+        //String registrationType = args.getString(getResources().getString(R.string.registrationType));
+        //mOtp = args.getString(getResources().getString(R.string.otp));
 
         //dummy data
         //String registrationData = "k.omkar357@gmail.com";
         //String registrationType = getResources().getString(R.string.email);
 
-        mRegistrationData = registrationData;
+        //mRegistrationData = registrationData;
 
-        mLoginRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
-                LogIn.RegistrationType.EMAIL_ID : LogIn.RegistrationType.PHONE_NUMBER;
+        //mLoginRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
+        //        LogIn.RegistrationType.EMAIL_ID : LogIn.RegistrationType.PHONE_NUMBER;
 
-        mResetRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
-                ResetPassword.RegistrationType.EMAIL_ID : ResetPassword.RegistrationType.PHONE_NUMBER;
+        //mResetRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
+        //        ResetPassword.RegistrationType.EMAIL_ID : ResetPassword.RegistrationType.PHONE_NUMBER;
 
         //initialize ui elements
         mEnterNewPasswordTextView = (TextView) findViewById(R.id.tv_enter_new_password);
@@ -95,20 +97,18 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
 
                 if(mConfirmedPassword.equals(mNewPassword)) {
-                    resetPassword(mContext, mResetRegistrationType, mRegistrationData, mOtp, mNewPassword);
+                    resetPassword(mContext, mUniqueId, mNewPassword);
                 }
 
             }
         });
     }
 
-    private void resetPassword(Context context, ResetPassword.RegistrationType registrationType, String registrationData, String otp, String newPassword) {
+    private void resetPassword(Context context, String uniqueId, String newPassword) {
 
         ResetPassword.resetPasswordInBackground(
                 context,
-                registrationType,
-                registrationData,
-                otp,
+                uniqueId,
                 newPassword,
                 new OnDoneResetPassword() {
                     @Override
@@ -116,7 +116,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         switch (resetPasswordResponse.getResponseType()) {
                             case PASSWORD_RESET:
                                 mResponseString = resetPasswordResponse.getResponseString();
-                                LoginActivity.login(mContext, mLoginRegistrationType, mRegistrationData, newPassword);
+                                //LoginActivity.login(mContext, mLoginRegistrationType, mRegistrationData, newPassword);
                             case INVALID_OTP:
                                 mResponseString = resetPasswordResponse.getResponseString();
                             case NETWORK_ERROR:

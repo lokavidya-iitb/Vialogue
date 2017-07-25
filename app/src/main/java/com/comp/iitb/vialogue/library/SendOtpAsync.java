@@ -34,13 +34,13 @@ public class SendOtpAsync {
             @Override
             public void done(Object object, ParseException e) {
                 mProgressDialog.dismiss();
-//                if(e == null) {
-//                    // success
+                if(e == null) {
+                    // success
                     mOnOtpSent.onDone(object, e);
-//                } else {
-//                    // fail
-//                    mOnOtpSent.onCouldNotSend();
-//                }
+                } else {
+                    // fail
+                    mOnOtpSent.onCouldNotSend();
+                }
             }
         });
     }

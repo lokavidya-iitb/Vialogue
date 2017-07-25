@@ -314,9 +314,11 @@ public class UploadVideoActivity extends AppCompatActivity {
                                     Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();
+                                    System.out.println("inside catch");
                                     Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                                 }
                             } else {
+                                System.out.println("outside catch");
                                 Toast.makeText(UploadVideoActivity.this, R.string.couldntUpload, Toast.LENGTH_LONG).show();
                             }
                         }

@@ -14,7 +14,9 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.ForgotPassword;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.activity.ResetPasswordActivity;
+import com.comp.iitb.vialogue.coordinators.OnDoneCallingSsoApiResult;
 import com.comp.iitb.vialogue.coordinators.OnDoneForgotPassword;
+import com.comp.iitb.vialogue.library.SsoMethods;
 
 public class ForgotPasswordDialog extends Dialog {
 
@@ -73,14 +75,20 @@ public class ForgotPasswordDialog extends Dialog {
                     if (mEmailOrPhone.matches(PHONE_NUMBER_REGEX)) {
                         mRegistrationType = ForgotPassword.RegistrationType.PHONE_NUMBER;
                         args.putString(mContext.getResources().getString(R.string.registrationType), mContext.getResources().getString(R.string.phoneNo));
+                        mRegistrationData = "+91" + mEmailOrPhone;
                     } else {
                         mRegistrationType = ForgotPassword.RegistrationType.EMAIL_ID;
                         args.putString(mContext.getResources().getString(R.string.registrationType), mContext.getResources().getString(R.string.email));
+                        mRegistrationData = mEmailOrPhone;
                     }
 
-                    mRegistrationData = mEmailOrPhone;
-
-                    forgotPassword(getContext(), mRegistrationType, mRegistrationData);
+                    new SsoMethods(new OnDoneCallingSsoApiResult() {
+                        @Override
+                        public void onDone(Bundle bundleInfo) {
+                            boolean otp_sent = bundleInfo.getBoolean("otp_sent");
+                            if(otp_sent) new VerifyOtpDialogue(mContext, args, 1).show();
+                        }
+                    }).forgotPassword(getContext(), mRegistrationType, mRegistrationData);
 
                     ForgotPasswordDialog.this.dismiss();
                 }
@@ -107,30 +115,4 @@ public class ForgotPasswordDialog extends Dialog {
         intent.putExtras(args);
         mContext.startActivity(intent);
     }*/
-
-    private void forgotPassword(Context context, ForgotPassword.RegistrationType registrationType, String registrationData) {
-        ForgotPassword.forgotPasswordInBackground(
-                context,
-                registrationType,
-                registrationData,
-                new OnDoneForgotPassword() {
-                    @Override
-                    public void done(ForgotPassword.ForgotPasswordResponse response) {
-                        switch (response.getResponseType()) {
-                            case OTP_SENT:
-                                mResponseString = response.getResponseString();
-                                VerifyOtp verifyOtpDialog = new VerifyOtp(mContext, args, 1);
-                                verifyOtpDialog.show();
-                            case USER_NOT_REGISTERED:
-                                mResponseString = response.getResponseString();
-                            case NETWORK_ERROR:
-                                mResponseString = response.getResponseString();
-                            case SOMETHING_WENT_WRONG:
-                                mResponseString = response.getResponseString();
-                        }
-                        Toast.makeText(context, mResponseString, Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-    }
 }

@@ -41,13 +41,15 @@ public class ForgotPassword {
 
         public ForgotPasswordResponse(Response response) {
             mResponse = response;
+            System.out.println(response);
             if(mResponse == null) {
+                System.out.println("null response");
                 mResponseType = ForgotPasswordResponseType.NETWORK_ERROR;
                 mResponseString = "Could not Connect to the server, please check your network connection";
                 return;
             }
 
-            JSONObject responseBody = null;
+            /*JSONObject responseBody = null;
             int responseCode;
             try {
                 responseBody = new JSONObject(response.body().string());
@@ -62,10 +64,10 @@ public class ForgotPassword {
                 mResponseType = ForgotPasswordResponseType.SOMETHING_WENT_WRONG;
                 mResponseString = "Something went wrong";
                 return;
-            }
+            }*/
 
-            System.out.println("forgot password response code : " + responseCode);
-            switch (responseCode) {
+            //System.out.println("forgot password response code : " + responseCode);
+            switch (mResponse.code()) {
                 case(200): {
                     mResponseType = ForgotPasswordResponseType.OTP_SENT;
                     mResponseString = "An OTP has been sent to your registered mobile number and email address";
@@ -75,6 +77,7 @@ public class ForgotPassword {
                     mResponseString = "The email ID / phone number entered have not been registered";
                     break;
                 } default: {
+                    System.out.println("default response");
                     mResponseType = ForgotPasswordResponseType.NETWORK_ERROR;
                     mResponseString = "Could not Connect to the server, please check your network connection";
                     break;
@@ -111,10 +114,27 @@ public class ForgotPassword {
     }
 
     public static ForgotPasswordResponse forgotPassword(Context context, RegistrationType registrationType, String registrationData) {
-        Response response = null;
-        String apiString = "";
+        JSONObject user;
+        JSONObject body;
+        Response response;
+        //String apiString;
 
+        // create body JSON object
         try {
+            user = new JSONObject();
+            body = new JSONObject();
+            if(registrationType == RegistrationType.EMAIL_ID) {
+                user.put("email", registrationData);
+            } else if(registrationType == RegistrationType.PHONE_NUMBER) {
+                user.put("phone", registrationData);
+            }
+            body.put("user", user);
+        } catch (org.json.JSONException e) {
+            e.printStackTrace();
+            return new ForgotPasswordResponse(null);
+        }
+
+        /*try {
             if(registrationType == RegistrationType.EMAIL_ID) {
                 apiString = ApiStrings.getForgotPasswordApi(ApiStrings.RegistrationType.EMAIL_ID, registrationData);
             } else if(registrationType == RegistrationType.PHONE_NUMBER) {
@@ -124,11 +144,11 @@ public class ForgotPassword {
             e.printStackTrace();
             return ForgotPasswordResponse.getNewNullResponse();
         }
-        System.out.println(apiString);
+        System.out.println(apiString);*/
 
-        // send GET request
+        // send POST request
         try {
-            response = new NetworkCalls().doGetRequest(apiString);
+            response = new NetworkCalls().doPostRequest(ApiStrings.getForgotPasswordApi(), body.toString());
             return new ForgotPasswordResponse(response);
         } catch (IOException e) {
             e.printStackTrace();

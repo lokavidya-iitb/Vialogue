@@ -110,17 +110,18 @@ public class ResetPassword {
         }
     }
 
-    public static ResetPasswordResponse resetPassword(Context context, RegistrationType registrationType, String registrationData, String otp, String newPassword) {
+    public static ResetPasswordResponse resetPassword(Context context, String uniqueId, String newPassword) {
         String apiString = "";
         JSONObject body;
         JSONObject user;
 
         try {
-            if(registrationType == RegistrationType.EMAIL_ID) {
+            /*if(registrationType == RegistrationType.EMAIL_ID) {
                 apiString = ApiStrings.getResetPasswordApi(ApiStrings.RegistrationType.EMAIL_ID, registrationData, otp);
             } else {
                 apiString = ApiStrings.getResetPasswordApi(ApiStrings.RegistrationType.PHONE_NUMBER, registrationData, otp);
-            }
+            }*/
+            apiString = ApiStrings.getResetPasswordApi();
         } catch (java.io.UnsupportedEncodingException e) {
             return ResetPasswordResponse.getNewNullResponse();
         }
@@ -129,8 +130,8 @@ public class ResetPassword {
         try {
             body = new JSONObject();
             user = new JSONObject();
+            user.put("uuid", uniqueId);
             user.put("password", newPassword);
-            user.put("password_confirmation", newPassword);
             body.put("user", user);
         } catch (org.json.JSONException e) {
             e.printStackTrace();
@@ -148,7 +149,7 @@ public class ResetPassword {
         }
     }
 
-    public static void resetPasswordInBackground(Context context, RegistrationType registrationType, String registrationData, String otp, String newPassword, OnDoneResetPassword onDoneResetPassword) {
+    public static void resetPasswordInBackground(Context context, String uniqueId, String newPassword, OnDoneResetPassword onDoneResetPassword) {
         (new AsyncTask<Void, Void, Void>() {
             private ResetPasswordResponse mResetPasswordResponse;
             ProgressDialog asyncDialog = new ProgressDialog(context);
@@ -162,7 +163,7 @@ public class ResetPassword {
 
             @Override
             public Void doInBackground(Void... params) {
-                mResetPasswordResponse = resetPassword(context, registrationType, registrationData, otp, newPassword);
+                mResetPasswordResponse = resetPassword(context, uniqueId, newPassword);
                 return null;
             }
 
