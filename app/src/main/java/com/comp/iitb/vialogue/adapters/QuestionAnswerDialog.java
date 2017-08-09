@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.dialogs.SingleOptionQuestion;
 
 /**
  * Created by shubh on 10-02-2017.
@@ -89,11 +90,15 @@ public abstract class QuestionAnswerDialog extends Dialog {
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if(SingleOptionQuestion.mSelectedAnswer == null) {
+//                    Toast.makeText(getContext(),"Please select one answer", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 if (isAnswerCorrect()) {
-                    Toast.makeText(getContext(),"Answer is correct", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"Answer is correct", Toast.LENGTH_SHORT).show();
                     dismiss();
-                } else {
-                    Toast.makeText(getContext(),"Err!! Wrong", Toast.LENGTH_LONG).show();
+                } else if(!isAnswerCorrect()) {
+                    Toast.makeText(getContext(),"Err!! Wrong", Toast.LENGTH_SHORT).show();
                     dismiss();
                 }
             }

@@ -44,23 +44,28 @@ public class LogIn {
         private String mResponseString;
         private String mSessionToken;
         private String mSessionUuid;
+        private String mSessionName;
 
         public LogInResponse(Response response) {
             mResponse = response;
             System.out.println(response);
             mSessionToken = null;
             mSessionUuid = null;
+            mSessionName = null;
             if(mResponse == null) {
+                System.out.println("could not login 1");
                 mResponseType = LogInResponseType.NETWORK_ERROR;
                 mResponseString = "Could not Log In, please check your network connection";
                 return;
             }
 
             JSONObject responseBody = null;
-            int responseCode;
+            int responseCodey = 0;
             try {
                 responseBody = new JSONObject(response.body().string());
-                responseCode = Integer.parseInt(responseBody.getString("status"));
+                responseCodey = Integer.parseInt(responseBody.getString("status"));
+                System.out.println("resbody: " +responseBody);
+                System.out.println("res: " +responseCodey);
             } catch (JSONException e) {
                 System.out.println("catch1");
                 e.printStackTrace();
@@ -75,13 +80,15 @@ public class LogIn {
                 return;
             }
 
-            switch(responseCode) {
+            switch(responseCodey) {
                 case(200): {
                     mResponseType = LogInResponseType.LOGGED_IN;
                     mResponseString = "User Successfully logged in";
                     try {
                         mSessionToken = responseBody.getString(SharedPreferencesDetails.SESSION_TOKEN_KEY);
                         mSessionUuid = responseBody.getString(SharedPreferencesDetails.SESSION_UUID_KEY);
+                        mSessionName = responseBody.getString(SharedPreferencesDetails.SESSION_NAME);
+                        System.out.println("session_name:" +mSessionName);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         mResponseType = LogInResponseType.SOMETHING_WENT_WRONG;
@@ -104,7 +111,10 @@ public class LogIn {
                 } case(404) : {
                     mResponseType = LogInResponseType.USER_DOES_NOT_EXIST;
                     mResponseString = "User does not exist, please register to login";
+                    break;
                 } default: {
+                    System.out.println("res:" + responseCodey);
+                    System.out.println("could not login 2");
                     mResponseType = LogInResponseType.NETWORK_ERROR;
                     mResponseString = "Could not Log In, please check your network connection";
                     break;
@@ -127,6 +137,8 @@ public class LogIn {
         public String getSessionUuid() {
             return mSessionUuid;
         }
+
+        public String getSessionName() { return mSessionName; }
     }
 
     public static LogInResponse logIn(Context context, RegistrationType registrationType, String registrationData, String password) {
@@ -143,6 +155,7 @@ public class LogIn {
             } else if(registrationType == RegistrationType.PHONE_NUMBER) {
                 user.put("phone", registrationData);
             }
+            System.out.println("registrationdata: " +registrationData);
             user.put("password", password);
             body.put("user", user);
         } catch (org.json.JSONException e) {
@@ -199,6 +212,7 @@ public class LogIn {
             SharedPreferences.Editor editor = lokavidyaSsoSharedPreferences.edit();
             editor.putString(SharedPreferencesDetails.SESSION_TOKEN_KEY, logInResponse.getSessionToken());
             editor.putString(SharedPreferencesDetails.SESSION_UUID_KEY, logInResponse.getSessionUuid());
+            editor.putString(SharedPreferencesDetails.SESSION_NAME, logInResponse.getSessionName());
             editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, true);
             editor.apply();
             MainActivity.mIsLoggedIn = true;

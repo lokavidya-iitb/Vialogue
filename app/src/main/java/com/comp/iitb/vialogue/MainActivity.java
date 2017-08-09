@@ -44,6 +44,7 @@ import com.comp.iitb.vialogue.models.ParseObjects.models.Resources.Question;
 import com.comp.iitb.vialogue.models.ParseObjects.models.Slide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -265,15 +266,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         System.out.println("aaaaaa "+mIsLoggedIn);
         System.out.println("bbbbbb "+mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false));
         try {
-            if (!mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false)) {
+            if (!mIsLoggedIn) {
                 System.out.println("loggedin: "+mIsLoggedIn);
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_in);
             } else {
                 System.out.println("loggedin: "+mIsLoggedIn);
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_out);
-                SharedPreferences.Editor editor = mLokavidyaSsoSharedPreferences.edit();
-                editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false);
-                editor.apply();
             }
         } catch (Exception e) {}
     }
@@ -288,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         if (item.getItemId() == R.id.action_settings) {
             System.out.println("loggedin: "+mIsLoggedIn);
             if(mIsLoggedIn) {
-                //ParseUser.getCurrentUser() != null
                 // already Signed in, Sign out
                 System.out.println("logout");
                 LogOut.logOutInBackground(mContext, new OnDoneLogOut() {
@@ -307,15 +304,24 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                     }
                 });
 
-                /*SignIn.signOut(
-                        MainActivity.this,
-                        new OnSignedOut() {
-                            @Override
-                            public void done(ParseException e) {
-                                if(e == null) {}
-                                refreshSignInOutOptions();
+                SharedPreferences.Editor editor = mLokavidyaSsoSharedPreferences.edit();
+                editor.putBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false);
+                editor.apply();
+
+                if(ParseUser.getCurrentUser() != null) {
+                    // already Signed in, Sign out
+                    ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e == null) {
+                                System.out.println("parse logout");
+                            } else {
+                                System.out.println("parse couldnotlogout");
+                            }
                         }
-                });*/
+                    });
+                }
+
             } else {
                 // already Signed out, Sign in
                 System.out.println("open whoareyeou");

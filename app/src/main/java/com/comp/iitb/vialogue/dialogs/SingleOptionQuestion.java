@@ -25,13 +25,17 @@ public class SingleOptionQuestion extends QuestionAnswerDialog {
     private QuestionAnswer mQuestionAnswer;
     private View mQuestionView;
     private View[] mOptionViews;
-    private CompoundButton mSelectedAnswer;
+    public static CompoundButton mSelectedAnswer;
 
     public SingleOptionQuestion(Context context, QuestionAnswer questionAnswer) {
         super(context);
         mLayoutInflater = getLayoutInflater();
         mQuestionAnswer = questionAnswer;
         mOptionViews = new View[questionAnswer.getOptions().length];
+    }
+
+    public SingleOptionQuestion(Context context) {
+        super(context);
     }
 
     @Override
@@ -85,7 +89,9 @@ public class SingleOptionQuestion extends QuestionAnswerDialog {
     }
 
     @Override
-    public boolean isAnswerCorrect(){
+    public boolean isAnswerCorrect() {
+        System.out.println("mSelectedans: " +mSelectedAnswer);
+        //if(mSelectedAnswer == null) return true;
         if(mQuestionAnswer.getAnswers()[0].toString().equals(mSelectedAnswer.getText().toString()))
             return true;
         else
@@ -107,5 +113,9 @@ public class SingleOptionQuestion extends QuestionAnswerDialog {
         return !mQuestionAnswer.isCompulsory();
     }
 
+//    public boolean isSetChecked() {
+//        System.out.println("mSelectedans: " +mSelectedAnswer);
+//        return mSelectedAnswer == null;
+//    }
 
 }

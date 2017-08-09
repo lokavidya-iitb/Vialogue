@@ -27,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.App;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.QuestionAnswerDialog;
 import com.comp.iitb.vialogue.coordinators.OnDone;
@@ -45,9 +46,11 @@ import com.comp.iitb.vialogue.models.QuestionAnswer;
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +84,9 @@ public class UploadVideoActivity extends AppCompatActivity {
     List<ParseObject> receiveEM;
     private ProgressDialog mProgressDialog;
     public static List<BlankImage> blankImages = new ArrayList<>();
+    String deviceToken;
+    int mFinalPosition;
+    private SimulationHandler mSimulationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +185,6 @@ public class UploadVideoActivity extends AppCompatActivity {
         });
 
         mPlayer.addPlayerDialogAdapter(new PlayerDialogAdapter() {
-            private SimulationHandler mSimulationHandler;
 
             @Override
             public void bind(SimulationHandler simulationHandler) {
@@ -198,6 +203,7 @@ public class UploadVideoActivity extends AppCompatActivity {
                         Log.d("time now", "" + questionLists.get(0).getTime());
                         if (currentPosition > questionLists.get(0).getTime()) {
                             popupQuestion(currentPosition, questionLists.get(0).getTime(), mSimulationHandler, questionAnswer);
+                            System.out.println("Hello");
                         }
                     }
                 } catch (NullPointerException e) {
@@ -236,8 +242,11 @@ public class UploadVideoActivity extends AppCompatActivity {
         mPlayer.onComplete(new Runnable() {
             @Override
             public void run() {
+
+
                 //callback when video is finish
                 Toast.makeText(getApplicationContext(), R.string.videoCompleted, Toast.LENGTH_SHORT).show();
+
             }
         }).onInfo(new VPlayer.OnInfoListener() {
             @Override
@@ -275,7 +284,7 @@ public class UploadVideoActivity extends AppCompatActivity {
         if (ParseUser.getCurrentUser() == null) {
             // User not signed in
             Toast.makeText(UploadVideoActivity.this, R.string.signIn, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(UploadVideoActivity.this, SignUpOrSignIn.class);
+            Intent intent = new Intent(UploadVideoActivity.this, WhoAreYou.class);
             startActivity(intent);
         } else {
             // User signed in, save project
@@ -307,9 +316,12 @@ public class UploadVideoActivity extends AppCompatActivity {
                         @Override
                         public void done(boolean isSaved) {
                             if (isSaved) {
+                                deviceToken = App.deviceToken;
                                 Map<String, String> params = new HashMap<>();
                                 params.put("project_id", SharedRuntimeContent.getProject().getObjectId());
+                                params.put("deviceToken", deviceToken);
                                 try {
+
                                     ParseCloud.callFunction("stitch", params);
                                     Toast.makeText(UploadVideoActivity.this, R.string.projectSaved, Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {

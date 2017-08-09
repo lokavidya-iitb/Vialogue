@@ -26,6 +26,7 @@ import com.comp.iitb.vialogue.coordinators.OnDoneVerifyOtp;
 import com.comp.iitb.vialogue.coordinators.OnOtpReceived;
 import com.comp.iitb.vialogue.coordinators.OnOtpSent;
 import com.comp.iitb.vialogue.library.SendOtpAsync;
+import com.comp.iitb.vialogue.library.SsoMethods;
 import com.comp.iitb.vialogue.listeners.SmsOtpListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.ParseException;
@@ -265,10 +266,13 @@ public class VerifyOtpDialogue extends Dialog {
             intent = new Intent(mContext, ResetPasswordActivity.class);
             Bundle id = new Bundle();
             id.putString("uniqueId", uniqueId);
+            id.putString(mContext.getResources().getString(R.string.registrationType), info.getString(mContext.getResources().getString(R.string.registrationType)));
+            id.putString(mContext.getResources().getString(R.string.registrationData), info.getString(mContext.getResources().getString(R.string.registrationData)));
             intent.putExtras(id);
             resetActivityCode = 0;
         } else {
             intent = new Intent(mContext, LoginActivity.class);
+            new SsoMethods().signUpUsingParse(info.getString(mContext.getResources().getString(R.string.registrationData)), info.getString(mContext.getResources().getString(R.string.userName)), info.getString(mContext.getResources().getString(R.string.password)));
         }
         mContext.startActivity(intent);
     }

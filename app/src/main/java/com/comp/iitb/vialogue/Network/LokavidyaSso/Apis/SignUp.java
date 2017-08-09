@@ -44,7 +44,7 @@ public class SignUp {
         private String mUniqueId;
         int responseCode;
 
-        public SignUpResponse(Response response) {
+        public SignUpResponse(Response response, RegistrationType registrationType) {
             mResponse = response;
             System.out.println("response:" +mResponse);
             if(mResponse == null) {
@@ -76,7 +76,7 @@ public class SignUp {
                     }
                     System.out.println("success:");
                     mResponseType = SignUpResponseType.USER_SIGNED_UP;
-                    mResponseString = "Please enter the otp we have sent";
+                    mResponseString = registrationType == RegistrationType.PHONE_NUMBER ? "Please enter the otp we have sent" : "Please check your email and activate your email address";
                     break;
                 } default: {
                     // user already exists
@@ -124,15 +124,15 @@ public class SignUp {
             body.put("user", user);
         } catch (org.json.JSONException e) {
             e.printStackTrace();
-            return new SignUpResponse(null);
+            return new SignUpResponse(null, null);
         }
 
         // send POST request
         try {
-            return new SignUpResponse(new NetworkCalls().doPostRequest(ApiStrings.getSignUpApi(), body.toString()));
+            return new SignUpResponse(new NetworkCalls().doPostRequest(ApiStrings.getSignUpApi(), body.toString()), registrationType);
         } catch (IOException e) {
             e.printStackTrace();
-            return new SignUpResponse(null);
+            return new SignUpResponse(null, null);
         }
     }
 

@@ -81,6 +81,7 @@ public class ForgotPasswordDialog extends Dialog {
                         args.putString(mContext.getResources().getString(R.string.registrationType), mContext.getResources().getString(R.string.email));
                         mRegistrationData = mEmailOrPhone;
                     }
+                    args.putString(mContext.getResources().getString(R.string.registrationData), mRegistrationData);
 
                     new SsoMethods(new OnDoneCallingSsoApiResult() {
                         @Override

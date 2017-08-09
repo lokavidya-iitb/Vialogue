@@ -163,9 +163,12 @@ public class CreateYourAccount2 extends AppCompatActivity {
                         public void onDone(Bundle bundleInfo) {
                             mUniqueId = bundleInfo.getString(mContext.getResources().getString(R.string.uniqueId));
                             boolean user_exists = bundleInfo.getBoolean("user_exists");
-                            //Intent intent = new Intent(CreateYourAccount2.this, LoginActivity.class);
+                            Intent intent = new Intent(CreateYourAccount2.this, LoginActivity.class);
                             if(mUniqueId != null) {
-                                //if(bundleInfo.getString(mContext.getResources().getString(R.string.registrationType)).equals(mContext.getResources().getString(R.string.phoneNo))) {
+                                System.out.println(bundleInfo.getString(mContext.getResources().getString(R.string.registrationType)));
+                                System.out.println(mContext.getResources().getString(R.string.phoneNo));
+                                if(bundleInfo.getString(mContext.getResources().getString(R.string.registrationType)).equals(mContext.getResources().getString(R.string.phoneNo))) {
+                                    System.out.println("phonelogin");
                                     Bundle info = new Bundle();
                                     info.putString(mContext.getResources().getString(R.string.uniqueId), mUniqueId);
                                     info.putString(mContext.getResources().getString(R.string.userName), mUserName);
@@ -173,12 +176,14 @@ public class CreateYourAccount2 extends AppCompatActivity {
                                     info.putString(mContext.getResources().getString(R.string.registrationType), mContext.getResources().getString(R.string.phoneNo));
                                     info.putString(mContext.getResources().getString(R.string.registrationData), registrationData);
                                     new VerifyOtpDialogue(CreateYourAccount2.this, info).show();
-                                } //else {
-                                //    startActivity(intent);
-                                //}
-                            //} else if(user_exists) {
-                            //    startActivity(intent);
-                            //}
+                                } else {
+                                    System.out.println("emaillogin");
+                                    startActivity(intent);
+                                    new SsoMethods().signUpUsingParse(registrationData, mUserName, mPassword);
+                                }
+                            } else if(user_exists) {
+                                startActivity(intent);
+                            }
                             //Toast.makeText(mContext, bundleInfo.getString("responseString"), Toast.LENGTH_SHORT).show();
                         }
                     }).signUp(mContext, mUserName, mRegistrationType, registrationData, mPassword, mUniqueId);

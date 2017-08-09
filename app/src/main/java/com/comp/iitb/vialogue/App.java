@@ -40,11 +40,13 @@ public class App extends Application implements IAdobeAuthClientCredentials {
     private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
     private static final String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
 //    private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
-//    private static final String serverUrl = "https://10.196.31.255:5000/parse";
+//    private static final String serverUrl = "https://10.196.2.173:5000/parse";
 //    private static final String serverUrl = "http://best-erp.com/lokavidya/parse";
 //    private static final String serverUrl = "http://192.168.1.100:27017/parse";
-    //private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
-    private static final String serverUrl = "http://192.168.43.83:5000/parse";
+    private static final String serverUrl = "http://54.218.78.174:5000/parse"; // EC2 instance
+    //private static final String serverUrl = "http://192.168.43.83:5000/parse";
+
+    public static String deviceToken;
 
     @Override
     public void onCreate() {
@@ -83,7 +85,7 @@ public class App extends Application implements IAdobeAuthClientCredentials {
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                String deviceToken = (String) ParseInstallation.getCurrentInstallation().get("deviceToken");
+                deviceToken = (String) ParseInstallation.getCurrentInstallation().get("deviceToken");
                 System.out.println("deviceToken: " +deviceToken);
             }
         });

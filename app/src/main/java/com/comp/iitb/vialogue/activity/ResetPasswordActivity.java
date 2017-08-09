@@ -1,6 +1,7 @@
 package com.comp.iitb.vialogue.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +11,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.ResetPassword;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.OnDoneCallingSsoApiResult;
 import com.comp.iitb.vialogue.coordinators.OnDoneResetPassword;
+import com.comp.iitb.vialogue.library.SsoMethods;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -31,6 +35,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private String mResponseString;
     String mOtp;
+    String mRegistrationType;
     String mRegistrationData;
     String mUniqueId;
 
@@ -47,8 +52,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         Bundle args = getIntent().getExtras();
         mUniqueId = args.getString("uniqueId");
-        //String registrationData = args.getString(getResources().getString(R.string.registrationData));
-        //String registrationType = args.getString(getResources().getString(R.string.registrationType));
+        mRegistrationData = args.getString(getResources().getString(R.string.registrationData));
+        mRegistrationType = args.getString(getResources().getString(R.string.registrationType));
         //mOtp = args.getString(getResources().getString(R.string.otp));
 
         //dummy data
@@ -57,8 +62,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         //mRegistrationData = registrationData;
 
-        //mLoginRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
-        //        LogIn.RegistrationType.EMAIL_ID : LogIn.RegistrationType.PHONE_NUMBER;
+        mLoginRegistrationType = (mRegistrationType.equals(getResources().getString(R.string.email))) ?
+                LogIn.RegistrationType.EMAIL_ID : LogIn.RegistrationType.PHONE_NUMBER;
 
         //mResetRegistrationType = (registrationType.equals(getResources().getString(R.string.email))) ?
         //        ResetPassword.RegistrationType.EMAIL_ID : ResetPassword.RegistrationType.PHONE_NUMBER;
@@ -116,7 +121,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         switch (resetPasswordResponse.getResponseType()) {
                             case PASSWORD_RESET:
                                 mResponseString = resetPasswordResponse.getResponseString();
-                                //LoginActivity.login(mContext, mLoginRegistrationType, mRegistrationData, newPassword);
+                                new SsoMethods(new OnDoneCallingSsoApiResult() {
+                                    @Override
+                                    public void onDone(Bundle info) {
+                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }).login(mContext, mLoginRegistrationType, mRegistrationData, newPassword);
                             case INVALID_OTP:
                                 mResponseString = resetPasswordResponse.getResponseString();
                             case NETWORK_ERROR:

@@ -112,14 +112,14 @@
 
         <Button
             android:id="@+id/next"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Generate otp"
-            android:enabled="false"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="25dp" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="25dp"
+            android:enabled="false"
+            android:text="Next"
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 </LinearLayout>

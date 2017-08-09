@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -14,9 +15,12 @@ import android.widget.Toast;
 
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
+import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.OnDoneCallingSsoApiResult;
 import com.comp.iitb.vialogue.coordinators.OnDoneLogIn;
 import com.comp.iitb.vialogue.dialogs.ForgotPasswordDialog;
+import com.comp.iitb.vialogue.library.SsoMethods;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private String mLoginId;
     private String mPassword;
     private Context mContext;
+    SharedPreferences mLokavidyaSsoSharedPreferences;
 
     private static String mResponseString;
     private String mRegistrationData;
@@ -46,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mContext = LoginActivity.this;
+        mLokavidyaSsoSharedPreferences = mContext.getSharedPreferences(SharedPreferencesDetails.SHARED_PREFERENCES_NAME, 0);
 
         //initialize ui elements
         mRegisteredNumberIdTextView = (TextView) findViewById(R.id.tv_registered_number_id);
@@ -80,11 +86,19 @@ public class LoginActivity extends AppCompatActivity {
                     mRegistrationData = "+91" + mLoginId;
                 } else {
                     mRegistrationType = LogIn.RegistrationType.EMAIL_ID;
+                    mRegistrationData = mLoginId;
                 }
 
                 System.out.println("mRegistrationType: " + mRegistrationType);
 
-                login(mContext, mRegistrationType, mRegistrationData, mPassword);
+                new SsoMethods(new OnDoneCallingSsoApiResult() {
+                    @Override
+                    public void onDone(Bundle info) {
+                        //new SsoMethods().signUpUsingParse(mRegistrationData, mLokavidyaSsoSharedPreferences.getString(SharedPreferencesDetails.SESSION_NAME, ""), mPassword);
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }).login(mContext, mRegistrationType, mRegistrationData, mPassword);
             }
         });
 
@@ -101,31 +115,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    public void login(Context context, LogIn.RegistrationType registrationType, String registrationData, String password) {
-
-        LogIn.logInInBackground(context, registrationType, registrationData, password, new OnDoneLogIn() {
-            @Override
-            public void done(LogIn.LogInResponse logInResponse) {
-                switch (logInResponse.getResponseType()) {
-                    case LOGGED_IN:
-                        mResponseString = logInResponse.getResponseString();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    case PASSWORD_DOES_NOT_MATCH:
-                        mResponseString = logInResponse.getResponseString();
-                    case USER_NOT_ACTIVE:
-                        mResponseString = logInResponse.getResponseString();
-                    case SOMETHING_WENT_WRONG:
-                        mResponseString = logInResponse.getResponseString();
-                    case NETWORK_ERROR:
-                        mResponseString = logInResponse.getResponseString();
-                    case USER_DOES_NOT_EXIST:
-                        mResponseString = logInResponse.getResponseString();
-                }
-                Toast.makeText(context, mResponseString, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
