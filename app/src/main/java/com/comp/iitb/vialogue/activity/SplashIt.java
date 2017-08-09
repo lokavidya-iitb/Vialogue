@@ -27,7 +27,7 @@ public class SplashIt extends AppCompatActivity {
         } else {
                 intent = new Intent(this, WhoAreYou.class);
         }
-        intent.putExtra("context",0);
+        intent.putExtra("context", 0);
         startActivity(intent);
         finish();
 

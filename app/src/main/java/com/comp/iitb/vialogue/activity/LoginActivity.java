@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 new SsoMethods(new OnDoneCallingSsoApiResult() {
                     @Override
                     public void onDone(Bundle info) {
-                        //new SsoMethods().signUpUsingParse(mRegistrationData, mLokavidyaSsoSharedPreferences.getString(SharedPreferencesDetails.SESSION_NAME, ""), mPassword);
+                        new SsoMethods().signUpUsingParse(mRegistrationData, mLokavidyaSsoSharedPreferences.getString(SharedPreferencesDetails.SESSION_NAME, ""), mPassword);
                         Intent intent = new Intent(mContext, MainActivity.class);
                         startActivity(intent);
                     }
