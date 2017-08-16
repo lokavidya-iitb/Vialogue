@@ -60,7 +60,6 @@ public class App extends Application implements IAdobeAuthClientCredentials, IGo
         // whenever the app is stopped, no matter in what fashion
 
         AdobeCSDKFoundation.initializeCSDKFoundation(getApplicationContext());
-        startService(new Intent(getApplicationContext(), ClosingService.class));
 
         // register parse Subclasses
         ParseObject.registerSubclass(Project.class);
@@ -96,6 +95,8 @@ public class App extends Application implements IAdobeAuthClientCredentials, IGo
 
         Intent cdsIntent = AdobeImageIntent.createCdsInitIntent(getBaseContext(), "CDS");
         startService(cdsIntent);
+
+        startService(new Intent(getApplicationContext(), ClosingService.class));
 
     }
 
