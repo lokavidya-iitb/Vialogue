@@ -97,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         new SsoMethods().signUpUsingParse(mRegistrationData, mLokavidyaSsoSharedPreferences.getString(SharedPreferencesDetails.SESSION_NAME, ""), mPassword);
                         Intent intent = new Intent(mContext, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                 }).login(mContext, mRegistrationType, mRegistrationData, mPassword);
             }

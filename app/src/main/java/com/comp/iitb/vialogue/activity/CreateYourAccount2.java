@@ -178,8 +178,9 @@ public class CreateYourAccount2 extends AppCompatActivity {
                                     new VerifyOtpDialogue(CreateYourAccount2.this, info).show();
                                 } else {
                                     System.out.println("emaillogin");
-                                    startActivity(intent);
                                     new SsoMethods().signUpUsingParse(registrationData, mUserName, mPassword);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             } else if(user_exists) {
                                 startActivity(intent);

@@ -87,6 +87,7 @@ public class UploadVideoActivity extends AppCompatActivity {
     String deviceToken;
     int mFinalPosition;
     private SimulationHandler mSimulationHandler;
+    QuestionAnswer questionAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,14 +196,15 @@ public class UploadVideoActivity extends AppCompatActivity {
             @Override
             public void timeChanged(int currentPosition, boolean isUser) {
                 Log.d("---is time changing", "good question" + currentPosition);
-                QuestionAnswer questionAnswer = new QuestionAnswer();
+
                 try {
                     if (questionLists.size() != 0) {
-                        questionAnswer = questionLists.get(0);
 
                         Log.d("time now", "" + questionLists.get(0).getTime());
-                        if (currentPosition > questionLists.get(0).getTime()) {
-                            popupQuestion(currentPosition, questionLists.get(0).getTime(), mSimulationHandler, questionAnswer);
+                        long t = questionLists.get(0).getTime();
+                        if (currentPosition > t) {
+                            questionAnswer = questionLists.get(0);
+                            popupQuestion(currentPosition, t, mSimulationHandler, questionAnswer);
                             System.out.println("Hello");
                         }
                     }
@@ -242,11 +244,10 @@ public class UploadVideoActivity extends AppCompatActivity {
         mPlayer.onComplete(new Runnable() {
             @Override
             public void run() {
-
-
                 //callback when video is finish
+                //show remaining questions
+                showQuestionsDialogs();
                 Toast.makeText(getApplicationContext(), R.string.videoCompleted, Toast.LENGTH_SHORT).show();
-
             }
         }).onInfo(new VPlayer.OnInfoListener() {
             @Override
@@ -278,6 +279,22 @@ public class UploadVideoActivity extends AppCompatActivity {
                 // do nothing
             }
         });
+    }
+
+    public void showQuestionsDialogs() {
+        if (questionLists.size() != 0) {
+            questionAnswer = questionLists.get(0);
+            QuestionAnswerDialog adapter = new SingleOptionQuestion(mSimulationHandler.getActivity(), questionAnswer);
+            adapter.show();
+            adapter.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    questionLists.remove(0);
+                    System.out.println("fuk ya");
+                    showQuestionsDialogs();
+                }
+            });
+        }
     }
 
     public void uploadProject() {
@@ -545,6 +562,7 @@ public class UploadVideoActivity extends AppCompatActivity {
 
         }
     }
+
     public void showDialog(Activity activity, String title, CharSequence message, int position, int currentPosition, int slideTime) {
         if (currentPosition > slideTime && currentPosition < slideTime + 500) {
             mPlayer.pause();

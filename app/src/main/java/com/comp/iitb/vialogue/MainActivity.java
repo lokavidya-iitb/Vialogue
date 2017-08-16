@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.adobe.creativesdk.aviary.AdobeImageIntent;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogOut;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
 import com.comp.iitb.vialogue.activity.AudioRecordActivity;
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         SharedRuntimeContent.previewFab.setVisibility(View.GONE);
         refreshSignInOutOptions();
         mViewPager.setCurrentItem(mStartFragmentPosition);
+
     }
 
     // Back Button logic

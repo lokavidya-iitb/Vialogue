@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.util.Pair;
+import android.widget.Toast;
 
 /**
  * Created by ironstein on 18/03/17.
@@ -95,7 +96,13 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
             }
         });
 
+        int count = 0;
         while(mDeleteArray.size() > 0) {
+            count += 1;
+            if(count > 10) {
+                Toast.makeText(mContext, "You can delete only 10 slides at a time", Toast.LENGTH_SHORT).show();
+                break;
+            }
             SharedRuntimeContent.justDeleteSlide(mDeleteArray.get(0).slidePosition);
             notifyItemRemoved(mDeleteArray.get(0).slidePosition);
             mDeleteArray.remove(0);
@@ -155,6 +162,7 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
 
         @Override
         public void onLongClick() {
+            Toast.makeText(mContext, "You can delete only 10 slides at a time", Toast.LENGTH_SHORT).show();
             Activity activity = (Activity) view.getContext();
             mDeleteActionModeIndicator.setEnabled();
             isQueuedForDelete = true;
@@ -260,6 +268,7 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
             slideViewHolder.videoPlayIcon.setVisibility(View.GONE);
         }
 
+
         slideViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -300,5 +309,10 @@ public class SlidesRecyclerViewAdapterMark2 extends RecyclerView.Adapter<SlidesR
     public void onItemDismiss(int position) {
         mItems.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public void notifyAdapterChanged() {
+        notifyDataSetChanged();
+        mRecyclerView.invalidate();
     }
 }

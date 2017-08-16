@@ -114,8 +114,10 @@
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.QuestionDialogResultActivity" />
         <activity android:name=".activity.PhoneNumberSigninActivity" />
-        <activity android:name=".activity.CreateYourAccount" />
-        <activity android:name=".activity.WhoAreYou" />
+        <activity android:name=".activity.CreateYourAccount"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.WhoAreYou"
+            android:screenOrientation="portrait"/>
 
         <receiver android:name=".listeners.SmsOtpListener">
             <intent-filter>
@@ -143,10 +145,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.CreateNewAccountScreen1" />
-        <activity android:name=".activity.CreateYourAccount2" />
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.ResetPasswordActivity"/>
+        <activity android:name=".activity.CreateNewAccountScreen1"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.CreateYourAccount2"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ResetPasswordActivity"
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">

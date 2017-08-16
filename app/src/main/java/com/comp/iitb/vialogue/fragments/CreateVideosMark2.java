@@ -9,7 +9,9 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -104,6 +106,8 @@ public class CreateVideosMark2 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {}
+
+
     }
 
     @Override
@@ -121,9 +125,10 @@ public class CreateVideosMark2 extends Fragment {
         mLoadingAnimationView = (AVLoadingIndicatorView) view.findViewById(R.id.loading_animation);
         mSlidesRecyclerView = (RecyclerView) view.findViewById(R.id.slides_recycler_view);
         mCreateVideosRootView = (LinearLayout) view.findViewById(R.id.create_videos_root);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), 3);
 
         // instantiate Variables
-        mSlidesRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
+        mSlidesRecyclerView.setLayoutManager(gridLayoutManager);
         mSlideRecyclerViewAdapter = new SlidesRecyclerViewAdapterMark2(view.getContext(), mListener, mSlidesRecyclerView);
         mItemTouchHelperCallback = new GridLayoutItemTouchHelperCallback(mSlideRecyclerViewAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
@@ -213,9 +218,36 @@ public class CreateVideosMark2 extends Fragment {
         // slideRecyclerView
         mSlidesRecyclerView.setAdapter(mSlideRecyclerViewAdapter);
         mItemTouchHelper.attachToRecyclerView(mSlidesRecyclerView);
+//        SwipeRefreshLayout mSwipeRefreshLayout;
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.activity_main_swipe_refresh_layout);
+        //mSlideRecyclerViewAdapter.notifyAdapterChanged();
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mSwipeRefreshLayout.post(new Runnable() {
+//                                             @Override
+//                                             public void run() {
+//                                                 mSwipeRefreshLayout.setRefreshing(true);
+//                                                 mSlidesRecyclerView.setAdapter(null);
+//                                                 mSlideRecyclerViewAdapter.getItemCount();
+//                                                 Toast.makeText(getContext(), "" + mSlideRecyclerViewAdapter.getItemCount(), Toast.LENGTH_SHORT).show();
+//                                                 mSlidesRecyclerView.setAdapter(mSlideRecyclerViewAdapter);
+//                                                 mSlideRecyclerViewAdapter.notifyAdapterChanged();
+//                                                 mSwipeRefreshLayout.setRefreshing(false);
+//                                             }
+//                                         }
+//                );
+//            }
+//        });
 
         // return the inflated view
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override

@@ -3,7 +3,11 @@ package com.comp.iitb.vialogue;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 
+import com.adobe.creativesdk.aviary.AdobeImageIntent;
+import com.adobe.creativesdk.aviary.IGoogleClientBilling;
+import com.adobe.creativesdk.aviary.utils.AdobeImageEditorIntentConfigurationValidator;
 import com.adobe.creativesdk.foundation.AdobeCSDKFoundation;
 import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.comp.iitb.vialogue.activity.CameraActivity;
@@ -31,12 +35,12 @@ import com.parse.SaveCallback;
  * Created by ironstein on 13/02/17.
  */
 
-public class App extends Application implements IAdobeAuthClientCredentials {
+public class App extends Application implements IAdobeAuthClientCredentials, IGoogleClientBilling {
 
     // constants
-    private static final String CREATIVE_SDK_CLIENT_ID      = "f71339a291b841acbc45c18cf50ab10c";
-    private static final String CREATIVE_SDK_CLIENT_SECRET  = "5ef66814-7fd7-4063-ab3e-8fadefd46ab3";
-    private static final String CREATIVE_SDK_REDIRECT_URI   = "ams+2c0aaf828a578c32b47110b21fdd7300961250cd://adobeid/f71339a291b841acbc45c18cf50ab10c";
+    private static final String CREATIVE_SDK_CLIENT_ID      = "2898ebd674af4c39884a33e2167ce989";
+    private static final String CREATIVE_SDK_CLIENT_SECRET  = "6004eafa-73dd-49fb-b5b4-0f40d55927f8";
+    private static final String CREATIVE_SDK_REDIRECT_URI   = "ams+6e78a51ceeacace4863810e2770b3855f74a403a://adobeid/2898ebd674af4c39884a33e2167ce989";
     private static final String[] CREATIVE_SDK_SCOPES       = {"email", "profile", "address"};
     private static final String appId = "wpFAVTgYHZSrmGRFXzPwXZrBjE4btFgNYzOV";
 //    private static final String serverUrl = "https://lokavidya-heroku-server.herokuapp.com/parse";
@@ -90,6 +94,9 @@ public class App extends Application implements IAdobeAuthClientCredentials {
             }
         });
 
+        Intent cdsIntent = AdobeImageIntent.createCdsInitIntent(getBaseContext(), "CDS");
+        startService(cdsIntent);
+
     }
 
 
@@ -112,5 +119,10 @@ public class App extends Application implements IAdobeAuthClientCredentials {
     @Override
     public String getRedirectURI() {
         return CREATIVE_SDK_REDIRECT_URI;
+    }
+
+    @Override
+    public String getBillingKey() {
+        return "";
     }
 }

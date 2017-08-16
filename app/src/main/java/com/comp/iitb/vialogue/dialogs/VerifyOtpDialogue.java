@@ -170,10 +170,9 @@ public class VerifyOtpDialogue extends Dialog {
             public void done(VerifyOtp.VerifyOtpResponse verifyOtpResponse) {
                 switch (verifyOtpResponse.getResponseType()) {
                     case OTP_VERIFIED_SUCCESSFULLY:
-                        mResponseString = verifyOtpResponse.getResponseString();
+                        mResponseString = resetActivityCode == 1 ? "Otp verified" : verifyOtpResponse.getResponseString();
                         mUniqueId = verifyOtpResponse.getUniqueId();
                         onOtpVerified(mUniqueId);
-                        System.out.println("asdfasdf");
                         break;
                     case INCORRECT_OTP:
                         mResponseString = verifyOtpResponse.getResponseString();
@@ -265,6 +264,7 @@ public class VerifyOtpDialogue extends Dialog {
         if(resetActivityCode == 1) {
             intent = new Intent(mContext, ResetPasswordActivity.class);
             Bundle id = new Bundle();
+            System.out.println("uniqueId" + uniqueId);
             id.putString("uniqueId", uniqueId);
             id.putString(mContext.getResources().getString(R.string.registrationType), info.getString(mContext.getResources().getString(R.string.registrationType)));
             id.putString(mContext.getResources().getString(R.string.registrationData), info.getString(mContext.getResources().getString(R.string.registrationData)));

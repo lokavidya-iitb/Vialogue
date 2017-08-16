@@ -66,6 +66,7 @@ public class VerifyOtp {
                     // successfull
                     try {
                         mUniqueId = responseBody.getString("uuid");
+                        System.out.println("uuid" + mUniqueId);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         mResponseType = VerifyOtpResponseType.SOMETHING_WENT_WRONG;

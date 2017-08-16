@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.GlobalStuff.Master;
 import com.comp.iitb.vialogue.R;
+import com.comp.iitb.vialogue.coordinators.ItemTouchHelperViewHolder;
 import com.comp.iitb.vialogue.coordinators.SharedRuntimeContent;
 import com.comp.iitb.vialogue.fragments.SlideFragment;
 import com.comp.iitb.vialogue.library.Storage;
@@ -72,7 +74,7 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
     private ArrayList<String> mProjectNamesList;
     private RecyclerView mRecyclerView;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {//} implements ItemTouchHelperViewHolder {
         public TextView title;
         public ImageView thumbnail;
 
@@ -81,6 +83,31 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             title = (TextView) view.findViewById(R.id.title);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
         }
+
+//        @Override
+//        public void onItemSelected() {
+//            thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // dark gray tint
+//        }
+//
+//        @Override
+//        public void onItemClear() {
+//            thumbnail.setColorFilter(Color.argb(0, 0, 0, 0)); // no tint
+//        }
+//
+//        @Override
+//        public void onLongClick() {
+//            (mActivity).startActionMode(new ActionBarCallBack(this.title.getText().toString(), this.getAdapterPosition()));
+//        }
+//
+//        @Override
+//        public void onDragEnabled() {
+//
+//        }
+//
+//        @Override
+//        public void onDragDisabled() {
+//
+//        }
     }
 
     public class ProjectView {
@@ -248,11 +275,13 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         return new MyViewHolder(itemView);
     }
 
-    @Override
+    ImageView thumbnail;
 
+    @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final ProjectView projectView = mProjectViewsList.get(position);
         holder.title.setText(projectView.getProjectName());
+        thumbnail = holder.thumbnail;
 
         if(projectView.mThumbnailUrl == null) {
             Glide
@@ -311,7 +340,8 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
             @Override
             public boolean onLongClick(View view) {
                 (mActivity).startActionMode(new ActionBarCallBack(holder.title.getText().toString(), holder.getAdapterPosition()));
-                return false;
+                holder.thumbnail.setColorFilter(Color.argb(200, 0, 0, 0)); // dark gray tint
+                return true;
             }
         });
 
@@ -325,7 +355,6 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
         public ActionBarCallBack(String projectName, int position){
             this.projectName = projectName;
             this.position = position;
-
         }
 
         public boolean deleteProject(int position) {
@@ -363,8 +392,8 @@ public class MyProjectsAdapter extends RecyclerView.Adapter<MyProjectsAdapter.My
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
-
+            //Toast.makeText(mContext, "this", Toast.LENGTH_SHORT).show();
+            thumbnail.setColorFilter(Color.argb(0, 0, 0, 0)); // no tint
         }
 
         @Override

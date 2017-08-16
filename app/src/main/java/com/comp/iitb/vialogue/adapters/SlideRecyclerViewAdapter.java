@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.comp.iitb.vialogue.R;
@@ -126,7 +127,7 @@ public class SlideRecyclerViewAdapter extends RecyclerView.Adapter<SlideRecycler
         @Override
         public boolean onLongClick(View v) {
             Activity activity = (Activity) mView.getContext();
-
+            Toast.makeText(mContext, "Hello", Toast.LENGTH_SHORT).show();
             // TODO change this
             DeleteActionMode actionMode = new DeleteActionMode(
                     activity,

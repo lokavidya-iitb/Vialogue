@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adobe.creativesdk.aviary.AdobeImageIntent;
+import com.adobe.creativesdk.aviary.utils.AdobeImageEditorIntentConfigurationValidator;
+import com.adobe.creativesdk.foundation.auth.IAdobeAuthClientCredentials;
 import com.bumptech.glide.Glide;
+import com.comp.iitb.vialogue.BuildConfig;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.adapters.FragmentPageAdapter;
@@ -131,6 +135,17 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        if (BuildConfig.DEBUG) {
+            try {
+                AdobeImageEditorIntentConfigurationValidator.validateConfiguration(this);
+            }
+            catch (Throwable e) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage(e.getMessage()).show();
+            }
+        }
 
         System.out.println("audioRecordActivity : onCreate : called");
         setContentView(R.layout.activity_audio_record);
@@ -341,6 +356,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                     }
                 }
         ).execute();
+
     }
 
     public void startCropMainActivity(String path) {
@@ -353,6 +369,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivityForResult(intent, SharedRuntimeContent.CROP_MAIN_ACTIVITY_RESULT);*/
+
         Intent imageEditorIntent = new AdobeImageIntent.Builder(AudioRecordActivity.this)
                 .setData(mStorage.getUriFromPath(path)) // Set in onActivityResult()
                 .build();

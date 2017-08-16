@@ -72,7 +72,7 @@ public class ResetPassword {
                     return;
                 } case(404): {
                     mResponseType = ResetPasswordResponseType.INVALID_OTP;
-                    mResponseString = "Invalid OTP";
+                    mResponseString = "There was some problem resetting your password. Please try again.";
                     return;
                 } default: {
                     mResponseType = ResetPasswordResponseType.NETWORK_ERROR;

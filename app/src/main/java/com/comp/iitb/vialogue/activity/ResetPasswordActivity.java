@@ -2,6 +2,7 @@ package com.comp.iitb.vialogue.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.comp.iitb.vialogue.MainActivity;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.LogIn;
 import com.comp.iitb.vialogue.Network.LokavidyaSso.Apis.ResetPassword;
+import com.comp.iitb.vialogue.Network.LokavidyaSso.SharedPreferencesDetails;
 import com.comp.iitb.vialogue.R;
 import com.comp.iitb.vialogue.coordinators.OnDoneCallingSsoApiResult;
 import com.comp.iitb.vialogue.coordinators.OnDoneResetPassword;
@@ -42,6 +44,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     ResetPassword.RegistrationType mResetRegistrationType;
 
     LogIn.RegistrationType mLoginRegistrationType;
+    SharedPreferences mLokavidyaSsoSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password);
 
         mContext = ResetPasswordActivity.this;
+        mLokavidyaSsoSharedPreferences = mContext.getSharedPreferences(SharedPreferencesDetails.SHARED_PREFERENCES_NAME, 0);
 
         Bundle args = getIntent().getExtras();
         mUniqueId = args.getString("uniqueId");
@@ -124,8 +128,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 new SsoMethods(new OnDoneCallingSsoApiResult() {
                                     @Override
                                     public void onDone(Bundle info) {
+                                        new SsoMethods().signUpUsingParse(mRegistrationData, mLokavidyaSsoSharedPreferences.getString(SharedPreferencesDetails.SESSION_NAME, ""), newPassword);
                                         Intent intent = new Intent(mContext, MainActivity.class);
                                         startActivity(intent);
+                                        finish();
                                     }
                                 }).login(mContext, mLoginRegistrationType, mRegistrationData, newPassword);
                             case INVALID_OTP:

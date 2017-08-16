@@ -104,7 +104,7 @@
     <string name="network_signIn">An error occurred while signing in. Please check your network connection</string>
     <string name="mobileSignedSuccess">Successfully signed in with user mobile number :</string>
     <string name="emailSignedSuccess">Successfully signed in with Email ID :</string>
-    <string name="projectSaved">Project Uploaded successfully</string>
+    <string name="projectSaved">Your project is being uploaded. Please be online.</string>
     <string name="couldntUpload">Could not upload project. Please check your network connection.</string>
     <string name="videoCompleted">Video play completed</string>
     <string name="videoError">Video play error</string>

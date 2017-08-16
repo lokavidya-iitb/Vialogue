@@ -90,10 +90,10 @@ public abstract class QuestionAnswerDialog extends Dialog {
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(SingleOptionQuestion.mSelectedAnswer == null) {
-//                    Toast.makeText(getContext(),"Please select one answer", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
+                if(SingleOptionQuestion.mSelectedAnswer == null) {
+                    Toast.makeText(getContext(),"Please select one answer", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (isAnswerCorrect()) {
                     Toast.makeText(getContext(),"Answer is correct", Toast.LENGTH_SHORT).show();
                     dismiss();
@@ -101,6 +101,7 @@ public abstract class QuestionAnswerDialog extends Dialog {
                     Toast.makeText(getContext(),"Err!! Wrong", Toast.LENGTH_SHORT).show();
                     dismiss();
                 }
+                SingleOptionQuestion.mSelectedAnswer = null;
             }
         });
     }

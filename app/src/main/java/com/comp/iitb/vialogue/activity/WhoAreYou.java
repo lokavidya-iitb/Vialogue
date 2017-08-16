@@ -59,6 +59,7 @@ public class WhoAreYou extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(view.getContext(), CreateYourAccount.class);
                 startActivity(i);
+                finish();
             }
 
 
@@ -71,6 +72,7 @@ public class WhoAreYou extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(view.getContext(), LoginActivity.class);      //todo: intent to login page
                 startActivity(i);
+                finish();
             }
 
         });
