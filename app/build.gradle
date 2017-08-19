@@ -59,7 +59,7 @@ annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.1'
 // ACRA Crash Reporting
 
 // Loading Animations
-//Creative SDK
+// Creative SDK
     compile ('com.adobe.creativesdk.foundation:auth:0.9.1251') {
         exclude group: 'com.google.android.gms'
     }

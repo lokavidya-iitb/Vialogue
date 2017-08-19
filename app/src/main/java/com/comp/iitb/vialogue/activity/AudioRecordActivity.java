@@ -136,7 +136,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             try {
                 AdobeImageEditorIntentConfigurationValidator.validateConfiguration(this);
             }
@@ -145,7 +145,7 @@ public class AudioRecordActivity extends AppCompatActivity implements MediaTimeU
                         .setTitle("Error")
                         .setMessage(e.getMessage()).show();
             }
-        }
+        }*/
 
         System.out.println("audioRecordActivity : onCreate : called");
         setContentView(R.layout.activity_audio_record);

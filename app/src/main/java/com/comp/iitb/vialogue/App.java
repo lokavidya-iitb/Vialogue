@@ -35,7 +35,7 @@ import com.parse.SaveCallback;
  * Created by ironstein on 13/02/17.
  */
 
-public class App extends Application implements IAdobeAuthClientCredentials, IGoogleClientBilling {
+public class App extends Application implements IAdobeAuthClientCredentials {
 
     // constants
     private static final String CREATIVE_SDK_CLIENT_ID      = "2898ebd674af4c39884a33e2167ce989";
@@ -122,8 +122,4 @@ public class App extends Application implements IAdobeAuthClientCredentials, IGo
         return CREATIVE_SDK_REDIRECT_URI;
     }
 
-    @Override
-    public String getBillingKey() {
-        return "";
-    }
 }
