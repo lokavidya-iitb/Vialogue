@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         System.out.println("aaaaaa "+mIsLoggedIn);
         System.out.println("bbbbbb "+mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false));
         try {
-            if (!mIsLoggedIn) {
+            if (!mLokavidyaSsoSharedPreferences.getBoolean(SharedPreferencesDetails.IS_LOGGED_IN_KEY, false)) {
                 System.out.println("loggedin: "+mIsLoggedIn);
                 mMenu.findItem(R.id.action_settings).setTitle(R.string.sign_in);
             } else {
