@@ -184,7 +184,7 @@
         IMPORTANT: Change "YOUR_SENDER_ID" to your GCM Sender Id.
         -->
         <meta-data android:name="com.parse.push.gcm_sender_id"
-            android:value="id:520903486948" />
+            android:value="id:1094169363298" />
 
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
